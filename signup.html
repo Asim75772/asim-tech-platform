@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Sign Up - ASIM TECH</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         * {
@@ -94,6 +98,15 @@
             background: #2ea043;
         }
 
+        button:disabled {
+            opacity: 0.6;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+        }
+
         .login {
             text-align: center;
             margin-top: 20px;
@@ -123,37 +136,31 @@
 
         <h2>Create your account</h2>
 
-        <form>
+        <form id="signupForm">
 
             <label>Username</label>
-            <input type="text"
-                   placeholder="Choose a username"
-                   required>
+            <input
+                id="username"
+                type="text"
+                placeholder="Choose a username"
+                required
+            >
+
+            <label>Full Name</label>
+            <input
+                id="fullName"
+                type="text"
+                placeholder="Your full name"
+                required
+            >
 
             <label>Email</label>
-            <input type="email"
-                   placeholder="you@example.com"
-                   required>
+            <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                required
+            >
 
             <label>Password</label>
-            <input type="password"
-                   placeholder="Create a password"
-                   required>
-
-            <button type="submit">
-                Create Account
-            </button>
-
-        </form>
-
-        <div class="login">
-            Already have an account?
-            <a href="login.html">Sign in</a>
-        </div>
-
-    </div>
-
-</div>
-
-</body>
-</html>
+           
