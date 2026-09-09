@@ -163,4 +163,122 @@
             >
 
             <label>Password</label>
-           
+            <input
+                id="password"
+                type="password"
+                placeholder="Create a password"
+                minlength="6"
+                required
+            >
+
+            <button type="submit" id="signupBtn">
+                Create Account
+            </button>
+
+            <div id="message"></div>
+
+        </form>
+
+    </div>
+
+    <div class="login">
+        Already have an account?
+        <a href="login.html">Sign in</a>
+    </div>
+
+</div>
+
+<script>
+
+    const SUPABASE_URL =
+        "https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+        sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT
+
+    const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+    document
+        .getElementById("signupForm")
+        .addEventListener("submit", async function (e) {
+
+            e.preventDefault();
+
+            const username =
+                document.getElementById("username").value.trim();
+
+            const fullName =
+                document.getElementById("fullName").value.trim();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+            const message =
+                document.getElementById("message");
+
+            const button =
+                document.getElementById("signupBtn");
+
+
+            message.textContent = "";
+            button.disabled = true;
+            button.textContent = "Creating account...";
+
+
+            try {
+
+                const { data, error } =
+                    await supabaseClient.auth.signUp({
+
+                        email: email,
+                        password: password,
+
+                        options: {
+                            data: {
+                                username: username,
+                                full_name: fullName
+                            }
+                        }
+
+                    });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                message.style.color = "#39d353";
+
+                message.textContent =
+                    "Account created successfully! Please check your email if confirmation is required.";
+
+
+                document.getElementById("signupForm").reset();
+
+            } catch (error) {
+
+                message.style.color = "#ff7b72";
+
+                message.textContent =
+                    error.message;
+
+            }
+
+
+            button.disabled = false;
+            button.textContent = "Create Account";
+
+        });
+
+</script>
+
+</body>
+</html>
