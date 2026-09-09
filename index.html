@@ -3,16 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asim Tech</title>
+
+    <title>ASIM TECH</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0d1117;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            height: 65px;
+            background: #010409;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #39d353;
+        }
+
+        .nav-links {
+            margin-left: auto;
+        }
+
+        .nav-links a {
+            color: #c9d1d9;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .hero h1 {
+            font-size: 55px;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 span {
+            color: #39d353;
+        }
+
+        .tagline {
+            font-size: 20px;
+            color: #8b949e;
+            margin-bottom: 35px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 13px 25px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            border: 1px solid #30363d;
+        }
+
+        .primary {
+            background: #238636;
+            color: white;
+        }
+
+        .secondary {
+            color: white;
+            background: #21262d;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 25px;
+            width: 250px;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #8b949e;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #8b949e;
+            border-top: 1px solid #30363d;
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>Welcome to Asim Tech</h1>
+    <nav class="navbar">
+        <div class="logo">
+            <span>ASIM</span> TECH
+        </div>
 
-    <p>My own coding platform is coming soon.</p>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Repositories</a>
+            <a href="#">Login</a>
+        </div>
+    </nav>
 
-    <button>Explore</button>
+    <section class="hero">
+
+        <h1>
+            <span>ASIM</span> TECH
+        </h1>
+
+        <p class="tagline">
+            Code. Create. Innovate.
+        </p>
+
+        <div class="buttons">
+            <a href="#" class="btn primary">
+                Explore Repositories
+            </a>
+
+            <a href="#" class="btn secondary">
+                Sign In
+            </a>
+        </div>
+
+    </section>
+
+    <section class="features">
+
+        <div class="card">
+            <h3>📁 Repositories</h3>
+            <p>
+                Create and manage your coding projects.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>💻 Code</h3>
+            <p>
+                Store and share your source code.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>🚀 Projects</h3>
+            <p>
+                Build amazing projects with Asim Tech.
+            </p>
+        </div>
+
+    </section>
+
+    <footer>
+        © 2026 ASIM TECH — Code. Create. Innovate.
+    </footer>
 
 </body>
 </html>
