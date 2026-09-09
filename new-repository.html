@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>New Repository - ASIM TECH</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0d1117;
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            min-height: 65px;
+            background: #010409;
+            border-bottom: 1px solid #30363d;
+
+            display: flex;
+            align-items: center;
+
+            padding: 12px 20px;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .green {
+            color: #39d353;
+        }
+
+        .home {
+            margin-left: auto;
+            color: #c9d1d9;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            margin: auto;
+            padding: 35px 20px;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .intro {
+            color: #8b949e;
+            margin-bottom: 30px;
+        }
+
+        .box {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .required {
+            color: #8b949e;
+            font-weight: normal;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            background: #0d1117;
+            color: white;
+
+            border: 1px solid #30363d;
+            border-radius: 6px;
+
+            padding: 13px;
+            margin-bottom: 22px;
+
+            font-size: 16px;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #39d353;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+
+            background: #0d1117;
+
+            border: 1px solid #30363d;
+            border-radius: 7px;
+
+            padding: 15px;
+
+            margin-bottom: 12px;
+        }
+
+        .option input {
+            width: auto;
+            margin: 4px 0 0;
+        }
+
+        .option strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .option p {
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button,
+        .cancel {
+            padding: 13px 22px;
+            border-radius: 7px;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button {
+            background: #238636;
+            color: white;
+            border: 1px solid #2ea043;
+            flex: 1;
+        }
+
+        .cancel {
+            background: #21262d;
+            color: white;
+            border: 1px solid #30363d;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            color: #8b949e;
+            padding: 30px;
+            margin-top: 30px;
+            border-top: 1px solid #30363d;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button,
+            .cancel {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        <span class="green">ASIM</span> TECH
+    </div>
+
+    <a href="dashboard.html" class="home">
+        Dashboard
+    </a>
+
+</nav>
+
+
+<div class="container">
+
+    <h1>
+        Create a new repository
+    </h1>
+
+    <p class="intro">
+        A repository contains all your project files,
+        including code and documentation.
+    </p>
+
+
+    <div class="box">
+
+        <form>
+
+            <label>
+                Repository name
+                <span class="required">(required)</span>
+            </label>
+
+            <input
+                type="text"
+                placeholder="my-project"
+                required
+            >
+
+
+            <label>
+                Description
+                <span class="required">(optional)</span>
+            </label>
+
+            <textarea
+                placeholder="What is this project about?"
+            ></textarea>
+
+
+            <label>
+                Repository visibility
+            </label>
+
+
+            <label class="option">
+
+                <input
+                    type="radio"
+                    name="visibility"
+                    value="public"
+                    checked
+                >
+
+                <span>
+                    <strong>🌎 Public</strong>
+
+                    <p>
+                        Anyone can see this repository.
+                    </p>
+                </span>
+
+            </label>
+
+
+            <label class="option">
+
+                <input
+                    type="radio"
+                    name="visibility"
+                    value="private"
+                >
+
+                <span>
+                    <strong>🔒 Private</strong>
+
+                    <p>
+                        Only you and selected users can
+                        access this repository.
+                    </p>
+                </span>
+
+            </label>
+
+
+            <div class="buttons">
+
+                <a
+                    href="dashboard.html"
+                    class="cancel"
+                >
+                    Cancel
+                </a>
+
+                <button type="submit">
+                    Create repository
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<footer>
+
+    © 2026 ASIM TECH —
+    Code. Create. Innovate.
+
+</footer>
+
+
+</body>
+
+</html>
