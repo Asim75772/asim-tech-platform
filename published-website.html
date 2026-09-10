@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Published Website — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:#f5f7fb;
+color:#1f2937;
+min-height:100vh;
+}
+
+#loading{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+color:#64748b;
+}
+
+#error{
+display:none;
+max-width:700px;
+margin:80px auto;
+padding:25px;
+background:#fee2e2;
+color:#991b1b;
+border-radius:14px;
+text-align:center;
+}
+
+#website{
+display:none;
+min-height:100vh;
+}
+
+.topbar{
+background:#0f172a;
+color:white;
+padding:12px 20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+}
+
+.brand{
+font-weight:bold;
+font-size:18px;
+}
+
+.status{
+background:#166534;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+
+.website-frame{
+width:100%;
+height:calc(100vh - 55px);
+border:0;
+background:white;
+display:block;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="loading">
+🚀 Loading website...
+</div>
+
+
+<div id="error">
+<h2>Website unavailable</h2>
+
+<p id="errorText"
+style="margin-top:10px;">
+Unable to load this website.
+</p>
+</div>
+
+
+<div id="website">
+
+<div class="topbar">
+
+<div class="brand">
+⚡ ASIM TECH
+</div>
+
+<div class="status">
+● Published
+</div>
+
+</div>
+
+
+<iframe
+id="websiteFrame"
+class="website-frame"
+sandbox="allow-scripts allow-forms allow-modals"
+></iframe>
+
+</div>
+
+
+<script>
+
+/* SUPABASE */
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* GET PAGE ID */
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const pageId =
+params.get("id");
+
+
+/* ERROR */
+
+function showError(message){
+
+document.getElementById(
+"loading"
+).style.display="none";
+
+document.getElementById(
+"error"
+).style.display="block";
+
+document.getElementById(
+"errorText"
+).textContent=message;
+
+}
+
+
+/* LOAD WEBSITE */
+
+async function loadWebsite(){
+
+try{
+
+if(!pageId){
+
+showError(
+"Website ID is missing."
+);
+
+return;
+
+}
+
+
+/*
+LOAD PUBLISHED PAGE
+*/
+
+const {
+data:page,
+error:pageError
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.select("*")
+
+.eq("id",pageId)
+
+.eq("is_published",true)
+
+.single();
+
+
+if(pageError || !page){
+
+showError(
+"This website is not published or does not exist."
+);
+
+return;
+
+}
+
+
+/*
+BUILD WEBSITE
+*/
+
+const html =
+page.html_content || "";
+
+const css =
+page.css_content || "";
+
+const js =
+page.js_content || "";
+
+
+/*
+COMBINE HTML + CSS + JS
+*/
+
+const completeHtml = `
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<style>
+
+${css}
+
+</style>
+
+</head>
+
+<body>
+
+${html}
+
+<script>
+
+${js}
+
+<\/script>
+
+</body>
+
+</html>
+
+`;
+
+
+/*
+DISPLAY
+*/
+
+const frame =
+document.getElementById(
+"websiteFrame"
+);
+
+frame.srcdoc =
+completeHtml;
+
+
+/*
+PAGE TITLE
+*/
+
+document.title =
+(page.page_name || "Website") +
+" — ASIM TECH";
+
+
+/*
+SHOW
+*/
+
+document.getElementById(
+"loading"
+).style.display="none";
+
+document.getElementById(
+"website"
+).style.display="block";
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+"Unable to load the published website."
+);
+
+}
+
+}
+
+
+/*
+START
+*/
+
+loadWebsite();
+
+</script>
+
+</body>
+
+</html>
