@@ -3,10 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>New Repository - ASIM TECH</title>
+    <title>Create Repository - ASIM TECH</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
 
@@ -17,7 +18,10 @@
         }
 
         body {
-            background: #0d1117;
+            background:
+                radial-gradient(circle at top right, #102b58 0%, transparent 35%),
+                radial-gradient(circle at bottom left, #063c2d 0%, transparent 30%),
+                #07111d;
             color: white;
             font-family: Arial, sans-serif;
             min-height: 100vh;
@@ -25,8 +29,8 @@
 
         .navbar {
             min-height: 65px;
-            background: #010409;
-            border-bottom: 1px solid #30363d;
+            background: rgba(5,15,25,0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
 
             display: flex;
             align-items: center;
@@ -40,7 +44,7 @@
         }
 
         .green {
-            color: #39d353;
+            color: #00e676;
         }
 
         .home {
@@ -49,28 +53,34 @@
             text-decoration: none;
         }
 
+        .home:hover {
+            color: #00e676;
+        }
+
         .container {
             width: 100%;
-            max-width: 700px;
+            max-width: 720px;
             margin: auto;
-            padding: 35px 20px;
+            padding: 45px 20px 70px;
         }
 
         h1 {
-            font-size: 30px;
+            font-size: 32px;
             margin-bottom: 10px;
         }
 
         .intro {
-            color: #8b949e;
+            color: #94a3b8;
             margin-bottom: 30px;
+            line-height: 1.6;
         }
 
         .box {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 10px;
-            padding: 25px;
+            background: rgba(17,32,48,0.9);
+            border: 1px solid #23415d;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
         }
 
         label {
@@ -80,34 +90,40 @@
         }
 
         .required {
-            color: #8b949e;
+            color: #94a3b8;
             font-weight: normal;
         }
 
-        input,
+        input[type="text"],
         textarea {
             width: 100%;
-            background: #0d1117;
+
+            background: #07111d;
             color: white;
 
-            border: 1px solid #30363d;
-            border-radius: 6px;
+            border: 1px solid #2b4158;
+            border-radius: 8px;
 
-            padding: 13px;
-            margin-bottom: 22px;
+            padding: 14px;
+            margin-bottom: 23px;
 
             font-size: 16px;
         }
 
         textarea {
-            min-height: 110px;
+            min-height: 120px;
             resize: vertical;
         }
 
-        input:focus,
+        input[type="text"]:focus,
         textarea:focus {
             outline: none;
-            border-color: #39d353;
+            border-color: #00e676;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #64748b;
         }
 
         .option {
@@ -115,19 +131,25 @@
             align-items: flex-start;
             gap: 12px;
 
-            background: #0d1117;
+            background: #07111d;
 
-            border: 1px solid #30363d;
-            border-radius: 7px;
+            border: 1px solid #2b4158;
+            border-radius: 9px;
 
-            padding: 15px;
+            padding: 16px;
 
             margin-bottom: 12px;
+
+            cursor: pointer;
+        }
+
+        .option:hover {
+            border-color: #00e676;
         }
 
         .option input {
             width: auto;
-            margin: 4px 0 0;
+            margin-top: 4px;
         }
 
         .option strong {
@@ -136,20 +158,21 @@
         }
 
         .option p {
-            color: #8b949e;
+            color: #94a3b8;
             font-size: 14px;
+            line-height: 1.5;
         }
 
         .buttons {
             display: flex;
             gap: 12px;
-            margin-top: 25px;
+            margin-top: 28px;
         }
 
         button,
         .cancel {
-            padding: 13px 22px;
-            border-radius: 7px;
+            padding: 14px 22px;
+            border-radius: 9px;
 
             font-size: 16px;
             font-weight: bold;
@@ -159,35 +182,59 @@
         }
 
         button {
-            background: #238636;
+            background: #00c853;
             color: white;
-            border: 1px solid #2ea043;
+            border: none;
             flex: 1;
         }
 
+        button:hover {
+            background: #00e676;
+            color: #07111d;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .cancel {
-            background: #21262d;
+            background: #172536;
             color: white;
-            border: 1px solid #30363d;
+            border: 1px solid #2b4158;
             text-align: center;
+        }
+
+        .cancel:hover {
+            border-color: #00e676;
+        }
+
+        #message {
+            margin-top: 18px;
+            text-align: center;
+            line-height: 1.5;
+            min-height: 22px;
         }
 
         footer {
             text-align: center;
-            color: #8b949e;
-            padding: 30px;
-            margin-top: 30px;
-            border-top: 1px solid #30363d;
+            color: #64748b;
+            padding: 28px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
         @media (max-width: 600px) {
 
             .container {
-                padding: 25px 15px;
+                padding: 30px 15px 55px;
             }
 
             h1 {
-                font-size: 25px;
+                font-size: 27px;
+            }
+
+            .box {
+                padding: 21px;
             }
 
             .buttons {
@@ -208,6 +255,8 @@
 <body>
 
 
+<!-- NAVBAR -->
+
 <nav class="navbar">
 
     <div class="logo">
@@ -221,6 +270,8 @@
 </nav>
 
 
+<!-- MAIN -->
+
 <div class="container">
 
     <h1>
@@ -228,36 +279,57 @@
     </h1>
 
     <p class="intro">
-        A repository contains all your project files,
-        including code and documentation.
+        A repository contains your project information.
+        Create one and start building with ASIM TECH.
     </p>
 
 
     <div class="box">
 
-        <form>
+        <form id="repositoryForm">
 
-            <label>
+
+            <!-- REPOSITORY NAME -->
+
+            <label for="repoName">
+
                 Repository name
-                <span class="required">(required)</span>
+
+                <span class="required">
+                    (required)
+                </span>
+
             </label>
 
             <input
                 type="text"
+                id="repoName"
                 placeholder="my-project"
+                maxlength="100"
                 required
             >
 
 
-            <label>
+            <!-- DESCRIPTION -->
+
+            <label for="repoDescription">
+
                 Description
-                <span class="required">(optional)</span>
+
+                <span class="required">
+                    (optional)
+                </span>
+
             </label>
 
             <textarea
+                id="repoDescription"
                 placeholder="What is this project about?"
+                maxlength="500"
             ></textarea>
 
+
+            <!-- VISIBILITY -->
 
             <label>
                 Repository visibility
@@ -274,11 +346,15 @@
                 >
 
                 <span>
-                    <strong>🌎 Public</strong>
+
+                    <strong>
+                        🌎 Public
+                    </strong>
 
                     <p>
                         Anyone can see this repository.
                     </p>
+
                 </span>
 
             </label>
@@ -293,31 +369,43 @@
                 >
 
                 <span>
-                    <strong>🔒 Private</strong>
+
+                    <strong>
+                        🔒 Private
+                    </strong>
 
                     <p>
-                        Only you and selected users can
-                        access this repository.
+                        Only you can access this repository.
                     </p>
+
                 </span>
 
             </label>
 
 
+            <!-- BUTTONS -->
+
             <div class="buttons">
 
                 <a
-                    href="dashboard.html"
+                    href="repositories.html"
                     class="cancel"
                 >
                     Cancel
                 </a>
 
-                <button type="submit">
+                <button
+                    type="submit"
+                    id="createBtn"
+                >
                     Create repository
                 </button>
 
             </div>
+
+
+            <div id="message"></div>
+
 
         </form>
 
@@ -326,12 +414,268 @@
 </div>
 
 
+<!-- FOOTER -->
+
 <footer>
 
     © 2026 ASIM TECH —
     Code. Create. Innovate.
 
 </footer>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+   ========================================= */
+
+const SUPABASE_URL =
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* =========================================
+   ELEMENTS
+   ========================================= */
+
+const form =
+    document.getElementById("repositoryForm");
+
+const createBtn =
+    document.getElementById("createBtn");
+
+const message =
+    document.getElementById("message");
+
+
+/* =========================================
+   CREATE REPOSITORY
+   ========================================= */
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const name =
+            document
+                .getElementById("repoName")
+                .value
+                .trim();
+
+        const description =
+            document
+                .getElementById("repoDescription")
+                .value
+                .trim();
+
+        const visibility =
+            document.querySelector(
+                'input[name="visibility"]:checked'
+            ).value;
+
+        const isPrivate =
+            visibility === "private";
+
+
+        /* CHECK LOGIN */
+
+        const {
+            data: {
+                user
+            }
+        } =
+        await supabaseClient.auth.getUser();
+
+
+        if (!user) {
+
+            message.style.color =
+                "#ff7b72";
+
+            message.textContent =
+                "Please sign in before creating a repository.";
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "login.html";
+
+            }, 1200);
+
+            return;
+        }
+
+
+        /* VALIDATE NAME */
+
+        if (name.length < 1) {
+
+            message.style.color =
+                "#ff7b72";
+
+            message.textContent =
+                "Repository name is required.";
+
+            return;
+        }
+
+
+        /* ALLOW SIMPLE REPOSITORY NAMES */
+
+        const validName =
+            /^[a-zA-Z0-9._-]+$/;
+
+        if (!validName.test(name)) {
+
+            message.style.color =
+                "#ff7b72";
+
+            message.textContent =
+                "Use only letters, numbers, dots, hyphens or underscores.";
+
+            return;
+        }
+
+
+        /* LOADING */
+
+        createBtn.disabled = true;
+
+        createBtn.textContent =
+            "Creating...";
+
+        message.style.color =
+            "#94a3b8";
+
+        message.textContent =
+            "Creating your repository...";
+
+
+        try {
+
+
+            /* CHECK DUPLICATE */
+
+            const {
+                data: existing,
+                error: checkError
+            } =
+            await supabaseClient
+                .from("repositories")
+                .select("id")
+                .eq("owner_id", user.id)
+                .eq("name", name)
+                .maybeSingle();
+
+
+            if (checkError) {
+                throw checkError;
+            }
+
+
+            if (existing) {
+
+                message.style.color =
+                    "#ff7b72";
+
+                message.textContent =
+                    "You already have a repository with this name.";
+
+                createBtn.disabled = false;
+
+                createBtn.textContent =
+                    "Create repository";
+
+                return;
+            }
+
+
+            /* INSERT */
+
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
+                .from("repositories")
+                .insert({
+
+                    owner_id: user.id,
+
+                    name: name,
+
+                    description:
+                        description || null,
+
+                    is_private: isPrivate
+
+                })
+                .select()
+                .single();
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            /* SUCCESS */
+
+            message.style.color =
+                "#39d353";
+
+            message.textContent =
+                "Repository created successfully!";
+
+
+            createBtn.textContent =
+                "Created ✓";
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "repositories.html";
+
+            }, 900);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            message.style.color =
+                "#ff7b72";
+
+            message.textContent =
+                error.message ||
+                "Unable to create repository.";
+
+            createBtn.disabled =
+                false;
+
+            createBtn.textContent =
+                "Create repository";
+
+        }
+
+    }
+
+);
+
+</script>
 
 
 </body>
