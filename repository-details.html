@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Repository — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#07111f,#0b2233,#063b35);
+    color:#fff;
+    min-height:100vh;
+}
+
+nav{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 6%;
+    background:rgba(5,12,22,.95);
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+    color:#36e0b5;
+}
+
+.nav-links{
+    display:flex;
+    gap:20px;
+}
+
+.nav-links a{
+    color:#ddd;
+    text-decoration:none;
+}
+
+.nav-links a:hover{
+    color:#36e0b5;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+    margin:40px auto;
+}
+
+.back{
+    display:inline-block;
+    color:#8edfc9;
+    text-decoration:none;
+    margin-bottom:25px;
+}
+
+.repo-header{
+    background:rgba(13,29,43,.9);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:16px;
+    padding:30px;
+}
+
+.repo-title{
+    font-size:32px;
+    word-break:break-word;
+    margin-bottom:12px;
+}
+
+.description{
+    color:#aab7c4;
+    font-size:17px;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.badges{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:25px;
+}
+
+.badge{
+    background:#17384a;
+    color:#8edfc9;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+.private{
+    background:#46351c;
+    color:#ffd27a;
+}
+
+.info{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.info-box{
+    background:#081a28;
+    border:1px solid #203746;
+    padding:18px;
+    border-radius:10px;
+}
+
+.info-label{
+    color:#71818d;
+    font-size:13px;
+    margin-bottom:7px;
+}
+
+.info-value{
+    color:#fff;
+    font-size:15px;
+    word-break:break-word;
+}
+
+.actions{
+    display:flex;
+    gap:12px;
+    margin-top:25px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:12px 20px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.edit{
+    background:#36e0b5;
+    color:#06151a;
+}
+
+.delete{
+    background:#55252c;
+    color:#ffb5bd;
+}
+
+.status{
+    text-align:center;
+    padding:50px 20px;
+    color:#aab7c4;
+}
+
+.error{
+    color:#ff8d8d;
+}
+
+footer{
+    text-align:center;
+    color:#71818d;
+    padding:40px 10px;
+    font-size:13px;
+}
+
+@media(max-width:600px){
+
+    nav{
+        padding:0 5%;
+    }
+
+    .nav-links{
+        gap:10px;
+        font-size:13px;
+    }
+
+    .container{
+        width:92%;
+        margin:25px auto;
+    }
+
+    .repo-header{
+        padding:22px;
+    }
+
+    .repo-title{
+        font-size:27px;
+    }
+
+    .info{
+        grid-template-columns:1fr;
+    }
+
+    .actions .btn{
+        width:100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">
+        ⚡ ASIM TECH
+    </div>
+
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="repositories.html">Repositories</a>
+        <a href="dashboard.html">Dashboard</a>
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <a class="back" href="repositories.html">
+        ← Back to Repositories
+    </a>
+
+    <div id="loading" class="status">
+        Loading repository...
+    </div>
+
+    <div id="error" class="status error" style="display:none;">
+    </div>
+
+    <div id="repo" class="repo-header" style="display:none;">
+
+        <div class="repo-title">
+            📦 <span id="repoName"></span>
+        </div>
+
+        <div class="description" id="repoDescription">
+        </div>
+
+        <div class="badges">
+
+            <span id="visibility" class="badge">
+            </span>
+
+            <span class="badge">
+                ASIM TECH
+            </span>
+
+        </div>
+
+
+        <div class="info">
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    👤 Owner ID
+                </div>
+
+                <div class="info-value" id="owner">
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    📅 Created
+                </div>
+
+                <div class="info-value" id="created">
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    🔄 Last Updated
+                </div>
+
+                <div class="info-value" id="updated">
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    🆔 Repository ID
+                </div>
+
+                <div class="info-value" id="repoId">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                class="btn edit"
+                onclick="editRepository()">
+                ✏️ Edit Repository
+            </button>
+
+            <button
+                class="btn delete"
+                onclick="deleteRepository()">
+                🗑️ Delete Repository
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer>
+    © 2026 ASIM TECH — Code. Create. Innovate.
+</footer>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+let repository = null;
+
+
+/* Get repository ID from URL */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const repositoryId =
+    params.get("id");
+
+
+async function loadRepository(){
+
+    const loading =
+        document.getElementById("loading");
+
+    const errorBox =
+        document.getElementById("error");
+
+    const repoBox =
+        document.getElementById("repo");
+
+
+    if(!repositoryId){
+
+        loading.style.display = "none";
+
+        errorBox.style.display = "block";
+
+        errorBox.textContent =
+            "Repository ID not found.";
+
+        return;
+    }
+
+
+    try{
+
+        const {
+            data:{user},
+            error:userError
+        } =
+            await supabaseClient.auth.getUser();
+
+
+        if(userError || !user){
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("repositories")
+                .select("*")
+                .eq("id",repositoryId)
+                .single();
+
+
+        if(error){
+
+            throw error;
+        }
+
+
+        repository = data;
+
+
+        document.getElementById("repoName")
+            .textContent =
+            repository.name;
+
+
+        document.getElementById("repoDescription")
+            .textContent =
+            repository.description ||
+            "No description provided.";
+
+
+        const visibility =
+            document.getElementById("visibility");
+
+
+        if(repository.is_private){
+
+            visibility.textContent =
+                "🔒 Private";
+
+            visibility.classList.add("private");
+
+        }else{
+
+            visibility.textContent =
+                "🌐 Public";
+
+        }
+
+
+        document.getElementById("owner")
+            .textContent =
+            repository.owner_id;
+
+
+        document.getElementById("repoId")
+            .textContent =
+            repository.id;
+
+
+        document.getElementById("created")
+            .textContent =
+            formatDate(repository.created_at);
+
+
+        document.getElementById("updated")
+            .textContent =
+            formatDate(repository.updated_at);
+
+
+        loading.style.display = "none";
+
+        repoBox.style.display = "block";
+
+
+    }catch(error){
+
+        console.error(error);
+
+        loading.style.display = "none";
+
+        errorBox.style.display = "block";
+
+        errorBox.textContent =
+            "Repository not found or you do not have access.";
+
+    }
+
+}
+
+
+/* Format date */
+
+function formatDate(date){
+
+    if(!date){
+        return "Not available";
+    }
+
+    return new Date(date)
+        .toLocaleDateString(
+            "en-IN",
+            {
+                day:"numeric",
+                month:"short",
+                year:"numeric"
+            }
+        );
+
+}
+
+
+/* Edit */
+
+function editRepository(){
+
+    alert(
+        "Edit Repository feature will be added in the next step."
+    );
+
+}
+
+
+/* Delete */
+
+async function deleteRepository(){
+
+    if(!repository){
+        return;
+    }
+
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete '" +
+            repository.name +
+            "'?"
+        );
+
+
+    if(!confirmDelete){
+        return;
+    }
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("repositories")
+            .delete()
+            .eq("id",repository.id);
+
+
+    if(error){
+
+        alert(
+            "Unable to delete repository."
+        );
+
+        console.error(error);
+
+        return;
+    }
+
+
+    alert(
+        "Repository deleted successfully."
+    );
+
+
+    window.location.href =
+        "repositories.html";
+
+}
+
+
+loadRepository();
+
+</script>
+
+</body>
+</html>
