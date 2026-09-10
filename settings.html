@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Settings — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0d1117;
+    color:#ffffff;
+}
+
+.navbar{
+    min-height:65px;
+    background:#161b22;
+    border-bottom:1px solid #30363d;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.green{
+    color:#39d353;
+}
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.nav-link{
+    color:#58a6ff;
+    text-decoration:none;
+    padding:9px 12px;
+}
+
+.nav-link:hover{
+    text-decoration:underline;
+}
+
+.logout{
+    color:#ff7b72;
+    background:#21262d;
+    border:1px solid #30363d;
+    padding:9px 13px;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.logout:hover{
+    background:#30363d;
+}
+
+.container{
+    max-width:850px;
+    margin:auto;
+    padding:35px 20px;
+}
+
+.header{
+    margin-bottom:25px;
+}
+
+.header h1{
+    font-size:30px;
+    margin-bottom:8px;
+}
+
+.header p{
+    color:#8b949e;
+}
+
+.card{
+    background:#161b22;
+    border:1px solid #30363d;
+    border-radius:10px;
+    margin-bottom:20px;
+    overflow:hidden;
+}
+
+.card-title{
+    padding:18px 20px;
+    border-bottom:1px solid #30363d;
+    font-size:19px;
+    font-weight:bold;
+}
+
+.card-body{
+    padding:20px;
+}
+
+.info-row{
+    padding:12px 0;
+    border-bottom:1px solid #30363d;
+}
+
+.info-row:last-child{
+    border-bottom:none;
+}
+
+.label{
+    display:block;
+    color:#8b949e;
+    font-size:13px;
+    margin-bottom:6px;
+}
+
+.value{
+    word-break:break-all;
+}
+
+input,
+select{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+    background:#0d1117;
+    color:#ffffff;
+    border:1px solid #30363d;
+    border-radius:7px;
+    font-size:15px;
+}
+
+input:focus,
+select:focus{
+    outline:none;
+    border-color:#58a6ff;
+}
+
+.btn{
+    display:inline-block;
+    padding:11px 17px;
+    border-radius:7px;
+    border:1px solid #30363d;
+    font-weight:bold;
+    cursor:pointer;
+    text-decoration:none;
+    font-size:14px;
+    margin-top:15px;
+}
+
+.primary{
+    background:#238636;
+    color:white;
+}
+
+.primary:hover{
+    background:#2ea043;
+}
+
+.blue{
+    background:#1f6feb;
+    color:white;
+}
+
+.blue:hover{
+    background:#388bfd;
+}
+
+.gray{
+    background:#21262d;
+    color:white;
+}
+
+.gray:hover{
+    background:#30363d;
+}
+
+.message{
+    margin-top:12px;
+    padding:11px;
+    border-radius:7px;
+    display:none;
+}
+
+.success{
+    display:block;
+    background:#0f2d1b;
+    border:1px solid #238636;
+    color:#56d364;
+}
+
+.error{
+    display:block;
+    background:#2d1111;
+    border:1px solid #da3633;
+    color:#ff7b72;
+}
+
+.danger{
+    border-color:#da3633;
+}
+
+.danger-title{
+    color:#ff7b72;
+}
+
+.loading{
+    text-align:center;
+    padding:40px;
+    color:#58a6ff;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#8b949e;
+    border-top:1px solid #30363d;
+    margin-top:40px;
+}
+
+@media(max-width:600px){
+
+    .navbar{
+        padding:10px 15px;
+        flex-direction:column;
+        align-items:flex-start;
+        gap:10px;
+    }
+
+    .nav-right{
+        width:100%;
+        justify-content:flex-start;
+    }
+
+    .container{
+        padding:25px 15px;
+    }
+
+    .header h1{
+        font-size:25px;
+    }
+
+    .btn{
+        width:100%;
+        text-align:center;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        <span class="green">ASIM</span> TECH
+    </div>
+
+    <div class="nav-right">
+
+        <a href="dashboard.html" class="nav-link">
+            🏠 Dashboard
+        </a>
+
+        <a href="profile.html" class="nav-link">
+            👤 Profile
+        </a>
+
+        <button
+            type="button"
+            class="logout"
+            onclick="logoutUser()"
+        >
+            🚪 Logout
+        </button>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <div id="loading" class="loading">
+        Loading settings...
+    </div>
+
+
+    <div id="settingsContent" style="display:none;">
+
+        <div class="header">
+
+            <h1>⚙️ Settings</h1>
+
+            <p>
+                Manage your ASIM TECH account settings
+            </p>
+
+        </div>
+
+
+        <!-- ACCOUNT INFORMATION -->
+
+        <div class="card">
+
+            <div class="card-title">
+                👤 Account Information
+            </div>
+
+            <div class="card-body">
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Email
+                    </span>
+
+                    <div
+                        id="email"
+                        class="value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        User ID
+                    </span>
+
+                    <div
+                        id="userId"
+                        class="value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Account Created
+                    </span>
+
+                    <div
+                        id="createdAt"
+                        class="value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DISPLAY NAME -->
+
+        <div class="card">
+
+            <div class="card-title">
+                ✏️ Display Name
+            </div>
+
+            <div class="card-body">
+
+                <label class="label">
+                    Your Display Name
+                </label>
+
+                <input
+                    type="text"
+                    id="displayName"
+                    placeholder="Enter your display name"
+                    maxlength="80"
+                >
+
+                <button
+                    type="button"
+                    class="btn primary"
+                    onclick="saveDisplayName()"
+                >
+                    💾 Save Display Name
+                </button>
+
+                <div
+                    id="nameMessage"
+                    class="message"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPEARANCE -->
+
+        <div class="card">
+
+            <div class="card-title">
+                🎨 Appearance
+            </div>
+
+            <div class="card-body">
+
+                <label class="label">
+                    Theme
+                </label>
+
+                <select id="themeSelect">
+
+                    <option value="dark">
+                        Dark
+                    </option>
+
+                    <option value="light">
+                        Light
+                    </option>
+
+                    <option value="system">
+                        System Default
+                    </option>
+
+                </select>
+
+                <button
+                    type="button"
+                    class="btn blue"
+                    onclick="saveTheme()"
+                >
+                    🎨 Save Theme Preference
+                </button>
+
+                <div
+                    id="themeMessage"
+                    class="message"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SECURITY -->
+
+        <div class="card">
+
+            <div class="card-title">
+                🔐 Security
+            </div>
+
+            <div class="card-body">
+
+                <p style="color:#8b949e;line-height:1.6;">
+                    To change your password, we will send
+                    a secure password reset email to your
+                    registered email address.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn blue"
+                    onclick="sendPasswordReset()"
+                >
+                    🔑 Reset Password
+                </button>
+
+                <div
+                    id="passwordMessage"
+                    class="message"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <div class="card">
+
+            <div class="card-title">
+                🔗 Quick Links
+            </div>
+
+            <div class="card-body">
+
+                <a
+                    href="dashboard.html"
+                    class="btn gray"
+                >
+                    🏠 Dashboard
+                </a>
+
+                <a
+                    href="repositories.html"
+                    class="btn gray"
+                >
+                    📁 Repositories
+                </a>
+
+                <a
+                    href="profile.html"
+                    class="btn gray"
+                >
+                    👤 My Profile
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGOUT -->
+
+        <div class="card danger">
+
+            <div class="card-title danger-title">
+                🚪 Sign Out
+            </div>
+
+            <div class="card-body">
+
+                <p style="color:#8b949e;line-height:1.6;">
+                    Sign out from your ASIM TECH account
+                    on this device.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn logout"
+                    onclick="logoutUser()"
+                >
+                    🚪 Logout
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer>
+
+    © 2026 ASIM TECH — Code. Create. Innovate.
+
+</footer>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+let currentUser = null;
+
+
+/* LOAD SETTINGS */
+
+async function loadSettings(){
+
+    try{
+
+        const {
+            data:{user},
+            error
+        } =
+        await supabaseClient.auth.getUser();
+
+        if(error){
+
+            throw error;
+
+        }
+
+        if(!user){
+
+            window.location.href =
+            "login.html";
+
+            return;
+
+        }
+
+        currentUser = user;
+
+
+        document.getElementById("email")
+        .textContent =
+        user.email || "—";
+
+
+        document.getElementById("userId")
+        .textContent =
+        user.id;
+
+
+        document.getElementById("createdAt")
+        .textContent =
+        formatDate(user.created_at);
+
+
+        const displayName =
+        user.user_metadata &&
+        user.user_metadata.display_name
+        ? user.user_metadata.display_name
+        : "";
+
+        document.getElementById(
+            "displayName"
+        ).value = displayName;
+
+
+        loadTheme();
+
+
+        document.getElementById(
+            "loading"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "settingsContent"
+        ).style.display = "block";
+
+
+    }catch(error){
+
+        console.error(
+            "Settings error:",
+            error
+        );
+
+        document.getElementById(
+            "loading"
+        ).textContent =
+        "Unable to load settings. Please refresh the page.";
+
+    }
+
+}
+
+
+/* SAVE DISPLAY NAME */
+
+async function saveDisplayName(){
+
+    if(!currentUser){
+
+        return;
+
+    }
+
+    const input =
+    document.getElementById(
+        "displayName"
+    );
+
+    const name =
+    input.value.trim();
+
+    const message =
+    document.getElementById(
+        "nameMessage"
+    );
+
+
+    if(name.length > 80){
+
+        showMessage(
+            message,
+            "Display name is too long.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        const {
+            error
+        } =
+        await supabaseClient.auth.updateUser({
+
+            data:{
+                display_name:name
+            }
+
+        });
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        showMessage(
+            message,
+            "Display name updated successfully!",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+        showMessage(
+            message,
+            error.message ||
+            "Unable to update display name.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* PASSWORD RESET */
+
+async function sendPasswordReset(){
+
+    if(!currentUser){
+
+        return;
+
+    }
+
+    const message =
+    document.getElementById(
+        "passwordMessage"
+    );
+
+
+    try{
+
+        const {
+            error
+        } =
+        await supabaseClient.auth.resetPasswordForEmail(
+            currentUser.email,
+            {
+                redirectTo:
+                window.location.origin +
+                window.location.pathname.replace(
+                    "settings.html",
+                    "update-password.html"
+                )
+            }
+        );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        showMessage(
+            message,
+            "Password reset email sent successfully. Please check your email.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+        showMessage(
+            message,
+            error.message ||
+            "Unable to send password reset email.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* THEME */
+
+function loadTheme(){
+
+    const savedTheme =
+    localStorage.getItem(
+        "asimTechTheme"
+    ) || "dark";
+
+
+    document.getElementById(
+        "themeSelect"
+    ).value = savedTheme;
+
+}
+
+
+function saveTheme(){
+
+    const theme =
+    document.getElementById(
+        "themeSelect"
+    ).value;
+
+
+    localStorage.setItem(
+        "asimTechTheme",
+        theme
+    );
+
+
+    const message =
+    document.getElementById(
+        "themeMessage"
+    );
+
+
+    showMessage(
+        message,
+        "Theme preference saved successfully!",
+        "success"
+    );
+
+}
+
+
+/* MESSAGE */
+
+function showMessage(
+    element,
+    text,
+    type
+){
+
+    element.textContent = text;
+
+    element.className =
+    "message " + type;
+
+}
+
+
+/* DATE */
+
+function formatDate(
+    dateString
+){
+
+    if(!dateString){
+
+        return "—";
+
+    }
+
+    const date =
+    new Date(dateString);
+
+    return date.toLocaleString();
+
+}
+
+
+/* LOGOUT */
+
+async function logoutUser(){
+
+    try{
+
+        const {
+            error
+        } =
+        await supabaseClient.auth.signOut();
+
+        if(error){
+
+            throw error;
+
+        }
+
+        window.location.href =
+        "login.html";
+
+    }catch(error){
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+        alert(
+            "Unable to logout. Please try again."
+        );
+
+    }
+
+}
+
+
+loadSettings();
+
+</script>
+
+</body>
+
+</html>
