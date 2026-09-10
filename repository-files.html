@@ -28,11 +28,11 @@ min-height:100vh;
 }
 
 nav{
-height:70px;
+min-height:70px;
 display:flex;
 align-items:center;
 justify-content:space-between;
-padding:0 6%;
+padding:10px 6%;
 background:rgba(5,12,22,.95);
 border-bottom:1px solid rgba(255,255,255,.1);
 }
@@ -46,6 +46,7 @@ color:#36e0b5;
 .nav-links{
 display:flex;
 gap:18px;
+align-items:center;
 }
 
 .nav-links a{
@@ -98,6 +99,10 @@ border-radius:10px;
 font-weight:bold;
 display:inline-block;
 text-align:center;
+}
+
+.new-btn:hover{
+opacity:.9;
 }
 
 .web-btn{
@@ -245,6 +250,31 @@ flex-wrap:wrap;
 min-width:100px;
 }
 
+.search-box{
+margin-bottom:20px;
+}
+
+.search-input{
+width:100%;
+padding:13px 15px;
+border-radius:9px;
+border:1px solid #3a4a57;
+background:#081521;
+color:#fff;
+outline:none;
+font-size:16px;
+}
+
+.search-input:focus{
+border-color:#36e0b5;
+}
+
+.search-info{
+color:#8293a1;
+font-size:13px;
+margin-top:8px;
+}
+
 .modal{
 display:none;
 position:fixed;
@@ -310,7 +340,10 @@ padding:40px 10px;
 @media(max-width:600px){
 
 nav{
-padding:0 5%;
+padding:10px 5%;
+flex-direction:column;
+align-items:flex-start;
+gap:12px;
 }
 
 .logo{
@@ -320,6 +353,7 @@ font-size:21px;
 .nav-links{
 gap:9px;
 font-size:13px;
+flex-wrap:wrap;
 }
 
 .container{
@@ -354,7 +388,7 @@ width:100%;
 }
 
 .web-actions .btn{
-flex:1;
+width:100%;
 }
 
 .modal{
@@ -469,9 +503,31 @@ Loading repository...
 
 <div class="card">
 
-<div style="margin-bottom:18px;color:#aab7c4;">
+<div
+style="margin-bottom:18px;color:#aab7c4;">
 
 Web pages created using ASIM TECH Web Page Builder.
+
+</div>
+
+
+<!-- WEB PAGE SEARCH -->
+
+<div class="search-box">
+
+<input
+type="search"
+id="webPageSearch"
+class="search-input"
+placeholder="🔎 Search web pages...">
+
+<div
+id="searchInfo"
+class="search-info">
+
+Loading web pages...
+
+</div>
 
 </div>
 
@@ -544,6 +600,8 @@ sandbox="allow-scripts">
 <script>
 
 
+/* SUPABASE */
+
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
@@ -574,6 +632,8 @@ let currentUser = null;
 
 let repository = null;
 
+let allWebPages = [];
+
 
 /* ESCAPE HTML */
 
@@ -596,14 +656,16 @@ function showError(text){
 const box =
 document.getElementById("error");
 
-box.textContent = text;
+box.textContent =
+text;
 
-box.style.display = "block";
+box.style.display =
+"block";
 
 }
 
 
-/* LOAD EVERYTHING */
+/* LOAD */
 
 async function loadFiles(){
 
@@ -636,10 +698,11 @@ return;
 }
 
 
-currentUser = user;
+currentUser =
+user;
 
 
-/* CHECK REPOSITORY ID */
+/* CHECK ID */
 
 if(!repoId){
 
@@ -674,7 +737,8 @@ throw repoError;
 }
 
 
-repository = repoData;
+repository =
+repoData;
 
 
 /* REPOSITORY TITLE */
@@ -713,7 +777,7 @@ document.getElementById(
 encodeURIComponent(repoId);
 
 
-/* LOAD NORMAL FILES */
+/* NORMAL FILES */
 
 const {
 data:files,
@@ -740,7 +804,7 @@ throw fileError;
 }
 
 
-/* LOAD WEB PAGES */
+/* WEB PAGES */
 
 const {
 data:webPages,
@@ -782,7 +846,8 @@ webPages || []
 
 document.getElementById(
 "loading"
-).style.display = "none";
+).style.display =
+"none";
 
 
 /* DISPLAY FILES */
@@ -794,15 +859,20 @@ files || []
 
 }catch(error){
 
-console.error(error);
+console.error(
+"Load error:",
+error
+);
 
 
 document.getElementById(
 "loading"
-).style.display = "none";
+).style.display =
+"none";
 
 
 showError(
+error.message ||
 "Unable to load repository."
 );
 
@@ -811,7 +881,7 @@ showError(
 }
 
 
-/* RENDER NORMAL FILES */
+/* RENDER FILES */
 
 function renderFiles(files){
 
@@ -819,7 +889,8 @@ const container =
 document.getElementById("files");
 
 
-container.innerHTML = "";
+container.innerHTML =
+"";
 
 
 if(files.length === 0){
@@ -855,16 +926,15 @@ return;
 }
 
 
-/* FILE CARDS */
-
-files.forEach(file => {
-
+files.forEach(
+function(file){
 
 const card =
 document.createElement("div");
 
 
-card.className = "card";
+card.className =
+"card";
 
 
 card.innerHTML = `
@@ -875,14 +945,17 @@ card.innerHTML = `
 
 <div class="file-name">
 
-📄 ${escapeHtml(file.file_path)}
+📄 ${escapeHtml(
+file.file_path
+)}
 
 </div>
 
 <div class="file-language">
 
 ${escapeHtml(
-file.language || "Plain text"
+file.language ||
+"Plain text"
 )}
 
 </div>
@@ -927,7 +1000,9 @@ Delete
 `;
 
 
-container.appendChild(card);
+container.appendChild(
+card
+);
 
 });
 
@@ -983,7 +1058,6 @@ return;
 
 try{
 
-
 const {
 error
 } =
@@ -1013,7 +1087,9 @@ loadFiles();
 
 }catch(error){
 
-console.error(error);
+console.error(
+error
+);
 
 
 alert(
@@ -1030,36 +1106,103 @@ alert(
 function renderWebPages(webPages){
 
 const container =
-document.getElementById("webPages");
+document.getElementById(
+"webPages"
+);
 
 
-container.innerHTML = "";
+container.innerHTML =
+"";
 
 
-if(!webPages ||
-webPages.length === 0){
+allWebPages =
+webPages || [];
+
+
+const searchInput =
+document.getElementById(
+"webPageSearch"
+);
+
+
+const searchTerm =
+searchInput
+? searchInput.value
+    .trim()
+    .toLowerCase()
+: "";
+
+
+let filteredPages =
+allWebPages;
+
+
+if(searchTerm){
+
+filteredPages =
+allWebPages.filter(
+function(page){
+
+const name =
+String(
+page.page_name || ""
+)
+.toLowerCase();
+
+
+return name.includes(
+searchTerm
+);
+
+}
+);
+
+}
+
+
+const searchInfo =
+document.getElementById(
+"searchInfo"
+);
+
+
+if(searchInfo){
+
+if(searchTerm){
+
+searchInfo.textContent =
+"Showing " +
+filteredPages.length +
+" web page(s) for \"" +
+searchInput.value.trim() +
+"\"";
+
+}else{
+
+searchInfo.textContent =
+allWebPages.length +
+" web page(s) available";
+
+}
+
+}
+
+
+if(filteredPages.length === 0){
 
 container.innerHTML = `
 
 <div class="card empty">
 
 <h2>
-🌐 No Web Pages Yet
+🔎 No Web Pages Found
 </h2>
 
-<p style="margin:12px 0 20px">
+<p style="margin-top:10px">
 
-Create a webpage using Web Page Builder.
+Try another page name.
 
 </p>
-
-<a
-class="new-btn web-btn"
-href="page-builder.html?repository_id=${encodeURIComponent(repoId)}">
-
-＋ Create Web Page
-
-</a>
 
 </div>
 
@@ -1072,8 +1215,8 @@ return;
 
 /* WEB PAGE CARDS */
 
-webPages.forEach(page => {
-
+filteredPages.forEach(
+function(page){
 
 const card =
 document.createElement("div");
@@ -1083,49 +1226,54 @@ card.className =
 "card web-page-card";
 
 
-const statusHtml =
-page.is_published
+const isPublished =
+page.is_published === true;
 
-? `<span class="published">🟢 Published</span>`
 
-: `<span class="unpublished">⚪ Unpublished</span>`;
+const status =
+isPublished
+
+? `
+<span class="published">
+🟢 Published
+</span>
+`
+
+: `
+<span class="unpublished">
+⚪ Unpublished
+</span>
+`;
 
 
 const publishButton =
-
-page.is_published
+isPublished
 
 ? `
-
 <button
 class="btn unpublish"
-onclick="togglePublish('${page.id}',true)">
+onclick="unpublishWebPage('${page.id}')">
 
 🔴 Unpublish
 
 </button>
-
 `
 
 : `
-
 <button
 class="btn publish"
-onclick="togglePublish('${page.id}',false)">
+onclick="publishWebPage('${page.id}')">
 
 🟢 Publish
 
 </button>
-
 `;
 
 
 const liveButton =
-
-page.is_published
+isPublished
 
 ? `
-
 <button
 class="btn live"
 onclick="openLive('${page.id}')">
@@ -1133,7 +1281,6 @@ onclick="openLive('${page.id}')">
 🌐 Open Live
 
 </button>
-
 `
 
 : "";
@@ -1145,14 +1292,18 @@ card.innerHTML = `
 
 <div class="web-page-name">
 
-🌐 ${escapeHtml(page.page_name)}
+🌐 ${escapeHtml(
+page.page_name
+)}
 
 </div>
 
 
 <div class="web-page-info">
 
-${statusHtml}
+Web Page
+&nbsp; • &nbsp;
+${status}
 
 </div>
 
@@ -1200,121 +1351,29 @@ onclick="deleteWebPage('${page.id}')">
 `;
 
 
-container.appendChild(card);
+container.appendChild(
+card
+);
 
 });
 
 }
 
 
-/* PUBLISH / UNPUBLISH */
+/* SEARCH WEB PAGES */
 
-async function togglePublish(id,currentStatus){
+document.getElementById(
+"webPageSearch"
+).addEventListener(
+"input",
+function(){
 
-const action =
-currentStatus
-? "unpublish"
-: "publish";
-
-
-const confirmed =
-confirm(
-
-currentStatus
-
-? "Are you sure you want to unpublish this web page?"
-
-: "Publish this web page?"
-
-);
-
-
-if(!confirmed){
-
-return;
-
-}
-
-
-try{
-
-
-const newStatus =
-!currentStatus;
-
-
-const {
-error
-} =
-await supabaseClient
-
-.from("web_pages")
-
-.update({
-
-is_published:
-newStatus,
-
-published_at:
-newStatus
-? new Date().toISOString()
-: null
-
-})
-
-.eq("id",id);
-
-
-if(error){
-
-throw error;
-
-}
-
-
-alert(
-
-newStatus
-
-? "Web page published successfully!"
-
-: "Web page unpublished successfully!"
-
-);
-
-
-loadFiles();
-
-
-}catch(error){
-
-console.error(error);
-
-
-alert(
-"Unable to change publish status."
+renderWebPages(
+allWebPages
 );
 
 }
-
-}
-
-
-/* OPEN LIVE */
-
-function openLive(id){
-
-window.open(
-
-"web-page.html?id=" +
-
-encodeURIComponent(id),
-
-"_blank"
-
 );
-
-}
 
 
 /* PREVIEW WEB PAGE */
@@ -1322,7 +1381,6 @@ encodeURIComponent(id),
 async function previewWebPage(id){
 
 try{
-
 
 const {
 data:page,
@@ -1419,7 +1477,9 @@ document.getElementById(
 
 }catch(error){
 
-console.error(error);
+console.error(
+error
+);
 
 
 alert(
@@ -1448,6 +1508,152 @@ encodeURIComponent(id);
 }
 
 
+/* PUBLISH WEB PAGE */
+
+async function publishWebPage(id){
+
+if(!confirm(
+"Publish this web page?"
+)){
+
+return;
+
+}
+
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.update({
+
+is_published:true,
+
+published_at:new Date().toISOString()
+
+})
+
+.eq("id",id);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+alert(
+"Web page published successfully."
+);
+
+
+loadFiles();
+
+
+}catch(error){
+
+console.error(
+error
+);
+
+
+alert(
+"Unable to publish web page: " +
+error.message
+);
+
+}
+
+}
+
+
+/* UNPUBLISH WEB PAGE */
+
+async function unpublishWebPage(id){
+
+if(!confirm(
+"Unpublish this web page?"
+)){
+
+return;
+
+}
+
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.update({
+
+is_published:false,
+
+published_at:null
+
+})
+
+.eq("id",id);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+alert(
+"Web page unpublished successfully."
+);
+
+
+loadFiles();
+
+
+}catch(error){
+
+console.error(
+error
+);
+
+
+alert(
+"Unable to unpublish web page: " +
+error.message
+);
+
+}
+
+}
+
+
+/* OPEN LIVE */
+
+function openLive(id){
+
+window.open(
+
+"web-page.html?id=" +
+encodeURIComponent(id),
+
+"_blank"
+
+);
+
+}
+
+
 /* DELETE WEB PAGE */
 
 async function deleteWebPage(id){
@@ -1462,7 +1668,6 @@ return;
 
 
 try{
-
 
 const {
 error
@@ -1493,11 +1698,14 @@ loadFiles();
 
 }catch(error){
 
-console.error(error);
+console.error(
+error
+);
 
 
 alert(
-"Unable to delete web page."
+"Unable to delete web page: " +
+error.message
 );
 
 }
@@ -1515,18 +1723,20 @@ function(){
 
 document.getElementById(
 "previewModal"
-).style.display = "none";
+).style.display =
+"none";
 
 
 document.getElementById(
 "previewFrame"
-).srcdoc = "";
+).srcdoc =
+"";
 
 }
 );
 
 
-/* CLOSE MODAL OUTSIDE */
+/* CLOSE OUTSIDE CLICK */
 
 document.getElementById(
 "previewModal"
@@ -1535,14 +1745,18 @@ document.getElementById(
 function(event){
 
 if(
-event.target === this
+event.target ===
+this
 ){
 
-this.style.display = "none";
+this.style.display =
+"none";
+
 
 document.getElementById(
 "previewFrame"
-).srcdoc = "";
+).srcdoc =
+"";
 
 }
 
