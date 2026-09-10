@@ -3,7 +3,9 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>Web Page Builder - ASIM TECH</title>
 
@@ -131,7 +133,7 @@ textarea{
 
 .preview{
     width:100%;
-    height:500px;
+    height:550px;
     border:0;
     background:#fff;
     border-radius:9px;
@@ -225,15 +227,18 @@ button{
     }
 
     .preview{
-        height:550px;
+        height:600px;
     }
+
 }
 
 </style>
 
 </head>
 
+
 <body>
+
 
 <nav>
 
@@ -250,20 +255,25 @@ button{
 
 <div class="container">
 
+
 <h1 id="pageTitle">
     🌐 Web Page Builder
 </h1>
 
+
 <p class="subtitle">
     Create your webpage using HTML, CSS and JavaScript.
 </p>
+
 
 <div id="modeLabel" class="mode">
     New Web Page
 </div>
 
 
-<!-- REPOSITORY / PAGE NAME -->
+<!-- =========================
+     REPOSITORY
+========================= -->
 
 <div class="card">
 
@@ -301,7 +311,9 @@ button{
 </div>
 
 
-<!-- EDITORS -->
+<!-- =========================
+     EDITORS
+========================= -->
 
 <div class="editors">
 
@@ -366,16 +378,20 @@ p {
 
 </div>
 
+
 </div>
 
 
-<!-- LIVE PREVIEW -->
+<!-- =========================
+     LIVE PREVIEW
+========================= -->
 
 <div class="card">
 
     <div class="editor-title">
         👁️ Live Preview
     </div>
+
 
     <iframe
         id="preview"
@@ -386,17 +402,22 @@ p {
 </div>
 
 
-<!-- BUTTONS -->
+<!-- =========================
+     BUTTONS
+========================= -->
 
 <div class="card">
 
     <div class="buttons">
 
+
         <button
             type="button"
             class="preview-btn"
             onclick="updatePreview()">
+
             👁️ Preview
+
         </button>
 
 
@@ -405,7 +426,9 @@ p {
             id="saveButton"
             class="save"
             onclick="savePage()">
+
             💾 Save Page
+
         </button>
 
 
@@ -413,8 +436,11 @@ p {
             type="button"
             class="back"
             onclick="goBack()">
+
             ← Back
+
         </button>
+
 
     </div>
 
@@ -424,22 +450,26 @@ p {
         class="status">
     </div>
 
+
 </div>
+
 
 </div>
 
 
 <script>
 
-/* =========================================
+/* =====================================
    SUPABASE
-========================================= */
+===================================== */
 
 const SUPABASE_URL =
     "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
+
 const SUPABASE_KEY =
     "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
 
 const supabaseClient =
     window.supabase.createClient(
@@ -448,69 +478,87 @@ const supabaseClient =
     );
 
 
-/* =========================================
+/* =====================================
    ELEMENTS
-========================================= */
+===================================== */
 
 const repository =
     document.getElementById("repository");
 
+
 const pageName =
     document.getElementById("pageName");
+
 
 const htmlCode =
     document.getElementById("htmlCode");
 
+
 const cssCode =
     document.getElementById("cssCode");
+
 
 const jsCode =
     document.getElementById("jsCode");
 
+
 const preview =
     document.getElementById("preview");
+
 
 const statusBox =
     document.getElementById("status");
 
+
 const saveButton =
     document.getElementById("saveButton");
 
+
 const modeLabel =
     document.getElementById("modeLabel");
+
 
 const pageTitle =
     document.getElementById("pageTitle");
 
 
-/* =========================================
+/* =====================================
    URL PARAMETERS
-========================================= */
+===================================== */
 
 const params =
     new URLSearchParams(
         window.location.search
     );
 
+
 const repositoryId =
     params.get("repository_id");
+
 
 const pageId =
     params.get("page_id");
 
 
-/* =========================================
+/* =====================================
    VARIABLES
-========================================= */
+===================================== */
 
 let currentUser = null;
 
 let editingPage = null;
 
 
-/* =========================================
+/* =====================================
+   PREVIEW URL
+===================================== */
+
+let previewURL = null;
+
+
+/* =====================================
    STATUS
-========================================= */
+===================================== */
 
 function setStatus(
     message,
@@ -525,9 +573,9 @@ function setStatus(
 }
 
 
-/* =========================================
+/* =====================================
    INITIALIZE
-========================================= */
+===================================== */
 
 async function initialize(){
 
@@ -564,11 +612,6 @@ async function initialize(){
             user;
 
 
-        /*
-        If repository_id is present,
-        load that repository directly.
-        */
-
         if(repositoryId){
 
             await loadSelectedRepository();
@@ -580,11 +623,6 @@ async function initialize(){
         }
 
 
-        /*
-        If page_id is present,
-        load existing page.
-        */
-
         if(pageId){
 
             await loadExistingPage();
@@ -595,15 +633,14 @@ async function initialize(){
                 "Ready to create your webpage.",
                 "success"
             );
+
         }
 
 
         /*
-        Initial preview
+        Do NOT automatically run
+        preview before page is ready.
         */
-
-        updatePreview();
-
 
     }catch(error){
 
@@ -614,13 +651,15 @@ async function initialize(){
             "Unable to load page builder.",
             "error"
         );
+
     }
+
 }
 
 
-/* =========================================
+/* =====================================
    LOAD SELECTED REPOSITORY
-========================================= */
+===================================== */
 
 async function loadSelectedRepository(){
 
@@ -656,6 +695,7 @@ async function loadSelectedRepository(){
         throw new Error(
             "Unable to load repository."
         );
+
     }
 
 
@@ -664,6 +704,7 @@ async function loadSelectedRepository(){
         throw new Error(
             "Repository not found."
         );
+
     }
 
 
@@ -675,6 +716,7 @@ async function loadSelectedRepository(){
         throw new Error(
             "You are not the owner of this repository."
         );
+
     }
 
 
@@ -709,12 +751,13 @@ async function loadSelectedRepository(){
         "Repository loaded successfully.",
         "success"
     );
+
 }
 
 
-/* =========================================
-   LOAD ALL OWNED REPOSITORIES
-========================================= */
+/* =====================================
+   LOAD REPOSITORIES
+===================================== */
 
 async function loadRepositories(){
 
@@ -755,6 +798,7 @@ async function loadRepositories(){
         throw new Error(
             "Unable to load repositories."
         );
+
     }
 
 
@@ -773,6 +817,7 @@ async function loadRepositories(){
         throw new Error(
             "Please create a repository first."
         );
+
     }
 
 
@@ -812,12 +857,13 @@ async function loadRepositories(){
         "Repositories loaded.",
         "success"
     );
+
 }
 
 
-/* =========================================
+/* =====================================
    LOAD EXISTING PAGE
-========================================= */
+===================================== */
 
 async function loadExistingPage(){
 
@@ -851,6 +897,7 @@ async function loadExistingPage(){
         throw new Error(
             "Unable to load web page."
         );
+
     }
 
 
@@ -859,6 +906,7 @@ async function loadExistingPage(){
         throw new Error(
             "Web page not found."
         );
+
     }
 
 
@@ -870,6 +918,7 @@ async function loadExistingPage(){
         throw new Error(
             "You are not the owner of this web page."
         );
+
     }
 
 
@@ -913,13 +962,14 @@ async function loadExistingPage(){
         "Web page loaded successfully.",
         "success"
     );
+
 }
 
 
-/* =========================================
-   UPDATE PREVIEW
-   IMPORTANT FIX
-========================================= */
+/* =====================================
+   LIVE PREVIEW
+   BLOB METHOD
+===================================== */
 
 function updatePreview(){
 
@@ -928,20 +978,26 @@ function updatePreview(){
         const html =
             htmlCode.value;
 
+
         const css =
             cssCode.value;
+
 
         const js =
             jsCode.value;
 
 
         /*
-        First create the page with
-        HTML + CSS only.
+        IMPORTANT:
+        We use a Blob instead of srcdoc.
+
+        This means the complete webpage,
+        including JavaScript, becomes a
+        separate HTML document.
         */
 
-        const previewHTML = `
 
+        const fullPage = `
 <!DOCTYPE html>
 
 <html>
@@ -952,7 +1008,7 @@ function updatePreview(){
 
 <meta
 name="viewport"
-content="width=device-width, initial-scale=1.0"
+content="width=device-width,initial-scale=1.0"
 >
 
 <style>
@@ -963,87 +1019,73 @@ ${css}
 
 </head>
 
+
 <body>
 
 ${html}
 
+
+<script>
+
+${js}
+
+<\/script>
+
+
 </body>
 
 </html>
-
 `;
 
 
         /*
-        Put HTML into iframe.
+        Remove previous Blob URL.
         */
 
-        preview.srcdoc =
-            previewHTML;
+        if(previewURL){
+
+            URL.revokeObjectURL(
+                previewURL
+            );
+
+            previewURL = null;
+        }
 
 
         /*
-        Wait until iframe has loaded,
-        then create a REAL script
-        element and execute JS.
+        Create Blob.
         */
 
-        preview.onload =
-            function(){
-
-                try{
-
-                    const doc =
-                        preview.contentDocument;
-
-
-                    if(!doc){
-
-                        console.error(
-                            "Preview document unavailable."
-                        );
-
-                        return;
-                    }
-
-
-                    const script =
-                        doc.createElement(
-                            "script"
-                        );
-
-
-                    script.type =
-                        "text/javascript";
-
-
-                    script.textContent =
-                        js;
-
-
-                    /*
-                    Append JavaScript
-                    after page HTML exists.
-                    */
-
-                    doc.body.appendChild(
-                        script
-                    );
-
-
-                }catch(error){
-
-                    console.error(
-                        "Preview JavaScript error:",
-                        error
-                    );
+        const blob =
+            new Blob(
+                [fullPage],
+                {
+                    type:
+                        "text/html"
                 }
+            );
 
-            };
+
+        /*
+        Create temporary URL.
+        */
+
+        previewURL =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        /*
+        Load complete webpage.
+        */
+
+        preview.src =
+            previewURL;
 
 
         setStatus(
-            "Preview updated.",
+            "Preview updated successfully.",
             "success"
         );
 
@@ -1057,13 +1099,15 @@ ${html}
             error.message,
             "error"
         );
+
     }
+
 }
 
 
-/* =========================================
+/* =====================================
    SAVE PAGE
-========================================= */
+===================================== */
 
 async function savePage(){
 
@@ -1108,7 +1152,7 @@ async function savePage(){
 
 
         /*
-        Automatically add .html
+        Add .html automatically.
         */
 
         if(
@@ -1119,21 +1163,24 @@ async function savePage(){
 
             name +=
                 ".html";
+
         }
 
 
         const html =
             htmlCode.value;
 
+
         const css =
             cssCode.value;
+
 
         const js =
             jsCode.value;
 
 
         /* =================================
-           UPDATE EXISTING PAGE
+           UPDATE
         ================================= */
 
         if(editingPage){
@@ -1185,12 +1232,6 @@ async function savePage(){
             }
 
 
-            setStatus(
-                "Web page updated successfully!",
-                "success"
-            );
-
-
             alert(
                 "Web page updated successfully!"
             );
@@ -1208,7 +1249,7 @@ async function savePage(){
 
 
         /* =================================
-           CHECK DUPLICATE
+           DUPLICATE CHECK
         ================================= */
 
         setStatus(
@@ -1257,7 +1298,7 @@ async function savePage(){
 
 
         /* =================================
-           INSERT NEW PAGE
+           INSERT
         ================================= */
 
         setStatus(
@@ -1309,12 +1350,6 @@ async function savePage(){
         }
 
 
-        setStatus(
-            "Web page saved successfully!",
-            "success"
-        );
-
-
         alert(
             "Web page saved successfully!"
         );
@@ -1342,13 +1377,15 @@ async function savePage(){
             error.message ||
             "Unable to save web page."
         );
+
     }
+
 }
 
 
-/* =========================================
+/* =====================================
    BACK
-========================================= */
+===================================== */
 
 function goBack(){
 
@@ -1364,17 +1401,20 @@ function goBack(){
 
         window.location.href =
             "repository-files.html";
+
     }
+
 }
 
 
-/* =========================================
+/* =====================================
    START
-========================================= */
+===================================== */
 
 initialize();
 
 </script>
+
 
 </body>
 </html>
