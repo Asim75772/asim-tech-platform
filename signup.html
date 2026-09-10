@@ -194,12 +194,13 @@
         "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
     const SUPABASE_PUBLISHABLE_KEY =
-        sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT
+        "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
-    const supabaseClient = supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-    );
+    const supabaseClient =
+        supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+        );
 
 
     document
@@ -209,16 +210,27 @@
             e.preventDefault();
 
             const username =
-                document.getElementById("username").value.trim();
+                document
+                    .getElementById("username")
+                    .value
+                    .trim();
 
             const fullName =
-                document.getElementById("fullName").value.trim();
+                document
+                    .getElementById("fullName")
+                    .value
+                    .trim();
 
             const email =
-                document.getElementById("email").value.trim();
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
 
             const password =
-                document.getElementById("password").value;
+                document
+                    .getElementById("password")
+                    .value;
 
             const message =
                 document.getElementById("message");
@@ -228,8 +240,11 @@
 
 
             message.textContent = "";
+
             button.disabled = true;
-            button.textContent = "Creating account...";
+
+            button.textContent =
+                "Creating account...";
 
 
             try {
@@ -238,13 +253,19 @@
                     await supabaseClient.auth.signUp({
 
                         email: email,
+
                         password: password,
 
                         options: {
+
                             data: {
+
                                 username: username,
+
                                 full_name: fullName
+
                             }
+
                         }
 
                     });
@@ -255,17 +276,22 @@
                 }
 
 
-                message.style.color = "#39d353";
+                message.style.color =
+                    "#39d353";
 
                 message.textContent =
                     "Account created successfully! Please check your email if confirmation is required.";
 
 
-                document.getElementById("signupForm").reset();
+                document
+                    .getElementById("signupForm")
+                    .reset();
+
 
             } catch (error) {
 
-                message.style.color = "#ff7b72";
+                message.style.color =
+                    "#ff7b72";
 
                 message.textContent =
                     error.message;
@@ -274,7 +300,9 @@
 
 
             button.disabled = false;
-            button.textContent = "Create Account";
+
+            button.textContent =
+                "Create Account";
 
         });
 
