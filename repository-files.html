@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repository Files — ASIM TECH</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#07111f,#0b2233,#063b35);
+color:#fff;min-height:100vh
+}
+nav{
+height:70px;display:flex;align-items:center;justify-content:space-between;
+padding:0 6%;background:rgba(5,12,22,.95);
+border-bottom:1px solid rgba(255,255,255,.1)
+}
+.logo{font-size:22px;font-weight:bold;color:#36e0b5}
+.nav-links{display:flex;gap:18px}
+.nav-links a{color:#ddd;text-decoration:none}
+.nav-links a:hover{color:#36e0b5}
+.container{width:90%;max-width:1000px;margin:35px auto}
+.back{color:#8edfc9;text-decoration:none;display:inline-block;margin-bottom:20px}
+.header{
+display:flex;justify-content:space-between;align-items:center;
+gap:15px;margin-bottom:25px
+}
+h1{font-size:30px}
+.subtitle{color:#aab7c4;margin-top:7px}
+.new-btn{
+background:#36e0b5;color:#06151a;text-decoration:none;
+padding:12px 18px;border-radius:10px;font-weight:bold
+}
+.card{
+background:rgba(13,29,43,.95);
+border:1px solid rgba(255,255,255,.1);
+border-radius:15px;padding:20px;margin-bottom:15px
+}
+.file-row{
+display:flex;align-items:center;justify-content:space-between;
+gap:15px
+}
+.file-name{
+font-size:17px;font-weight:bold;word-break:break-word
+}
+.file-language{color:#8293a1;font-size:13px;margin-top:5px}
+.actions{display:flex;gap:8px}
+.btn{
+border:0;border-radius:8px;padding:9px 12px;
+cursor:pointer;font-weight:bold
+}
+.open{background:#17384a;color:#8edfc9}
+.edit{background:#36e0b5;color:#06151a}
+.delete{background:#55252c;color:#ffb5bd}
+.empty{text-align:center;padding:45px 15px;color:#aab7c4}
+#loading{text-align:center;padding:40px;color:#aab7c4}
+#error{
+display:none;background:#4b2027;color:#ffb5bd;
+padding:13px;border-radius:9px;margin-bottom:20px
+}
+footer{text-align:center;color:#71818d;padding:40px 10px}
+@media(max-width:600px){
+nav{padding:0 5%}
+.nav-links{gap:9px;font-size:13px}
+.container{width:92%;margin:25px auto}
+.header{flex-direction:column;align-items:flex-start}
+.new-btn{width:100%;text-align:center}
+.file-row{align-items:flex-start;flex-direction:column}
+.actions{width:100%}
+.btn{flex:1}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">⚡ ASIM TECH</div>
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="repositories.html">Repositories</a>
+<a href="dashboard.html">Dashboard</a>
+</div>
+</nav>
+
+<div class="container">
+
+<a class="back" href="repositories.html">← Back to Repositories</a>
+
+<div class="header">
+<div>
+<h1>📁 Repository Files</h1>
+<p id="repoTitle" class="subtitle">Loading repository...</p>
+</div>
+
+<a id="newFileBtn" class="new-btn" href="#">
+＋ New File
+</a>
+</div>
+
+<div id="error"></div>
+<div id="loading">Loading files...</div>
+<div id="files"></div>
+
+</div>
+
+<footer>
+© 2026 ASIM TECH — Code. Create. Innovate.
+</footer>
+
+<script>
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_PUBLISHABLE_KEY
+);
+
+const params =
+new URLSearchParams(window.location.search);
+
+const repoId =
+params.get("id");
+
+let currentUser=null;
+let repository=null;
+
+
+function escapeHtml(value){
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+
+function showError(text){
+const box=document.getElementById("error");
+box.textContent=text;
+box.style.display="block";
+}
+
+
+async function loadFiles(){
+
+try{
+
+const {
+data:{user},
+error:userError
+}=await supabaseClient.auth.getUser();
+
+if(userError) throw userError;
+
+if(!user){
+window.location.href="login.html";
+return;
+}
+
+currentUser=user;
+
+if(!repoId){
+throw new Error("Repository ID missing");
+}
+
+
+const {
+data:repoData,
+error:repoError
+}=await supabaseClient
+.from("repositories")
+.select("*")
+.eq("id",repoId)
+.single();
+
+if(repoError) throw repoError;
+
+repository=repoData;
+
+document.getElementById("repoTitle").textContent =
+repository.name + " — " +
+(repository.description || "Repository files");
+
+
+document.getElementById("newFileBtn").href =
+"file-editor.html?repository_id=" +
+encodeURIComponent(repoId);
+
+
+const {
+data:files,
+error:fileError
+}=await supabaseClient
+.from("repository_files")
+.select("*")
+.eq("repository_id",repoId)
+.order("file_path",{ascending:true});
+
+if(fileError) throw fileError;
+
+document.getElementById("loading").style.display="none";
+
+renderFiles(files || []);
+
+}catch(error){
+
+console.error(error);
+
+document.getElementById("loading").style.display="none";
+
+showError(
+"Unable to load repository files."
+);
+
+}
+
+}
+
+
+function renderFiles(files){
+
+const container=
+document.getElementById("files");
+
+container.innerHTML="";
+
+if(files.length===0){
+
+container.innerHTML=`
+<div class="card empty">
+<h2>📂 No files yet</h2>
+<p style="margin:12px 0 20px">
+Create your first file in this repository.
+</p>
+<a class="new-btn"
+href="file-editor.html?repository_id=${encodeURIComponent(repoId)}">
+＋ Create First File
+</a>
+</div>
+`;
+
+return;
+}
+
+
+files.forEach(file=>{
+
+const card=document.createElement("div");
+card.className="card";
+
+card.innerHTML=`
+
+<div class="file-row">
+
+<div>
+
+<div class="file-name">
+📄 ${escapeHtml(file.file_path)}
+</div>
+
+<div class="file-language">
+${escapeHtml(file.language || "Plain text")}
+</div>
+
+</div>
+
+<div class="actions">
+
+<button class="btn open"
+onclick="openFile('${file.id}')">
+Open
+</button>
+
+<button class="btn edit"
+onclick="editFile('${file.id}')">
+Edit
+</button>
+
+<button class="btn delete"
+onclick="deleteFile('${file.id}')">
+Delete
+</button>
+
+</div>
+
+</div>
+`;
+
+container.appendChild(card);
+
+});
+
+}
+
+
+function openFile(id){
+
+window.location.href =
+"file-editor.html?repository_id=" +
+encodeURIComponent(repoId) +
+"&file_id=" +
+encodeURIComponent(id);
+
+}
+
+
+function editFile(id){
+
+window.location.href =
+"file-editor.html?repository_id=" +
+encodeURIComponent(repoId) +
+"&file_id=" +
+encodeURIComponent(id);
+
+}
+
+
+async function deleteFile(id){
+
+if(!confirm("Delete this file?")){
+return;
+}
+
+try{
+
+const {error}=await supabaseClient
+.from("repository_files")
+.delete()
+.eq("id",id);
+
+if(error) throw error;
+
+await loadFiles();
+
+}catch(error){
+
+console.error(error);
+
+alert("Unable to delete file.");
+
+}
+
+}
+
+
+loadFiles();
+
+</script>
+
+</body>
+</html>
