@@ -184,6 +184,34 @@ body{
     color:#58a6ff;
 }
 
+.activity-item{
+    padding:18px 20px;
+    border-bottom:1px solid #30363d;
+}
+
+.activity-item:last-child{
+    border-bottom:none;
+}
+
+.activity-item h3{
+    margin-bottom:7px;
+}
+
+.activity-item h3 a{
+    color:#58a6ff;
+    text-decoration:none;
+}
+
+.activity-item p{
+    color:#8b949e;
+    margin-bottom:8px;
+}
+
+.activity-info{
+    color:#8b949e;
+    font-size:13px;
+}
+
 footer{
     text-align:center;
     padding:30px;
@@ -232,25 +260,34 @@ footer{
 
 </head>
 
+
 <body>
 
 
 <nav class="navbar">
 
+
     <div class="logo">
 
-        <span class="green">ASIM</span> TECH
+        <span class="green">
+            ASIM
+        </span>
+
+        TECH
 
     </div>
 
 
     <div class="nav-right">
 
+
         <a
             href="index.html"
             class="home"
         >
+
             Home
+
         </a>
 
 
@@ -258,12 +295,17 @@ footer{
             href="profile.html"
             class="profile"
         >
+
             👤 My Profile
+
         </a>
+
 
     </div>
 
+
 </nav>
+
 
 
 <div class="container">
@@ -271,15 +313,23 @@ footer{
 
     <div class="welcome">
 
+
         <h1>
+
             Welcome to ASIM TECH 👋
+
         </h1>
 
+
         <p>
+
             Your coding dashboard
+
         </p>
 
+
     </div>
+
 
 
     <div class="top-buttons">
@@ -289,27 +339,39 @@ footer{
             href="new-repository.html"
             class="btn new-repo"
         >
+
             ➕ New Repository
+
         </a>
+
 
 
         <a
             href="repositories.html"
             class="btn all-repo"
         >
+
             📁 All Repositories
+
         </a>
+
 
 
         <a
             href="page-builder.html"
             class="btn page-builder"
         >
+
             🌐 Web Page Builder
+
         </a>
 
 
     </div>
+
+
+
+    <!-- YOUR REPOSITORIES -->
 
 
     <div class="section">
@@ -324,16 +386,22 @@ footer{
 
         <div id="repoList">
 
+
             <div class="loading">
 
                 Loading repositories...
 
             </div>
 
+
         </div>
 
 
     </div>
+
+
+
+    <!-- RECENT ACTIVITY -->
 
 
     <div class="section">
@@ -346,9 +414,15 @@ footer{
         </div>
 
 
-        <div class="empty">
+        <div id="activityList">
 
-            Repository activity will appear here soon.
+
+            <div class="loading">
+
+                Loading activity...
+
+            </div>
+
 
         </div>
 
@@ -359,11 +433,13 @@ footer{
 </div>
 
 
+
 <footer>
 
     © 2026 ASIM TECH — Code. Create. Innovate.
 
 </footer>
+
 
 
 <script>
@@ -384,52 +460,231 @@ supabase.createClient(
 );
 
 
+
 const repoList =
-document.getElementById("repoList");
+document.getElementById(
+    "repoList"
+);
+
+
+const activityList =
+document.getElementById(
+    "activityList"
+);
+
+
+
+let currentUser = null;
+
+
+
+/* LOAD DASHBOARD */
 
 
 async function loadDashboard(){
 
 
-    const {
-        data:{user}
-    } =
-    await supabaseClient.auth.getUser();
+    try{
 
 
-    if(!user){
-
-        window.location.href =
-        "login.html";
-
-        return;
-
-    }
+        const {
+            data:{user},
+            error:userError
+        } =
+        await supabaseClient.auth.getUser();
 
 
-    const {
-        data:repos,
-        error
-    } =
-    await supabaseClient
+        if(userError){
 
-        .from("repositories")
+            throw userError;
 
-        .select(
-            "id,name,description,is_private,created_at,updated_at"
-        )
-
-        .order(
-            "updated_at",
-            {ascending:false}
-        )
-
-        .limit(10);
+        }
 
 
-    if(error){
+        if(!user){
 
-        console.error(error);
+            window.location.href =
+            "login.html";
+
+            return;
+
+        }
+
+
+        currentUser = user;
+
+
+
+        /* LOAD REPOSITORIES */
+
+
+        const {
+            data:repos,
+            error
+        } =
+        await supabaseClient
+
+            .from("repositories")
+
+            .select(
+                "id,name,description,is_private,created_at,updated_at"
+            )
+
+            .eq(
+                "owner_id",
+                user.id
+            )
+
+            .order(
+                "updated_at",
+                {ascending:false}
+            )
+
+            .limit(10);
+
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+
+        if(!repos || repos.length === 0){
+
+
+            repoList.innerHTML = `
+
+                <div class="empty">
+
+                    No repositories yet.
+
+                    <br><br>
+
+                    <a
+                        href="new-repository.html"
+                        class="open"
+                    >
+
+                        Create your first repository →
+
+                    </a>
+
+                </div>
+
+            `;
+
+
+        }else{
+
+
+            repoList.innerHTML =
+
+            repos.map(repo => `
+
+
+                <div class="repo">
+
+
+                    <h3>
+
+
+                        <a
+                            href="repository-details.html?id=${encodeURIComponent(repo.id)}"
+                        >
+
+                            ${escapeHtml(repo.name)}
+
+                        </a>
+
+
+
+                        <span class="badge">
+
+                            ${
+                                repo.is_private
+                                ? "Private"
+                                : "Public"
+                            }
+
+                        </span>
+
+
+                    </h3>
+
+
+
+                    <p>
+
+
+                        ${
+                            escapeHtml(
+                                repo.description ||
+                                "No description"
+                            )
+                        }
+
+
+                    </p>
+
+
+
+                    <div class="repo-info">
+
+
+                        Updated:
+
+                        ${
+                            formatDate(
+                                repo.updated_at ||
+                                repo.created_at
+                            )
+                        }
+
+
+                        &nbsp; • &nbsp;
+
+
+
+                        <a
+                            class="open"
+                            href="repository-details.html?id=${encodeURIComponent(repo.id)}"
+                        >
+
+                            Open Repository →
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+
+            `).join("");
+
+
+        }
+
+
+
+        /* LOAD RECENT ACTIVITY */
+
+
+        await loadRecentActivity();
+
+
+    }catch(error){
+
+
+        console.error(
+            "Dashboard error:",
+            error
+        );
+
 
         repoList.innerHTML = `
 
@@ -445,132 +700,449 @@ async function loadDashboard(){
 
         `;
 
-        return;
 
     }
 
 
-    if(!repos || repos.length === 0){
+}
 
-        repoList.innerHTML = `
+
+
+/* RECENT ACTIVITY */
+
+
+async function loadRecentActivity(){
+
+
+    try{
+
+
+        const user =
+        currentUser;
+
+
+        if(!user){
+
+            return;
+
+        }
+
+
+
+        const [
+            repoResult,
+            fileResult,
+            pageResult
+        ] =
+        await Promise.all([
+
+
+
+            /* REPOSITORIES */
+
+
+            supabaseClient
+
+                .from("repositories")
+
+                .select(
+                    "id,name,created_at,updated_at"
+                )
+
+                .eq(
+                    "owner_id",
+                    user.id
+                )
+
+                .order(
+                    "updated_at",
+                    {ascending:false}
+                )
+
+                .limit(10),
+
+
+
+            /* FILES */
+
+
+            supabaseClient
+
+                .from("repository_files")
+
+                .select(
+                    "id,file_path,repository_id,created_at,updated_at"
+                )
+
+                .order(
+                    "updated_at",
+                    {ascending:false}
+                )
+
+                .limit(10),
+
+
+
+            /* WEB PAGES */
+
+
+            supabaseClient
+
+                .from("web_pages")
+
+                .select(
+                    "id,page_name,repository_id,created_at,updated_at"
+                )
+
+                .eq(
+                    "owner_id",
+                    user.id
+                )
+
+                .order(
+                    "updated_at",
+                    {ascending:false}
+                )
+
+                .limit(10)
+
+
+        ]);
+
+
+
+        const activities = [];
+
+
+
+        /* REPOSITORY ACTIVITY */
+
+
+        if(
+            repoResult.data
+        ){
+
+
+            repoResult.data.forEach(
+                repo => {
+
+
+                    activities.push({
+
+                        title:
+                        "📁 Repository: " +
+                        repo.name,
+
+
+                        text:
+                        "Repository created or updated",
+
+
+                        date:
+                        repo.updated_at ||
+                        repo.created_at,
+
+
+                        link:
+                        "repository-details.html?id=" +
+                        encodeURIComponent(
+                            repo.id
+                        )
+
+                    });
+
+
+                }
+            );
+
+
+        }
+
+
+
+        /* FILE ACTIVITY */
+
+
+        if(
+            fileResult.data
+        ){
+
+
+            fileResult.data.forEach(
+                file => {
+
+
+                    activities.push({
+
+                        title:
+                        "📄 File: " +
+                        file.file_path,
+
+
+                        text:
+                        "Repository file created or updated",
+
+
+                        date:
+                        file.updated_at ||
+                        file.created_at,
+
+
+                        link:
+                        "repository-files.html?repository_id=" +
+                        encodeURIComponent(
+                            file.repository_id
+                        )
+
+                    });
+
+
+                }
+            );
+
+
+        }
+
+
+
+        /* WEB PAGE ACTIVITY */
+
+
+        if(
+            pageResult.data
+        ){
+
+
+            pageResult.data.forEach(
+                page => {
+
+
+                    activities.push({
+
+                        title:
+                        "🌐 Web Page: " +
+                        page.page_name,
+
+
+                        text:
+                        "Web page created or updated",
+
+
+                        date:
+                        page.updated_at ||
+                        page.created_at,
+
+
+                        link:
+                        "repository-files.html?repository_id=" +
+                        encodeURIComponent(
+                            page.repository_id
+                        )
+
+                    });
+
+
+                }
+            );
+
+
+        }
+
+
+
+        /* SORT BY DATE */
+
+
+        activities.sort(
+
+            (a,b) =>
+
+            new Date(b.date) -
+            new Date(a.date)
+
+        );
+
+
+
+        /* ONLY 10 */
+
+
+        const recent =
+        activities.slice(
+            0,
+            10
+        );
+
+
+
+        if(
+            recent.length === 0
+        ){
+
+
+            activityList.innerHTML = `
+
+                <div class="empty">
+
+                    No recent activity yet.
+
+                </div>
+
+            `;
+
+
+            return;
+
+        }
+
+
+
+        /* DISPLAY */
+
+
+        activityList.innerHTML =
+
+
+        recent.map(
+            activity => `
+
+
+                <div class="activity-item">
+
+
+                    <h3>
+
+
+                        <a
+                            href="${activity.link}"
+                        >
+
+                            ${escapeHtml(
+                                activity.title
+                            )}
+
+                        </a>
+
+
+                    </h3>
+
+
+
+                    <p>
+
+                        ${escapeHtml(
+                            activity.text
+                        )}
+
+                    </p>
+
+
+
+                    <div class="activity-info">
+
+
+                        ${formatDate(
+                            activity.date
+                        )}
+
+
+                        &nbsp; • &nbsp;
+
+
+
+                        <a
+                            class="open"
+                            href="${activity.link}"
+                        >
+
+                            Open →
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+
+            `
+        ).join("");
+
+
+    }catch(error){
+
+
+        console.error(
+            "Activity error:",
+            error
+        );
+
+
+        activityList.innerHTML = `
 
             <div class="empty">
 
-                No repositories yet.
-
-                <br><br>
-
-                <a
-                    href="new-repository.html"
-                    class="open"
-                >
-                    Create your first repository →
-                </a>
+                Unable to load recent activity.
 
             </div>
 
         `;
 
-        return;
 
     }
 
 
-    repoList.innerHTML =
-    repos.map(repo => `
-
-        <div class="repo">
-
-            <h3>
-
-                <a
-                    href="repository-details.html?id=${repo.id}"
-                >
-                    ${escapeHtml(repo.name)}
-                </a>
-
-
-                <span class="badge">
-
-                    ${
-                        repo.is_private
-                        ? "Private"
-                        : "Public"
-                    }
-
-                </span>
-
-            </h3>
-
-
-            <p>
-
-                ${
-                    escapeHtml(
-                        repo.description ||
-                        "No description"
-                    )
-                }
-
-            </p>
-
-
-            <div class="repo-info">
-
-                Updated:
-
-                ${
-                    formatDate(
-                        repo.updated_at ||
-                        repo.created_at
-                    )
-                }
-
-                &nbsp; • &nbsp;
-
-
-                <a
-                    class="open"
-                    href="repository-details.html?id=${repo.id}"
-                >
-                    Open Repository →
-                </a>
-
-            </div>
-
-        </div>
-
-    `).join("");
-
 }
+
+
+
+/* ESCAPE HTML */
 
 
 function escapeHtml(value){
 
-    return String(value).replace(
+
+    return String(
+        value ?? ""
+    ).replace(
 
         /[&<>"']/g,
 
         function(character){
 
+
             return {
 
+
                 "&":"&amp;",
+
                 "<":"&lt;",
+
                 ">":"&gt;",
+
                 '"':"&quot;",
+
                 "'":"&#039;"
 
+
             }[character];
+
 
         }
 
     );
 
+
 }
 
 
+
+/* FORMAT DATE */
+
+
 function formatDate(value){
+
 
     if(!value){
 
@@ -580,6 +1152,7 @@ function formatDate(value){
 
 
     return new Date(value)
+
         .toLocaleDateString(
 
             "en-IN",
@@ -587,17 +1160,25 @@ function formatDate(value){
             {
 
                 day:"2-digit",
+
                 month:"short",
+
                 year:"numeric"
 
             }
 
         );
 
+
 }
 
 
+
+/* START */
+
+
 loadDashboard();
+
 
 </script>
 
