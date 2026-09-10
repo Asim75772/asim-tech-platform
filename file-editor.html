@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>File Editor — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#07111f,#0b2233,#063b35);
+color:#fff;
+min-height:100vh;
+}
+
+nav{
+height:70px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 6%;
+background:rgba(5,12,22,.95);
+border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#36e0b5;
+}
+
+.nav-links{
+display:flex;
+gap:18px;
+}
+
+.nav-links a{
+color:#ddd;
+text-decoration:none;
+}
+
+.nav-links a:hover{
+color:#36e0b5;
+}
+
+.container{
+width:92%;
+max-width:1100px;
+margin:30px auto;
+}
+
+.back{
+color:#8edfc9;
+text-decoration:none;
+display:inline-block;
+margin-bottom:20px;
+}
+
+.card{
+background:rgba(13,29,43,.95);
+border:1px solid rgba(255,255,255,.1);
+border-radius:15px;
+padding:24px;
+}
+
+h1{
+font-size:30px;
+margin-bottom:8px;
+}
+
+.subtitle{
+color:#aab7c4;
+margin-bottom:25px;
+}
+
+label{
+display:block;
+font-weight:bold;
+margin-bottom:8px;
+}
+
+input,select,textarea{
+width:100%;
+border:1px solid #294252;
+border-radius:10px;
+background:#071725;
+color:#fff;
+padding:14px;
+font-size:15px;
+outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+border-color:#36e0b5;
+}
+
+textarea{
+height:400px;
+resize:vertical;
+font-family:monospace;
+line-height:1.5;
+margin-top:8px;
+}
+
+.field{
+margin-bottom:20px;
+}
+
+.buttons{
+display:flex;
+gap:12px;
+margin-top:20px;
+}
+
+button{
+flex:1;
+padding:14px;
+border:0;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.save{
+background:#36e0b5;
+color:#06151a;
+}
+
+.cancel{
+background:#172c3d;
+color:#fff;
+}
+
+#loading{
+text-align:center;
+padding:45px;
+color:#aab7c4;
+}
+
+#message{
+display:none;
+padding:13px;
+border-radius:9px;
+margin-bottom:20px;
+text-align:center;
+}
+
+.success{
+display:block !important;
+background:#123d35;
+color:#6ff0ce;
+}
+
+.error{
+display:block !important;
+background:#4b2027;
+color:#ffb5bd;
+}
+
+footer{
+text-align:center;
+color:#71818d;
+padding:40px 10px;
+}
+
+@media(max-width:600px){
+
+nav{
+padding:0 5%;
+}
+
+.nav-links{
+gap:9px;
+font-size:13px;
+}
+
+.container{
+width:92%;
+margin:22px auto;
+}
+
+.card{
+padding:18px;
+}
+
+h1{
+font-size:26px;
+}
+
+textarea{
+height:330px;
+}
+
+.buttons{
+flex-direction:column;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+⚡ ASIM TECH
+</div>
+
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="repositories.html">Repositories</a>
+<a href="dashboard.html">Dashboard</a>
+</div>
+
+</nav>
+
+
+<div class="container">
+
+<a id="backLink" class="back" href="repositories.html">
+← Back
+</a>
+
+
+<div id="loading">
+Loading editor...
+</div>
+
+
+<div id="message"></div>
+
+
+<div id="editor" class="card" style="display:none">
+
+<h1 id="pageTitle">
+📄 Create New File
+</h1>
+
+<p id="repoTitle" class="subtitle">
+Repository
+</p>
+
+
+<div class="field">
+
+<label for="filePath">
+File name / path
+</label>
+
+<input
+id="filePath"
+type="text"
+placeholder="example.html"
+maxlength="200"
+>
+
+</div>
+
+
+<div class="field">
+
+<label for="language">
+Language
+</label>
+
+<select id="language">
+
+<option value="text">Plain Text</option>
+<option value="html">HTML</option>
+<option value="css">CSS</option>
+<option value="javascript">JavaScript</option>
+<option value="json">JSON</option>
+<option value="markdown">Markdown</option>
+<option value="python">Python</option>
+<option value="php">PHP</option>
+<option value="java">Java</option>
+<option value="sql">SQL</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label for="content">
+Code / File Content
+</label>
+
+<textarea
+id="content"
+placeholder="Write your code here..."
+spellcheck="false"
+></textarea>
+
+</div>
+
+
+<div class="buttons">
+
+<button
+class="cancel"
+onclick="goBack()">
+Cancel
+</button>
+
+<button
+class="save"
+onclick="saveFile()">
+💾 Save File
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+© 2026 ASIM TECH — Code. Create. Innovate.
+</footer>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_PUBLISHABLE_KEY
+);
+
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const repositoryId =
+params.get("repository_id");
+
+const fileId =
+params.get("file_id");
+
+let currentUser=null;
+let repository=null;
+let editing=false;
+
+
+function showMessage(text,type){
+
+const box=
+document.getElementById("message");
+
+box.textContent=text;
+box.className=type;
+
+}
+
+
+async function loadEditor(){
+
+try{
+
+const {
+data:{user},
+error:userError
+} =
+await supabaseClient.auth.getUser();
+
+if(userError) throw userError;
+
+if(!user){
+
+window.location.href="login.html";
+return;
+
+}
+
+currentUser=user;
+
+
+if(!repositoryId){
+
+throw new Error(
+"Repository ID missing"
+);
+
+}
+
+
+const {
+data:repo,
+error:repoError
+} =
+await supabaseClient
+.from("repositories")
+.select("*")
+.eq("id",repositoryId)
+.single();
+
+if(repoError) throw repoError;
+
+
+if(repo.owner_id !== user.id){
+
+throw new Error(
+"You are not the repository owner"
+);
+
+}
+
+
+repository=repo;
+
+
+document.getElementById("repoTitle")
+.textContent=
+"Repository: " + repo.name;
+
+
+document.getElementById("backLink").href =
+"repository-files.html?repository_id=" +
+encodeURIComponent(repositoryId);
+
+
+if(fileId){
+
+editing=true;
+
+document.getElementById("pageTitle")
+.textContent=
+"✏️ Edit File";
+
+
+const {
+data:file,
+error:fileError
+} =
+await supabaseClient
+.from("repository_files")
+.select("*")
+.eq("id",fileId)
+.eq("repository_id",repositoryId)
+.single();
+
+if(fileError) throw fileError;
+
+
+document.getElementById("filePath")
+.value=file.file_path || "";
+
+document.getElementById("language")
+.value=file.language || "text";
+
+document.getElementById("content")
+.value=file.content || "";
+
+}else{
+
+editing=false;
+
+document.getElementById("pageTitle")
+.textContent=
+"📄 Create New File";
+
+}
+
+
+document.getElementById("loading")
+.style.display="none";
+
+document.getElementById("editor")
+.style.display="block";
+
+
+}catch(error){
+
+console.error(error);
+
+document.getElementById("loading")
+.style.display="none";
+
+showMessage(
+"Unable to load repository or file.",
+"error"
+);
+
+}
+
+}
+
+
+async function saveFile(){
+
+const filePath=
+document.getElementById("filePath")
+.value.trim();
+
+const language=
+document.getElementById("language")
+.value;
+
+const content=
+document.getElementById("content")
+.value;
+
+
+if(!filePath){
+
+showMessage(
+"File name is required.",
+"error"
+);
+
+return;
+
+}
+
+
+if(filePath.startsWith("/") ||
+filePath.endsWith("/") ||
+filePath.includes("..")){
+
+showMessage(
+"Please enter a valid file path.",
+"error"
+);
+
+return;
+
+}
+
+
+try{
+
+
+if(editing){
+
+const {
+error
+} =
+await supabaseClient
+.from("repository_files")
+.update({
+
+file_path:filePath,
+content:content,
+language:language,
+updated_at:new Date().toISOString()
+
+})
+.eq("id",fileId)
+.eq("repository_id",repositoryId);
+
+
+if(error) throw error;
+
+
+showMessage(
+"File updated successfully!",
+"success"
+);
+
+
+}else{
+
+
+const {
+data:existing,
+error:checkError
+} =
+await supabaseClient
+.from("repository_files")
+.select("id")
+.eq("repository_id",repositoryId)
+.eq("file_path",filePath);
+
+
+if(checkError) throw checkError;
+
+
+if(existing && existing.length>0){
+
+showMessage(
+"A file with this name already exists.",
+"error"
+);
+
+return;
+
+}
+
+
+const {
+error
+} =
+await supabaseClient
+.from("repository_files")
+.insert({
+
+repository_id:repositoryId,
+file_path:filePath,
+content:content,
+language:language
+
+});
+
+
+if(error) throw error;
+
+
+showMessage(
+"File created successfully!",
+"success"
+);
+
+}
+
+
+setTimeout(function(){
+
+window.location.href =
+"repository-files.html?repository_id=" +
+encodeURIComponent(repositoryId);
+
+},900);
+
+
+}catch(error){
+
+console.error(error);
+
+showMessage(
+"Unable to save file.",
+"error"
+);
+
+}
+
+}
+
+
+function goBack(){
+
+window.location.href =
+"repository-files.html?repository_id=" +
+encodeURIComponent(repositoryId);
+
+}
+
+
+loadEditor();
+
+</script>
+
+</body>
+</html>
