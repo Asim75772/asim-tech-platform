@@ -7,7 +7,6 @@
 
     <title>Sign In - ASIM TECH</title>
 
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -110,19 +109,32 @@
             line-height: 1.5;
         }
 
+        .forgot {
+            text-align: right;
+            margin-top: -5px;
+            margin-bottom: 18px;
+        }
+
+        .forgot a,
+        .signup a {
+            color: #58a6ff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .forgot a:hover,
+        .signup a:hover {
+            text-decoration: underline;
+        }
+
         .signup {
             text-align: center;
             margin-top: 20px;
             color: #8b949e;
         }
 
-        .signup a {
-            color: #58a6ff;
-            text-decoration: none;
-        }
-
-        .signup a:hover {
-            text-decoration: underline;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -141,7 +153,11 @@
 
     <div class="box">
 
-        <h2>Sign in to ASIM TECH</h2>
+        <h2 id="pageTitle">
+            Sign in to ASIM TECH
+        </h2>
+
+        <!-- LOGIN FORM -->
 
         <form id="loginForm">
 
@@ -163,21 +179,61 @@
                 required
             >
 
+            <div class="forgot">
+                <a id="forgotLink">
+                    Forgot password?
+                </a>
+            </div>
+
             <button
                 type="submit"
                 id="loginBtn">
                 Sign In
             </button>
 
-            <div id="message"></div>
+        </form>
+
+
+        <!-- RESET PASSWORD FORM -->
+
+        <form id="resetForm" class="hidden">
+
+            <label for="resetEmail">
+                Enter your email
+            </label>
+
+            <input
+                id="resetEmail"
+                type="email"
+                placeholder="you@example.com"
+                required
+            >
+
+            <button
+                type="submit"
+                id="resetBtn">
+                Send Reset Link
+            </button>
+
+            <div style="text-align:center; margin-top:15px;">
+                <a id="backToLogin"
+                   style="color:#58a6ff; cursor:pointer;">
+                    Back to Sign In
+                </a>
+            </div>
 
         </form>
+
+
+        <div id="message"></div>
 
     </div>
 
     <div class="signup">
         Don't have an account?
-        <a href="signup.html">Create account</a>
+        <a href="signup.html">
+            Create account
+        </a>
     </div>
 
 </div>
@@ -185,132 +241,263 @@
 
 <script>
 
-    /* ==============================
-       SUPABASE CONFIGURATION
-       ============================== */
+/* =================================
+   SUPABASE CONFIGURATION
+   ================================= */
 
-    const SUPABASE_URL =
-        "https://lgwaeqgiqrsjprsecwxx.supabase.co";
+const SUPABASE_URL =
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-    const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
-
-
-    /* ==============================
-       CREATE SUPABASE CLIENT
-       ============================== */
-
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-        );
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
 
-    /* ==============================
-       GET ELEMENTS
-       ============================== */
+/* =================================
+   CREATE SUPABASE CLIENT
+   ================================= */
 
-    const loginForm =
-        document.getElementById("loginForm");
-
-    const loginBtn =
-        document.getElementById("loginBtn");
-
-    const message =
-        document.getElementById("message");
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
 
 
-    /* ==============================
-       LOGIN
-       ============================== */
+/* =================================
+   ELEMENTS
+   ================================= */
 
-    loginForm.addEventListener(
-        "submit",
-        async function (event) {
+const loginForm =
+    document.getElementById("loginForm");
 
-            event.preventDefault();
+const resetForm =
+    document.getElementById("resetForm");
 
+const loginBtn =
+    document.getElementById("loginBtn");
 
-            const email =
-                document
-                    .getElementById("email")
-                    .value
-                    .trim();
+const resetBtn =
+    document.getElementById("resetBtn");
 
-            const password =
-                document
-                    .getElementById("password")
-                    .value;
+const message =
+    document.getElementById("message");
 
+const forgotLink =
+    document.getElementById("forgotLink");
 
-            message.textContent = "";
-            message.style.color = "";
+const backToLogin =
+    document.getElementById("backToLogin");
 
-            loginBtn.disabled = true;
-            loginBtn.textContent =
-                "Signing in...";
+const pageTitle =
+    document.getElementById("pageTitle");
 
 
-            try {
+/* =================================
+   FORGOT PASSWORD PAGE
+   ================================= */
 
-                const { data, error } =
-                    await supabaseClient.auth
-                        .signInWithPassword({
+forgotLink.addEventListener(
+    "click",
+    function () {
 
-                            email: email,
+        loginForm.classList.add("hidden");
+        resetForm.classList.remove("hidden");
 
-                            password: password
+        pageTitle.textContent =
+            "Reset your password";
 
-                        });
+        message.textContent = "";
 
+        const email =
+            document.getElementById("email").value.trim();
 
-                if (error) {
-                    throw error;
-                }
-
-
-                /* SUCCESS */
-
-                message.style.color =
-                    "#39d353";
-
-                message.textContent =
-                    "Login successful!";
+        if (email) {
+            document.getElementById("resetEmail").value =
+                email;
+        }
+    }
+);
 
 
-                /*
-                 * Wait briefly so the user
-                 * can see the success message.
-                 */
+/* =================================
+   BACK TO LOGIN
+   ================================= */
 
-                setTimeout(function () {
+backToLogin.addEventListener(
+    "click",
+    function () {
+
+        resetForm.classList.add("hidden");
+        loginForm.classList.remove("hidden");
+
+        pageTitle.textContent =
+            "Sign in to ASIM TECH";
+
+        message.textContent = "";
+    }
+);
+
+
+/* =================================
+   LOGIN
+   ================================= */
+
+loginForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+
+        const password =
+            document
+                .getElementById("password")
+                .value;
+
+        message.style.color = "#8b949e";
+
+        message.textContent =
+            "Signing in...";
+
+        loginBtn.disabled = true;
+
+        loginBtn.textContent =
+            "Signing in...";
+
+
+        try {
+
+            const { data, error } =
+                await supabaseClient.auth
+                    .signInWithPassword({
+
+                        email: email,
+
+                        password: password
+
+                    });
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            message.style.color =
+                "#39d353";
+
+            message.textContent =
+                "Login successful!";
+
+
+            setTimeout(
+                function () {
 
                     window.location.href =
                         "index.html";
 
-                }, 800);
+                },
+                800
+            );
 
 
-            } catch (error) {
+        } catch (error) {
 
-                /* ERROR */
+            message.style.color =
+                "#ff7b72";
 
-                message.style.color =
-                    "#ff7b72";
+            message.textContent =
+                error.message ||
+                "Login failed.";
 
-                message.textContent =
-                    error.message ||
-                    "Login failed. Please try again.";
+            loginBtn.disabled = false;
 
-                loginBtn.disabled = false;
+            loginBtn.textContent =
+                "Sign In";
+        }
 
-                loginBtn.textContent =
-                    "Sign In";
+    }
+);
+
+
+/* =================================
+   SEND PASSWORD RESET EMAIL
+   ================================= */
+
+resetForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        const email =
+            document
+                .getElementById("resetEmail")
+                .value
+                .trim();
+
+        message.style.color =
+            "#8b949e";
+
+        message.textContent =
+            "Sending reset link...";
+
+        resetBtn.disabled = true;
+
+        resetBtn.textContent =
+            "Sending...";
+
+
+        try {
+
+            const { error } =
+                await supabaseClient.auth
+                    .resetPasswordForEmail(
+                        email,
+                        {
+                            redirectTo:
+                                window.location.origin +
+                                window.location.pathname
+                        }
+                    );
+
+
+            if (error) {
+                throw error;
             }
 
+
+            message.style.color =
+                "#39d353";
+
+            message.textContent =
+                "Password reset link sent. Please check your email.";
+
+
+        } catch (error) {
+
+            message.style.color =
+                "#ff7b72";
+
+            message.textContent =
+                error.message ||
+                "Unable to send reset link.";
+
         }
-    );
+
+
+        resetBtn.disabled = false;
+
+        resetBtn.textContent =
+            "Send Reset Link";
+
+    }
+);
 
 </script>
 
