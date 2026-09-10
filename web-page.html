@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Web Page — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0d1117;
+    color:white;
+    min-height:100vh;
+}
+
+.navbar{
+    height:65px;
+    background:#161b22;
+    border-bottom:1px solid #30363d;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.green{
+    color:#39d353;
+}
+
+.dashboard{
+    color:#58a6ff;
+    text-decoration:none;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:25px 18px;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.title{
+    font-size:30px;
+    font-weight:bold;
+}
+
+.subtitle{
+    color:#8b949e;
+    margin-top:6px;
+}
+
+.back{
+    color:#58a6ff;
+    text-decoration:none;
+}
+
+.status{
+    padding:14px;
+    border-radius:8px;
+    background:#161b22;
+    border:1px solid #30363d;
+    color:#8b949e;
+    margin-bottom:20px;
+}
+
+.error{
+    color:#f85149;
+}
+
+.published{
+    display:inline-block;
+    margin-top:8px;
+    padding:5px 12px;
+    border-radius:20px;
+    background:#238636;
+    color:white;
+    font-size:12px;
+}
+
+.page{
+    display:none;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+iframe{
+    width:100%;
+    height:75vh;
+    border:0;
+    display:block;
+    background:white;
+}
+
+@media(max-width:600px){
+    .container{
+        padding:18px 12px;
+    }
+
+    .title{
+        font-size:24px;
+    }
+
+    .navbar{
+        padding:0 14px;
+    }
+
+    .logo{
+        font-size:19px;
+    }
+
+    iframe{
+        height:78vh;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<div class="logo">
+<span class="green">ASIM</span> TECH
+</div>
+
+<a href="dashboard.html" class="dashboard">
+Dashboard
+</a>
+
+</nav>
+
+<div class="container">
+
+<div class="top">
+
+<div>
+<div id="title" class="title">
+🌐 Loading...
+</div>
+
+<div id="subtitle" class="subtitle"></div>
+</div>
+
+<a href="javascript:history.back()" class="back">
+← Back
+</a>
+
+</div>
+
+<div id="status" class="status">
+Loading published page...
+</div>
+
+<div id="page" class="page">
+
+<iframe
+id="frame"
+sandbox="allow-scripts allow-forms allow-modals">
+</iframe>
+
+</div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const pageId =
+params.get("id");
+
+
+function showError(message){
+
+const status =
+document.getElementById("status");
+
+status.textContent = message;
+
+status.className = "status error";
+}
+
+
+async function loadPage(){
+
+if(!pageId){
+
+showError("Web page ID is missing.");
+
+return;
+}
+
+
+const { data: page, error } =
+await supabaseClient
+
+.from("web_pages")
+
+.select(
+"id,page_name,html_content,css_content,js_content,is_published"
+)
+
+.eq("id", pageId)
+
+.single();
+
+
+if(error){
+
+console.error(error);
+
+showError("Unable to load web page.");
+
+return;
+}
+
+
+if(!page){
+
+showError("Web page not found.");
+
+return;
+}
+
+
+if(!page.is_published){
+
+showError("This web page is not published.");
+
+return;
+}
+
+
+document.getElementById("title").textContent =
+"🌐 " + (page.page_name || "Web Page");
+
+
+document.getElementById("subtitle").innerHTML =
+'<span class="published">Published</span>';
+
+
+const fullPage = `
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<style>
+
+${page.css_content || ""}
+
+</style>
+
+</head>
+
+<body>
+
+${page.html_content || ""}
+
+<script>
+
+${page.js_content || ""}
+
+<\/script>
+
+</body>
+
+</html>
+
+`;
+
+
+document.getElementById("frame").srcdoc =
+fullPage;
+
+document.getElementById("status").style.display =
+"none";
+
+document.getElementById("page").style.display =
+"block";
+
+}
+
+
+loadPage();
+
+</script>
+
+</body>
+</html>
