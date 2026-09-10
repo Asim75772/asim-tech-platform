@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Repositories — ASIM TECH</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Repository Files — ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
 body{
 font-family:Arial,sans-serif;
@@ -27,112 +37,145 @@ background:rgba(5,12,22,.95);
 border-bottom:1px solid rgba(255,255,255,.1);
 }
 
-.logo{font-size:22px;font-weight:bold;color:#36e0b5}
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#36e0b5;
+}
 
-.nav-links{display:flex;gap:20px}
-.nav-links a{color:#ddd;text-decoration:none}
-.nav-links a:hover{color:#36e0b5}
+.nav-links{
+display:flex;
+gap:18px;
+}
+
+.nav-links a{
+color:#ddd;
+text-decoration:none;
+}
+
+.nav-links a:hover{
+color:#36e0b5;
+}
 
 .container{
 width:90%;
 max-width:1000px;
-margin:40px auto;
+margin:35px auto;
+}
+
+.back{
+color:#8edfc9;
+text-decoration:none;
+display:inline-block;
+margin-bottom:20px;
+font-size:17px;
 }
 
 .header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-gap:20px;
+gap:15px;
 margin-bottom:25px;
 }
 
-h1{font-size:32px}
-.header p{color:#aab7c4;margin-top:7px}
+h1{
+font-size:30px;
+}
+
+.subtitle{
+color:#aab7c4;
+margin-top:7px;
+font-size:18px;
+}
 
 .new-btn{
 background:#36e0b5;
 color:#06151a;
 text-decoration:none;
-padding:13px 18px;
+padding:12px 18px;
 border-radius:10px;
 font-weight:bold;
+display:inline-block;
+text-align:center;
 }
 
-.search{
-width:100%;
-padding:15px;
-border-radius:10px;
-border:1px solid #294252;
-background:#0c1b29;
+.web-btn{
+background:#1877f2;
 color:#fff;
-outline:none;
-margin-bottom:25px;
-font-size:15px;
 }
 
-.repositories{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:18px;
-}
-
-.repo-card{
+.card{
 background:rgba(13,29,43,.95);
 border:1px solid rgba(255,255,255,.1);
-border-radius:14px;
-padding:22px;
+border-radius:15px;
+padding:20px;
+margin-bottom:15px;
 }
 
-.repo-name{
-font-size:21px;
+.section-title{
+font-size:24px;
 font-weight:bold;
-margin-bottom:10px;
+margin:35px 0 18px;
+}
+
+.file-row{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+}
+
+.file-name{
+font-size:17px;
+font-weight:bold;
 word-break:break-word;
 }
 
-.repo-description{
-color:#aab7c4;
-line-height:1.5;
-min-height:45px;
-margin-bottom:18px;
-}
-
-.badge{
-display:inline-block;
-padding:6px 10px;
-border-radius:20px;
-font-size:12px;
-background:#17384a;
-color:#8edfc9;
-margin-right:6px;
-}
-
-.private{
-background:#46351c;
-color:#ffd27a;
-}
-
-.info{
+.file-language{
 color:#8293a1;
 font-size:13px;
-margin:16px 0;
+margin-top:5px;
 }
 
-.open-btn{
-display:block;
-text-align:center;
+.actions{
+display:flex;
+gap:8px;
+}
+
+.btn{
+border:0;
+border-radius:8px;
+padding:9px 12px;
+cursor:pointer;
+font-weight:bold;
+font-size:14px;
+}
+
+.open{
 background:#17384a;
 color:#8edfc9;
-padding:11px;
-border-radius:9px;
-text-decoration:none;
-font-weight:bold;
 }
 
-.open-btn:hover{
+.edit{
 background:#36e0b5;
 color:#06151a;
+}
+
+.delete{
+background:#55252c;
+color:#ffb5bd;
+}
+
+.preview{
+background:#1877f2;
+color:#fff;
+}
+
+.empty{
+text-align:center;
+padding:45px 15px;
+color:#aab7c4;
 }
 
 #loading{
@@ -141,33 +184,96 @@ padding:40px;
 color:#aab7c4;
 }
 
-#message{
-text-align:center;
-padding:30px;
-color:#ff8d8d;
+#error{
 display:none;
-}
-
-.empty{
-text-align:center;
-padding:50px 20px;
-background:rgba(13,29,43,.9);
-border-radius:14px;
-}
-
-.empty p{
-color:#aab7c4;
-margin:12px 0 20px;
-}
-
-.empty a{
-display:inline-block;
-background:#36e0b5;
-color:#06151a;
-padding:11px 18px;
+background:#4b2027;
+color:#ffb5bd;
+padding:13px;
 border-radius:9px;
-text-decoration:none;
+margin-bottom:20px;
+}
+
+.web-page-card{
+border-left:4px solid #1877f2;
+}
+
+.web-page-name{
+font-size:19px;
 font-weight:bold;
+word-break:break-word;
+}
+
+.web-page-info{
+color:#8293a1;
+font-size:13px;
+margin-top:6px;
+}
+
+.web-actions{
+display:flex;
+gap:8px;
+margin-top:15px;
+flex-wrap:wrap;
+}
+
+.web-actions .btn{
+min-width:100px;
+}
+
+.modal{
+display:none;
+position:fixed;
+z-index:9999;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.85);
+padding:20px;
+}
+
+.modal-content{
+width:100%;
+height:100%;
+max-width:1100px;
+margin:auto;
+background:#fff;
+border-radius:12px;
+overflow:hidden;
+display:flex;
+flex-direction:column;
+}
+
+.modal-header{
+height:60px;
+background:#161b22;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 18px;
+color:#fff;
+}
+
+.modal-title{
+font-weight:bold;
+font-size:18px;
+}
+
+.close-btn{
+background:#55252c;
+color:#fff;
+border:0;
+border-radius:7px;
+padding:8px 14px;
+font-weight:bold;
+cursor:pointer;
+}
+
+#previewFrame{
+width:100%;
+height:calc(100% - 60px);
+border:0;
+background:#fff;
 }
 
 footer{
@@ -177,67 +283,249 @@ padding:40px 10px;
 }
 
 @media(max-width:600px){
-nav{padding:0 5%}
-.nav-links{gap:10px;font-size:13px}
-.container{width:92%;margin:28px auto}
-.header{flex-direction:column;align-items:flex-start}
-.new-btn{width:100%;text-align:center}
-h1{font-size:28px}
+
+nav{
+padding:0 5%;
 }
+
+.logo{
+font-size:21px;
+}
+
+.nav-links{
+gap:9px;
+font-size:13px;
+}
+
+.container{
+width:92%;
+margin:25px auto;
+}
+
+.header{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.new-btn{
+width:100%;
+}
+
+.file-row{
+align-items:flex-start;
+flex-direction:column;
+}
+
+.actions{
+width:100%;
+}
+
+.actions .btn{
+flex:1;
+}
+
+.web-actions{
+width:100%;
+}
+
+.web-actions .btn{
+width:100%;
+}
+
+.modal{
+padding:8px;
+}
+
+}
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <nav>
-<div class="logo">⚡ ASIM TECH</div>
+
+<div class="logo">
+⚡ ASIM TECH
+</div>
 
 <div class="nav-links">
-<a href="index.html">Home</a>
-<a href="repositories.html">Repositories</a>
-<a href="dashboard.html">Dashboard</a>
+
+<a href="index.html">
+Home
+</a>
+
+<a href="repositories.html">
+Repositories
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
 </div>
+
 </nav>
+
 
 <div class="container">
 
-<div class="header">
-<div>
-<h1>📁 Repositories</h1>
-<p>Your ASIM TECH repositories</p>
-</div>
 
-<a class="new-btn" href="new-repository.html">
-＋ New Repository
+<a class="back"
+href="repositories.html">
+
+← Back to Repositories
+
 </a>
+
+
+<div class="header">
+
+<div>
+
+<h1>
+📁 Repository Files
+</h1>
+
+<p id="repoTitle"
+class="subtitle">
+
+Loading repository...
+
+</p>
+
 </div>
 
-<input
-id="search"
-class="search"
-type="text"
-placeholder="🔍 Search repositories..."
->
 
-<div id="loading">Loading repositories...</div>
+<a id="newFileBtn"
+class="new-btn"
+href="#">
 
-<div id="message"></div>
+＋ New File
 
-<div id="repositories" class="repositories"></div>
+</a>
 
 </div>
+
+
+<div id="error"></div>
+
+
+<div id="loading">
+
+Loading repository...
+
+</div>
+
+
+<!-- REPOSITORY FILES -->
+
+<div class="section-title">
+
+📄 Repository Files
+
+</div>
+
+
+<div id="files"></div>
+
+
+<!-- WEB PAGES -->
+
+<div class="section-title">
+
+🌐 Web Pages
+
+</div>
+
+
+<div class="card">
+
+<div style="margin-bottom:18px;color:#aab7c4;">
+
+Web pages created using ASIM TECH Web Page Builder.
+
+</div>
+
+
+<a id="newWebPageBtn"
+class="new-btn web-btn"
+href="#">
+
+＋ New Web Page
+
+</a>
+
+</div>
+
+
+<div id="webPages"></div>
+
+
+</div>
+
+
+<!-- PREVIEW MODAL -->
+
+<div id="previewModal"
+class="modal">
+
+<div class="modal-content">
+
+
+<div class="modal-header">
+
+<div id="modalTitle"
+class="modal-title">
+
+Web Page Preview
+
+</div>
+
+
+<button
+id="closePreview"
+class="close-btn">
+
+✕ Close
+
+</button>
+
+</div>
+
+
+<iframe
+id="previewFrame"
+sandbox="allow-scripts">
+
+</iframe>
+
+
+</div>
+
+</div>
+
 
 <footer>
+
 © 2026 ASIM TECH — Code. Create. Innovate.
+
 </footer>
 
+
 <script>
+
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
+
 const SUPABASE_PUBLISHABLE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
 
 const supabaseClient =
 window.supabase.createClient(
@@ -245,167 +533,28 @@ SUPABASE_URL,
 SUPABASE_PUBLISHABLE_KEY
 );
 
-let allRepositories=[];
 
+/* REPOSITORY ID */
 
-async function loadRepositories(){
-
-try{
-
-const {
-data:{user},
-error:userError
-}=await supabaseClient.auth.getUser();
-
-if(userError) throw userError;
-
-if(!user){
-window.location.href="login.html";
-return;
-}
-
-const {data,error}=
-await supabaseClient
-.from("repositories")
-.select("*")
-.order("created_at",{ascending:false});
-
-if(error) throw error;
-
-allRepositories=data || [];
-
-document.getElementById("loading").style.display="none";
-
-renderRepositories(allRepositories);
-
-}catch(error){
-
-console.error(error);
-
-document.getElementById("loading").style.display="none";
-
-const message=document.getElementById("message");
-
-message.style.display="block";
-
-message.textContent=
-"Unable to load repositories.";
-
-}
-
-}
-
-
-function renderRepositories(list){
-
-const container=
-document.getElementById("repositories");
-
-container.innerHTML="";
-
-if(list.length===0){
-
-container.innerHTML=`
-<div class="empty">
-<h2>📂 No repositories yet</h2>
-<p>Create your first ASIM TECH repository.</p>
-<a href="new-repository.html">
-＋ Create Repository
-</a>
-</div>
-`;
-
-return;
-}
-
-
-list.forEach(repo=>{
-
-const card=document.createElement("div");
-
-card.className="repo-card";
-
-const visibility=repo.is_private
-?"🔒 Private"
-:"🌐 Public";
-
-const privateClass=repo.is_private
-?"private"
-:"";
-
-const date=repo.created_at
-?new Date(repo.created_at).toLocaleDateString(
-"en-IN",
-{
-day:"numeric",
-month:"short",
-year:"numeric"
-})
-:"";
-
-
-card.innerHTML=`
-
-<div class="repo-name">
-📦 ${escapeHtml(repo.name)}
-</div>
-
-<div class="repo-description">
-${escapeHtml(
-repo.description ||
-"No description provided."
-)}
-</div>
-
-<div>
-<span class="badge ${privateClass}">
-${visibility}
-</span>
-
-<span class="badge">
-ASIM TECH
-</span>
-</div>
-
-<div class="info">
-Created ${date}
-</div>
-
-<a
-class="open-btn"
-href="repository-details.html?id=${encodeURIComponent(repo.id)}"
->
-Open Repository →
-</a>
-
-`;
-
-container.appendChild(card);
-
-});
-
-}
-
-
-document
-.getElementById("search")
-.addEventListener("input",function(){
-
-const text=this.value.toLowerCase().trim();
-
-const filtered=allRepositories.filter(repo=>
-(repo.name||"").toLowerCase().includes(text) ||
-(repo.description||"").toLowerCase().includes(text)
+const params =
+new URLSearchParams(
+window.location.search
 );
 
-renderRepositories(filtered);
+const repoId =
+params.get("repository_id");
 
-});
 
+let currentUser = null;
+
+let repository = null;
+
+
+/* ESCAPE HTML */
 
 function escapeHtml(value){
 
-return String(value)
+return String(value ?? "")
 .replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
 .replace(/>/g,"&gt;")
@@ -415,9 +564,802 @@ return String(value)
 }
 
 
-loadRepositories();
+/* ERROR */
+
+function showError(text){
+
+const box =
+document.getElementById("error");
+
+box.textContent = text;
+
+box.style.display = "block";
+
+}
+
+
+/* LOAD */
+
+async function loadFiles(){
+
+try{
+
+
+/* LOGIN */
+
+const {
+data:{user},
+error:userError
+} =
+await supabaseClient.auth.getUser();
+
+
+if(userError){
+
+throw userError;
+
+}
+
+
+if(!user){
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+currentUser = user;
+
+
+/* CHECK ID */
+
+if(!repoId){
+
+throw new Error(
+"Repository ID missing"
+);
+
+}
+
+
+/* LOAD REPOSITORY */
+
+const {
+data:repoData,
+error:repoError
+} =
+await supabaseClient
+
+.from("repositories")
+
+.select("*")
+
+.eq("id",repoId)
+
+.single();
+
+
+if(repoError){
+
+throw repoError;
+
+}
+
+
+repository = repoData;
+
+
+/* REPOSITORY TITLE */
+
+document.getElementById(
+"repoTitle"
+).textContent =
+
+repository.name +
+" — " +
+(
+repository.description ||
+"Repository files"
+);
+
+
+/* NEW FILE */
+
+document.getElementById(
+"newFileBtn"
+).href =
+
+"file-editor.html?repository_id=" +
+
+encodeURIComponent(repoId);
+
+
+/* NEW WEB PAGE */
+
+document.getElementById(
+"newWebPageBtn"
+).href =
+
+"page-builder.html?repository_id=" +
+
+encodeURIComponent(repoId);
+
+
+/* NORMAL FILES */
+
+const {
+data:files,
+error:fileError
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.select("*")
+
+.eq("repository_id",repoId)
+
+.order(
+"file_path",
+{ascending:true}
+);
+
+
+if(fileError){
+
+throw fileError;
+
+}
+
+
+/* WEB PAGES */
+
+const {
+data:webPages,
+error:webPageError
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.select("*")
+
+.eq("repository_id",repoId)
+
+.order(
+"page_name",
+{ascending:true}
+);
+
+
+if(webPageError){
+
+console.error(
+"Web pages error:",
+webPageError
+);
+
+renderWebPages([]);
+
+}else{
+
+renderWebPages(
+webPages || []
+);
+
+}
+
+
+/* HIDE LOADING */
+
+document.getElementById(
+"loading"
+).style.display = "none";
+
+
+/* DISPLAY FILES */
+
+renderFiles(
+files || []
+);
+
+
+}catch(error){
+
+console.error(error);
+
+
+document.getElementById(
+"loading"
+).style.display = "none";
+
+
+showError(
+"Unable to load repository."
+);
+
+}
+
+}
+
+
+/* RENDER FILES */
+
+function renderFiles(files){
+
+const container =
+document.getElementById("files");
+
+
+container.innerHTML = "";
+
+
+if(files.length === 0){
+
+container.innerHTML = `
+
+<div class="card empty">
+
+<h2>
+📂 No files yet
+</h2>
+
+<p style="margin:12px 0 20px">
+
+Create your first file in this repository.
+
+</p>
+
+<a
+class="new-btn"
+href="file-editor.html?repository_id=${encodeURIComponent(repoId)}">
+
+＋ Create First File
+
+</a>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+/* FILE CARDS */
+
+files.forEach(file => {
+
+
+const card =
+document.createElement("div");
+
+
+card.className = "card";
+
+
+card.innerHTML = `
+
+<div class="file-row">
+
+<div>
+
+<div class="file-name">
+
+📄 ${escapeHtml(file.file_path)}
+
+</div>
+
+<div class="file-language">
+
+${escapeHtml(
+file.language || "Plain text"
+)}
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+
+<button
+class="btn open"
+onclick="openFile('${file.id}')">
+
+Open
+
+</button>
+
+
+<button
+class="btn edit"
+onclick="editFile('${file.id}')">
+
+Edit
+
+</button>
+
+
+<button
+class="btn delete"
+onclick="deleteFile('${file.id}')">
+
+Delete
+
+</button>
+
+
+</div>
+
+</div>
+
+`;
+
+
+container.appendChild(card);
+
+});
+
+}
+
+
+/* OPEN FILE */
+
+function openFile(id){
+
+window.location.href =
+
+"file-editor.html?repository_id=" +
+
+encodeURIComponent(repoId) +
+
+"&file_id=" +
+
+encodeURIComponent(id);
+
+}
+
+
+/* EDIT FILE */
+
+function editFile(id){
+
+window.location.href =
+
+"file-editor.html?repository_id=" +
+
+encodeURIComponent(repoId) +
+
+"&file_id=" +
+
+encodeURIComponent(id);
+
+}
+
+
+/* DELETE FILE */
+
+async function deleteFile(id){
+
+if(!confirm(
+"Delete this file?"
+)){
+
+return;
+
+}
+
+
+try{
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.delete()
+
+.eq("id",id);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+alert(
+"File deleted successfully."
+);
+
+
+loadFiles();
+
+
+}catch(error){
+
+console.error(error);
+
+
+alert(
+"Unable to delete file."
+);
+
+}
+
+}
+
+
+/* RENDER WEB PAGES */
+
+function renderWebPages(webPages){
+
+const container =
+document.getElementById("webPages");
+
+
+container.innerHTML = "";
+
+
+if(!webPages ||
+webPages.length === 0){
+
+container.innerHTML = `
+
+<div class="card empty">
+
+<h2>
+🌐 No Web Pages Yet
+</h2>
+
+<p style="margin:12px 0 20px">
+
+Create a webpage using Web Page Builder.
+
+</p>
+
+<a
+class="new-btn web-btn"
+href="page-builder.html?repository_id=${encodeURIComponent(repoId)}">
+
+＋ Create Web Page
+
+</a>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+/* WEB PAGE CARDS */
+
+webPages.forEach(page => {
+
+
+const card =
+document.createElement("div");
+
+
+card.className =
+"card web-page-card";
+
+
+card.innerHTML = `
+
+<div>
+
+<div class="web-page-name">
+
+🌐 ${escapeHtml(page.page_name)}
+
+</div>
+
+
+<div class="web-page-info">
+
+Web Page
+
+</div>
+
+
+<div class="web-actions">
+
+
+<button
+class="btn preview"
+onclick="previewWebPage('${page.id}')">
+
+👁️ Preview
+
+</button>
+
+
+<button
+class="btn edit"
+onclick="editWebPage('${page.id}')">
+
+✏️ Edit
+
+</button>
+
+
+<button
+class="btn delete"
+onclick="deleteWebPage('${page.id}')">
+
+🗑️ Delete
+
+</button>
+
+
+</div>
+
+</div>
+
+`;
+
+
+container.appendChild(card);
+
+});
+
+}
+
+
+/* PREVIEW WEB PAGE */
+
+async function previewWebPage(id){
+
+try{
+
+
+const {
+data:page,
+error
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.select("*")
+
+.eq("id",id)
+
+.single();
+
+
+if(error){
+
+throw error;
+
+}
+
+
+if(!page){
+
+alert(
+"Web page not found."
+);
+
+return;
+
+}
+
+
+const fullPage = `
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<style>
+
+${page.css_content || ""}
+
+</style>
+
+</head>
+
+<body>
+
+${page.html_content || ""}
+
+<script>
+
+${page.js_content || ""}
+
+<\/script>
+
+</body>
+
+</html>
+
+`;
+
+
+document.getElementById(
+"modalTitle"
+).textContent =
+
+"🌐 " +
+page.page_name;
+
+
+document.getElementById(
+"previewFrame"
+).srcdoc = fullPage;
+
+
+document.getElementById(
+"previewModal"
+).style.display = "block";
+
+
+}catch(error){
+
+console.error(error);
+
+
+alert(
+"Unable to preview web page."
+);
+
+}
+
+}
+
+
+/* EDIT WEB PAGE */
+
+function editWebPage(id){
+
+window.location.href =
+
+"page-builder.html?repository_id=" +
+
+encodeURIComponent(repoId) +
+
+"&page_id=" +
+
+encodeURIComponent(id);
+
+}
+
+
+/* DELETE WEB PAGE */
+
+async function deleteWebPage(id){
+
+if(!confirm(
+"Delete this web page?"
+)){
+
+return;
+
+}
+
+
+try{
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.delete()
+
+.eq("id",id);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+alert(
+"Web page deleted successfully."
+);
+
+
+loadFiles();
+
+
+}catch(error){
+
+console.error(error);
+
+
+alert(
+"Unable to delete web page."
+);
+
+}
+
+}
+
+
+/* CLOSE PREVIEW */
+
+document.getElementById(
+"closePreview"
+).addEventListener(
+"click",
+function(){
+
+document.getElementById(
+"previewModal"
+).style.display = "none";
+
+
+document.getElementById(
+"previewFrame"
+).srcdoc = "";
+
+}
+);
+
+
+/* CLOSE BY OUTSIDE CLICK */
+
+document.getElementById(
+"previewModal"
+).addEventListener(
+"click",
+function(event){
+
+if(
+event.target ===
+this
+){
+
+this.style.display = "none";
+
+document.getElementById(
+"previewFrame"
+).srcdoc = "";
+
+}
+
+}
+);
+
+
+/* START */
+
+loadFiles();
+
 
 </script>
 
+
 </body>
+
 </html>
