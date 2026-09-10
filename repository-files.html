@@ -97,12 +97,23 @@ font-weight:bold;
 display:inline-block;
 }
 
+.web-btn{
+background:#1877f2;
+color:#fff;
+}
+
 .card{
 background:rgba(13,29,43,.95);
 border:1px solid rgba(255,255,255,.1);
 border-radius:15px;
 padding:20px;
 margin-bottom:15px;
+}
+
+.section-title{
+font-size:24px;
+font-weight:bold;
+margin:35px 0 18px;
 }
 
 .file-row{
@@ -152,6 +163,11 @@ background:#55252c;
 color:#ffb5bd;
 }
 
+.preview{
+background:#1877f2;
+color:#fff;
+}
+
 .empty{
 text-align:center;
 padding:45px 15px;
@@ -171,6 +187,85 @@ color:#ffb5bd;
 padding:13px;
 border-radius:9px;
 margin-bottom:20px;
+}
+
+.web-page-card{
+border-left:4px solid #1877f2;
+}
+
+.web-page-name{
+font-size:19px;
+font-weight:bold;
+word-break:break-word;
+}
+
+.web-page-info{
+color:#8293a1;
+font-size:13px;
+margin-top:6px;
+}
+
+.web-actions{
+display:flex;
+gap:8px;
+margin-top:15px;
+flex-wrap:wrap;
+}
+
+.modal{
+display:none;
+position:fixed;
+z-index:9999;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.85);
+padding:20px;
+}
+
+.modal-content{
+width:100%;
+height:100%;
+max-width:1100px;
+margin:auto;
+background:#fff;
+border-radius:12px;
+overflow:hidden;
+display:flex;
+flex-direction:column;
+}
+
+.modal-header{
+height:60px;
+background:#161b22;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 18px;
+color:#fff;
+}
+
+.modal-title{
+font-weight:bold;
+font-size:18px;
+}
+
+.close-btn{
+background:#55252c;
+color:#fff;
+border:0;
+border-radius:7px;
+padding:8px 14px;
+font-weight:bold;
+cursor:pointer;
+}
+
+#previewFrame{
+width:100%;
+height:calc(100% - 60px);
+border:0;
+background:#fff;
 }
 
 footer{
@@ -220,6 +315,18 @@ width:100%;
 
 .btn{
 flex:1;
+}
+
+.web-actions{
+width:100%;
+}
+
+.web-actions .btn{
+width:100%;
+}
+
+.modal{
+padding:8px;
 }
 
 }
@@ -302,13 +409,92 @@ href="#">
 
 <div id="loading">
 
-Loading files...
+Loading repository...
+
+</div>
+
+
+<!-- NORMAL REPOSITORY FILES -->
+
+<div class="section-title">
+
+📄 Repository Files
 
 </div>
 
 
 <div id="files"></div>
 
+
+<!-- WEB PAGES -->
+
+<div class="section-title">
+
+🌐 Web Pages
+
+</div>
+
+
+<div class="card">
+
+<div style="margin-bottom:18px;color:#aab7c4;">
+
+Web pages created using ASIM TECH Web Page Builder.
+
+</div>
+
+
+<a id="newWebPageBtn"
+class="new-btn web-btn"
+href="#">
+
+＋ New Web Page
+
+</a>
+
+</div>
+
+
+<div id="webPages"></div>
+
+
+</div>
+
+
+<!-- PREVIEW MODAL -->
+
+<div id="previewModal"
+class="modal">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<div id="modalTitle"
+class="modal-title">
+
+Web Page Preview
+
+</div>
+
+<button
+id="closePreview"
+class="close-btn">
+
+✕ Close
+
+</button>
+
+</div>
+
+
+<iframe
+id="previewFrame"
+sandbox="allow-scripts">
+
+</iframe>
+
+</div>
 
 </div>
 
@@ -383,7 +569,7 @@ box.style.display = "block";
 }
 
 
-/* LOAD REPOSITORY AND FILES */
+/* LOAD REPOSITORY */
 
 async function loadFiles(){
 
@@ -437,9 +623,13 @@ data:repoData,
 error:repoError
 } =
 await supabaseClient
+
 .from("repositories")
+
 .select("*")
+
 .eq("id",repoId)
+
 .single();
 
 
@@ -477,16 +667,30 @@ document.getElementById(
 encodeURIComponent(repoId);
 
 
-/* LOAD FILES */
+/* NEW WEB PAGE BUTTON */
+
+document.getElementById(
+"newWebPageBtn"
+).href =
+
+"page-builder.html?repository_id=" +
+encodeURIComponent(repoId);
+
+
+/* LOAD NORMAL FILES */
 
 const {
 data:files,
 error:fileError
 } =
 await supabaseClient
+
 .from("repository_files")
+
 .select("*")
+
 .eq("repository_id",repoId)
+
 .order(
 "file_path",
 {ascending:true}
@@ -500,6 +704,49 @@ throw fileError;
 }
 
 
+/* LOAD WEB PAGES */
+
+const {
+data:webPages,
+error:webPageError
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.select("*")
+
+.eq("repository_id",repoId)
+
+.order(
+"page_name",
+{ascending:true}
+);
+
+
+if(webPageError){
+
+console.error(
+"Web pages error:",
+webPageError
+);
+
+/*
+Do not stop the whole page if
+web_pages has a problem.
+*/
+
+renderWebPages([]);
+
+}else{
+
+renderWebPages(
+webPages || []
+);
+
+}
+
+
 /* HIDE LOADING */
 
 document.getElementById(
@@ -509,7 +756,9 @@ document.getElementById(
 
 /* DISPLAY FILES */
 
-renderFiles(files || []);
+renderFiles(
+files || []
+);
 
 
 }catch(error){
@@ -524,7 +773,7 @@ document.getElementById(
 
 
 showError(
-"Unable to load repository files."
+"Unable to load repository."
 );
 
 
@@ -533,7 +782,7 @@ showError(
 }
 
 
-/* DISPLAY FILES */
+/* DISPLAY NORMAL FILES */
 
 function renderFiles(files){
 
@@ -709,8 +958,11 @@ const {
 error
 } =
 await supabaseClient
+
 .from("repository_files")
+
 .delete()
+
 .eq("id",id);
 
 
@@ -737,6 +989,349 @@ console.error(error);
 
 alert(
 "Unable to delete file."
+);
+
+
+}
+
+}
+
+
+/* DISPLAY WEB PAGES */
+
+function renderWebPages(webPages){
+
+
+const container =
+document.getElementById("webPages");
+
+
+container.innerHTML = "";
+
+
+if(!webPages ||
+webPages.length === 0){
+
+
+container.innerHTML = `
+
+<div class="card empty">
+
+<h2>
+🌐 No Web Pages Yet
+</h2>
+
+<p style="margin:12px 0 20px">
+
+Create a webpage using Web Page Builder.
+
+</p>
+
+<a
+class="new-btn web-btn"
+href="page-builder.html?repository_id=${encodeURIComponent(repoId)}">
+
+＋ Create Web Page
+
+</a>
+
+</div>
+
+`;
+
+
+return;
+
+}
+
+
+/* SHOW EACH WEB PAGE */
+
+webPages.forEach(page => {
+
+
+const card =
+document.createElement("div");
+
+
+card.className =
+"card web-page-card";
+
+
+card.innerHTML = `
+
+<div>
+
+<div class="web-page-name">
+
+🌐 ${escapeHtml(page.page_name)}
+
+</div>
+
+
+<div class="web-page-info">
+
+Web Page
+
+</div>
+
+
+<div class="web-actions">
+
+
+<button
+class="btn preview"
+onclick="previewWebPage('${page.id}')">
+
+👁️ Preview
+
+</button>
+
+
+<button
+class="btn delete"
+onclick="deleteWebPage('${page.id}')">
+
+🗑️ Delete
+
+</button>
+
+
+</div>
+
+</div>
+
+`;
+
+
+container.appendChild(card);
+
+
+});
+
+}
+
+
+/* PREVIEW WEB PAGE */
+
+async function previewWebPage(id){
+
+
+try{
+
+
+const {
+data:page,
+error
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.select("*")
+
+.eq("id",id)
+
+.single();
+
+
+if(error){
+
+throw error;
+
+}
+
+
+if(!page){
+
+alert(
+"Web page not found."
+);
+
+return;
+
+}
+
+
+/* BUILD COMPLETE HTML */
+
+const html = `
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<style>
+
+${page.css_content || ""}
+
+</style>
+
+</head>
+
+<body>
+
+${page.html_content || ""}
+
+<script>
+
+${page.js_content || ""}
+
+<\/script>
+
+</body>
+
+</html>
+
+`;
+
+
+/* SET MODAL TITLE */
+
+document.getElementById(
+"modalTitle"
+).textContent =
+
+"🌐 " +
+(page.page_name || "Web Page");
+
+
+/* LOAD PREVIEW */
+
+const frame =
+document.getElementById(
+"previewFrame"
+);
+
+
+frame.srcdoc = html;
+
+
+/* SHOW MODAL */
+
+document.getElementById(
+"previewModal"
+).style.display = "block";
+
+
+}catch(error){
+
+
+console.error(error);
+
+
+alert(
+"Unable to preview web page."
+);
+
+
+}
+
+}
+
+
+/* CLOSE PREVIEW */
+
+document.getElementById(
+"closePreview"
+).addEventListener(
+"click",
+function(){
+
+document.getElementById(
+"previewModal"
+).style.display = "none";
+
+
+document.getElementById(
+"previewFrame"
+).srcdoc = "";
+
+}
+);
+
+
+/* CLOSE WHEN CLICKING OUTSIDE */
+
+document.getElementById(
+"previewModal"
+).addEventListener(
+"click",
+function(event){
+
+if(event.target === this){
+
+this.style.display = "none";
+
+document.getElementById(
+"previewFrame"
+).srcdoc = "";
+
+}
+
+}
+);
+
+
+/* DELETE WEB PAGE */
+
+async function deleteWebPage(id){
+
+
+if(!confirm(
+"Delete this web page?"
+)){
+
+return;
+
+}
+
+
+try{
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.delete()
+
+.eq("id",id);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+alert(
+"Web page deleted successfully."
+);
+
+
+loadFiles();
+
+
+}catch(error){
+
+
+console.error(error);
+
+
+alert(
+"Unable to delete web page."
 );
 
 
