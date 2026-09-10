@@ -5,275 +5,314 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login - ASIM TECH</title>
+    <title>Sign In - ASIM TECH</title>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
             background: #0d1117;
             color: white;
             font-family: Arial, sans-serif;
-
             min-height: 100vh;
-
             display: flex;
             justify-content: center;
             align-items: center;
-
             padding: 20px;
         }
-
 
         .container {
             width: 100%;
             max-width: 420px;
         }
 
-
         .logo {
             text-align: center;
-
-            font-size: 34px;
+            font-size: 32px;
             font-weight: bold;
-
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-
-        .logo .green {
+        .logo span {
             color: #39d353;
         }
 
-
         .tagline {
             text-align: center;
-
             color: #8b949e;
-
             margin-bottom: 25px;
         }
 
-
         .box {
             background: #161b22;
-
             border: 1px solid #30363d;
-
             border-radius: 10px;
-
-            padding: 28px;
+            padding: 25px;
         }
-
 
         h2 {
-            margin-bottom: 22px;
-
-            font-size: 24px;
+            margin-bottom: 20px;
         }
-
 
         label {
             display: block;
-
             margin-bottom: 7px;
-
             color: #c9d1d9;
         }
 
-
         input {
             width: 100%;
-
             padding: 13px;
-
-            margin-bottom: 18px;
-
+            margin-bottom: 17px;
             background: #0d1117;
-
             border: 1px solid #30363d;
-
             border-radius: 6px;
-
             color: white;
-
             font-size: 16px;
         }
 
-
         input:focus {
             outline: none;
-
             border-color: #39d353;
         }
 
-
         button {
             width: 100%;
-
             padding: 13px;
-
             background: #238636;
-
             border: none;
-
             border-radius: 6px;
-
             color: white;
-
             font-size: 17px;
-
             font-weight: bold;
-
             cursor: pointer;
         }
-
 
         button:hover {
             background: #2ea043;
         }
 
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            line-height: 1.5;
+        }
 
         .signup {
             text-align: center;
-
             margin-top: 20px;
-
             color: #8b949e;
         }
-
 
         .signup a {
             color: #58a6ff;
-
             text-decoration: none;
         }
 
-
-        .back {
-            display: block;
-
-            text-align: center;
-
-            margin-top: 20px;
-
-            color: #8b949e;
-
-            text-decoration: none;
+        .signup a:hover {
+            text-decoration: underline;
         }
-
     </style>
-
 </head>
-
 
 <body>
 
-
 <div class="container">
 
-
     <div class="logo">
-
-        <span class="green">ASIM</span> TECH
-
+        <span>ASIM</span> TECH
     </div>
 
-
     <p class="tagline">
-
         Code. Create. Innovate.
-
     </p>
-
-
 
     <div class="box">
 
+        <h2>Sign in to ASIM TECH</h2>
 
-        <h2>
+        <form id="loginForm">
 
-            Sign in to ASIM TECH
-
-        </h2>
-
-
-        <form>
-
-
-            <label>
-
-                Username or Email
-
-            </label>
-
+            <label for="email">Email</label>
 
             <input
-                type="text"
-                placeholder="Username or email"
+                id="email"
+                type="email"
+                placeholder="you@example.com"
                 required
             >
 
-
-
-            <label>
-
-                Password
-
-            </label>
-
+            <label for="password">Password</label>
 
             <input
+                id="password"
                 type="password"
-                placeholder="Password"
+                placeholder="Your password"
                 required
             >
 
-
-
-            <button type="submit">
-
+            <button
+                type="submit"
+                id="loginBtn">
                 Sign In
-
             </button>
 
+            <div id="message"></div>
 
         </form>
 
-
-
-        <div class="signup">
-
-            New to ASIM TECH?
-
-            <a href="signup.html">
-
-                Create an account
-
-            </a>
-
-        </div>
-
-
-
-        <a href="index.html" class="back">
-
-            ← Back to Home
-
-        </a>
-
-
     </div>
 
+    <div class="signup">
+        Don't have an account?
+        <a href="signup.html">Create account</a>
+    </div>
 
 </div>
 
 
-</body>
+<script>
 
+    /* ==============================
+       SUPABASE CONFIGURATION
+       ============================== */
+
+    const SUPABASE_URL =
+        "https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+
+    /* ==============================
+       CREATE SUPABASE CLIENT
+       ============================== */
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+        );
+
+
+    /* ==============================
+       GET ELEMENTS
+       ============================== */
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const loginBtn =
+        document.getElementById("loginBtn");
+
+    const message =
+        document.getElementById("message");
+
+
+    /* ==============================
+       LOGIN
+       ============================== */
+
+    loginForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
+
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
+
+
+            message.textContent = "";
+            message.style.color = "";
+
+            loginBtn.disabled = true;
+            loginBtn.textContent =
+                "Signing in...";
+
+
+            try {
+
+                const { data, error } =
+                    await supabaseClient.auth
+                        .signInWithPassword({
+
+                            email: email,
+
+                            password: password
+
+                        });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                /* SUCCESS */
+
+                message.style.color =
+                    "#39d353";
+
+                message.textContent =
+                    "Login successful!";
+
+
+                /*
+                 * Wait briefly so the user
+                 * can see the success message.
+                 */
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        "index.html";
+
+                }, 800);
+
+
+            } catch (error) {
+
+                /* ERROR */
+
+                message.style.color =
+                    "#ff7b72";
+
+                message.textContent =
+                    error.message ||
+                    "Login failed. Please try again.";
+
+                loginBtn.disabled = false;
+
+                loginBtn.textContent =
+                    "Sign In";
+            }
+
+        }
+    );
+
+</script>
+
+</body>
 </html>
