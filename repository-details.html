@@ -57,7 +57,7 @@ padding:20px;
 background:white;
 border-radius:16px;
 padding:30px;
-box-shadow:0 8px 30px rgba(0,0,0,0.08);
+box-shadow:0 8px 30px rgba(0,0,0,.08);
 }
 
 h1{
@@ -88,6 +88,16 @@ color:#166534;
 .private{
 background:#fee2e2;
 color:#991b1b;
+}
+
+.published{
+background:#dbeafe;
+color:#1d4ed8;
+}
+
+.unpublished{
+background:#fef3c7;
+color:#92400e;
 }
 
 .info{
@@ -138,6 +148,21 @@ background:#dc2626;
 color:white;
 }
 
+.publish-btn{
+background:#16a34a;
+color:white;
+}
+
+.unpublish-btn{
+background:#dc2626;
+color:white;
+}
+
+.website-btn{
+background:#7c3aed;
+color:white;
+}
+
 .back-btn{
 background:#64748b;
 color:white;
@@ -155,6 +180,15 @@ background:#fee2e2;
 color:#991b1b;
 padding:20px;
 border-radius:12px;
+}
+
+.notice{
+background:#eff6ff;
+color:#1e40af;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+display:none;
 }
 
 @media(max-width:600px){
@@ -185,6 +219,17 @@ width:100%;
 margin-bottom:4px;
 }
 
+.navbar{
+flex-direction:column;
+align-items:flex-start;
+gap:12px;
+}
+
+.navbar a{
+margin-left:0;
+margin-right:12px;
+}
+
 }
 
 </style>
@@ -201,7 +246,9 @@ ASIM TECH
 
 <div>
 
-<a href="index.html">Home</a>
+<a href="index.html">
+Home
+</a>
 
 <a href="repositories.html">
 Repositories
@@ -214,15 +261,20 @@ Repositories
 
 <div class="container">
 
-<div id="loading" class="loading">
+<div id="loading"
+class="loading">
+
 Loading repository...
+
 </div>
 
 
 <div id="error"
 class="error"
 style="display:none;">
+
 Unable to load repository.
+
 </div>
 
 
@@ -236,9 +288,24 @@ style="display:none;">
 class="description">
 </div>
 
+
+<div>
+
 <span id="repoVisibility"
 class="badge">
 </span>
+
+<span id="publishStatus"
+class="badge">
+</span>
+
+</div>
+
+
+<div id="publishNotice"
+class="notice">
+
+</div>
 
 
 <div class="info">
@@ -268,6 +335,7 @@ class="badge">
 
 <div class="buttons">
 
+
 <button
 class="files-btn"
 onclick="openFiles()">
@@ -278,6 +346,7 @@ onclick="openFiles()">
 
 
 <button
+id="editButton"
 class="edit-btn"
 onclick="editRepo()">
 
@@ -287,6 +356,40 @@ onclick="editRepo()">
 
 
 <button
+id="publishButton"
+class="publish-btn"
+onclick="publishRepo()"
+style="display:none;">
+
+🚀 Publish Website
+
+</button>
+
+
+<button
+id="unpublishButton"
+class="unpublish-btn"
+onclick="unpublishRepo()"
+style="display:none;">
+
+🔴 Unpublish Website
+
+</button>
+
+
+<button
+id="websiteButton"
+class="website-btn"
+onclick="openWebsite()"
+style="display:none;">
+
+🌐 Open Website
+
+</button>
+
+
+<button
+id="deleteButton"
 class="delete-btn"
 onclick="deleteRepo()">
 
@@ -312,6 +415,8 @@ onclick="goBack()">
 
 <script>
 
+/* SUPABASE */
+
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
@@ -328,12 +433,36 @@ SUPABASE_KEY
 
 let repo = null;
 
+let currentUser = null;
+
 
 /* LOAD REPOSITORY */
 
 async function loadRepo(){
 
 try{
+
+
+/* CURRENT USER */
+
+const {
+data:{user},
+error:userError
+} =
+await supabaseClient.auth.getUser();
+
+
+if(userError){
+
+throw userError;
+
+}
+
+
+currentUser = user;
+
+
+/* GET REPOSITORY ID */
 
 const params =
 new URLSearchParams(
@@ -355,11 +484,17 @@ return;
 }
 
 
+/* LOAD REPOSITORY */
+
 const result =
 await supabaseClient
+
 .from("repositories")
+
 .select("*")
+
 .eq("id",repoId)
+
 .single();
 
 
@@ -379,6 +514,8 @@ return;
 repo = result.data;
 
 
+/* BASIC INFORMATION */
+
 document.getElementById(
 "repoName"
 ).textContent =
@@ -391,6 +528,8 @@ document.getElementById(
 repo.description ||
 "No description provided.";
 
+
+/* VISIBILITY */
 
 const visibility =
 document.getElementById(
@@ -417,6 +556,35 @@ visibility.className =
 }
 
 
+/* PUBLISH STATUS */
+
+const publishStatus =
+document.getElementById(
+"publishStatus"
+);
+
+
+if(repo.is_published){
+
+publishStatus.textContent =
+"Website Published";
+
+publishStatus.className =
+"badge published";
+
+}else{
+
+publishStatus.textContent =
+"Website Not Published";
+
+publishStatus.className =
+"badge unpublished";
+
+}
+
+
+/* INFORMATION */
+
 document.getElementById(
 "ownerId"
 ).textContent =
@@ -440,6 +608,61 @@ document.getElementById(
 ).textContent =
 formatDate(repo.updated_at);
 
+
+/* OWNER */
+
+const isOwner =
+currentUser &&
+repo.owner_id ===
+currentUser.id;
+
+
+/* OWNER BUTTONS */
+
+if(!isOwner){
+
+document.getElementById(
+"editButton"
+).style.display =
+"none";
+
+document.getElementById(
+"deleteButton"
+).style.display =
+"none";
+
+}
+
+
+/* PUBLISH BUTTONS */
+
+if(isOwner){
+
+if(repo.is_published){
+
+document.getElementById(
+"unpublishButton"
+).style.display =
+"inline-block";
+
+document.getElementById(
+"websiteButton"
+).style.display =
+"inline-block";
+
+}else{
+
+document.getElementById(
+"publishButton"
+).style.display =
+"inline-block";
+
+}
+
+}
+
+
+/* SHOW */
 
 document.getElementById(
 "loading"
@@ -466,7 +689,7 @@ showError(
 }
 
 
-/* SHOW ERROR */
+/* ERROR */
 
 function showError(message){
 
@@ -490,7 +713,7 @@ document.getElementById(
 }
 
 
-/* FORMAT DATE */
+/* DATE */
 
 function formatDate(date){
 
@@ -513,6 +736,36 @@ year:"numeric"
 }
 
 
+/* OWNER CHECK */
+
+function checkOwner(){
+
+if(!repo ||
+!currentUser){
+
+alert(
+"Please login first."
+);
+
+return false;
+
+}
+
+if(repo.owner_id !== currentUser.id){
+
+alert(
+"Only the repository owner can perform this action."
+);
+
+return false;
+
+}
+
+return true;
+
+}
+
+
 /* OPEN FILES */
 
 function openFiles(){
@@ -530,11 +783,11 @@ encodeURIComponent(repo.id);
 }
 
 
-/* EDIT REPOSITORY */
+/* EDIT */
 
 function editRepo(){
 
-if(!repo){
+if(!checkOwner()){
 
 return;
 
@@ -547,11 +800,363 @@ encodeURIComponent(repo.id);
 }
 
 
-/* DELETE REPOSITORY */
+/* PUBLISH WEBSITE */
+
+async function publishRepo(){
+
+if(!checkOwner()){
+
+return;
+
+}
+
+
+/*
+CHECK INDEX PAGE
+*/
+
+const {
+data:pages,
+error:pageError
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.select("id,page_name,is_published")
+
+.eq("repository_id",repo.id);
+
+
+if(pageError){
+
+console.error(pageError);
+
+alert(
+"Unable to check website pages."
+);
+
+return;
+
+}
+
+
+/*
+FIND INDEX.HTML
+*/
+
+const indexPage =
+(pages || []).find(
+page =>
+(page.page_name || "")
+.toLowerCase() ===
+"index.html"
+);
+
+
+if(!indexPage){
+
+alert(
+"Please create an index.html Web Page before publishing the website."
+);
+
+return;
+
+}
+
+
+/*
+CONFIRM
+*/
+
+const confirmed =
+confirm(
+"Publish '" +
+repo.name +
+"' as a public website?"
+);
+
+
+if(!confirmed){
+
+return;
+
+}
+
+
+/*
+PUBLISH REPOSITORY
+*/
+
+const result =
+await supabaseClient
+
+.from("repositories")
+
+.update({
+
+is_published:true,
+
+published_at:
+new Date().toISOString(),
+
+updated_at:
+new Date().toISOString()
+
+})
+
+.eq("id",repo.id)
+
+.eq("owner_id",currentUser.id);
+
+
+if(result.error){
+
+console.error(result.error);
+
+alert(
+"Unable to publish website."
+);
+
+return;
+
+}
+
+
+/*
+PUBLISH INDEX PAGE
+*/
+
+const pageResult =
+await supabaseClient
+
+.from("web_pages")
+
+.update({
+
+is_published:true,
+
+published_at:
+new Date().toISOString()
+
+})
+
+.eq("id",indexPage.id)
+
+.eq("owner_id",currentUser.id);
+
+
+if(pageResult.error){
+
+console.error(
+pageResult.error
+);
+
+alert(
+"Repository published, but index.html could not be published."
+);
+
+return;
+
+}
+
+
+alert(
+"Website published successfully!"
+);
+
+
+/*
+RELOAD
+*/
+
+location.reload();
+
+}
+
+
+/* UNPUBLISH WEBSITE */
+
+async function unpublishRepo(){
+
+if(!checkOwner()){
+
+return;
+
+}
+
+
+const confirmed =
+confirm(
+"Unpublish '" +
+repo.name +
+"' website?"
+);
+
+
+if(!confirmed){
+
+return;
+
+}
+
+
+/*
+UNPUBLISH REPOSITORY
+*/
+
+const result =
+await supabaseClient
+
+.from("repositories")
+
+.update({
+
+is_published:false,
+
+published_at:null,
+
+updated_at:
+new Date().toISOString()
+
+})
+
+.eq("id",repo.id)
+
+.eq("owner_id",currentUser.id);
+
+
+if(result.error){
+
+console.error(result.error);
+
+alert(
+"Unable to unpublish website."
+);
+
+return;
+
+}
+
+
+/*
+UNPUBLISH ALL PAGES
+*/
+
+const pageResult =
+await supabaseClient
+
+.from("web_pages")
+
+.update({
+
+is_published:false,
+
+published_at:null
+
+})
+
+.eq("repository_id",repo.id)
+
+.eq("owner_id",currentUser.id);
+
+
+if(pageResult.error){
+
+console.error(
+pageResult.error
+);
+
+}
+
+
+alert(
+"Website unpublished successfully."
+);
+
+
+location.reload();
+
+}
+
+
+/* OPEN WEBSITE */
+
+async function openWebsite(){
+
+if(!repo){
+
+return;
+
+}
+
+
+/*
+FIND PUBLISHED INDEX
+*/
+
+const {
+data:pages,
+error
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.select("id,page_name,is_published")
+
+.eq("repository_id",repo.id)
+
+.eq("is_published",true);
+
+
+if(error){
+
+console.error(error);
+
+alert(
+"Unable to open website."
+);
+
+return;
+
+}
+
+
+const indexPage =
+(pages || []).find(
+page =>
+(page.page_name || "")
+.toLowerCase() ===
+"index.html"
+);
+
+
+if(!indexPage){
+
+alert(
+"Published index.html was not found."
+);
+
+return;
+
+}
+
+
+window.open(
+"published-website.html?id=" +
+encodeURIComponent(indexPage.id),
+"_blank"
+);
+
+}
+
+
+/* DELETE */
 
 async function deleteRepo(){
 
-if(!repo){
+if(!checkOwner()){
 
 return;
 
@@ -577,9 +1182,14 @@ try{
 
 const result =
 await supabaseClient
+
 .from("repositories")
+
 .delete()
-.eq("id",repo.id);
+
+.eq("id",repo.id)
+
+.eq("owner_id",currentUser.id);
 
 
 if(result.error){
@@ -620,6 +1230,8 @@ window.location.href =
 
 }
 
+
+/* START */
 
 loadRepo();
 
