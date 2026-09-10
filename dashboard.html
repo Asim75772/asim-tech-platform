@@ -1,202 +1,268 @@
-            color: white;
-        }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        .section {
-            background: #161b22;
+<title>Dashboard — ASIM TECH</title>
 
-            border: 1px solid #30363d;
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-            border-radius: 10px;
+<style>
 
-            margin-bottom: 25px;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
-            overflow: hidden;
-        }
+body{
+    font-family:Arial,sans-serif;
+    background:#0d1117;
+    color:#ffffff;
+}
 
-        .section-title {
-            padding: 18px 20px;
+.navbar{
+    height:65px;
+    background:#161b22;
+    border-bottom:1px solid #30363d;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+}
 
-            border-bottom: 1px solid #30363d;
+.logo{
+    font-size:21px;
+    font-weight:bold;
+}
 
-            font-size: 20px;
+.green{
+    color:#39d353;
+}
 
-            font-weight: bold;
-        }
+.home{
+    color:#58a6ff;
+    text-decoration:none;
+}
 
-        .repo {
-            padding: 20px;
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:35px 20px;
+}
 
-            border-bottom: 1px solid #30363d;
-        }
+.welcome h1{
+    font-size:30px;
+    margin-bottom:8px;
+}
 
-        .repo:last-child {
-            border-bottom: none;
-        }
+.welcome p{
+    color:#8b949e;
+}
 
-        .repo h3 {
-            color: #58a6ff;
+.top-buttons{
+    display:flex;
+    gap:12px;
+    margin:25px 0;
+}
 
-            margin-bottom: 8px;
-        }
+.btn{
+    display:inline-block;
+    padding:11px 17px;
+    border-radius:7px;
+    text-decoration:none;
+    font-weight:bold;
+    border:1px solid #30363d;
+}
 
-        .repo p {
-            color: #8b949e;
+.new-repo{
+    background:#238636;
+    color:white;
+}
 
-            margin-bottom: 10px;
-        }
+.all-repo{
+    background:#21262d;
+    color:white;
+}
 
-        .repo-info {
-            color: #8b949e;
+.section{
+    background:#161b22;
+    border:1px solid #30363d;
+    border-radius:10px;
+    margin-bottom:25px;
+    overflow:hidden;
+}
 
-            font-size: 14px;
-        }
+.section-title{
+    padding:18px 20px;
+    border-bottom:1px solid #30363d;
+    font-size:20px;
+    font-weight:bold;
+}
 
-        .empty {
-            padding: 35px 20px;
+.repo{
+    padding:20px;
+    border-bottom:1px solid #30363d;
+}
 
-            text-align: center;
+.repo:last-child{
+    border-bottom:none;
+}
 
-            color: #8b949e;
-        }
+.repo h3{
+    margin-bottom:8px;
+}
 
-        footer {
-            text-align: center;
+.repo h3 a{
+    color:#58a6ff;
+    text-decoration:none;
+}
 
-            padding: 30px;
+.repo p{
+    color:#8b949e;
+    margin-bottom:10px;
+}
 
-            color: #8b949e;
+.repo-info{
+    color:#8b949e;
+    font-size:14px;
+}
 
-            border-top: 1px solid #30363d;
+.open{
+    color:#58a6ff;
+    text-decoration:none;
+}
 
-            margin-top: 40px;
-        }
+.badge{
+    display:inline-block;
+    padding:3px 8px;
+    border:1px solid #30363d;
+    border-radius:20px;
+    font-size:12px;
+    margin-left:8px;
+}
 
-        @media (max-width: 600px) {
+.empty{
+    padding:35px 20px;
+    text-align:center;
+    color:#8b949e;
+}
 
-            .container {
-                padding: 25px 15px;
-            }
+.loading{
+    padding:35px 20px;
+    text-align:center;
+    color:#58a6ff;
+}
 
-            .welcome h1 {
-                font-size: 25px;
-            }
+footer{
+    text-align:center;
+    padding:30px;
+    color:#8b949e;
+    border-top:1px solid #30363d;
+    margin-top:40px;
+}
 
-            .btn {
-                width: 100%;
+@media(max-width:600px){
 
-                text-align: center;
-            }
+    .container{
+        padding:25px 15px;
+    }
 
-        }
+    .welcome h1{
+        font-size:25px;
+    }
 
-    </style>
+    .top-buttons{
+        flex-direction:column;
+    }
+
+    .btn{
+        width:100%;
+        text-align:center;
+    }
+
+}
+
+</style>
 
 </head>
 
-
 <body>
-
 
 <nav class="navbar">
 
     <div class="logo">
-
         <span class="green">ASIM</span> TECH
-
     </div>
 
-    <a href="index.html" class="profile">
-
+    <a href="index.html" class="home">
         Home
-
     </a>
 
 </nav>
 
 
-
 <div class="container">
-
 
     <div class="welcome">
 
         <h1>
-
             Welcome to ASIM TECH 👋
-
         </h1>
 
         <p>
-
             Your coding dashboard
-
         </p>
 
     </div>
 
 
-
     <div class="top-buttons">
 
-        <a href="#" class="btn new-repo">
-
+        <a href="new-repository.html" class="btn new-repo">
             ➕ New Repository
-
         </a>
 
-        <a href="#" class="btn settings">
-
-            ⚙️ Settings
-
+        <a href="repositories.html" class="btn all-repo">
+            📁 All Repositories
         </a>
 
     </div>
 
 
-
     <div class="section">
 
         <div class="section-title">
-
             📁 Your Repositories
-
         </div>
 
+        <div id="repoList">
 
-        <div class="empty">
-
-            No repositories yet.
-
-            <br><br>
-
-            Create your first repository!
+            <div class="loading">
+                Loading repositories...
+            </div>
 
         </div>
 
     </div>
-
 
 
     <div class="section">
 
         <div class="section-title">
-
             ⚡ Recent Activity
-
         </div>
-
 
         <div class="empty">
 
-            Your recent activity will appear here.
+            Repository activity will appear here soon.
 
         </div>
 
     </div>
-
 
 </div>
-
 
 
 <footer>
@@ -206,6 +272,225 @@
 </footer>
 
 
-</body>
+<script>
 
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+const repoList =
+document.getElementById("repoList");
+
+
+async function loadDashboard(){
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+
+    if(!user){
+
+        window.location.href =
+        "login.html";
+
+        return;
+
+    }
+
+
+    const {
+        data:repos,
+        error
+    } =
+    await supabaseClient
+
+        .from("repositories")
+
+        .select(
+            "id,name,description,is_private,created_at,updated_at"
+        )
+
+        .order(
+            "updated_at",
+            {ascending:false}
+        )
+
+        .limit(10);
+
+
+    if(error){
+
+        console.error(error);
+
+        repoList.innerHTML = `
+
+            <div class="empty">
+
+                Unable to load repositories.
+
+                <br><br>
+
+                Please refresh the page.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    if(!repos || repos.length === 0){
+
+        repoList.innerHTML = `
+
+            <div class="empty">
+
+                No repositories yet.
+
+                <br><br>
+
+                <a
+                    href="new-repository.html"
+                    class="open"
+                >
+                    Create your first repository →
+                </a>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    repoList.innerHTML =
+    repos.map(repo => `
+
+        <div class="repo">
+
+            <h3>
+
+                <a
+                    href="repository-details.html?id=${repo.id}"
+                >
+                    ${escapeHtml(repo.name)}
+                </a>
+
+                <span class="badge">
+
+                    ${
+                        repo.is_private
+                        ? "Private"
+                        : "Public"
+                    }
+
+                </span>
+
+            </h3>
+
+
+            <p>
+
+                ${
+                    escapeHtml(
+                        repo.description ||
+                        "No description"
+                    )
+                }
+
+            </p>
+
+
+            <div class="repo-info">
+
+                Updated:
+                ${
+                    formatDate(
+                        repo.updated_at ||
+                        repo.created_at
+                    )
+                }
+
+                &nbsp; • &nbsp;
+
+                <a
+                    class="open"
+                    href="repository-details.html?id=${repo.id}"
+                >
+                    Open Repository →
+                </a>
+
+            </div>
+
+        </div>
+
+    `).join("");
+
+}
+
+
+function escapeHtml(value){
+
+    return String(value).replace(
+        /[&<>"']/g,
+
+        function(character){
+
+            return {
+
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#039;"
+
+            }[character];
+
+        }
+
+    );
+
+}
+
+
+function formatDate(value){
+
+    if(!value){
+
+        return "Unknown";
+
+    }
+
+    return new Date(value)
+        .toLocaleDateString(
+            "en-IN",
+            {
+                day:"2-digit",
+                month:"short",
+                year:"numeric"
+            }
+        );
+
+}
+
+
+loadDashboard();
+
+</script>
+
+</body>
 </html>
