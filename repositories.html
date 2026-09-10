@@ -1,527 +1,548 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Repositories – ASIM TECH</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+<title>Repositories — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#07111f,#0b2233,#063b35);
+    color:#fff;
+    min-height:100vh;
+}
+
+nav{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 6%;
+    background:rgba(5,12,22,.92);
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+    color:#36e0b5;
+}
+
+.nav-links{
+    display:flex;
+    gap:22px;
+}
+
+.nav-links a{
+    color:#ddd;
+    text-decoration:none;
+}
+
+.nav-links a:hover{
+    color:#36e0b5;
+}
+
+.container{
+    width:90%;
+    max-width:1000px;
+    margin:40px auto;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.header h1{
+    font-size:32px;
+}
+
+.header p{
+    color:#aab7c4;
+    margin-top:7px;
+}
+
+.new-btn{
+    background:#36e0b5;
+    color:#06151a;
+    text-decoration:none;
+    padding:12px 18px;
+    border-radius:10px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.new-btn:hover{
+    opacity:.9;
+}
+
+.search{
+    width:100%;
+    padding:15px;
+    border-radius:10px;
+    border:1px solid #294252;
+    background:#0c1b29;
+    color:#fff;
+    outline:none;
+    margin-bottom:25px;
+    font-size:15px;
+}
+
+.search:focus{
+    border-color:#36e0b5;
+}
+
+#loading{
+    text-align:center;
+    color:#aab7c4;
+    padding:40px;
+}
+
+#message{
+    text-align:center;
+    color:#ff8d8d;
+    padding:20px;
+    display:none;
+}
+
+.repositories{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:18px;
+}
+
+.repo-card{
+    background:rgba(13,29,43,.9);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;
+    padding:22px;
+    transition:.2s;
+}
+
+.repo-card:hover{
+    transform:translateY(-3px);
+    border-color:#36e0b5;
+}
+
+.repo-name{
+    font-size:21px;
+    font-weight:bold;
+    color:#fff;
+    margin-bottom:10px;
+    word-break:break-word;
+}
+
+.repo-description{
+    color:#aab7c4;
+    min-height:45px;
+    line-height:1.5;
+    margin-bottom:18px;
+}
+
+.badges{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:15px;
+}
+
+.badge{
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    background:#17384a;
+    color:#8edfc9;
+}
+
+.private{
+    background:#46351c;
+    color:#ffd27a;
+}
+
+.repo-info{
+    color:#8293a1;
+    font-size:13px;
+    margin-bottom:16px;
+}
+
+.empty{
+    text-align:center;
+    padding:55px 20px;
+    background:rgba(13,29,43,.8);
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.1);
+}
+
+.empty h2{
+    margin-bottom:10px;
+}
+
+.empty p{
+    color:#aab7c4;
+    margin-bottom:20px;
+}
+
+.empty a{
+    display:inline-block;
+    background:#36e0b5;
+    color:#06151a;
+    padding:11px 18px;
+    border-radius:9px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+footer{
+    text-align:center;
+    color:#71818d;
+    padding:35px 10px;
+    font-size:13px;
+}
+
+@media(max-width:600px){
+
+    nav{
+        padding:0 5%;
     }
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #07111f;
-      color: #ffffff;
-      min-height: 100vh;
+    .nav-links{
+        gap:12px;
+        font-size:13px;
     }
 
-    /* NAVBAR */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(7, 17, 31, 0.95);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(12px);
+    .container{
+        width:92%;
+        margin:28px auto;
     }
 
-    .nav-container {
-      max-width: 1150px;
-      margin: auto;
-      padding: 18px 22px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .header{
+        align-items:flex-start;
+        flex-direction:column;
     }
 
-    .logo {
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 1px;
+    .header h1{
+        font-size:27px;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 24px;
-      align-items: center;
+    .new-btn{
+        width:100%;
+        text-align:center;
     }
-
-    .nav-links a {
-      color: #cbd5e1;
-      text-decoration: none;
-      font-size: 15px;
-      transition: 0.3s;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: #34d399;
-    }
-
-    .signin {
-      border: 1px solid #2563eb;
-      padding: 9px 17px;
-      border-radius: 9px;
-      color: #ffffff !important;
-    }
-
-    .signin:hover {
-      background: #2563eb;
-    }
-
-    /* MAIN */
-    .container {
-      max-width: 1050px;
-      margin: auto;
-      padding: 55px 22px 80px;
-    }
-
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 35px;
-    }
-
-    .page-header h1 {
-      font-size: 38px;
-      margin-bottom: 10px;
-    }
-
-    .page-header p {
-      color: #94a3b8;
-      font-size: 16px;
-    }
-
-    .new-btn {
-      display: inline-block;
-      text-decoration: none;
-      background: #10b981;
-      color: #ffffff;
-      padding: 13px 20px;
-      border-radius: 10px;
-      font-weight: 700;
-      white-space: nowrap;
-      transition: 0.3s;
-    }
-
-    .new-btn:hover {
-      background: #059669;
-      transform: translateY(-2px);
-    }
-
-    /* SEARCH */
-    .search-box {
-      margin-bottom: 28px;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 15px 18px;
-      border-radius: 10px;
-      border: 1px solid #243244;
-      background: #0d1a2b;
-      color: #ffffff;
-      font-size: 15px;
-      outline: none;
-    }
-
-    .search-box input:focus {
-      border-color: #10b981;
-    }
-
-    .search-box input::placeholder {
-      color: #64748b;
-    }
-
-    /* REPOSITORY CARD */
-    .repo-list {
-      display: grid;
-      gap: 18px;
-    }
-
-    .repo-card {
-      background: #0d1a2b;
-      border: 1px solid #1e2d40;
-      border-radius: 15px;
-      padding: 23px;
-      transition: 0.3s;
-    }
-
-    .repo-card:hover {
-      transform: translateY(-3px);
-      border-color: #10b981;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-    }
-
-    .repo-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 15px;
-    }
-
-    .repo-name {
-      color: #60a5fa;
-      font-size: 21px;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .repo-name:hover {
-      color: #34d399;
-    }
-
-    .badge {
-      font-size: 12px;
-      border: 1px solid #334155;
-      color: #94a3b8;
-      padding: 5px 10px;
-      border-radius: 20px;
-    }
-
-    .description {
-      color: #94a3b8;
-      margin: 13px 0 20px;
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    .repo-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      color: #64748b;
-      font-size: 13px;
-    }
-
-    .repo-info {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-    }
-
-    .view-btn {
-      color: #34d399;
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    .view-btn:hover {
-      color: #ffffff;
-    }
-
-    /* EMPTY */
-    .empty {
-      display: none;
-      text-align: center;
-      padding: 60px 20px;
-      background: #0d1a2b;
-      border: 1px solid #1e2d40;
-      border-radius: 15px;
-      color: #94a3b8;
-    }
-
-    .empty-icon {
-      font-size: 42px;
-      margin-bottom: 15px;
-    }
-
-    .empty h2 {
-      color: #ffffff;
-      margin-bottom: 8px;
-    }
-
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 25px 20px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      color: #64748b;
-      font-size: 13px;
-    }
-
-    /* MOBILE */
-    @media (max-width: 700px) {
-
-      .nav-container {
-        padding: 16px;
-      }
-
-      .nav-links {
-        gap: 10px;
-      }
-
-      .nav-links a:not(.signin) {
-        display: none;
-      }
-
-      .container {
-        padding: 40px 16px 60px;
-      }
-
-      .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .page-header h1 {
-        font-size: 31px;
-      }
-
-      .new-btn {
-        width: 100%;
-        text-align: center;
-      }
-
-      .repo-top {
-        flex-direction: column;
-      }
-
-      .repo-bottom {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-  </style>
+}
+</style>
 </head>
 
 <body>
 
-  <!-- NAVBAR -->
-  <nav>
-    <div class="nav-container">
+<nav>
+    <div class="logo">⚡ ASIM TECH</div>
 
-      <a href="index.html" class="logo">
-        ASIM TECH
-      </a>
-
-      <div class="nav-links">
+    <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="repositories.html" class="active">Repositories</a>
-        <a href="login.html" class="signin">👤 Sign In</a>
-      </div>
-
+        <a href="repositories.html">Repositories</a>
+        <a href="dashboard.html">Dashboard</a>
     </div>
-  </nav>
+</nav>
 
+<div class="container">
 
-  <!-- MAIN CONTENT -->
-  <main class="container">
+    <div class="header">
+        <div>
+            <h1>📁 Repositories</h1>
+            <p>Your ASIM TECH repositories</p>
+        </div>
 
-    <div class="page-header">
-
-      <div>
-        <h1>📁 Repositories</h1>
-        <p>Explore and manage your coding projects.</p>
-      </div>
-
-      <a href="new-repository.html" class="new-btn">
-        ＋ New Repository
-      </a>
-
+        <a class="new-btn" href="new-repository.html">
+            ＋ New Repository
+        </a>
     </div>
 
-
-    <!-- SEARCH -->
-    <div class="search-box">
-      <input
+    <input
         type="text"
-        id="searchInput"
+        id="search"
+        class="search"
         placeholder="🔍 Search repositories..."
-        onkeyup="searchRepositories()"
-      >
+    >
+
+    <div id="loading">
+        Loading repositories...
     </div>
 
+    <div id="message"></div>
 
-    <!-- REPOSITORY LIST -->
-    <div class="repo-list" id="repoList">
+    <div id="repositories" class="repositories"></div>
 
+</div>
 
-      <!-- REPOSITORY 1 -->
-      <div
-        class="repo-card"
-        data-name="asim-tech-platform"
-        data-desc="ASIM TECH web platform authentication repositories project management"
-      >
-
-        <div class="repo-top">
-
-          <div>
-            <a
-              href="https://github.com/Asim75772/asim-tech-platform"
-              target="_blank"
-              class="repo-name"
-            >
-              asim-tech-platform
-            </a>
-          </div>
-
-          <span class="badge">Public</span>
-
-        </div>
-
-        <p class="description">
-          ASIM TECH web platform — authentication, repositories
-          and project management.
-        </p>
-
-        <div class="repo-bottom">
-
-          <div class="repo-info">
-            <span>● HTML</span>
-            <span>⭐ 0</span>
-            <span>Updated today</span>
-          </div>
-
-          <a
-            href="https://github.com/Asim75772/asim-tech-platform"
-            target="_blank"
-            class="view-btn"
-          >
-            View on GitHub →
-          </a>
-
-        </div>
-
-      </div>
-
-
-      <!-- REPOSITORY 2 -->
-      <div
-        class="repo-card"
-        data-name="new-project"
-        data-desc="Create your next project with ASIM TECH"
-      >
-
-        <div class="repo-top">
-
-          <div>
-            <a
-              href="new-repository.html"
-              class="repo-name"
-            >
-              new-project
-            </a>
-          </div>
-
-          <span class="badge">Private</span>
-
-        </div>
-
-        <p class="description">
-          Create your next project with ASIM TECH.
-        </p>
-
-        <div class="repo-bottom">
-
-          <div class="repo-info">
-            <span>● Project</span>
-            <span>Recently created</span>
-          </div>
-
-          <a
-            href="new-repository.html"
-            class="view-btn"
-          >
-            Open →
-          </a>
-
-        </div>
-
-      </div>
-
-
-    </div>
-
-
-    <!-- NO RESULT -->
-    <div class="empty" id="emptyState">
-
-      <div class="empty-icon">🔎</div>
-
-      <h2>No repositories found</h2>
-
-      <p>
-        Try searching with a different repository name.
-      </p>
-
-    </div>
-
-  </main>
-
-
-  <!-- FOOTER -->
-  <footer>
+<footer>
     © 2026 ASIM TECH — Code. Create. Innovate.
-    <br><br>
-    Built with ❤️ by ASIM TECH
-  </footer>
+</footer>
 
 
-  <!-- SEARCH SCRIPT -->
-  <script>
+<script>
 
-    function searchRepositories() {
+const SUPABASE_URL =
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-      const input =
-        document.getElementById("searchInput")
-        .value
-        .toLowerCase()
-        .trim();
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
-      const cards =
-        document.querySelectorAll(".repo-card");
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
 
-      let found = 0;
 
-      cards.forEach(function(card) {
+let allRepositories = [];
 
-        const name =
-          card.getAttribute("data-name")
-          .toLowerCase();
 
-        const description =
-          card.getAttribute("data-desc")
-          .toLowerCase();
+/* Load repositories */
 
-        if (
-          name.includes(input) ||
-          description.includes(input)
-        ) {
+async function loadRepositories(){
 
-          card.style.display = "block";
-          found++;
+    const loading =
+        document.getElementById("loading");
 
-        } else {
+    const message =
+        document.getElementById("message");
 
-          card.style.display = "none";
+    const container =
+        document.getElementById("repositories");
 
+    try{
+
+        const {
+            data: { user },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+
+        if(userError){
+            throw userError;
         }
 
-      });
+
+        if(!user){
+
+            window.location.href = "login.html";
+            return;
+        }
 
 
-      const emptyState =
-        document.getElementById("emptyState");
+        const { data, error } =
+            await supabaseClient
+                .from("repositories")
+                .select("*")
+                .order("created_at", {
+                    ascending:false
+                });
 
-      if (found === 0) {
-        emptyState.style.display = "block";
-      } else {
-        emptyState.style.display = "none";
-      }
+
+        if(error){
+            throw error;
+        }
+
+
+        allRepositories = data || [];
+
+        loading.style.display = "none";
+
+        renderRepositories(allRepositories);
 
     }
+    catch(error){
 
-  </script>
+        console.error(error);
+
+        loading.style.display = "none";
+
+        message.style.display = "block";
+
+        message.textContent =
+            "Unable to load repositories. Please try again.";
+
+    }
+}
+
+
+/* Display repositories */
+
+function renderRepositories(repositories){
+
+    const container =
+        document.getElementById("repositories");
+
+    container.innerHTML = "";
+
+
+    if(repositories.length === 0){
+
+        container.innerHTML = `
+            <div class="empty">
+                <h2>📂 No repositories yet</h2>
+
+                <p>
+                    Create your first repository on ASIM TECH.
+                </p>
+
+                <a href="new-repository.html">
+                    ＋ Create Repository
+                </a>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    repositories.forEach(repo => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "repo-card";
+
+
+        const visibility =
+            repo.is_private
+                ? "Private"
+                : "Public";
+
+
+        const badgeClass =
+            repo.is_private
+                ? "badge private"
+                : "badge";
+
+
+        let date = "";
+
+        if(repo.created_at){
+
+            date =
+                new Date(
+                    repo.created_at
+                ).toLocaleDateString(
+                    "en-IN",
+                    {
+                        day:"numeric",
+                        month:"short",
+                        year:"numeric"
+                    }
+                );
+        }
+
+
+        card.innerHTML = `
+
+            <div class="repo-name">
+                📦 ${escapeHtml(repo.name)}
+            </div>
+
+            <div class="repo-description">
+                ${
+                    repo.description
+                    ? escapeHtml(repo.description)
+                    : "No description provided."
+                }
+            </div>
+
+            <div class="badges">
+
+                <span class="${badgeClass}">
+                    ${visibility}
+                </span>
+
+                <span class="badge">
+                    ASIM TECH
+                </span>
+
+            </div>
+
+            <div class="repo-info">
+                Created ${date}
+            </div>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+/* Search */
+
+document
+    .getElementById("search")
+    .addEventListener("input", function(){
+
+        const search =
+            this.value
+                .toLowerCase()
+                .trim();
+
+
+        const filtered =
+            allRepositories.filter(repo => {
+
+                const name =
+                    (repo.name || "")
+                    .toLowerCase();
+
+                const description =
+                    (repo.description || "")
+                    .toLowerCase();
+
+
+                return (
+                    name.includes(search) ||
+                    description.includes(search)
+                );
+
+            });
+
+
+        renderRepositories(filtered);
+
+    });
+
+
+/* Security: escape HTML */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* Start */
+
+loadRepositories();
+
+</script>
 
 </body>
 </html>
