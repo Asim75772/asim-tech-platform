@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Repository — ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -130,19 +131,25 @@ word-break:break-all;
 }
 
 .buttons{
-display:flex;
+display:grid;
+grid-template-columns:1fr 1fr;
 gap:12px;
 margin-top:25px;
 }
 
 button{
-flex:1;
+width:100%;
 padding:14px;
 border:0;
 border-radius:10px;
 font-size:16px;
 font-weight:bold;
 cursor:pointer;
+}
+
+.files{
+background:#17384a;
+color:#8edfc9;
 }
 
 .edit{
@@ -153,6 +160,7 @@ color:#06151a;
 .delete{
 background:#55252c;
 color:#ffb5bd;
+grid-column:1 / -1;
 }
 
 #loading{
@@ -203,7 +211,11 @@ grid-template-columns:1fr;
 }
 
 .buttons{
-flex-direction:column;
+grid-template-columns:1fr;
+}
+
+.delete{
+grid-column:auto;
 }
 
 }
@@ -323,6 +335,13 @@ ASIM TECH
 <div class="buttons">
 
 <button
+class="files"
+onclick="openFiles()">
+📁 Repository Files
+</button>
+
+
+<button
 class="edit"
 onclick="editRepo()">
 ✏️ Edit Repository
@@ -368,10 +387,8 @@ new URLSearchParams(
 window.location.search
 );
 
-
 const repoId =
 params.get("id");
-
 
 let repo=null;
 
@@ -380,13 +397,11 @@ async function loadRepo(){
 
 try{
 
-
 const {
 data:{user},
 error:userError
 } =
 await supabaseClient.auth.getUser();
-
 
 if(userError){
 throw userError;
@@ -493,7 +508,6 @@ document.getElementById("repository")
 
 console.error(error);
 
-
 document.getElementById("loading")
 .style.display="none";
 
@@ -501,9 +515,7 @@ document.getElementById("loading")
 const errorBox=
 document.getElementById("error");
 
-
 errorBox.style.display="block";
-
 
 errorBox.textContent=
 "Repository not found or you do not have access.";
@@ -519,7 +531,6 @@ if(!date){
 return "Not available";
 }
 
-
 return new Date(date)
 .toLocaleDateString(
 "en-IN",
@@ -533,12 +544,23 @@ year:"numeric"
 }
 
 
+/* OPEN FILES */
+
+function openFiles(){
+
+window.location.href =
+"repository-files.html?repository_id=" +
+encodeURIComponent(repo.id);
+
+}
+
+
 /* EDIT REPOSITORY */
 
 function editRepo(){
 
-window.location.href=
-"edit-repository.html?id="+
+window.location.href =
+"edit-repository.html?id=" +
 encodeURIComponent(repo.id);
 
 }
@@ -553,7 +575,7 @@ return;
 }
 
 
-const confirmed=
+const confirmed =
 confirm(
 "Are you sure you want to delete '" +
 repo.name +
@@ -567,7 +589,6 @@ return;
 
 
 try{
-
 
 const {
 error
@@ -588,14 +609,13 @@ alert(
 );
 
 
-window.location.href=
+window.location.href =
 "repositories.html";
 
 
 }catch(error){
 
 console.error(error);
-
 
 alert(
 "Unable to delete repository."
