@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Repository — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#07111f,#0b2233,#063b35);
+color:#fff;
+min-height:100vh;
+}
+
+nav{
+height:70px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 6%;
+background:rgba(5,12,22,.95);
+border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#36e0b5;
+}
+
+.nav-links{
+display:flex;
+gap:18px;
+}
+
+.nav-links a{
+color:#ddd;
+text-decoration:none;
+}
+
+.container{
+width:90%;
+max-width:750px;
+margin:40px auto;
+}
+
+.back{
+color:#8edfc9;
+text-decoration:none;
+display:inline-block;
+margin-bottom:22px;
+}
+
+.card{
+background:rgba(13,29,43,.95);
+border:1px solid rgba(255,255,255,.1);
+border-radius:16px;
+padding:28px;
+}
+
+h1{
+font-size:30px;
+margin-bottom:25px;
+}
+
+label{
+display:block;
+font-weight:bold;
+margin-bottom:8px;
+font-size:16px;
+}
+
+input,textarea{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:1px solid #294252;
+background:#071725;
+color:white;
+font-size:15px;
+outline:none;
+margin-bottom:22px;
+}
+
+textarea{
+min-height:130px;
+resize:vertical;
+}
+
+input:focus,textarea:focus{
+border-color:#36e0b5;
+}
+
+.visibility{
+margin-bottom:25px;
+}
+
+.option{
+display:block;
+padding:17px;
+border:1px solid #294252;
+border-radius:10px;
+background:#071725;
+margin-bottom:12px;
+cursor:pointer;
+}
+
+.option input{
+width:auto;
+margin:0 10px 0 0;
+}
+
+.buttons{
+display:flex;
+gap:12px;
+}
+
+button{
+flex:1;
+padding:14px;
+border:0;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.save{
+background:#36e0b5;
+color:#06151a;
+}
+
+.cancel{
+background:#172c3d;
+color:#fff;
+}
+
+#loading{
+text-align:center;
+padding:40px;
+color:#aab7c4;
+}
+
+#message{
+margin-bottom:20px;
+padding:12px;
+border-radius:8px;
+display:none;
+text-align:center;
+}
+
+.success{
+background:#123d35;
+color:#6ff0ce;
+}
+
+.error{
+background:#4b2027;
+color:#ffb5bd;
+}
+
+footer{
+text-align:center;
+color:#71818d;
+padding:40px 10px;
+}
+
+@media(max-width:600px){
+.container{width:92%;margin:25px auto}
+.card{padding:22px}
+h1{font-size:27px}
+.buttons{flex-direction:column}
+.nav-links{gap:10px;font-size:13px}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">⚡ ASIM TECH</div>
+
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="repositories.html">Repositories</a>
+<a href="dashboard.html">Dashboard</a>
+</div>
+</nav>
+
+<div class="container">
+
+<a class="back" href="repositories.html">
+← Back to Repositories
+</a>
+
+<div id="loading">
+Loading repository...
+</div>
+
+<div id="message"></div>
+
+<div id="editor" class="card" style="display:none">
+
+<h1>✏️ Edit Repository</h1>
+
+<label for="name">
+Repository name
+</label>
+
+<input
+id="name"
+type="text"
+placeholder="Repository name"
+maxlength="100"
+>
+
+<label for="description">
+Description
+</label>
+
+<textarea
+id="description"
+placeholder="What is this project about?"
+maxlength="500"
+></textarea>
+
+<div class="visibility">
+
+<label>Repository visibility</label>
+
+<label class="option">
+<input
+type="radio"
+name="visibility"
+value="public"
+id="public"
+>
+🌐 Public
+</label>
+
+<label class="option">
+<input
+type="radio"
+name="visibility"
+value="private"
+id="private"
+>
+🔒 Private
+</label>
+
+</div>
+
+<div class="buttons">
+
+<button
+class="cancel"
+onclick="goBack()">
+Cancel
+</button>
+
+<button
+class="save"
+onclick="saveRepository()">
+💾 Save Changes
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+© 2026 ASIM TECH — Code. Create. Innovate.
+</footer>
+
+<script>
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_PUBLISHABLE_KEY
+);
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const repoId =
+params.get("id");
+
+let currentUser=null;
+
+
+function showMessage(text,type){
+
+const box =
+document.getElementById("message");
+
+box.textContent=text;
+
+box.className=type;
+
+box.style.display="block";
+
+}
+
+
+async function loadRepository(){
+
+try{
+
+const {
+data:{user},
+error:userError
+} =
+await supabaseClient.auth.getUser();
+
+if(userError) throw userError;
+
+if(!user){
+
+window.location.href="login.html";
+return;
+
+}
+
+currentUser=user;
+
+
+if(!repoId){
+
+throw new Error("Repository ID missing");
+
+}
+
+
+const {data,error} =
+await supabaseClient
+.from("repositories")
+.select("*")
+.eq("id",repoId)
+.eq("owner_id",user.id)
+.single();
+
+
+if(error) throw error;
+
+
+document.getElementById("name").value =
+data.name || "";
+
+document.getElementById("description").value =
+data.description || "";
+
+
+if(data.is_private){
+
+document.getElementById("private").checked=true;
+
+}else{
+
+document.getElementById("public").checked=true;
+
+}
+
+
+document.getElementById("loading").style.display="none";
+
+document.getElementById("editor").style.display="block";
+
+
+}catch(error){
+
+console.error(error);
+
+document.getElementById("loading").style.display="none";
+
+showMessage(
+"Repository not found or you do not have permission to edit it.",
+"error"
+);
+
+}
+
+}
+
+
+async function saveRepository(){
+
+const name =
+document.getElementById("name")
+.value.trim();
+
+const description =
+document.getElementById("description")
+.value.trim();
+
+const privateSelected =
+document.getElementById("private")
+.checked;
+
+
+if(!name){
+
+showMessage(
+"Repository name is required.",
+"error"
+);
+
+return;
+
+}
+
+
+if(!/^[a-zA-Z0-9._-]+$/.test(name)){
+
+showMessage(
+"Use only letters, numbers, dots, hyphens and underscores.",
+"error"
+);
+
+return;
+
+}
+
+
+try{
+
+const {data:existing,error:checkError} =
+await supabaseClient
+.from("repositories")
+.select("id")
+.eq("owner_id",currentUser.id)
+.eq("name",name)
+.neq("id",repoId);
+
+
+if(checkError) throw checkError;
+
+
+if(existing && existing.length>0){
+
+showMessage(
+"This repository name is already in use.",
+"error"
+);
+
+return;
+
+}
+
+
+const {error} =
+await supabaseClient
+.from("repositories")
+.update({
+
+name:name,
+description:description || null,
+is_private:privateSelected,
+updated_at:new Date().toISOString()
+
+})
+.eq("id",repoId)
+.eq("owner_id",currentUser.id);
+
+
+if(error) throw error;
+
+
+showMessage(
+"Repository updated successfully!",
+"success"
+);
+
+
+setTimeout(function(){
+
+window.location.href =
+"repository-details.html?id=" +
+encodeURIComponent(repoId);
+
+},800);
+
+
+}catch(error){
+
+console.error(error);
+
+showMessage(
+"Unable to update repository.",
+"error"
+);
+
+}
+
+}
+
+
+function goBack(){
+
+window.location.href =
+"repository-details.html?id=" +
+encodeURIComponent(repoId);
+
+}
+
+
+loadRepository();
+
+</script>
+
+</body>
+</html>
