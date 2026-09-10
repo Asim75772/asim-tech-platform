@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -24,7 +25,7 @@ body{
 }
 
 .navbar{
-    height:65px;
+    min-height:65px;
     background:#161b22;
     border-bottom:1px solid #30363d;
     display:flex;
@@ -42,9 +43,30 @@ body{
     color:#39d353;
 }
 
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
 .home{
     color:#58a6ff;
     text-decoration:none;
+    padding:8px 10px;
+}
+
+.profile{
+    color:#ffffff;
+    text-decoration:none;
+    background:#21262d;
+    border:1px solid #30363d;
+    padding:9px 13px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.profile:hover{
+    background:#30363d;
 }
 
 .container{
@@ -172,6 +194,21 @@ footer{
 
 @media(max-width:600px){
 
+    .navbar{
+        padding:10px 15px;
+        flex-wrap:wrap;
+        gap:10px;
+    }
+
+    .logo{
+        font-size:20px;
+    }
+
+    .nav-right{
+        width:100%;
+        justify-content:flex-end;
+    }
+
     .container{
         padding:25px 15px;
     }
@@ -197,20 +234,40 @@ footer{
 
 <body>
 
+
 <nav class="navbar">
 
     <div class="logo">
+
         <span class="green">ASIM</span> TECH
+
     </div>
 
-    <a href="index.html" class="home">
-        Home
-    </a>
+
+    <div class="nav-right">
+
+        <a
+            href="index.html"
+            class="home"
+        >
+            Home
+        </a>
+
+
+        <a
+            href="profile.html"
+            class="profile"
+        >
+            👤 My Profile
+        </a>
+
+    </div>
 
 </nav>
 
 
 <div class="container">
+
 
     <div class="welcome">
 
@@ -226,6 +283,7 @@ footer{
 
 
     <div class="top-buttons">
+
 
         <a
             href="new-repository.html"
@@ -250,31 +308,41 @@ footer{
             🌐 Web Page Builder
         </a>
 
+
     </div>
 
 
     <div class="section">
 
+
         <div class="section-title">
+
             📁 Your Repositories
+
         </div>
 
 
         <div id="repoList">
 
             <div class="loading">
+
                 Loading repositories...
+
             </div>
 
         </div>
+
 
     </div>
 
 
     <div class="section">
 
+
         <div class="section-title">
+
             ⚡ Recent Activity
+
         </div>
 
 
@@ -284,7 +352,9 @@ footer{
 
         </div>
 
+
     </div>
+
 
 </div>
 
@@ -297,6 +367,7 @@ footer{
 
 
 <script>
+
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -318,6 +389,7 @@ document.getElementById("repoList");
 
 
 async function loadDashboard(){
+
 
     const {
         data:{user}
@@ -529,5 +601,7 @@ loadDashboard();
 
 </script>
 
+
 </body>
+
 </html>
