@@ -172,6 +172,21 @@ background:#1877f2;
 color:#fff;
 }
 
+.publish{
+background:#238636;
+color:#fff;
+}
+
+.unpublish{
+background:#9b2226;
+color:#fff;
+}
+
+.live{
+background:#8957e5;
+color:#fff;
+}
+
 .empty{
 text-align:center;
 padding:45px 15px;
@@ -207,6 +222,16 @@ word-break:break-word;
 color:#8293a1;
 font-size:13px;
 margin-top:6px;
+}
+
+.published{
+color:#39d353;
+font-weight:bold;
+}
+
+.unpublished{
+color:#8b949e;
+font-weight:bold;
 }
 
 .web-actions{
@@ -1058,6 +1083,62 @@ card.className =
 "card web-page-card";
 
 
+const statusHtml =
+page.is_published
+
+? `<span class="published">🟢 Published</span>`
+
+: `<span class="unpublished">⚪ Unpublished</span>`;
+
+
+const publishButton =
+
+page.is_published
+
+? `
+
+<button
+class="btn unpublish"
+onclick="togglePublish('${page.id}',true)">
+
+🔴 Unpublish
+
+</button>
+
+`
+
+: `
+
+<button
+class="btn publish"
+onclick="togglePublish('${page.id}',false)">
+
+🟢 Publish
+
+</button>
+
+`;
+
+
+const liveButton =
+
+page.is_published
+
+? `
+
+<button
+class="btn live"
+onclick="openLive('${page.id}')">
+
+🌐 Open Live
+
+</button>
+
+`
+
+: "";
+
+
 card.innerHTML = `
 
 <div>
@@ -1071,7 +1152,7 @@ card.innerHTML = `
 
 <div class="web-page-info">
 
-Web Page
+${statusHtml}
 
 </div>
 
@@ -1097,6 +1178,12 @@ onclick="editWebPage('${page.id}')">
 </button>
 
 
+${publishButton}
+
+
+${liveButton}
+
+
 <button
 class="btn delete"
 onclick="deleteWebPage('${page.id}')">
@@ -1116,6 +1203,116 @@ onclick="deleteWebPage('${page.id}')">
 container.appendChild(card);
 
 });
+
+}
+
+
+/* PUBLISH / UNPUBLISH */
+
+async function togglePublish(id,currentStatus){
+
+const action =
+currentStatus
+? "unpublish"
+: "publish";
+
+
+const confirmed =
+confirm(
+
+currentStatus
+
+? "Are you sure you want to unpublish this web page?"
+
+: "Publish this web page?"
+
+);
+
+
+if(!confirmed){
+
+return;
+
+}
+
+
+try{
+
+
+const newStatus =
+!currentStatus;
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.update({
+
+is_published:
+newStatus,
+
+published_at:
+newStatus
+? new Date().toISOString()
+: null
+
+})
+
+.eq("id",id);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+alert(
+
+newStatus
+
+? "Web page published successfully!"
+
+: "Web page unpublished successfully!"
+
+);
+
+
+loadFiles();
+
+
+}catch(error){
+
+console.error(error);
+
+
+alert(
+"Unable to change publish status."
+);
+
+}
+
+}
+
+
+/* OPEN LIVE */
+
+function openLive(id){
+
+window.open(
+
+"web-page.html?id=" +
+
+encodeURIComponent(id),
+
+"_blank"
+
+);
 
 }
 
@@ -1210,12 +1407,14 @@ page.page_name;
 
 document.getElementById(
 "previewFrame"
-).srcdoc = fullPage;
+).srcdoc =
+fullPage;
 
 
 document.getElementById(
 "previewModal"
-).style.display = "block";
+).style.display =
+"block";
 
 
 }catch(error){
