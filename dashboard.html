@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -65,6 +66,7 @@ body{
     display:flex;
     gap:12px;
     margin:25px 0;
+    flex-wrap:wrap;
 }
 
 .btn{
@@ -83,6 +85,11 @@ body{
 
 .all-repo{
     background:#21262d;
+    color:white;
+}
+
+.page-builder{
+    background:#1f6feb;
     color:white;
 }
 
@@ -220,12 +227,27 @@ footer{
 
     <div class="top-buttons">
 
-        <a href="new-repository.html" class="btn new-repo">
+        <a
+            href="new-repository.html"
+            class="btn new-repo"
+        >
             ➕ New Repository
         </a>
 
-        <a href="repositories.html" class="btn all-repo">
+
+        <a
+            href="repositories.html"
+            class="btn all-repo"
+        >
             📁 All Repositories
+        </a>
+
+
+        <a
+            href="page-builder.html"
+            class="btn page-builder"
+        >
+            🌐 Web Page Builder
         </a>
 
     </div>
@@ -236,6 +258,7 @@ footer{
         <div class="section-title">
             📁 Your Repositories
         </div>
+
 
         <div id="repoList">
 
@@ -253,6 +276,7 @@ footer{
         <div class="section-title">
             ⚡ Recent Activity
         </div>
+
 
         <div class="empty">
 
@@ -277,8 +301,10 @@ footer{
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
+
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
 
 const supabaseClient =
 supabase.createClient(
@@ -295,7 +321,8 @@ async function loadDashboard(){
 
     const {
         data:{user}
-    } = await supabaseClient.auth.getUser();
+    } =
+    await supabaseClient.auth.getUser();
 
 
     if(!user){
@@ -390,6 +417,7 @@ async function loadDashboard(){
                     ${escapeHtml(repo.name)}
                 </a>
 
+
                 <span class="badge">
 
                     ${
@@ -418,6 +446,7 @@ async function loadDashboard(){
             <div class="repo-info">
 
                 Updated:
+
                 ${
                     formatDate(
                         repo.updated_at ||
@@ -426,6 +455,7 @@ async function loadDashboard(){
                 }
 
                 &nbsp; • &nbsp;
+
 
                 <a
                     class="open"
@@ -446,6 +476,7 @@ async function loadDashboard(){
 function escapeHtml(value){
 
     return String(value).replace(
+
         /[&<>"']/g,
 
         function(character){
@@ -475,14 +506,20 @@ function formatDate(value){
 
     }
 
+
     return new Date(value)
         .toLocaleDateString(
+
             "en-IN",
+
             {
+
                 day:"2-digit",
                 month:"short",
                 year:"numeric"
+
             }
+
         );
 
 }
