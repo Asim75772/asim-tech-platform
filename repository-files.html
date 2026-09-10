@@ -68,6 +68,7 @@ color:#8edfc9;
 text-decoration:none;
 display:inline-block;
 margin-bottom:20px;
+font-size:17px;
 }
 
 .header{
@@ -85,6 +86,7 @@ font-size:30px;
 .subtitle{
 color:#aab7c4;
 margin-top:7px;
+font-size:18px;
 }
 
 .new-btn{
@@ -95,6 +97,7 @@ padding:12px 18px;
 border-radius:10px;
 font-weight:bold;
 display:inline-block;
+text-align:center;
 }
 
 .web-btn{
@@ -146,6 +149,7 @@ border-radius:8px;
 padding:9px 12px;
 cursor:pointer;
 font-weight:bold;
+font-size:14px;
 }
 
 .open{
@@ -210,6 +214,10 @@ display:flex;
 gap:8px;
 margin-top:15px;
 flex-wrap:wrap;
+}
+
+.web-actions .btn{
+min-width:100px;
 }
 
 .modal{
@@ -301,7 +309,6 @@ align-items:flex-start;
 
 .new-btn{
 width:100%;
-text-align:center;
 }
 
 .file-row{
@@ -313,7 +320,7 @@ flex-direction:column;
 width:100%;
 }
 
-.btn{
+.actions .btn{
 flex:1;
 }
 
@@ -322,7 +329,7 @@ width:100%;
 }
 
 .web-actions .btn{
-width:100%;
+flex:1;
 }
 
 .modal{
@@ -414,7 +421,7 @@ Loading repository...
 </div>
 
 
-<!-- NORMAL REPOSITORY FILES -->
+<!-- REPOSITORY FILES -->
 
 <div class="section-title">
 
@@ -468,6 +475,7 @@ class="modal">
 
 <div class="modal-content">
 
+
 <div class="modal-header">
 
 <div id="modalTitle"
@@ -476,6 +484,7 @@ class="modal-title">
 Web Page Preview
 
 </div>
+
 
 <button
 id="closePreview"
@@ -493,6 +502,7 @@ id="previewFrame"
 sandbox="allow-scripts">
 
 </iframe>
+
 
 </div>
 
@@ -524,13 +534,12 @@ SUPABASE_PUBLISHABLE_KEY
 );
 
 
-/* GET REPOSITORY ID */
+/* REPOSITORY ID */
 
 const params =
 new URLSearchParams(
 window.location.search
 );
-
 
 const repoId =
 params.get("repository_id");
@@ -555,7 +564,7 @@ return String(value ?? "")
 }
 
 
-/* SHOW ERROR */
+/* ERROR */
 
 function showError(text){
 
@@ -569,14 +578,14 @@ box.style.display = "block";
 }
 
 
-/* LOAD REPOSITORY */
+/* LOAD EVERYTHING */
 
 async function loadFiles(){
 
 try{
 
 
-/* CHECK LOGIN */
+/* LOGIN */
 
 const {
 data:{user},
@@ -643,7 +652,7 @@ throw repoError;
 repository = repoData;
 
 
-/* SHOW REPOSITORY NAME */
+/* REPOSITORY TITLE */
 
 document.getElementById(
 "repoTitle"
@@ -657,23 +666,25 @@ repository.description ||
 );
 
 
-/* NEW FILE BUTTON */
+/* NEW FILE */
 
 document.getElementById(
 "newFileBtn"
 ).href =
 
 "file-editor.html?repository_id=" +
+
 encodeURIComponent(repoId);
 
 
-/* NEW WEB PAGE BUTTON */
+/* NEW WEB PAGE */
 
 document.getElementById(
 "newWebPageBtn"
 ).href =
 
 "page-builder.html?repository_id=" +
+
 encodeURIComponent(repoId);
 
 
@@ -731,11 +742,6 @@ console.error(
 webPageError
 );
 
-/*
-Do not stop the whole page if
-web_pages has a problem.
-*/
-
 renderWebPages([]);
 
 }else{
@@ -763,7 +769,6 @@ files || []
 
 }catch(error){
 
-
 console.error(error);
 
 
@@ -776,16 +781,14 @@ showError(
 "Unable to load repository."
 );
 
-
 }
 
 }
 
 
-/* DISPLAY NORMAL FILES */
+/* RENDER NORMAL FILES */
 
 function renderFiles(files){
-
 
 const container =
 document.getElementById("files");
@@ -795,7 +798,6 @@ container.innerHTML = "";
 
 
 if(files.length === 0){
-
 
 container.innerHTML = `
 
@@ -823,13 +825,12 @@ href="file-editor.html?repository_id=${encodeURIComponent(repoId)}">
 
 `;
 
-
 return;
 
 }
 
 
-/* SHOW EACH FILE */
+/* FILE CARDS */
 
 files.forEach(file => {
 
@@ -903,7 +904,6 @@ Delete
 
 container.appendChild(card);
 
-
 });
 
 }
@@ -916,8 +916,11 @@ function openFile(id){
 window.location.href =
 
 "file-editor.html?repository_id=" +
+
 encodeURIComponent(repoId) +
+
 "&file_id=" +
+
 encodeURIComponent(id);
 
 }
@@ -930,8 +933,11 @@ function editFile(id){
 window.location.href =
 
 "file-editor.html?repository_id=" +
+
 encodeURIComponent(repoId) +
+
 "&file_id=" +
+
 encodeURIComponent(id);
 
 }
@@ -940,7 +946,6 @@ encodeURIComponent(id);
 /* DELETE FILE */
 
 async function deleteFile(id){
-
 
 if(!confirm(
 "Delete this file?"
@@ -983,7 +988,6 @@ loadFiles();
 
 }catch(error){
 
-
 console.error(error);
 
 
@@ -991,16 +995,14 @@ alert(
 "Unable to delete file."
 );
 
-
 }
 
 }
 
 
-/* DISPLAY WEB PAGES */
+/* RENDER WEB PAGES */
 
 function renderWebPages(webPages){
-
 
 const container =
 document.getElementById("webPages");
@@ -1011,7 +1013,6 @@ container.innerHTML = "";
 
 if(!webPages ||
 webPages.length === 0){
-
 
 container.innerHTML = `
 
@@ -1039,13 +1040,12 @@ href="page-builder.html?repository_id=${encodeURIComponent(repoId)}">
 
 `;
 
-
 return;
 
 }
 
 
-/* SHOW EACH WEB PAGE */
+/* WEB PAGE CARDS */
 
 webPages.forEach(page => {
 
@@ -1089,6 +1089,15 @@ onclick="previewWebPage('${page.id}')">
 
 
 <button
+class="btn edit"
+onclick="editWebPage('${page.id}')">
+
+✏️ Edit
+
+</button>
+
+
+<button
 class="btn delete"
 onclick="deleteWebPage('${page.id}')">
 
@@ -1106,7 +1115,6 @@ onclick="deleteWebPage('${page.id}')">
 
 container.appendChild(card);
 
-
 });
 
 }
@@ -1115,7 +1123,6 @@ container.appendChild(card);
 /* PREVIEW WEB PAGE */
 
 async function previewWebPage(id){
-
 
 try{
 
@@ -1153,9 +1160,7 @@ return;
 }
 
 
-/* BUILD COMPLETE HTML */
-
-const html = `
+const fullPage = `
 
 <!DOCTYPE html>
 
@@ -1165,8 +1170,10 @@ const html = `
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
 
 <style>
 
@@ -1193,28 +1200,18 @@ ${page.js_content || ""}
 `;
 
 
-/* SET MODAL TITLE */
-
 document.getElementById(
 "modalTitle"
 ).textContent =
 
 "🌐 " +
-(page.page_name || "Web Page");
+page.page_name;
 
 
-/* LOAD PREVIEW */
-
-const frame =
 document.getElementById(
 "previewFrame"
-);
+).srcdoc = fullPage;
 
-
-frame.srcdoc = html;
-
-
-/* SHOW MODAL */
 
 document.getElementById(
 "previewModal"
@@ -1223,7 +1220,6 @@ document.getElementById(
 
 }catch(error){
 
-
 console.error(error);
 
 
@@ -1231,59 +1227,31 @@ alert(
 "Unable to preview web page."
 );
 
-
 }
 
 }
 
 
-/* CLOSE PREVIEW */
+/* EDIT WEB PAGE */
 
-document.getElementById(
-"closePreview"
-).addEventListener(
-"click",
-function(){
+function editWebPage(id){
 
-document.getElementById(
-"previewModal"
-).style.display = "none";
+window.location.href =
 
+"page-builder.html?repository_id=" +
 
-document.getElementById(
-"previewFrame"
-).srcdoc = "";
+encodeURIComponent(repoId) +
+
+"&page_id=" +
+
+encodeURIComponent(id);
 
 }
-);
-
-
-/* CLOSE WHEN CLICKING OUTSIDE */
-
-document.getElementById(
-"previewModal"
-).addEventListener(
-"click",
-function(event){
-
-if(event.target === this){
-
-this.style.display = "none";
-
-document.getElementById(
-"previewFrame"
-).srcdoc = "";
-
-}
-
-}
-);
 
 
 /* DELETE WEB PAGE */
 
 async function deleteWebPage(id){
-
 
 if(!confirm(
 "Delete this web page?"
@@ -1326,7 +1294,6 @@ loadFiles();
 
 }catch(error){
 
-
 console.error(error);
 
 
@@ -1334,10 +1301,54 @@ alert(
 "Unable to delete web page."
 );
 
+}
+
+}
+
+
+/* CLOSE PREVIEW */
+
+document.getElementById(
+"closePreview"
+).addEventListener(
+"click",
+function(){
+
+document.getElementById(
+"previewModal"
+).style.display = "none";
+
+
+document.getElementById(
+"previewFrame"
+).srcdoc = "";
+
+}
+);
+
+
+/* CLOSE MODAL OUTSIDE */
+
+document.getElementById(
+"previewModal"
+).addEventListener(
+"click",
+function(event){
+
+if(
+event.target === this
+){
+
+this.style.display = "none";
+
+document.getElementById(
+"previewFrame"
+).srcdoc = "";
 
 }
 
 }
+);
 
 
 /* START */
