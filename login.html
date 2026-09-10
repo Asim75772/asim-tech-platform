@@ -115,22 +115,39 @@
             margin-bottom: 18px;
         }
 
-        .forgot a,
-        .signup a {
+        .forgot a {
             color: #58a6ff;
             text-decoration: none;
             cursor: pointer;
         }
 
-        .forgot a:hover,
-        .signup a:hover {
+        .forgot a:hover {
             text-decoration: underline;
+        }
+
+        .back {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .back a {
+            color: #58a6ff;
+            cursor: pointer;
         }
 
         .signup {
             text-align: center;
             margin-top: 20px;
             color: #8b949e;
+        }
+
+        .signup a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        .signup a:hover {
+            text-decoration: underline;
         }
 
         .hidden {
@@ -157,11 +174,16 @@
             Sign in to ASIM TECH
         </h2>
 
-        <!-- LOGIN FORM -->
+
+        <!-- =========================
+             LOGIN FORM
+             ========================= -->
 
         <form id="loginForm">
 
-            <label for="email">Email</label>
+            <label for="email">
+                Email
+            </label>
 
             <input
                 id="email"
@@ -170,7 +192,10 @@
                 required
             >
 
-            <label for="password">Password</label>
+
+            <label for="password">
+                Password
+            </label>
 
             <input
                 id="password"
@@ -179,11 +204,13 @@
                 required
             >
 
+
             <div class="forgot">
                 <a id="forgotLink">
                     Forgot password?
                 </a>
             </div>
+
 
             <button
                 type="submit"
@@ -194,9 +221,13 @@
         </form>
 
 
-        <!-- RESET PASSWORD FORM -->
+        <!-- =========================
+             RESET EMAIL FORM
+             ========================= -->
 
-        <form id="resetForm" class="hidden">
+        <form
+            id="resetForm"
+            class="hidden">
 
             <label for="resetEmail">
                 Enter your email
@@ -209,15 +240,16 @@
                 required
             >
 
+
             <button
                 type="submit"
                 id="resetBtn">
                 Send Reset Link
             </button>
 
-            <div style="text-align:center; margin-top:15px;">
-                <a id="backToLogin"
-                   style="color:#58a6ff; cursor:pointer;">
+
+            <div class="back">
+                <a id="backToLogin">
                     Back to Sign In
                 </a>
             </div>
@@ -229,11 +261,15 @@
 
     </div>
 
+
     <div class="signup">
+
         Don't have an account?
+
         <a href="signup.html">
             Create account
         </a>
+
     </div>
 
 </div>
@@ -241,9 +277,9 @@
 
 <script>
 
-/* =================================
+/* =========================================
    SUPABASE CONFIGURATION
-   ================================= */
+   ========================================= */
 
 const SUPABASE_URL =
     "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -252,9 +288,9 @@ const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
 
-/* =================================
+/* =========================================
    CREATE SUPABASE CLIENT
-   ================================= */
+   ========================================= */
 
 const supabaseClient =
     window.supabase.createClient(
@@ -263,9 +299,9 @@ const supabaseClient =
     );
 
 
-/* =================================
+/* =========================================
    ELEMENTS
-   ================================= */
+   ========================================= */
 
 const loginForm =
     document.getElementById("loginForm");
@@ -279,28 +315,29 @@ const loginBtn =
 const resetBtn =
     document.getElementById("resetBtn");
 
-const message =
-    document.getElementById("message");
-
 const forgotLink =
     document.getElementById("forgotLink");
 
 const backToLogin =
     document.getElementById("backToLogin");
 
+const message =
+    document.getElementById("message");
+
 const pageTitle =
     document.getElementById("pageTitle");
 
 
-/* =================================
-   FORGOT PASSWORD PAGE
-   ================================= */
+/* =========================================
+   FORGOT PASSWORD
+   ========================================= */
 
 forgotLink.addEventListener(
     "click",
     function () {
 
         loginForm.classList.add("hidden");
+
         resetForm.classList.remove("hidden");
 
         pageTitle.textContent =
@@ -309,25 +346,31 @@ forgotLink.addEventListener(
         message.textContent = "";
 
         const email =
-            document.getElementById("email").value.trim();
+            document
+                .getElementById("email")
+                .value
+                .trim();
 
         if (email) {
-            document.getElementById("resetEmail").value =
-                email;
+
+            document
+                .getElementById("resetEmail")
+                .value = email;
         }
     }
 );
 
 
-/* =================================
+/* =========================================
    BACK TO LOGIN
-   ================================= */
+   ========================================= */
 
 backToLogin.addEventListener(
     "click",
     function () {
 
         resetForm.classList.add("hidden");
+
         loginForm.classList.remove("hidden");
 
         pageTitle.textContent =
@@ -338,15 +381,16 @@ backToLogin.addEventListener(
 );
 
 
-/* =================================
-   LOGIN
-   ================================= */
+/* =========================================
+   NORMAL LOGIN
+   ========================================= */
 
 loginForm.addEventListener(
     "submit",
     async function (event) {
 
         event.preventDefault();
+
 
         const email =
             document
@@ -359,10 +403,13 @@ loginForm.addEventListener(
                 .getElementById("password")
                 .value;
 
-        message.style.color = "#8b949e";
+
+        message.style.color =
+            "#8b949e";
 
         message.textContent =
             "Signing in...";
+
 
         loginBtn.disabled = true;
 
@@ -413,7 +460,8 @@ loginForm.addEventListener(
 
             message.textContent =
                 error.message ||
-                "Login failed.";
+                "Login failed. Please try again.";
+
 
             loginBtn.disabled = false;
 
@@ -425,9 +473,9 @@ loginForm.addEventListener(
 );
 
 
-/* =================================
+/* =========================================
    SEND PASSWORD RESET EMAIL
-   ================================= */
+   ========================================= */
 
 resetForm.addEventListener(
     "submit",
@@ -435,17 +483,20 @@ resetForm.addEventListener(
 
         event.preventDefault();
 
+
         const email =
             document
                 .getElementById("resetEmail")
                 .value
                 .trim();
 
+
         message.style.color =
             "#8b949e";
 
         message.textContent =
             "Sending reset link...";
+
 
         resetBtn.disabled = true;
 
@@ -460,9 +511,11 @@ resetForm.addEventListener(
                     .resetPasswordForEmail(
                         email,
                         {
+
                             redirectTo:
                                 window.location.origin +
-                                window.location.pathname
+                                "/asim-tech-platform/update-password.html"
+
                         }
                     );
 
@@ -476,8 +529,7 @@ resetForm.addEventListener(
                 "#39d353";
 
             message.textContent =
-                "Password reset link sent. Please check your email.";
-
+                "Reset link sent! Please check your email.";
 
         } catch (error) {
 
@@ -487,7 +539,6 @@ resetForm.addEventListener(
             message.textContent =
                 error.message ||
                 "Unable to send reset link.";
-
         }
 
 
