@@ -7,6 +7,7 @@
 
     <title>Sign Up - ASIM TECH</title>
 
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -100,11 +101,13 @@
 
         button:disabled {
             opacity: 0.6;
+            cursor: not-allowed;
         }
 
         #message {
             margin-top: 15px;
             text-align: center;
+            line-height: 1.5;
         }
 
         .login {
@@ -116,6 +119,10 @@
         .login a {
             color: #58a6ff;
             text-decoration: none;
+        }
+
+        .login a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -138,7 +145,8 @@
 
         <form id="signupForm">
 
-            <label>Username</label>
+            <label for="username">Username</label>
+
             <input
                 id="username"
                 type="text"
@@ -146,7 +154,8 @@
                 required
             >
 
-            <label>Full Name</label>
+            <label for="fullName">Full Name</label>
+
             <input
                 id="fullName"
                 type="text"
@@ -154,7 +163,8 @@
                 required
             >
 
-            <label>Email</label>
+            <label for="email">Email</label>
+
             <input
                 id="email"
                 type="email"
@@ -162,7 +172,8 @@
                 required
             >
 
-            <label>Password</label>
+            <label for="password">Password</label>
+
             <input
                 id="password"
                 type="password"
@@ -171,7 +182,9 @@
                 required
             >
 
-            <button type="submit" id="signupBtn">
+            <button
+                type="submit"
+                id="signupBtn">
                 Create Account
             </button>
 
@@ -188,7 +201,12 @@
 
 </div>
 
+
 <script>
+
+    /* ==============================
+       SUPABASE CONFIGURATION
+       ============================== */
 
     const SUPABASE_URL =
         "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -196,18 +214,40 @@
     const SUPABASE_PUBLISHABLE_KEY =
         "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
+
+    /* ==============================
+       CREATE SUPABASE CLIENT
+       ============================== */
+
     const supabaseClient =
-        supabase.createClient(
+        window.supabase.createClient(
             SUPABASE_URL,
             SUPABASE_PUBLISHABLE_KEY
         );
 
 
-    document
-        .getElementById("signupForm")
-        .addEventListener("submit", async function (e) {
+    /* ==============================
+       SIGNUP FORM
+       ============================== */
 
-            e.preventDefault();
+    const signupForm =
+        document.getElementById("signupForm");
+
+    const signupBtn =
+        document.getElementById("signupBtn");
+
+    const message =
+        document.getElementById("message");
+
+
+    signupForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            /* Get form values */
 
             const username =
                 document
@@ -232,22 +272,25 @@
                     .getElementById("password")
                     .value;
 
-            const message =
-                document.getElementById("message");
 
-            const button =
-                document.getElementById("signupBtn");
-
+            /* Clear old message */
 
             message.textContent = "";
+            message.style.color = "";
 
-            button.disabled = true;
 
-            button.textContent =
+            /* Disable button */
+
+            signupBtn.disabled = true;
+            signupBtn.textContent =
                 "Creating account...";
 
 
             try {
+
+                /* ==============================
+                   CREATE AUTH USER
+                   ============================== */
 
                 const { data, error } =
                     await supabaseClient.auth.signUp({
@@ -271,40 +314,68 @@
                     });
 
 
+                /* Check error */
+
                 if (error) {
                     throw error;
                 }
 
 
+                /* ==============================
+                   SUCCESS MESSAGE
+                   ============================== */
+
                 message.style.color =
                     "#39d353";
 
-                message.textContent =
-                    "Account created successfully! Please check your email if confirmation is required.";
+
+                if (
+                    data &&
+                    data.user &&
+                    !data.session
+                ) {
+
+                    message.textContent =
+                        "Account created! Please check your email and confirm your account.";
+
+                } else {
+
+                    message.textContent =
+                        "Account created successfully!";
+
+                }
 
 
-                document
-                    .getElementById("signupForm")
-                    .reset();
+                /* Reset form */
+
+                signupForm.reset();
 
 
             } catch (error) {
+
+                /* ==============================
+                   ERROR MESSAGE
+                   ============================== */
 
                 message.style.color =
                     "#ff7b72";
 
                 message.textContent =
-                    error.message;
+                    error.message ||
+                    "Something went wrong. Please try again.";
 
             }
 
 
-            button.disabled = false;
+            /* Enable button */
 
-            button.textContent =
+            signupBtn.disabled = false;
+
+            signupBtn.textContent =
                 "Create Account";
 
-        });
+        }
+    );
 
 </script>
 
