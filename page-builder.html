@@ -1,229 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Page Builder — ASIM TECH</title>
+<title>Web Page Builder - ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+box-sizing:border-box;
+margin:0;
+padding:0;
 }
 
 body{
-    font-family:Arial,sans-serif;
-    background:#0d1117;
-    color:#fff;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#07111f,#0b2233,#063b35);
+color:#fff;
+min-height:100vh;
 }
 
-.navbar{
-    height:65px;
-    background:#161b22;
-    border-bottom:1px solid #30363d;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 20px;
+nav{
+background:#050c16;
+padding:16px 6%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid rgba(255,255,255,.1);
 }
 
 .logo{
-    font-size:21px;
-    font-weight:bold;
+font-size:22px;
+font-weight:bold;
+color:#36e0b5;
 }
 
-.green{
-    color:#39d353;
-}
-
-.home{
-    color:#58a6ff;
-    text-decoration:none;
+nav a{
+color:#fff;
+text-decoration:none;
 }
 
 .container{
-    max-width:1200px;
-    margin:auto;
-    padding:25px 18px;
+width:92%;
+max-width:1100px;
+margin:30px auto;
 }
 
 h1{
-    font-size:30px;
-    margin-bottom:8px;
+font-size:30px;
+margin-bottom:8px;
 }
 
 .subtitle{
-    color:#8b949e;
-    margin-bottom:25px;
+color:#aab7c4;
+margin-bottom:25px;
+font-size:17px;
 }
 
 .card{
-    background:#161b22;
-    border:1px solid #30363d;
-    border-radius:10px;
-    padding:20px;
-    margin-bottom:20px;
+background:rgba(13,29,43,.95);
+border:1px solid rgba(255,255,255,.1);
+border-radius:15px;
+padding:20px;
+margin-bottom:20px;
 }
 
 label{
-    display:block;
-    margin-bottom:8px;
-    font-weight:bold;
+display:block;
+font-weight:bold;
+margin-bottom:8px;
 }
 
 input,
 select,
 textarea{
-    width:100%;
-    background:#0d1117;
-    color:#fff;
-    border:1px solid #30363d;
-    border-radius:7px;
-    padding:12px;
-    font-size:15px;
-    outline:none;
+width:100%;
+padding:13px;
+border-radius:9px;
+border:1px solid #3a4a57;
+background:#081521;
+color:#fff;
+font-size:16px;
+outline:none;
 }
 
 input:focus,
 select:focus,
 textarea:focus{
-    border-color:#58a6ff;
-}
-
-textarea{
-    min-height:260px;
-    resize:vertical;
-    font-family:monospace;
-    line-height:1.5;
+border-color:#36e0b5;
 }
 
 .field{
-    margin-bottom:18px;
+margin-bottom:20px;
+}
+
+textarea{
+min-height:260px;
+font-family:monospace;
+line-height:1.5;
+resize:vertical;
 }
 
 .editors{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
 }
 
 .editor-title{
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:10px;
+font-size:19px;
+font-weight:bold;
+margin-bottom:10px;
 }
 
 .html-title{
-    color:#ff7b72;
+color:#ff7b72;
 }
 
 .css-title{
-    color:#58a6ff;
+color:#58a6ff;
 }
 
 .js-title{
-    color:#e3b341;
+color:#e3b341;
 }
 
 .preview{
-    width:100%;
-    height:400px;
-    background:#fff;
-    border:none;
-    border-radius:7px;
+width:100%;
+height:400px;
+border:0;
+background:#fff;
+border-radius:9px;
 }
 
 .buttons{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
+display:flex;
+gap:12px;
+flex-wrap:wrap;
 }
 
 button{
-    border:none;
-    border-radius:7px;
-    padding:12px 20px;
-    font-size:15px;
-    font-weight:bold;
-    cursor:pointer;
+border:0;
+border-radius:9px;
+padding:13px 20px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
 }
 
 .save{
-    background:#238636;
-    color:#fff;
+background:#16a34a;
+color:#fff;
 }
 
 .preview-btn{
-    background:#1f6feb;
-    color:#fff;
+background:#2563eb;
+color:#fff;
 }
 
 .back{
-    background:#21262d;
-    color:#fff;
+background:#64748b;
+color:#fff;
 }
 
 .status{
-    margin-top:15px;
-    color:#8b949e;
+margin-top:15px;
+color:#aab7c4;
 }
 
 .success{
-    color:#3fb950;
+color:#36e0b5;
 }
 
 .error{
-    color:#f85149;
-}
-
-.loading{
-    color:#58a6ff;
+color:#ff7b72;
 }
 
 .mode{
-    display:inline-block;
-    padding:6px 12px;
-    border-radius:20px;
-    background:#21262d;
-    color:#8b949e;
-    font-size:13px;
-    margin-bottom:18px;
+display:inline-block;
+background:#17384a;
+color:#8edfc9;
+padding:7px 13px;
+border-radius:20px;
+font-size:13px;
+margin-bottom:20px;
 }
 
 @media(max-width:800px){
 
-    .editors{
-        grid-template-columns:1fr;
-    }
+nav{
+flex-direction:column;
+align-items:flex-start;
+gap:12px;
+}
 
-    h1{
-        font-size:25px;
-    }
+h1{
+font-size:25px;
+}
 
-    .container{
-        padding:20px 12px;
-    }
+.editors{
+grid-template-columns:1fr;
+}
 
-    textarea{
-        min-height:220px;
-    }
+.buttons{
+flex-direction:column;
+}
 
-    .preview{
-        height:350px;
-    }
+.buttons button{
+width:100%;
+}
 
-    .buttons button{
-        width:100%;
-    }
+.container{
+width:94%;
+margin:20px auto;
+}
+
+textarea{
+min-height:220px;
+}
 
 }
 
@@ -231,169 +229,111 @@ button{
 
 </head>
 
-
 <body>
 
+<nav>
 
-<nav class="navbar">
+<div class="logo">
+⚡ ASIM TECH
+</div>
 
-    <div class="logo">
-
-        <span class="green">
-            ASIM
-        </span>
-
-        TECH
-
-    </div>
-
-
-    <a
-        href="dashboard.html"
-        class="home"
-    >
-
-        Dashboard
-
-    </a>
+<a href="dashboard.html">
+Dashboard
+</a>
 
 </nav>
 
 
-
 <div class="container">
 
+<h1 id="pageTitle">
+🌐 Web Page Builder
+</h1>
 
-    <h1 id="pageTitle">
+<p class="subtitle">
+Create your webpage using HTML, CSS and JavaScript.
+</p>
 
-        🌐 Web Page Builder
+<div id="modeLabel" class="mode">
+New Web Page
+</div>
 
-    </h1>
 
+<!-- PAGE INFORMATION -->
 
-    <p class="subtitle">
+<div class="card">
 
-        Create your webpage with HTML, CSS and JavaScript.
+<div class="field">
 
-    </p>
+<label>
+📁 Repository
+</label>
 
+<select id="repository">
 
-    <div
-        id="modeLabel"
-        class="mode"
-    >
+<option value="">
+Loading repository...
+</option>
 
-        New Web Page
+</select>
 
-    </div>
+</div>
 
 
+<div class="field">
 
-    <!-- PAGE INFORMATION -->
+<label>
+📝 Page Name
+</label>
 
-    <div class="card">
+<input
+type="text"
+id="pageName"
+placeholder="Example: index.html"
+>
 
+</div>
 
-        <div class="field">
+</div>
 
 
-            <label for="repository">
+<!-- EDITORS -->
 
-                📁 Repository
+<div class="editors">
 
-            </label>
 
+<!-- HTML -->
 
-            <select id="repository">
+<div class="card">
 
-                <option value="">
+<div class="editor-title html-title">
+HTML
+</div>
 
-                    Loading repositories...
+<textarea
+id="htmlCode"
+placeholder="Write your HTML here..."
+><h1>Welcome to ASIM TECH!</h1>
+<p>This is my published website.</p></textarea>
 
-                </option>
+</div>
 
-            </select>
 
+<!-- CSS -->
 
-        </div>
+<div class="card">
 
+<div class="editor-title css-title">
+CSS
+</div>
 
-
-        <div class="field">
-
-
-            <label for="pageName">
-
-                📝 Page Name
-
-            </label>
-
-
-            <input
-                type="text"
-                id="pageName"
-                placeholder="Example: home.html"
-            >
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- EDITORS -->
-
-    <div class="editors">
-
-
-        <!-- HTML -->
-
-        <div class="card">
-
-
-            <div
-                class="editor-title html-title"
-            >
-
-                HTML
-
-            </div>
-
-
-            <textarea
-                id="htmlCode"
-                placeholder="Write your HTML here..."
-            ><h1>Welcome to ASIM TECH!</h1>
-<p>This is my first webpage.</p></textarea>
-
-
-        </div>
-
-
-
-        <!-- CSS -->
-
-        <div class="card">
-
-
-            <div
-                class="editor-title css-title"
-            >
-
-                CSS
-
-            </div>
-
-
-            <textarea
-                id="cssCode"
-                placeholder="Write your CSS here..."
-            >body {
+<textarea
+id="cssCode"
+placeholder="Write your CSS here..."
+>body {
     font-family: Arial, sans-serif;
     padding: 30px;
-    background: #f5f5f5;
+    background: #f5f7fb;
 }
 
 h1 {
@@ -404,217 +344,143 @@ p {
     font-size: 18px;
 }</textarea>
 
-
-        </div>
-
+</div>
 
 
-        <!-- JAVASCRIPT -->
+<!-- JAVASCRIPT -->
 
-        <div class="card">
+<div class="card">
 
+<div class="editor-title js-title">
+JavaScript
+</div>
 
-            <div
-                class="editor-title js-title"
-            >
+<textarea
+id="jsCode"
+placeholder="Write your JavaScript here..."
+>console.log("Hello from ASIM TECH!");</textarea>
 
-                JavaScript
-
-            </div>
-
-
-            <textarea
-                id="jsCode"
-                placeholder="Write your JavaScript here..."
-            >console.log("Hello from ASIM TECH!");</textarea>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- LIVE PREVIEW -->
-
-    <div class="card">
-
-
-        <div class="editor-title">
-
-            👁️ Live Preview
-
-        </div>
-
-
-        <iframe
-            id="preview"
-            class="preview"
-            sandbox="allow-scripts"
-        ></iframe>
-
-
-    </div>
-
-
-
-    <!-- BUTTONS -->
-
-    <div class="card">
-
-
-        <div class="buttons">
-
-
-            <button
-                class="preview-btn"
-                onclick="updatePreview()"
-            >
-
-                👁️ Preview
-
-            </button>
-
-
-            <button
-                id="saveButton"
-                class="save"
-                onclick="savePage()"
-            >
-
-                💾 Save Page
-
-            </button>
-
-
-            <button
-                class="back"
-                onclick="goBack()"
-            >
-
-                ← Back
-
-            </button>
-
-
-        </div>
-
-
-        <div
-            id="status"
-            class="status"
-        ></div>
-
-
-    </div>
-
+</div>
 
 </div>
 
 
+<!-- PREVIEW -->
+
+<div class="card">
+
+<div class="editor-title">
+👁️ Live Preview
+</div>
+
+<iframe
+id="preview"
+class="preview"
+sandbox="allow-scripts allow-forms allow-modals">
+</iframe>
+
+</div>
+
+
+<!-- BUTTONS -->
+
+<div class="card">
+
+<div class="buttons">
+
+<button
+class="preview-btn"
+onclick="updatePreview()">
+👁️ Preview
+</button>
+
+<button
+id="saveButton"
+class="save"
+onclick="savePage()">
+💾 Save Page
+</button>
+
+<button
+class="back"
+onclick="goBack()">
+← Back
+</button>
+
+</div>
+
+<div
+id="status"
+class="status">
+</div>
+
+</div>
+
+</div>
+
 
 <script>
 
+/* SUPABASE */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
-
 const supabaseClient =
-supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
 );
-
 
 
 /* ELEMENTS */
 
 const repository =
-document.getElementById(
-    "repository"
-);
-
+document.getElementById("repository");
 
 const pageName =
-document.getElementById(
-    "pageName"
-);
-
+document.getElementById("pageName");
 
 const htmlCode =
-document.getElementById(
-    "htmlCode"
-);
-
+document.getElementById("htmlCode");
 
 const cssCode =
-document.getElementById(
-    "cssCode"
-);
-
+document.getElementById("cssCode");
 
 const jsCode =
-document.getElementById(
-    "jsCode"
-);
-
+document.getElementById("jsCode");
 
 const preview =
-document.getElementById(
-    "preview"
-);
-
+document.getElementById("preview");
 
 const statusBox =
-document.getElementById(
-    "status"
-);
-
-
-const modeLabel =
-document.getElementById(
-    "modeLabel"
-);
-
-
-const pageTitle =
-document.getElementById(
-    "pageTitle"
-);
-
+document.getElementById("status");
 
 const saveButton =
-document.getElementById(
-    "saveButton"
-);
+document.getElementById("saveButton");
+
+const modeLabel =
+document.getElementById("modeLabel");
+
+const pageTitle =
+document.getElementById("pageTitle");
 
 
-
-/* URL PARAMETERS */
+/* URL */
 
 const params =
 new URLSearchParams(
-    window.location.search
+window.location.search
 );
-
 
 const repositoryId =
-params.get(
-    "repository_id"
-);
-
+params.get("repository_id");
 
 const pageId =
-params.get(
-    "page_id"
-);
-
+params.get("page_id");
 
 
 let currentUser = null;
@@ -622,369 +488,403 @@ let currentUser = null;
 let editingPage = null;
 
 
+/* STATUS */
+
+function setStatus(
+message,
+type=""
+){
+
+statusBox.textContent =
+message;
+
+statusBox.className =
+"status " + type;
+
+}
+
 
 /* INITIALIZE */
 
 async function initialize(){
 
+try{
 
-    statusBox.textContent =
-    "Checking login...";
-
-
-    const {
-        data:{user},
-        error
-    } =
-    await supabaseClient.auth.getUser();
+setStatus(
+"Checking login..."
+);
 
 
-    if(error){
+/* GET USER */
 
-        console.error(error);
-
-    }
-
-
-    if(!user){
-
-        window.location.href =
-        "login.html";
-
-        return;
-
-    }
+const {
+data:{user},
+error:userError
+} =
+await supabaseClient.auth.getUser();
 
 
-    currentUser = user;
+if(userError){
 
-
-    await loadRepositories();
-
-
-    if(pageId){
-
-        await loadExistingPage();
-
-    }
-
-
-    updatePreview();
-
+throw userError;
 
 }
 
 
+if(!user){
 
-/* LOAD REPOSITORIES */
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+currentUser =
+user;
+
+
+/*
+IMPORTANT:
+If repository_id exists,
+load that repository directly.
+*/
+
+if(repositoryId){
+
+await loadSelectedRepository();
+
+}else{
+
+await loadRepositories();
+
+}
+
+
+/* EDIT MODE */
+
+if(pageId){
+
+await loadExistingPage();
+
+}else{
+
+setStatus(
+"Ready to create your webpage.",
+"success"
+);
+
+}
+
+
+/* PREVIEW */
+
+updatePreview();
+
+
+}catch(error){
+
+console.error(error);
+
+setStatus(
+error.message ||
+"Unable to load page builder.",
+"error"
+);
+
+}
+
+}
+
+
+/* LOAD SELECTED REPOSITORY */
+
+async function loadSelectedRepository(){
+
+setStatus(
+"Loading repository..."
+);
+
+
+/* DIRECT QUERY */
+
+const {
+data:repo,
+error
+} =
+await supabaseClient
+
+.from("repositories")
+
+.select("id,name,owner_id")
+
+.eq("id",repositoryId)
+
+.single();
+
+
+if(error){
+
+console.error(error);
+
+throw new Error(
+"Unable to load repository."
+);
+
+}
+
+
+/* OWNER CHECK */
+
+if(repo.owner_id !== currentUser.id){
+
+throw new Error(
+"You are not the owner of this repository."
+);
+
+}
+
+
+/* SELECT */
+
+repository.innerHTML = "";
+
+const option =
+document.createElement("option");
+
+option.value =
+repo.id;
+
+option.textContent =
+repo.name;
+
+option.selected =
+true;
+
+repository.appendChild(
+option
+);
+
+
+/* STATUS */
+
+setStatus(
+"Repository loaded successfully.",
+"success"
+);
+
+}
+
+
+/* LOAD ALL OWNED REPOSITORIES */
 
 async function loadRepositories(){
 
+setStatus(
+"Loading repositories..."
+);
 
-    const {
-        data:repos,
-        error
-    } =
-    await supabaseClient
 
-        .from("repositories")
+const {
+data:repos,
+error
+} =
+await supabaseClient
 
-        .select(
-            "id,name,owner_id"
-        )
+.from("repositories")
 
-        .eq(
-            "owner_id",
-            currentUser.id
-        )
+.select("id,name,owner_id")
 
-        .order(
-            "name",
-            {ascending:true}
-        );
+.eq(
+"owner_id",
+currentUser.id
+)
 
+.order(
+"name",
+{ascending:true}
+);
 
-    if(error){
 
-        console.error(error);
+if(error){
 
+console.error(error);
 
-        repository.innerHTML = `
-
-            <option value="">
-
-                Unable to load repositories
-
-            </option>
-
-        `;
-
-
-        statusBox.textContent =
-        "Unable to load repositories.";
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-    if(!repos ||
-       repos.length === 0){
-
-
-        repository.innerHTML = `
-
-            <option value="">
-
-                No repositories found
-
-            </option>
-
-        `;
-
-
-        statusBox.innerHTML = `
-
-            Create a repository first.
-
-            <br><br>
-
-            <a
-                href="new-repository.html"
-                style="color:#58a6ff"
-            >
-
-                Create Repository →
-
-            </a>
-
-        `;
-
-
-        return;
-
-    }
-
-
-    repository.innerHTML = `
-
-        <option value="">
-
-            Select Repository
-
-        </option>
-
-    `;
-
-
-    repos.forEach(repo => {
-
-
-        const option =
-        document.createElement(
-            "option"
-        );
-
-
-        option.value =
-        repo.id;
-
-
-        option.textContent =
-        repo.name;
-
-
-        repository.appendChild(
-            option
-        );
-
-
-    });
-
-
-    /*
-       If repository_id exists,
-       automatically select it.
-    */
-
-    if(repositoryId){
-
-        repository.value =
-        repositoryId;
-
-    }
-
-
-    statusBox.textContent =
-    "Ready to build your webpage.";
-
-
-    statusBox.className =
-    "status";
+throw new Error(
+"Unable to load repositories."
+);
 
 }
 
 
+if(!repos ||
+repos.length === 0){
 
-/* LOAD EXISTING WEB PAGE */
+repository.innerHTML = `
+<option value="">
+No repositories found
+</option>
+`;
+
+throw new Error(
+"Please create a repository first."
+);
+
+}
+
+
+repository.innerHTML = `
+<option value="">
+Select Repository
+</option>
+`;
+
+
+repos.forEach(repo => {
+
+const option =
+document.createElement("option");
+
+option.value =
+repo.id;
+
+option.textContent =
+repo.name;
+
+repository.appendChild(
+option
+);
+
+});
+
+
+setStatus(
+"Repositories loaded.",
+"success"
+);
+
+}
+
+
+/* LOAD EXISTING PAGE */
 
 async function loadExistingPage(){
 
-
-    statusBox.textContent =
-    "Loading web page...";
-
-
-    const {
-        data:page,
-        error
-    } =
-    await supabaseClient
-
-        .from("web_pages")
-
-        .select("*")
-
-        .eq(
-            "id",
-            pageId
-        )
-
-        .single();
+setStatus(
+"Loading web page..."
+);
 
 
-    if(error){
+const {
+data:page,
+error
+} =
+await supabaseClient
 
-        console.error(error);
+.from("web_pages")
 
+.select("*")
 
-        statusBox.textContent =
-        "Unable to load web page.";
+.eq("id",pageId)
 
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
+.single();
 
 
-    if(!page){
+if(error){
 
-        statusBox.textContent =
-        "Web page not found.";
+console.error(error);
 
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-    /*
-       Security check
-    */
-
-    if(
-        page.owner_id !==
-        currentUser.id
-    ){
-
-        statusBox.textContent =
-        "You are not the owner of this web page.";
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-    editingPage = page;
-
-
-    /* EDIT MODE */
-
-    modeLabel.textContent =
-    "✏️ Edit Web Page";
-
-
-    pageTitle.textContent =
-    "✏️ Edit Web Page";
-
-
-    saveButton.textContent =
-    "💾 Update Page";
-
-
-    /* SELECT REPOSITORY */
-
-    repository.value =
-    page.repository_id;
-
-
-    /* LOAD DATA */
-
-    pageName.value =
-    page.page_name || "";
-
-
-    htmlCode.value =
-    page.html_content || "";
-
-
-    cssCode.value =
-    page.css_content || "";
-
-
-    jsCode.value =
-    page.js_content || "";
-
-
-    statusBox.textContent =
-    "Web page loaded. You can edit it now.";
-
-
-    statusBox.className =
-    "status";
-
-
+throw new Error(
+"Unable to load web page."
+);
 
 }
 
 
+if(!page){
 
-/* UPDATE LIVE PREVIEW */
+throw new Error(
+"Web page not found."
+);
+
+}
+
+
+/* OWNER CHECK */
+
+if(
+page.owner_id !==
+currentUser.id
+){
+
+throw new Error(
+"You are not the owner of this web page."
+);
+
+}
+
+
+editingPage =
+page;
+
+
+/* EDIT MODE */
+
+pageTitle.textContent =
+"✏️ Edit Web Page";
+
+modeLabel.textContent =
+"✏️ Edit Web Page";
+
+saveButton.textContent =
+"💾 Update Page";
+
+
+/* REPOSITORY */
+
+repository.value =
+page.repository_id;
+
+
+/* DATA */
+
+pageName.value =
+page.page_name || "";
+
+htmlCode.value =
+page.html_content || "";
+
+cssCode.value =
+page.css_content || "";
+
+jsCode.value =
+page.js_content || "";
+
+
+setStatus(
+"Web page loaded successfully.",
+"success"
+);
+
+}
+
+
+/* LIVE PREVIEW */
 
 function updatePreview(){
 
+const html =
+htmlCode.value;
 
-    const html =
-    htmlCode.value;
+const css =
+cssCode.value;
 
-
-    const css =
-    cssCode.value;
-
-
-    const js =
-    jsCode.value;
+const js =
+jsCode.value;
 
 
-    const fullPage = `
+const fullPage = `
 
 <!DOCTYPE html>
 
@@ -996,7 +896,7 @@ function updatePreview(){
 
 <meta
 name="viewport"
-content="width=device-width, initial-scale=1.0"
+content="width=device-width,initial-scale=1.0"
 >
 
 <style>
@@ -1015,7 +915,7 @@ ${html}
 
 ${js}
 
-<\/script>
+<\\/script>
 
 </body>
 
@@ -1024,548 +924,327 @@ ${js}
 `;
 
 
-    preview.srcdoc =
-    fullPage;
+preview.srcdoc =
+fullPage;
 
 }
 
 
-
-/* SAVE / UPDATE PAGE */
+/* SAVE PAGE */
 
 async function savePage(){
 
+try{
 
-    statusBox.textContent =
-    editingPage
-    ? "Updating page..."
-    : "Saving page...";
 
+/* CHECK USER */
 
-    statusBox.className =
-    "status";
+if(!currentUser){
 
+alert(
+"Please login first."
+);
 
-    if(!currentUser){
-
-        window.location.href =
-        "login.html";
-
-        return;
-
-    }
-
-
-    const repoId =
-    repository.value;
-
-
-    const name =
-    pageName.value.trim();
-
-
-    /* REPOSITORY */
-
-    if(!repoId){
-
-        statusBox.textContent =
-        "Please select a repository.";
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-    /* PAGE NAME */
-
-    if(!name){
-
-        statusBox.textContent =
-        "Please enter a page name.";
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-    /* NAME VALIDATION */
-
-    if(
-        !/^[a-zA-Z0-9._-]+$/.test(name)
-    ){
-
-        statusBox.textContent =
-        "Page name can contain letters, numbers, dot, underscore and hyphen only.";
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-    /* CHECK REPOSITORY OWNER */
-
-    const {
-        data:repo,
-        error:repoError
-    } =
-    await supabaseClient
-
-        .from("repositories")
-
-        .select(
-            "id,owner_id"
-        )
-
-        .eq(
-            "id",
-            repoId
-        )
-
-        .single();
-
-
-    if(
-        repoError ||
-        !repo
-    ){
-
-        statusBox.textContent =
-        "Repository not found.";
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-    if(
-        repo.owner_id !==
-        currentUser.id
-    ){
-
-        statusBox.textContent =
-        "You are not the owner of this repository.";
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-
-    /* =========================
-       EDIT EXISTING PAGE
-       ========================= */
-
-    if(editingPage){
-
-
-        /*
-           If page name is changed,
-           check duplicate name.
-        */
-
-        if(
-            name !==
-            editingPage.page_name
-        ){
-
-
-            const {
-                data:duplicate,
-                error:duplicateError
-            } =
-            await supabaseClient
-
-                .from("web_pages")
-
-                .select("id")
-
-                .eq(
-                    "repository_id",
-                    repoId
-                )
-
-                .eq(
-                    "page_name",
-                    name
-                )
-
-                .neq(
-                    "id",
-                    editingPage.id
-                )
-
-                .maybeSingle();
-
-
-            if(duplicateError){
-
-                console.error(
-                    duplicateError
-                );
-
-
-                statusBox.textContent =
-                "Unable to check existing page.";
-
-
-                statusBox.className =
-                "status error";
-
-
-                return;
-
-            }
-
-
-            if(duplicate){
-
-                statusBox.textContent =
-                "A page with this name already exists.";
-
-
-                statusBox.className =
-                "status error";
-
-
-                return;
-
-            }
-
-        }
-
-
-
-        /* UPDATE */
-
-        const {
-            error:updateError
-        } =
-        await supabaseClient
-
-            .from("web_pages")
-
-            .update({
-
-                repository_id:
-                repoId,
-
-                page_name:
-                name,
-
-                html_content:
-                htmlCode.value,
-
-                css_content:
-                cssCode.value,
-
-                js_content:
-                jsCode.value
-
-            })
-
-            .eq(
-                "id",
-                editingPage.id
-            );
-
-
-        if(updateError){
-
-            console.error(
-                updateError
-            );
-
-
-            statusBox.textContent =
-            "Unable to update page: " +
-            updateError.message;
-
-
-            statusBox.className =
-            "status error";
-
-
-            return;
-
-        }
-
-
-        statusBox.textContent =
-        "✅ Page updated successfully!";
-
-
-        statusBox.className =
-        "status success";
-
-
-        /*
-           Update local object
-        */
-
-        editingPage.page_name =
-        name;
-
-
-        editingPage.repository_id =
-        repoId;
-
-
-        return;
-
-    }
-
-
-
-    /* =========================
-       CREATE NEW PAGE
-       ========================= */
-
-
-    const {
-        data:existing,
-        error:existingError
-    } =
-    await supabaseClient
-
-        .from("web_pages")
-
-        .select("id")
-
-        .eq(
-            "repository_id",
-            repoId
-        )
-
-        .eq(
-            "page_name",
-            name
-        )
-
-        .maybeSingle();
-
-
-    if(existingError){
-
-        console.error(
-            existingError
-        );
-
-
-        statusBox.textContent =
-        "Unable to check existing page.";
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-    if(existing){
-
-        statusBox.textContent =
-        "A page with this name already exists.";
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-
-    /* INSERT NEW PAGE */
-
-    const {
-        data:newPage,
-        error
-    } =
-    await supabaseClient
-
-        .from("web_pages")
-
-        .insert({
-
-            repository_id:
-            repoId,
-
-            page_name:
-            name,
-
-            html_content:
-            htmlCode.value,
-
-            css_content:
-            cssCode.value,
-
-            js_content:
-            jsCode.value,
-
-            owner_id:
-            currentUser.id
-
-        })
-
-        .select()
-        .single();
-
-
-    if(error){
-
-        console.error(error);
-
-
-        statusBox.textContent =
-        "Unable to save page: " +
-        error.message;
-
-
-        statusBox.className =
-        "status error";
-
-
-        return;
-
-    }
-
-
-    /*
-       Convert to edit mode
-       after successful creation.
-    */
-
-    editingPage =
-    newPage;
-
-
-    modeLabel.textContent =
-    "✏️ Edit Web Page";
-
-
-    pageTitle.textContent =
-    "✏️ Edit Web Page";
-
-
-    saveButton.textContent =
-    "💾 Update Page";
-
-
-    /*
-       Keep the current page ID
-       in the browser URL.
-    */
-
-    const newUrl =
-    "page-builder.html?repository_id=" +
-    encodeURIComponent(repoId) +
-    "&page_id=" +
-    encodeURIComponent(newPage.id);
-
-
-    window.history.replaceState(
-        {},
-        "",
-        newUrl
-    );
-
-
-    statusBox.textContent =
-    "✅ Page saved successfully!";
-
-
-    statusBox.className =
-    "status success";
+return;
 
 }
 
+
+/* REPOSITORY */
+
+const selectedRepository =
+repository.value;
+
+
+if(!selectedRepository){
+
+alert(
+"Please select a repository."
+);
+
+return;
+
+}
+
+
+/* PAGE NAME */
+
+let name =
+pageName.value.trim();
+
+
+if(!name){
+
+alert(
+"Please enter a page name."
+);
+
+return;
+
+}
+
+
+/* AUTOMATIC HTML */
+
+if(
+!name.toLowerCase().endsWith(".html")
+){
+
+name += ".html";
+
+}
+
+
+/* CONTENT */
+
+const html =
+htmlCode.value;
+
+const css =
+cssCode.value;
+
+const js =
+jsCode.value;
+
+
+/* EDIT */
+
+if(editingPage){
+
+setStatus(
+"Updating page..."
+);
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.update({
+
+page_name:name,
+
+html_content:html,
+
+css_content:css,
+
+js_content:js
+
+})
+
+.eq(
+"id",
+editingPage.id
+)
+
+.eq(
+"owner_id",
+currentUser.id
+);
+
+
+if(error){
+
+console.error(error);
+
+throw error;
+
+}
+
+
+setStatus(
+"Web page updated successfully!",
+"success"
+);
+
+
+alert(
+"Web page updated successfully!"
+);
+
+
+window.location.href =
+"repository-files.html?repository_id=" +
+encodeURIComponent(
+selectedRepository
+);
+
+return;
+
+}
+
+
+/* CHECK DUPLICATE */
+
+const {
+data:existing,
+error:duplicateError
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.select("id")
+
+.eq(
+"repository_id",
+selectedRepository
+)
+
+.eq(
+"page_name",
+name
+);
+
+
+if(duplicateError){
+
+console.error(
+duplicateError
+);
+
+throw duplicateError;
+
+}
+
+
+if(
+existing &&
+existing.length > 0
+){
+
+alert(
+"A web page with this name already exists."
+);
+
+return;
+
+}
+
+
+/* SAVE */
+
+setStatus(
+"Saving page..."
+);
+
+
+const {
+data:newPage,
+error:saveError
+} =
+await supabaseClient
+
+.from("web_pages")
+
+.insert({
+
+repository_id:
+selectedRepository,
+
+page_name:name,
+
+html_content:html,
+
+css_content:css,
+
+js_content:js,
+
+owner_id:
+currentUser.id,
+
+is_published:false
+
+})
+
+.select()
+
+.single();
+
+
+if(saveError){
+
+console.error(
+saveError
+);
+
+throw saveError;
+
+}
+
+
+/* SUCCESS */
+
+setStatus(
+"Web page created successfully!",
+"success"
+);
+
+
+alert(
+"Web page created successfully!"
+);
+
+
+/* RETURN */
+
+window.location.href =
+"repository-files.html?repository_id=" +
+encodeURIComponent(
+selectedRepository
+);
+
+
+}catch(error){
+
+console.error(error);
+
+setStatus(
+error.message ||
+"Unable to save web page.",
+"error"
+);
+
+alert(
+error.message ||
+"Unable to save web page."
+);
+
+}
+
+}
 
 
 /* BACK */
 
 function goBack(){
 
+if(repositoryId){
 
-    if(repository.value){
+window.location.href =
+"repository-files.html?repository_id=" +
+encodeURIComponent(
+repositoryId
+);
 
-        window.location.href =
+}else{
 
-        "repository-files.html?repository_id=" +
-
-        encodeURIComponent(
-            repository.value
-        );
-
-    }else{
-
-        window.location.href =
-        "dashboard.html";
-
-    }
+window.location.href =
+"repository-files.html";
 
 }
 
-
-
-/* LIVE PREVIEW */
-
-htmlCode.addEventListener(
-    "input",
-    updatePreview
-);
-
-
-cssCode.addEventListener(
-    "input",
-    updatePreview
-);
-
-
-jsCode.addEventListener(
-    "input",
-    updatePreview
-);
-
+}
 
 
 /* START */
 
 initialize();
 
-
 </script>
 
-
 </body>
-
 </html>
