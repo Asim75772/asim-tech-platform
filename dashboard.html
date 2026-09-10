@@ -55,6 +55,10 @@ body{
     padding:8px 10px;
 }
 
+.home:hover{
+    text-decoration:underline;
+}
+
 .profile{
     color:#ffffff;
     text-decoration:none;
@@ -66,6 +70,21 @@ body{
 }
 
 .profile:hover{
+    background:#30363d;
+}
+
+.logout{
+    color:#ff7b72;
+    background:#21262d;
+    border:1px solid #30363d;
+    padding:9px 13px;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.logout:hover{
     background:#30363d;
 }
 
@@ -105,14 +124,26 @@ body{
     color:white;
 }
 
+.new-repo:hover{
+    background:#2ea043;
+}
+
 .all-repo{
     background:#21262d;
     color:white;
 }
 
+.all-repo:hover{
+    background:#30363d;
+}
+
 .page-builder{
     background:#1f6feb;
     color:white;
+}
+
+.page-builder:hover{
+    background:#388bfd;
 }
 
 .section{
@@ -148,6 +179,10 @@ body{
     text-decoration:none;
 }
 
+.repo h3 a:hover{
+    text-decoration:underline;
+}
+
 .repo p{
     color:#8b949e;
     margin-bottom:10px;
@@ -161,6 +196,10 @@ body{
 .open{
     color:#58a6ff;
     text-decoration:none;
+}
+
+.open:hover{
+    text-decoration:underline;
 }
 
 .badge{
@@ -202,6 +241,10 @@ body{
     text-decoration:none;
 }
 
+.activity-item h3 a:hover{
+    text-decoration:underline;
+}
+
 .activity-item p{
     color:#8b949e;
     margin-bottom:8px;
@@ -235,6 +278,13 @@ footer{
     .nav-right{
         width:100%;
         justify-content:flex-end;
+        flex-wrap:wrap;
+    }
+
+    .home,
+    .profile,
+    .logout{
+        font-size:13px;
     }
 
     .container{
@@ -299,6 +349,17 @@ footer{
             👤 My Profile
 
         </a>
+
+
+        <button
+            type="button"
+            class="logout"
+            onclick="logoutUser()"
+        >
+
+            🚪 Logout
+
+        </button>
 
 
     </div>
@@ -1088,6 +1149,84 @@ async function loadRecentActivity(){
             </div>
 
         `;
+
+
+    }
+
+
+}
+
+
+
+/* LOGOUT */
+
+
+async function logoutUser(){
+
+
+    const logoutButton =
+    document.querySelector(
+        ".logout"
+    );
+
+
+    try{
+
+
+        if(logoutButton){
+
+            logoutButton.disabled = true;
+
+            logoutButton.textContent =
+            "Logging out...";
+
+        }
+
+
+
+        const {
+            error
+        } =
+        await supabaseClient.auth.signOut();
+
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+
+        window.location.href =
+        "login.html";
+
+
+    }catch(error){
+
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+
+        alert(
+            "Logout failed: " +
+            error.message
+        );
+
+
+
+        if(logoutButton){
+
+            logoutButton.disabled = false;
+
+            logoutButton.textContent =
+            "🚪 Logout";
+
+        }
 
 
     }
