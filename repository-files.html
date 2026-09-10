@@ -755,26 +755,59 @@ repository.description ||
 );
 
 
-/* NEW FILE */
+/* OWNER CHECK */
 
+const isOwner =
+repository.owner_id ===
+currentUser.id;
+
+
+/* NEW FILE BUTTON */
+
+const newFileBtn =
 document.getElementById(
 "newFileBtn"
-).href =
+);
 
+if(isOwner){
+
+newFileBtn.href =
 "file-editor.html?repository_id=" +
-
 encodeURIComponent(repoId);
+
+newFileBtn.style.display =
+"inline-block";
+
+}else{
+
+newFileBtn.style.display =
+"none";
+
+}
 
 
 /* NEW WEB PAGE */
 
+const newWebPageBtn =
 document.getElementById(
 "newWebPageBtn"
-).href =
+);
 
+if(isOwner){
+
+newWebPageBtn.href =
 "page-builder.html?repository_id=" +
-
 encodeURIComponent(repoId);
+
+newWebPageBtn.style.display =
+"inline-block";
+
+}else{
+
+newWebPageBtn.style.display =
+"none";
+
+}
 
 
 /* NORMAL FILES */
@@ -909,6 +942,11 @@ Create your first file in this repository.
 
 </p>
 
+${
+repository &&
+repository.owner_id === currentUser.id
+? `
+
 <a
 class="new-btn"
 href="file-editor.html?repository_id=${encodeURIComponent(repoId)}">
@@ -916,6 +954,16 @@ href="file-editor.html?repository_id=${encodeURIComponent(repoId)}">
 ＋ Create First File
 
 </a>
+
+`
+: `
+
+<p>
+No files have been added yet.
+</p>
+
+`
+}
 
 </div>
 
@@ -935,6 +983,35 @@ document.createElement("div");
 
 card.className =
 "card";
+
+
+const ownerActions =
+repository &&
+currentUser &&
+repository.owner_id ===
+currentUser.id
+
+? `
+
+<button
+class="btn edit"
+onclick="editFile('${file.id}')">
+
+Edit
+
+</button>
+
+<button
+class="btn delete"
+onclick="deleteFile('${file.id}')">
+
+Delete
+
+</button>
+
+`
+
+: "";
 
 
 card.innerHTML = `
@@ -975,22 +1052,7 @@ Open
 </button>
 
 
-<button
-class="btn edit"
-onclick="editFile('${file.id}')">
-
-Edit
-
-</button>
-
-
-<button
-class="btn delete"
-onclick="deleteFile('${file.id}')">
-
-Delete
-
-</button>
+${ownerActions}
 
 
 </div>
@@ -1030,6 +1092,22 @@ encodeURIComponent(id);
 
 function editFile(id){
 
+if(
+!repository ||
+!currentUser ||
+repository.owner_id !==
+currentUser.id
+){
+
+alert(
+"You are not the owner of this repository."
+);
+
+return;
+
+}
+
+
 window.location.href =
 
 "file-editor.html?repository_id=" +
@@ -1046,6 +1124,22 @@ encodeURIComponent(id);
 /* DELETE FILE */
 
 async function deleteFile(id){
+
+if(
+!repository ||
+!currentUser ||
+repository.owner_id !==
+currentUser.id
+){
+
+alert(
+"You are not allowed to delete this file."
+);
+
+return;
+
+}
+
 
 if(!confirm(
 "Delete this file?"
@@ -1234,22 +1328,49 @@ const status =
 isPublished
 
 ? `
+
 <span class="published">
+
 🟢 Published
+
 </span>
+
 `
 
 : `
+
 <span class="unpublished">
+
 ⚪ Unpublished
+
 </span>
+
 `;
 
+
+/* OWNER ONLY ACTIONS */
+
+const isPageOwner =
+repository &&
+currentUser &&
+(
+page.owner_id ===
+currentUser.id ||
+repository.owner_id ===
+currentUser.id
+);
+
+
+let ownerButtons = "";
+
+
+if(isPageOwner){
 
 const publishButton =
 isPublished
 
 ? `
+
 <button
 class="btn unpublish"
 onclick="unpublishWebPage('${page.id}')">
@@ -1257,9 +1378,11 @@ onclick="unpublishWebPage('${page.id}')">
 🔴 Unpublish
 
 </button>
+
 `
 
 : `
+
 <button
 class="btn publish"
 onclick="publishWebPage('${page.id}')">
@@ -1267,6 +1390,7 @@ onclick="publishWebPage('${page.id}')">
 🟢 Publish
 
 </button>
+
 `;
 
 
@@ -1274,6 +1398,7 @@ const liveButton =
 isPublished
 
 ? `
+
 <button
 class="btn live"
 onclick="openLive('${page.id}')">
@@ -1281,9 +1406,57 @@ onclick="openLive('${page.id}')">
 🌐 Open Live
 
 </button>
+
 `
 
 : "";
+
+
+ownerButtons = `
+
+<button
+class="btn edit"
+onclick="editWebPage('${page.id}')">
+
+✏️ Edit
+
+</button>
+
+${publishButton}
+
+${liveButton}
+
+<button
+class="btn delete"
+onclick="deleteWebPage('${page.id}')">
+
+🗑️ Delete
+
+</button>
+
+`;
+
+}else{
+
+/* PUBLIC USER */
+
+ownerButtons = isPublished
+
+? `
+
+<button
+class="btn live"
+onclick="openLive('${page.id}')">
+
+🌐 Open Live
+
+</button>
+
+`
+
+: "";
+
+}
 
 
 card.innerHTML = `
@@ -1320,28 +1493,7 @@ onclick="previewWebPage('${page.id}')">
 </button>
 
 
-<button
-class="btn edit"
-onclick="editWebPage('${page.id}')">
-
-✏️ Edit
-
-</button>
-
-
-${publishButton}
-
-
-${liveButton}
-
-
-<button
-class="btn delete"
-onclick="deleteWebPage('${page.id}')">
-
-🗑️ Delete
-
-</button>
+${ownerButtons}
 
 
 </div>
@@ -1447,331 +1599,3 @@ ${page.html_content || ""}
 ${page.js_content || ""}
 
 <\/script>
-
-</body>
-
-</html>
-
-`;
-
-
-document.getElementById(
-"modalTitle"
-).textContent =
-
-"🌐 " +
-page.page_name;
-
-
-document.getElementById(
-"previewFrame"
-).srcdoc =
-fullPage;
-
-
-document.getElementById(
-"previewModal"
-).style.display =
-"block";
-
-
-}catch(error){
-
-console.error(
-error
-);
-
-
-alert(
-"Unable to preview web page."
-);
-
-}
-
-}
-
-
-/* EDIT WEB PAGE */
-
-function editWebPage(id){
-
-window.location.href =
-
-"page-builder.html?repository_id=" +
-
-encodeURIComponent(repoId) +
-
-"&page_id=" +
-
-encodeURIComponent(id);
-
-}
-
-
-/* PUBLISH WEB PAGE */
-
-async function publishWebPage(id){
-
-if(!confirm(
-"Publish this web page?"
-)){
-
-return;
-
-}
-
-
-try{
-
-const {
-error
-} =
-await supabaseClient
-
-.from("web_pages")
-
-.update({
-
-is_published:true,
-
-published_at:new Date().toISOString()
-
-})
-
-.eq("id",id);
-
-
-if(error){
-
-throw error;
-
-}
-
-
-alert(
-"Web page published successfully."
-);
-
-
-loadFiles();
-
-
-}catch(error){
-
-console.error(
-error
-);
-
-
-alert(
-"Unable to publish web page: " +
-error.message
-);
-
-}
-
-}
-
-
-/* UNPUBLISH WEB PAGE */
-
-async function unpublishWebPage(id){
-
-if(!confirm(
-"Unpublish this web page?"
-)){
-
-return;
-
-}
-
-
-try{
-
-const {
-error
-} =
-await supabaseClient
-
-.from("web_pages")
-
-.update({
-
-is_published:false,
-
-published_at:null
-
-})
-
-.eq("id",id);
-
-
-if(error){
-
-throw error;
-
-}
-
-
-alert(
-"Web page unpublished successfully."
-);
-
-
-loadFiles();
-
-
-}catch(error){
-
-console.error(
-error
-);
-
-
-alert(
-"Unable to unpublish web page: " +
-error.message
-);
-
-}
-
-}
-
-
-/* OPEN LIVE */
-
-function openLive(id){
-
-window.open(
-
-"web-page.html?id=" +
-encodeURIComponent(id),
-
-"_blank"
-
-);
-
-}
-
-
-/* DELETE WEB PAGE */
-
-async function deleteWebPage(id){
-
-if(!confirm(
-"Delete this web page?"
-)){
-
-return;
-
-}
-
-
-try{
-
-const {
-error
-} =
-await supabaseClient
-
-.from("web_pages")
-
-.delete()
-
-.eq("id",id);
-
-
-if(error){
-
-throw error;
-
-}
-
-
-alert(
-"Web page deleted successfully."
-);
-
-
-loadFiles();
-
-
-}catch(error){
-
-console.error(
-error
-);
-
-
-alert(
-"Unable to delete web page: " +
-error.message
-);
-
-}
-
-}
-
-
-/* CLOSE PREVIEW */
-
-document.getElementById(
-"closePreview"
-).addEventListener(
-"click",
-function(){
-
-document.getElementById(
-"previewModal"
-).style.display =
-"none";
-
-
-document.getElementById(
-"previewFrame"
-).srcdoc =
-"";
-
-}
-);
-
-
-/* CLOSE OUTSIDE CLICK */
-
-document.getElementById(
-"previewModal"
-).addEventListener(
-"click",
-function(event){
-
-if(
-event.target ===
-this
-){
-
-this.style.display =
-"none";
-
-
-document.getElementById(
-"previewFrame"
-).srcdoc =
-"";
-
-}
-
-}
-);
-
-
-/* START */
-
-loadFiles();
-
-
-</script>
-
-
-</body>
-
-</html>
