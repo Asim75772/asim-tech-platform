@@ -96,6 +96,15 @@ display:inline-block;
 background:#30363d;
 }
 
+.delete-btn{
+color:#ff7b72;
+border-color:#6e2b2b;
+}
+
+.delete-btn:hover{
+background:#3d1f25;
+}
+
 .search{
 flex:1;
 min-width:220px;
@@ -271,6 +280,16 @@ border-radius:6px;
 margin-bottom:15px;
 }
 
+.success{
+display:none;
+background:#123d35;
+border:1px solid #238636;
+color:#7ee787;
+padding:14px;
+border-radius:6px;
+margin-bottom:15px;
+}
+
 .status{
 color:#8b949e;
 font-size:12px;
@@ -345,6 +364,8 @@ Repository File Explorer
 
 <div id="error" class="error"></div>
 
+<div id="success" class="success"></div>
+
 
 <div class="toolbar">
 
@@ -370,6 +391,9 @@ Loading files...
 
 <div class="layout">
 
+
+<!-- FILE TREE -->
+
 <div class="panel">
 
 <div class="panel-title">
@@ -386,6 +410,8 @@ Loading...
 
 </div>
 
+
+<!-- VIEWER -->
 
 <div class="panel viewer">
 
@@ -418,6 +444,10 @@ Select a file from the explorer to preview it.
 
 <script>
 
+/* =========================
+   SUPABASE
+========================= */
+
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
@@ -431,26 +461,45 @@ SUPABASE_KEY
 );
 
 
+/* =========================
+   URL PARAMETERS
+========================= */
+
 const params =
 new URLSearchParams(
 window.location.search
 );
 
 
+/*
+Accept both:
+?repository_id=
+and
+?id=
+*/
+
 const repoId =
 params.get("repository_id") ||
 params.get("id");
 
 
+/* =========================
+   VARIABLES
+========================= */
+
 let currentUser = null;
+
 let repository = null;
+
 let allFiles = [];
+
 let filteredFiles = [];
+
 let selectedFile = null;
 
 
 /* =========================
-   INITIALIZE
+   INIT
 ========================= */
 
 async function init(){
@@ -465,6 +514,8 @@ throw new Error(
 
 }
 
+
+/* USER */
 
 const {
 data:{user},
@@ -486,8 +537,11 @@ return;
 
 }
 
+
 currentUser = user;
 
+
+/* REPOSITORY */
 
 const {
 data:repo,
@@ -513,6 +567,8 @@ throw new Error(
 repository = repo;
 
 
+/* HEADER */
+
 document.getElementById(
 "repoName"
 ).textContent =
@@ -526,12 +582,16 @@ repo.description ||
 "Repository File Explorer";
 
 
+/* BACK */
+
 document.getElementById(
 "backButton"
 ).href =
 "repository-details.html?id=" +
 encodeURIComponent(repo.id);
 
+
+/* LOAD FILES */
 
 await loadFiles();
 
@@ -572,7 +632,10 @@ await supabaseClient
 .from("repository_files")
 .select("*")
 .eq("repository_id",repoId)
-.order("file_path",{ascending:true});
+.order(
+"file_path",
+{ascending:true}
+);
 
 
 if(error)
@@ -596,9 +659,11 @@ document.getElementById(
 "status"
 ).textContent =
 allFiles.length +
-(allFiles.length === 1 ?
-" file" :
-" files");
+(
+allFiles.length === 1
+? " file"
+: " files"
+);
 
 
 }catch(error){
@@ -656,7 +721,7 @@ filteredFiles
 
 
 /* =========================
-   ICON
+   FILE ICON
 ========================= */
 
 function getIcon(file){
@@ -682,8 +747,13 @@ return "🖼️";
 }
 
 
-if(path.endsWith(".pdf"))
+if(
+path.endsWith(".pdf")
+){
+
 return "📕";
+
+}
 
 
 return "📦";
@@ -724,8 +794,11 @@ return;
 
 
 const root = {
+
 folders:{},
+
 files:[]
+
 };
 
 
@@ -748,14 +821,18 @@ parts.forEach(
 (part,index)=>{
 
 const last =
-index === parts.length - 1;
+index ===
+parts.length - 1;
 
 
 if(last){
 
 node.files.push({
+
 name:part,
+
 file:file
+
 });
 
 }else{
@@ -763,8 +840,11 @@ file:file
 if(!node.folders[part]){
 
 node.folders[part] = {
+
 folders:{},
+
 files:[]
+
 };
 
 }
@@ -799,23 +879,31 @@ container,
 path
 ){
 
-
-Object.keys(node.folders)
+Object.keys(
+node.folders
+)
 .sort()
-.forEach(folderName=>{
+.forEach(
+folderName=>{
 
 const folderPath =
-path ?
-path + "/" + folderName :
+path
+?
+path + "/" + folderName
+:
 folderName;
 
 
 const wrapper =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 
 const row =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 
 row.className =
@@ -823,15 +911,24 @@ row.className =
 
 
 row.innerHTML =
+
 '<span class="folder-arrow">▶</span>' +
+
 '<span class="file-icon">📁</span>' +
+
 '<span class="file-name">' +
-escapeHtml(folderName) +
+
+escapeHtml(
+folderName
+) +
+
 '</span>';
 
 
 const children =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 
 children.style.display =
@@ -842,7 +939,8 @@ children.style.paddingLeft =
 "18px";
 
 
-row.onclick = function(){
+row.onclick =
+function(){
 
 const arrow =
 row.querySelector(
@@ -850,7 +948,10 @@ row.querySelector(
 );
 
 
-if(children.style.display === "none"){
+if(
+children.style.display ===
+"none"
+){
 
 children.style.display =
 "block";
@@ -872,6 +973,7 @@ arrow.textContent =
 
 
 wrapper.appendChild(row);
+
 wrapper.appendChild(children);
 
 container.appendChild(wrapper);
@@ -883,17 +985,27 @@ children,
 folderPath
 );
 
-});
+}
 
+);
+
+
+/* FILES */
 
 node.files
-.sort((a,b)=>
-a.name.localeCompare(b.name)
+.sort(
+(a,b)=>
+a.name.localeCompare(
+b.name
 )
-.forEach(item=>{
+)
+.forEach(
+item=>{
 
 const row =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 
 row.className =
@@ -907,26 +1019,40 @@ row.style.paddingLeft =
 row.innerHTML =
 
 '<span class="file-icon">' +
-getIcon(item.file) +
+
+getIcon(
+item.file
+) +
+
 '</span>' +
 
 '<span class="file-name">' +
-escapeHtml(item.name) +
+
+escapeHtml(
+item.name
+) +
+
 '</span>';
 
 
-row.onclick = function(){
+row.onclick =
+function(){
 
 document
 .querySelectorAll(
 ".tree-item.active"
 )
-.forEach(el =>
-el.classList.remove("active")
+.forEach(
+el =>
+el.classList.remove(
+"active"
+)
 );
 
 
-row.classList.add("active");
+row.classList.add(
+"active"
+);
 
 
 openFile(
@@ -936,9 +1062,13 @@ item.file
 };
 
 
-container.appendChild(row);
+container.appendChild(
+row
+);
 
-});
+}
+
+);
 
 }
 
@@ -949,7 +1079,8 @@ container.appendChild(row);
 
 async function openFile(file){
 
-selectedFile = file;
+selectedFile =
+file;
 
 
 document.getElementById(
@@ -972,16 +1103,24 @@ document.getElementById(
 "</div>";
 
 
+/* BINARY */
+
 if(file.is_binary){
 
-await openBinaryFile(file);
+await openBinaryFile(
+file
+);
 
 return;
 
 }
 
 
-openTextFile(file);
+/* TEXT */
+
+openTextFile(
+file
+);
 
 }
 
@@ -997,17 +1136,26 @@ file.content || "";
 
 
 /*
-IMPORTANT FIX:
-file-editor.html expects file_id,
-not id.
+EDIT URL
 */
 
 const editUrl =
-"file-editor.html?file_id=" +
-encodeURIComponent(file.id) +
-"&repository_id=" +
-encodeURIComponent(repoId);
+"file-editor.html" +
 
+"?file_id=" +
+encodeURIComponent(
+file.id
+) +
+
+"&repository_id=" +
+encodeURIComponent(
+repoId
+);
+
+
+/*
+ACTIONS
+*/
 
 document.getElementById(
 "viewerActions"
@@ -1016,30 +1164,50 @@ document.getElementById(
 '<a class="btn" href="' +
 editUrl +
 '">' +
+
 "✏️ Edit" +
+
 "</a>" +
 
 '<button class="btn" onclick="downloadTextFile()">' +
+
 "⬇ Download" +
+
+"</button>" +
+
+'<button class="btn delete-btn" onclick="deleteFile()">' +
+
+"🗑️ Delete" +
+
 "</button>";
 
+
+/*
+CONTENT
+*/
 
 document.getElementById(
 "viewerBody"
 ).innerHTML =
 
 "<pre>" +
-escapeHtml(content) +
+
+escapeHtml(
+content
+) +
+
 "</pre>";
 
 }
 
 
 /* =========================
-   BINARY FILE
+   OPEN BINARY FILE
 ========================= */
 
-async function openBinaryFile(file){
+async function openBinaryFile(
+file
+){
 
 if(!file.storage_path){
 
@@ -1048,13 +1216,17 @@ document.getElementById(
 ).innerHTML =
 
 '<div class="binary-box">' +
+
 "⚠️ Storage path is missing." +
+
 "</div>";
 
 return;
 
 }
 
+
+try{
 
 const {
 data,
@@ -1069,21 +1241,8 @@ file.storage_path,
 );
 
 
-if(error){
-
-console.error(error);
-
-document.getElementById(
-"viewerBody"
-).innerHTML =
-
-'<div class="binary-box">' +
-"⚠️ Unable to create secure preview URL." +
-"</div>";
-
-return;
-
-}
+if(error)
+throw error;
 
 
 const url =
@@ -1094,6 +1253,10 @@ const mime =
 file.mime_type || "";
 
 
+/*
+ACTIONS
+*/
+
 document.getElementById(
 "viewerActions"
 ).innerHTML =
@@ -1101,15 +1264,29 @@ document.getElementById(
 '<a class="btn" target="_blank" href="' +
 url +
 '">' +
+
 "↗ Open" +
+
 "</a>" +
 
 '<a class="btn" download href="' +
 url +
 '">' +
-"⬇ Download" +
-"</a>";
 
+"⬇ Download" +
+
+"</a>" +
+
+'<button class="btn delete-btn" onclick="deleteFile()">' +
+
+"🗑️ Delete" +
+
+"</button>";
+
+
+/*
+IMAGE
+*/
 
 if(
 mime.startsWith("image/") ||
@@ -1128,6 +1305,10 @@ return;
 
 }
 
+
+/*
+PDF
+*/
 
 if(
 mime === "application/pdf" ||
@@ -1149,6 +1330,10 @@ return;
 }
 
 
+/*
+OTHER BINARY
+*/
+
 document.getElementById(
 "viewerBody"
 ).innerHTML =
@@ -1156,7 +1341,9 @@ document.getElementById(
 '<div class="binary-box">' +
 
 '<div style="font-size:45px;margin-bottom:15px">' +
+
 getIcon(file) +
+
 "</div>" +
 
 "<p>This file type cannot be previewed here.</p>" +
@@ -1166,16 +1353,30 @@ getIcon(file) +
 '<a class="btn" target="_blank" href="' +
 url +
 '">' +
+
 "⬇ Download / Open" +
+
 "</a>" +
 
 "</div>";
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to preview file."
+);
+
+}
 
 }
 
 
 /* =========================
-   DOWNLOAD
+   DOWNLOAD TEXT FILE
 ========================= */
 
 function downloadTextFile(){
@@ -1197,14 +1398,19 @@ type:
 
 
 const url =
-URL.createObjectURL(blob);
+URL.createObjectURL(
+blob
+);
 
 
 const a =
-document.createElement("a");
+document.createElement(
+"a"
+);
 
 
-a.href = url;
+a.href =
+url;
 
 
 a.download =
@@ -1213,14 +1419,194 @@ selectedFile.file_path
 .pop();
 
 
-document.body.appendChild(a);
+document.body.appendChild(
+a
+);
+
 
 a.click();
+
 
 a.remove();
 
 
-URL.revokeObjectURL(url);
+URL.revokeObjectURL(
+url
+);
+
+}
+
+
+/* =========================
+   DELETE FILE
+========================= */
+
+async function deleteFile(){
+
+if(!selectedFile){
+
+showError(
+"No file selected."
+);
+
+return;
+
+}
+
+
+const fileName =
+selectedFile.file_path;
+
+
+/*
+CONFIRMATION
+*/
+
+const confirmed =
+confirm(
+'Are you sure you want to delete "' +
+fileName +
+'"?\n\nThis action cannot be undone.'
+);
+
+
+if(!confirmed){
+
+return;
+
+}
+
+
+try{
+
+/*
+DISABLE BUTTONS
+*/
+
+document.getElementById(
+"viewerBody"
+).innerHTML =
+
+'<div class="loading">' +
+
+"Deleting file..." +
+
+"</div>";
+
+
+/*
+=========================
+DELETE STORAGE FILE
+=========================
+*/
+
+if(
+selectedFile.is_binary &&
+selectedFile.storage_path
+){
+
+const {
+error:storageError
+} =
+await supabaseClient
+.storage
+.from("repository-files")
+.remove([
+selectedFile.storage_path
+]);
+
+
+if(storageError)
+throw storageError;
+
+}
+
+
+/*
+=========================
+DELETE DATABASE RECORD
+=========================
+*/
+
+const {
+error
+} =
+await supabaseClient
+.from("repository_files")
+.delete()
+.eq(
+"id",
+selectedFile.id
+)
+.eq(
+"repository_id",
+repoId
+);
+
+
+if(error)
+throw error;
+
+
+/*
+=========================
+SUCCESS
+=========================
+*/
+
+showSuccess(
+"File deleted successfully."
+);
+
+
+/*
+CLEAR VIEWER
+*/
+
+selectedFile =
+null;
+
+
+document.getElementById(
+"viewerName"
+).textContent =
+"Select a file";
+
+
+document.getElementById(
+"viewerActions"
+).innerHTML =
+"";
+
+
+document.getElementById(
+"viewerBody"
+).innerHTML =
+
+'<div class="empty">' +
+
+"Select a file from the explorer to preview it." +
+
+"</div>";
+
+
+/*
+REFRESH FILE LIST
+*/
+
+await loadFiles();
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to delete file."
+);
+
+}
 
 }
 
@@ -1237,40 +1623,69 @@ const p =
 
 
 return [
+
 ".png",
 ".jpg",
 ".jpeg",
 ".gif",
 ".webp",
 ".svg"
+
 ].some(
-ext => p.endsWith(ext)
+ext =>
+p.endsWith(ext)
 );
 
 }
 
 
 /* =========================
-   HTML ESCAPE
+   ESCAPE HTML
 ========================= */
 
-function escapeHtml(value){
+function escapeHtml(
+value
+){
 
-return String(value || "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+return String(
+value || ""
+)
+
+.replace(
+/&/g,
+"&amp;"
+)
+
+.replace(
+/</g,
+"&lt;"
+)
+
+.replace(
+/>/g,
+"&gt;"
+)
+
+.replace(
+/"/g,
+"&quot;"
+)
+
+.replace(
+/'/g,
+"&#039;"
+);
 
 }
 
 
 /* =========================
-   ERROR
+   ERROR MESSAGE
 ========================= */
 
-function showError(message){
+function showError(
+message
+){
 
 const box =
 document.getElementById(
@@ -1279,11 +1694,59 @@ document.getElementById(
 
 
 box.textContent =
+"❌ " +
 message;
 
 
 box.style.display =
 "block";
+
+
+setTimeout(
+function(){
+
+box.style.display =
+"none";
+
+},
+4000
+);
+
+}
+
+
+/* =========================
+   SUCCESS MESSAGE
+========================= */
+
+function showSuccess(
+message
+){
+
+const box =
+document.getElementById(
+"success"
+);
+
+
+box.textContent =
+"✅ " +
+message;
+
+
+box.style.display =
+"block";
+
+
+setTimeout(
+function(){
+
+box.style.display =
+"none";
+
+},
+3000
+);
 
 }
 
