@@ -1,8 +1,20 @@
-<!DOCTYPE html><html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="en">
 
-<title>Web Page Builder - ASIM TECH</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<title>Web Page Builder - ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
 
 *{
     box-sizing:border-box;
@@ -223,7 +235,15 @@ button{
 
 }
 
-</style></head><body><nav><div class="logo">
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
     ⚡ ASIM TECH
 </div>
 
@@ -231,48 +251,79 @@ button{
     Dashboard
 </a>
 
-</nav><div class="container"><h1 id="pageTitle">
+</nav>
+
+
+<div class="container">
+
+
+<h1 id="pageTitle">
     🌐 Web Page Builder
-</h1><p class="subtitle">
+</h1>
+
+
+<p class="subtitle">
     Create your webpage using HTML, CSS and JavaScript.
-</p><div id="modeLabel" class="mode">
+</p>
+
+
+<div id="modeLabel" class="mode">
     New Web Page
-</div><!-- =========================
+</div>
+
+
+<!-- =========================
      REPOSITORY
-========================= --><div class="card"><div class="field">
+========================= -->
 
-    <label>
-        📁 Repository
-    </label>
+<div class="card">
 
-    <select id="repository">
+<div class="field">
 
-        <option value="">
-            Loading repository...
-        </option>
+<label>
+    📁 Repository
+</label>
 
-    </select>
+<select id="repository">
+
+<option value="">
+    Loading repository...
+</option>
+
+</select>
 
 </div>
 
 
 <div class="field">
 
-    <label>
-        📝 Page Name
-    </label>
+<label>
+    📝 Page Name
+</label>
 
-    <input
-        type="text"
-        id="pageName"
-        placeholder="Example: index.html"
-    >
+<input
+    type="text"
+    id="pageName"
+    placeholder="Example: index.html"
+>
 
 </div>
 
-</div><!-- =========================
+</div>
+
+
+<!-- =========================
      EDITORS
-========================= --><div class="editors"><!-- HTML --><div class="card"><div class="editor-title html-title">
+========================= -->
+
+<div class="editors">
+
+
+<!-- HTML -->
+
+<div class="card">
+
+<div class="editor-title html-title">
     HTML
 </div>
 
@@ -281,7 +332,16 @@ button{
     placeholder="Write your HTML here..."
 ><h1>Welcome to ASIM TECH!</h1>
 
-<p>This is my published website.</p></textarea></div><!-- CSS --><div class="card"><div class="editor-title css-title">
+<p>This is my published website.</p></textarea>
+
+</div>
+
+
+<!-- CSS -->
+
+<div class="card">
+
+<div class="editor-title css-title">
     CSS
 </div>
 
@@ -292,7 +352,6 @@ button{
 font-family: Arial, sans-serif;
 padding: 30px;
 background: #f5f7fb;
-
 }
 
 h1 {
@@ -303,7 +362,14 @@ p {
 font-size: 18px;
 }</textarea>
 
-</div><!-- JAVASCRIPT --><div class="card"><div class="editor-title js-title">
+</div>
+
+
+<!-- JAVASCRIPT -->
+
+<div class="card">
+
+<div class="editor-title js-title">
     JavaScript
 </div>
 
@@ -312,9 +378,19 @@ font-size: 18px;
     placeholder="Write your JavaScript here..."
 >console.log("Hello from ASIM TECH!");</textarea>
 
-</div></div><!-- =========================
+</div>
+
+
+</div>
+
+
+<!-- =========================
      LIVE PREVIEW
-========================= --><div class="card"><div class="editor-title">
+========================= -->
+
+<div class="card">
+
+<div class="editor-title">
     👁️ Live Preview
 </div>
 
@@ -325,40 +401,47 @@ font-size: 18px;
     sandbox="allow-scripts allow-forms allow-modals">
 </iframe>
 
-</div><!-- =========================
+</div>
+
+
+<!-- =========================
      BUTTONS
-========================= --><div class="card"><div class="buttons">
+========================= -->
+
+<div class="card">
+
+<div class="buttons">
 
 
-    <button
-        type="button"
-        class="preview-btn"
-        onclick="updatePreview()">
+<button
+    type="button"
+    class="preview-btn"
+    onclick="updatePreview()">
 
-        👁️ Preview
+    👁️ Preview
 
-    </button>
-
-
-    <button
-        type="button"
-        id="saveButton"
-        class="save"
-        onclick="savePage()">
-
-        💾 Save Page
-
-    </button>
+</button>
 
 
-    <button
-        type="button"
-        class="back"
-        onclick="goBack()">
+<button
+    type="button"
+    id="saveButton"
+    class="save"
+    onclick="savePage()">
 
-        ← Back
+    💾 Save Page
 
-    </button>
+</button>
+
+
+<button
+    type="button"
+    class="back"
+    onclick="goBack()">
+
+    ← Back
+
+</button>
 
 
 </div>
@@ -369,7 +452,14 @@ font-size: 18px;
     class="status">
 </div>
 
-</div></div><script>
+</div>
+
+
+</div>
+
+
+<script>
+
 
 /* =====================================
    SUPABASE
@@ -460,11 +550,6 @@ let currentUser = null;
 
 let editingPage = null;
 
-
-/* =====================================
-   PREVIEW URL
-===================================== */
-
 let previewURL = null;
 
 
@@ -508,6 +593,7 @@ async function initialize(){
         if(userError){
 
             throw userError;
+
         }
 
 
@@ -517,6 +603,7 @@ async function initialize(){
                 "login.html";
 
             return;
+
         }
 
 
@@ -854,46 +941,47 @@ async function loadExistingPage(){
         page.page_name || "";
 
 
-    /*
-    IMPORTANT:
-
-    When editing a page, load DRAFT content
-    first.
-
-    If draft content is unavailable/null,
-    use existing live content as fallback.
-
-    Therefore published live content remains
-    untouched until Publish is performed.
-    */
-
+    /* =================================
+       LOAD DRAFT FIRST
+    ================================= */
 
     htmlCode.value =
         page.draft_html_content !== null &&
         page.draft_html_content !== undefined
-            ? page.draft_html_content
-            : (page.html_content || "");
+
+        ? page.draft_html_content
+
+        : (page.html_content || "");
 
 
     cssCode.value =
         page.draft_css_content !== null &&
         page.draft_css_content !== undefined
-            ? page.draft_css_content
-            : (page.css_content || "");
+
+        ? page.draft_css_content
+
+        : (page.css_content || "");
 
 
     jsCode.value =
         page.draft_js_content !== null &&
         page.draft_js_content !== undefined
-            ? page.draft_js_content
-            : (page.js_content || "");
+
+        ? page.draft_js_content
+
+        : (page.js_content || "");
 
 
     setStatus(
+
         page.is_published
-            ? "Published page loaded. Your changes will be saved as Draft."
-            : "Draft page loaded successfully.",
+
+        ? "Published page loaded. Your changes will be saved as Draft."
+
+        : "Draft page loaded successfully.",
+
         "success"
+
     );
 
 }
@@ -938,14 +1026,19 @@ content="width=device-width,initial-scale=1.0"
 
 ${css}
 
-</style></head><body>${html}
+</style>
+
+</head>
+
+<body>
+
+${html}
 
 <script>
 
 ${js}
 
 <\/script>
-
 
 </body>
 
@@ -960,6 +1053,7 @@ ${js}
             );
 
             previewURL = null;
+
         }
 
 
@@ -1006,7 +1100,7 @@ ${js}
 
 /* =====================================
    SAVE PAGE
-   SAVE TO DRAFT
+   NEW + EXISTING
 ===================================== */
 
 async function savePage(){
@@ -1020,6 +1114,7 @@ async function savePage(){
             );
 
             return;
+
         }
 
 
@@ -1034,6 +1129,7 @@ async function savePage(){
             );
 
             return;
+
         }
 
 
@@ -1048,12 +1144,13 @@ async function savePage(){
             );
 
             return;
+
         }
 
 
-        /*
-        Add .html automatically.
-        */
+        /* =================================
+           ADD .HTML AUTOMATICALLY
+        ================================= */
 
         if(
             !name
@@ -1061,8 +1158,7 @@ async function savePage(){
                 .endsWith(".html")
         ){
 
-            name +=
-                ".html";
+            name += ".html";
 
         }
 
@@ -1080,8 +1176,97 @@ async function savePage(){
 
 
         /* =================================
+           DUPLICATE CHECK
+           IMPORTANT FIX
+
+           Existing page itself is excluded
+           from duplicate checking.
+        ================================= */
+
+        setStatus(
+            "Checking page name..."
+        );
+
+
+        let duplicateQuery =
+            supabaseClient
+
+                .from("web_pages")
+
+                .select("id")
+
+                .eq(
+                    "repository_id",
+                    selectedRepository
+                )
+
+                .eq(
+                    "page_name",
+                    name
+                );
+
+
+        /*
+        If editing an existing page,
+        exclude the current page ID.
+
+        Therefore:
+
+        test-app.html
+        editing itself
+
+        will NOT be treated as duplicate.
+        */
+
+        if(editingPage){
+
+            duplicateQuery =
+                duplicateQuery.neq(
+                    "id",
+                    editingPage.id
+                );
+
+        }
+
+
+        const {
+            data:existing,
+            error:checkError
+        } =
+        await duplicateQuery;
+
+
+        if(checkError){
+
+            console.error(checkError);
+
+            throw checkError;
+
+        }
+
+
+        if(
+            existing &&
+            existing.length > 0
+        ){
+
+            alert(
+                "A web page with this name already exists in this repository."
+            );
+
+            setStatus(
+                "Duplicate page name found.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* =================================
            UPDATE EXISTING PAGE
-           ONLY DRAFT IS UPDATED
+           ONLY DRAFT
         ================================= */
 
         if(editingPage){
@@ -1130,6 +1315,7 @@ async function savePage(){
                 console.error(error);
 
                 throw error;
+
             }
 
 
@@ -1140,61 +1326,14 @@ async function savePage(){
 
             window.location.href =
                 "repository-files.html?repository_id=" +
+
                 encodeURIComponent(
                     selectedRepository
                 );
 
 
             return;
-        }
 
-
-        /* =================================
-           DUPLICATE CHECK
-        ================================= */
-
-        setStatus(
-            "Checking page name..."
-        );
-
-
-        const {
-            data:existing,
-            error:checkError
-        } =
-        await supabaseClient
-
-            .from("web_pages")
-
-            .select("id")
-
-            .eq(
-                "repository_id",
-                selectedRepository
-            )
-
-            .eq(
-                "page_name",
-                name
-            );
-
-
-        if(checkError){
-
-            throw checkError;
-        }
-
-
-        if(
-            existing &&
-            existing.length > 0
-        ){
-
-            alert(
-                "A web page with this name already exists in this repository."
-            );
-
-            return;
         }
 
 
@@ -1225,12 +1364,6 @@ async function savePage(){
                 page_name:
                     name,
 
-                /*
-                Initial live content is kept
-                as the initial version, but the
-                page is unpublished.
-                */
-
                 html_content:
                     html,
 
@@ -1239,10 +1372,6 @@ async function savePage(){
 
                 js_content:
                     js,
-
-                /*
-                Draft content
-                */
 
                 draft_html_content:
                     html,
@@ -1270,6 +1399,7 @@ async function savePage(){
             console.error(error);
 
             throw error;
+
         }
 
 
@@ -1280,6 +1410,7 @@ async function savePage(){
 
         window.location.href =
             "repository-files.html?repository_id=" +
+
             encodeURIComponent(
                 selectedRepository
             );
@@ -1316,6 +1447,7 @@ function goBack(){
 
         window.location.href =
             "repository-files.html?repository_id=" +
+
             encodeURIComponent(
                 repositoryId
             );
@@ -1336,5 +1468,8 @@ function goBack(){
 
 initialize();
 
-</script></body>
+</script>
+
+</body>
+
 </html>
