@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Issues — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+background:#0d1117;
+color:#e6edf3;
+min-height:100vh;
+}
+
+.navbar{
+height:64px;
+background:#010409;
+border-bottom:1px solid #30363d;
+display:flex;
+align-items:center;
+padding:0 5%;
+gap:25px;
+}
+
+.logo{
+font-size:21px;
+font-weight:700;
+color:white;
+}
+
+.navbar a{
+color:#e6edf3;
+text-decoration:none;
+font-size:14px;
+}
+
+.navbar a:hover{
+color:#58a6ff;
+}
+
+.container{
+width:92%;
+max-width:1100px;
+margin:30px auto;
+}
+
+.repo-header{
+margin-bottom:25px;
+}
+
+.repo-name{
+font-size:26px;
+margin-bottom:8px;
+}
+
+.repo-name span{
+color:#8b949e;
+font-weight:400;
+}
+
+.description{
+color:#8b949e;
+font-size:14px;
+}
+
+.top-actions{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.issue-tabs{
+display:flex;
+gap:18px;
+align-items:center;
+}
+
+.issue-tab{
+color:#8b949e;
+text-decoration:none;
+font-size:14px;
+cursor:pointer;
+}
+
+.issue-tab.active{
+color:#e6edf3;
+font-weight:600;
+}
+
+.issue-count{
+background:#30363d;
+padding:2px 7px;
+border-radius:20px;
+font-size:11px;
+}
+
+.btn{
+border:1px solid #30363d;
+background:#21262d;
+color:#e6edf3;
+padding:8px 14px;
+border-radius:6px;
+font-size:14px;
+cursor:pointer;
+text-decoration:none;
+display:inline-block;
+}
+
+.btn:hover{
+background:#30363d;
+}
+
+.btn-green{
+background:#238636;
+border-color:#238636;
+color:white;
+}
+
+.btn-green:hover{
+background:#2ea043;
+}
+
+.search-row{
+display:flex;
+gap:10px;
+margin-bottom:15px;
+}
+
+.search{
+flex:1;
+background:#0d1117;
+border:1px solid #30363d;
+border-radius:6px;
+padding:9px 12px;
+color:#e6edf3;
+outline:none;
+}
+
+.search:focus{
+border-color:#58a6ff;
+}
+
+.issue-list{
+border:1px solid #30363d;
+border-radius:6px;
+overflow:hidden;
+}
+
+.issue-row{
+padding:16px;
+border-bottom:1px solid #21262d;
+display:flex;
+gap:14px;
+}
+
+.issue-row:last-child{
+border-bottom:0;
+}
+
+.issue-icon{
+font-size:21px;
+color:#3fb950;
+width:25px;
+}
+
+.issue-icon.closed{
+color:#8b949e;
+}
+
+.issue-main{
+flex:1;
+min-width:0;
+}
+
+.issue-title{
+font-size:16px;
+font-weight:600;
+color:#58a6ff;
+cursor:pointer;
+margin-bottom:7px;
+}
+
+.issue-title:hover{
+text-decoration:underline;
+}
+
+.issue-meta{
+font-size:12px;
+color:#8b949e;
+line-height:1.6;
+}
+
+.issue-body{
+color:#c9d1d9;
+font-size:13px;
+margin-top:8px;
+white-space:pre-wrap;
+word-break:break-word;
+}
+
+.issue-actions{
+display:flex;
+gap:6px;
+align-items:flex-start;
+}
+
+.small-btn{
+border:1px solid #30363d;
+background:#21262d;
+color:#e6edf3;
+padding:5px 9px;
+border-radius:6px;
+cursor:pointer;
+font-size:12px;
+}
+
+.small-btn:hover{
+background:#30363d;
+}
+
+.empty{
+padding:50px 20px;
+text-align:center;
+color:#8b949e;
+}
+
+.loading{
+padding:50px;
+text-align:center;
+color:#8b949e;
+}
+
+.error{
+display:none;
+background:#3d1f25;
+border:1px solid #f85149;
+color:#ff7b72;
+padding:14px;
+border-radius:6px;
+margin-bottom:20px;
+}
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.7);
+z-index:1000;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.modal-box{
+width:100%;
+max-width:600px;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:8px;
+padding:25px;
+}
+
+.modal-box h2{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+font-size:13px;
+color:#8b949e;
+margin-bottom:7px;
+}
+
+input,
+textarea{
+width:100%;
+background:#0d1117;
+border:1px solid #30363d;
+border-radius:6px;
+padding:10px;
+color:#e6edf3;
+outline:none;
+margin-bottom:18px;
+font-family:inherit;
+}
+
+textarea{
+min-height:150px;
+resize:vertical;
+}
+
+input:focus,
+textarea:focus{
+border-color:#58a6ff;
+}
+
+.modal-actions{
+display:flex;
+justify-content:flex-end;
+gap:8px;
+}
+
+footer{
+text-align:center;
+padding:45px 10px;
+color:#8b949e;
+font-size:13px;
+}
+
+@media(max-width:600px){
+
+.navbar{
+height:58px;
+padding:0 4%;
+gap:15px;
+}
+
+.navbar a{
+font-size:12px;
+}
+
+.container{
+width:94%;
+margin:20px auto;
+}
+
+.issue-row{
+padding:13px;
+}
+
+.issue-actions{
+flex-direction:column;
+}
+
+.search-row{
+flex-direction:column;
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+<div class="logo">
+⚡ ASIM TECH
+</div>
+
+<a href="index.html">
+Home
+</a>
+
+<a href="repositories.html">
+Repositories
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+</nav>
+
+
+<div class="container">
+
+
+<div id="loading"
+class="loading">
+
+Loading issues...
+
+</div>
+
+
+<div id="error"
+class="error">
+</div>
+
+
+<div id="mainContent"
+style="display:none;">
+
+
+<div class="repo-header">
+
+<div class="repo-name">
+
+📁 ASIM TECH
+/
+<strong id="repoName">
+Repository
+</strong>
+
+</div>
+
+<div id="repoDescription"
+class="description">
+
+</div>
+
+</div>
+
+
+<div class="top-actions">
+
+<div class="issue-tabs">
+
+<a id="openTab"
+class="issue-tab active"
+onclick="setState('open')">
+
+🟢 Open
+
+<span id="openCount"
+class="issue-count">
+0
+</span>
+
+</a>
+
+
+<a id="closedTab"
+class="issue-tab"
+onclick="setState('closed')">
+
+⚫ Closed
+
+<span id="closedCount"
+class="issue-count">
+0
+</span>
+
+</a>
+
+</div>
+
+
+<button
+class="btn btn-green"
+onclick="openNewIssue()">
+
+＋ New issue
+
+</button>
+
+</div>
+
+
+<div class="search-row">
+
+<input
+id="searchInput"
+class="search"
+type="search"
+placeholder="🔎 Search issues..."
+oninput="renderIssues()">
+
+</div>
+
+
+<div id="issueList"
+class="issue-list">
+
+<div class="empty">
+Loading issues...
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- NEW ISSUE MODAL -->
+
+<div id="newIssueModal"
+class="modal">
+
+<div class="modal-box">
+
+<h2>
+Create new issue
+</h2>
+
+
+<label>
+Title
+</label>
+
+<input
+id="issueTitle"
+type="text"
+placeholder="Issue title">
+
+
+<label>
+Description
+</label>
+
+<textarea
+id="issueBody"
+placeholder="Describe the issue..."></textarea>
+
+
+<div class="modal-actions">
+
+<button
+class="btn"
+onclick="closeNewIssue()">
+
+Cancel
+
+</button>
+
+
+<button
+class="btn btn-green"
+onclick="createIssue()">
+
+Create issue
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+
+© 2026 ASIM TECH — Code. Create. Innovate.
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* =====================================================
+   URL
+===================================================== */
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const repositoryId =
+params.get("repository_id") ||
+params.get("id");
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let repository = null;
+
+let currentUser = null;
+
+let allIssues = [];
+
+let currentState = "open";
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(message){
+
+document.getElementById(
+"loading"
+).style.display="none";
+
+document.getElementById(
+"mainContent"
+).style.display="none";
+
+const box =
+document.getElementById(
+"error"
+);
+
+box.textContent =
+message;
+
+box.style.display="block";
+
+}
+
+
+/* =====================================================
+   LOAD
+===================================================== */
+
+async function loadPage(){
+
+try{
+
+
+if(!repositoryId){
+
+showError(
+"Repository ID is missing."
+);
+
+return;
+
+}
+
+
+/* USER */
+
+const {
+data:userData
+} =
+await supabaseClient
+.auth
+.getUser();
+
+if(userData &&
+userData.user){
+
+currentUser =
+userData.user;
+
+}
+
+
+/* REPOSITORY */
+
+const {
+data:repo,
+error:repoError
+} =
+await supabaseClient
+
+.from("repositories")
+
+.select(`
+id,
+owner_id,
+name,
+description,
+is_private
+`)
+
+.eq(
+"id",
+repositoryId
+)
+
+.single();
+
+
+if(repoError){
+
+throw repoError;
+
+}
+
+
+if(!repo){
+
+throw new Error(
+"Repository not found."
+);
+
+}
+
+
+repository =
+repo;
+
+
+document.getElementById(
+"repoName"
+).textContent =
+repo.name;
+
+
+document.getElementById(
+"repoDescription"
+).textContent =
+repo.description ||
+"Repository issues";
+
+
+document.title =
+"Issues — " +
+repo.name +
+" — ASIM TECH";
+
+
+await loadIssues();
+
+
+document.getElementById(
+"loading"
+).style.display="none";
+
+
+document.getElementById(
+"mainContent"
+).style.display="block";
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to load issues."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   LOAD ISSUES
+===================================================== */
+
+async function loadIssues(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_issues")
+
+.select(`
+id,
+repository_id,
+author_id,
+issue_number,
+title,
+body,
+state,
+created_at,
+updated_at
+`)
+
+.eq(
+"repository_id",
+repositoryId
+)
+
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+allIssues =
+data || [];
+
+
+updateCounts();
+
+renderIssues();
+
+}
+
+
+/* =====================================================
+   COUNTS
+===================================================== */
+
+function updateCounts(){
+
+const open =
+allIssues.filter(
+issue =>
+issue.state === "open"
+).length;
+
+
+const closed =
+allIssues.filter(
+issue =>
+issue.state === "closed"
+).length;
+
+
+document.getElementById(
+"openCount"
+).textContent =
+open;
+
+
+document.getElementById(
+"closedCount"
+).textContent =
+closed;
+
+}
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+function setState(state){
+
+currentState =
+state;
+
+
+document.getElementById(
+"openTab"
+).classList.toggle(
+"active",
+state === "open"
+);
+
+
+document.getElementById(
+"closedTab"
+).classList.toggle(
+"active",
+state === "closed"
+);
+
+
+renderIssues();
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function renderIssues(){
+
+const list =
+document.getElementById(
+"issueList"
+);
+
+
+const search =
+(
+document.getElementById(
+"searchInput"
+).value || ""
+)
+.toLowerCase()
+.trim();
+
+
+const filtered =
+allIssues.filter(
+issue => {
+
+const stateMatch =
+issue.state === currentState;
+
+
+const searchMatch =
+!search ||
+
+(issue.title || "")
+.toLowerCase()
+.includes(search) ||
+
+(issue.body || "")
+.toLowerCase()
+.includes(search);
+
+
+return stateMatch &&
+searchMatch;
+
+}
+);
+
+
+if(!filtered.length){
+
+list.innerHTML =
+
+'<div class="empty">' +
+
+(
+currentState === "open"
+?
+"No open issues."
+:
+"No closed issues."
+)
+
++
+
+'</div>';
+
+return;
+
+}
+
+
+list.innerHTML =
+"";
+
+
+filtered.forEach(
+function(issue){
+
+const row =
+document.createElement(
+"div"
+);
+
+row.className =
+"issue-row";
+
+
+const icon =
+document.createElement(
+"div"
+);
+
+icon.className =
+"issue-icon" +
+(
+issue.state === "closed"
+?
+" closed"
+:
+""
+);
+
+icon.textContent =
+issue.state === "closed"
+?
+"●"
+:
+"●";
+
+
+const main =
+document.createElement(
+"div"
+);
+
+main.className =
+"issue-main";
+
+
+const title =
+document.createElement(
+"div"
+);
+
+title.className =
+"issue-title";
+
+
+title.textContent =
+"#" +
+issue.issue_number +
+" " +
+issue.title;
+
+
+title.onclick =
+function(){
+
+openIssue(issue);
+
+};
+
+
+const meta =
+document.createElement(
+"div"
+);
+
+meta.className =
+"issue-meta";
+
+
+meta.textContent =
+(
+issue.state === "open"
+?
+"Open"
+:
+"Closed"
+)
++
+" • Created " +
+formatDate(issue.created_at);
+
+
+const body =
+document.createElement(
+"div"
+);
+
+body.className =
+"issue-body";
+
+
+if(issue.body){
+
+body.textContent =
+issue.body;
+
+}
+
+
+main.appendChild(
+title
+);
+
+main.appendChild(
+meta
+);
+
+
+if(issue.body){
+
+main.appendChild(
+body
+);
+
+}
+
+
+const actions =
+document.createElement(
+"div"
+);
+
+actions.className =
+"issue-actions";
+
+
+const toggleButton =
+document.createElement(
+"button"
+);
+
+toggleButton.className =
+"small-btn";
+
+
+toggleButton.textContent =
+issue.state === "open"
+?
+"Close"
+:
+"Reopen";
+
+
+toggleButton.onclick =
+function(){
+
+toggleIssue(
+issue
+);
+
+};
+
+
+actions.appendChild(
+toggleButton
+);
+
+
+/* DELETE */
+
+if(
+currentUser &&
+(
+currentUser.id ===
+issue.author_id
+||
+currentUser.id ===
+repository.owner_id
+)
+){
+
+const deleteButton =
+document.createElement(
+"button"
+);
+
+deleteButton.className =
+"small-btn";
+
+deleteButton.textContent =
+"Delete";
+
+deleteButton.onclick =
+function(){
+
+deleteIssue(
+issue
+);
+
+};
+
+actions.appendChild(
+deleteButton
+);
+
+}
+
+
+row.appendChild(
+icon
+);
+
+row.appendChild(
+main
+);
+
+row.appendChild(
+actions
+);
+
+list.appendChild(
+row
+);
+
+});
+
+}
+
+
+/* =====================================================
+   NEW ISSUE
+===================================================== */
+
+function openNewIssue(){
+
+if(!currentUser){
+
+alert(
+"Please login to create an issue."
+);
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+document.getElementById(
+"issueTitle"
+).value =
+"";
+
+
+document.getElementById(
+"issueBody"
+).value =
+"";
+
+
+document.getElementById(
+"newIssueModal"
+).style.display =
+"flex";
+
+}
+
+
+function closeNewIssue(){
+
+document.getElementById(
+"newIssueModal"
+).style.display =
+"none";
+
+}
+
+
+/* =====================================================
+   CREATE ISSUE
+===================================================== */
+
+async function createIssue(){
+
+const title =
+document.getElementById(
+"issueTitle"
+).value.trim();
+
+
+const body =
+document.getElementById(
+"issueBody"
+).value.trim();
+
+
+if(!title){
+
+alert(
+"Please enter an issue title."
+);
+
+return;
+
+}
+
+
+if(!currentUser){
+
+alert(
+"Please login first."
+);
+
+return;
+
+}
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_issues")
+
+.insert({
+
+repository_id:
+repositoryId,
+
+author_id:
+currentUser.id,
+
+title:
+title,
+
+body:
+body,
+
+state:
+"open"
+
+});
+
+
+if(error){
+
+console.error(error);
+
+alert(
+"Unable to create issue: " +
+error.message
+);
+
+return;
+
+}
+
+
+closeNewIssue();
+
+await loadIssues();
+
+setState("open");
+
+}
+
+
+/* =====================================================
+   TOGGLE ISSUE
+===================================================== */
+
+async function toggleIssue(issue){
+
+const newState =
+issue.state === "open"
+?
+"closed"
+:
+"open";
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_issues")
+
+.update({
+
+state:
+newState
+
+})
+
+.eq(
+"id",
+issue.id
+);
+
+
+if(error){
+
+alert(
+"Unable to update issue: " +
+error.message
+);
+
+return;
+
+}
+
+
+await loadIssues();
+
+}
+
+
+/* =====================================================
+   DELETE ISSUE
+===================================================== */
+
+async function deleteIssue(issue){
+
+const confirmed =
+confirm(
+"Delete issue #" +
+issue.issue_number +
+"? This cannot be undone."
+);
+
+
+if(!confirmed){
+
+return;
+
+}
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_issues")
+
+.delete()
+
+.eq(
+"id",
+issue.id
+);
+
+
+if(error){
+
+alert(
+"Unable to delete issue: " +
+error.message
+);
+
+return;
+
+}
+
+
+await loadIssues();
+
+}
+
+
+/* =====================================================
+   OPEN ISSUE
+===================================================== */
+
+function openIssue(issue){
+
+alert(
+
+"#" +
+issue.issue_number +
+" — " +
+issue.title +
+"\n\n" +
+
+(
+issue.body ||
+"No description provided."
+)
+
+);
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(date){
+
+try{
+
+return new Date(
+date
+).toLocaleDateString(
+"en-IN",
+{
+year:"numeric",
+month:"short",
+day:"numeric"
+}
+);
+
+}catch(e){
+
+return "";
+
+}
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadPage();
+
+</script>
+
+
+</body>
+
+</html>
