@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Repository — ASIM TECH</title>
 
@@ -94,6 +97,10 @@ color:#8b949e;
 
 .badge.public{
 color:#3fb950;
+}
+
+.badge.private{
+color:#f0883e;
 }
 
 .badge.published{
@@ -338,6 +345,7 @@ margin-top:20px;
 padding:50px;
 text-align:center;
 color:#8b949e;
+font-size:18px;
 }
 
 .error{
@@ -447,7 +455,9 @@ margin-right:-5px;
 
 </head>
 
+
 <body>
+
 
 <nav class="navbar">
 
@@ -455,27 +465,44 @@ margin-right:-5px;
 ⚡ ASIM TECH
 </div>
 
-<a href="index.html">Home</a>
+<a href="index.html">
+Home
+</a>
 
-<a href="repositories.html">Repositories</a>
+<a href="repositories.html">
+Repositories
+</a>
 
-<a href="dashboard.html">Dashboard</a>
+<a href="dashboard.html">
+Dashboard
+</a>
 
 </nav>
 
 
 <div class="container">
 
-<div id="loading" class="loading">
+
+<div id="loading"
+class="loading">
+
 Loading repository...
+
 </div>
 
-<div id="error" class="error"></div>
 
-<div id="success" class="success"></div>
+<div id="error"
+class="error">
+</div>
 
 
-<div id="mainContent" style="display:none">
+<div id="success"
+class="success">
+</div>
+
+
+<div id="mainContent"
+style="display:none">
 
 
 <div class="repo-header">
@@ -525,60 +552,73 @@ Not published
 </div>
 
 
-<!-- TABS -->
-
 <div class="tabs">
 
-<a class="tab active" href="#">
+<a class="tab active"
+href="#">
+
 ◉ Code
+
 </a>
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Issues');return false;">
+
 Issues
+
 </a>
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Pull requests');return false;">
+
 Pull requests
+
 </a>
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Actions');return false;">
+
 Actions
+
 </a>
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Projects');return false;">
+
 Projects
+
 </a>
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Wiki');return false;">
+
 Wiki
+
 </a>
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Security');return false;">
+
 Security
+
 </a>
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Insights');return false;">
+
 Insights
+
 </a>
 
 </div>
 
-
-<!-- TOOLBAR -->
 
 <div class="toolbar">
 
@@ -586,28 +626,36 @@ Insights
 
 <button class="btn"
 type="button">
+
 🌿 main ▾
+
 </button>
 
 
 <a id="filesButton"
 class="btn"
 href="#">
+
 📁 Files
+
 </a>
 
 
 <a id="explorerButton"
 class="btn btn-purple"
 href="#">
+
 📂 File Explorer
+
 </a>
 
 
 <a id="newFileButton"
 class="btn btn-green"
 href="#">
+
 ＋ Add file
+
 </a>
 
 </div>
@@ -623,8 +671,6 @@ oninput="filterFiles()">
 </div>
 
 
-<!-- COMMIT BAR -->
-
 <div class="commit-bar">
 
 <div class="commit-left">
@@ -632,7 +678,7 @@ oninput="filterFiles()">
 Latest commit:
 
 <strong id="latestCommit">
-Initial repository
+Repository
 </strong>
 
 </div>
@@ -649,8 +695,6 @@ Initial repository
 </div>
 
 
-<!-- FILE LIST -->
-
 <div id="fileList"
 class="file-list">
 
@@ -660,8 +704,6 @@ Loading files...
 
 </div>
 
-
-<!-- README -->
 
 <div class="readme">
 
@@ -688,21 +730,24 @@ This repository was created using ASIM TECH Platform.
 </div>
 
 
-<!-- ACTIONS -->
-
 <div class="actions">
+
 
 <a id="openFilesAction"
 class="btn"
 href="#">
+
 📂 Open Repository Files
+
 </a>
 
 
 <a id="editAction"
 class="btn"
 href="#">
+
 ✏️ Edit Repository
+
 </a>
 
 
@@ -710,7 +755,9 @@ href="#">
 id="publishAction"
 class="btn btn-blue"
 onclick="publishWebsite()">
+
 🚀 Publish Website
+
 </button>
 
 
@@ -720,18 +767,19 @@ class="btn btn-visit"
 href="#"
 target="_blank"
 style="display:none;">
+
 🌐 Visit Published Website
+
 </a>
 
-</div>
-
-
-</div>
 
 </div>
 
 
-<!-- MODAL -->
+</div>
+
+</div>
+
 
 <div id="modal"
 class="modal">
@@ -749,7 +797,9 @@ This feature is coming soon.
 <button
 class="btn"
 onclick="closeModal()">
+
 Close
+
 </button>
 
 </div>
@@ -784,7 +834,7 @@ SUPABASE_KEY
 
 
 /* =====================================================
-   URL PARAMETERS
+   URL
 ===================================================== */
 
 const params =
@@ -801,9 +851,9 @@ params.get("repository_id");
    VARIABLES
 ===================================================== */
 
-let currentUser = null;
-
 let repository = null;
+
+let currentUser = null;
 
 let allFiles = [];
 
@@ -820,13 +870,13 @@ document.getElementById("loading")
 document.getElementById("mainContent")
 .style.display="none";
 
-const errorBox =
+const box =
 document.getElementById("error");
 
-errorBox.textContent =
+box.textContent =
 message;
 
-errorBox.style.display="block";
+box.style.display="block";
 
 }
 
@@ -855,6 +905,40 @@ box.style.display="none";
 
 
 /* =====================================================
+   GET CURRENT USER
+   NON-BLOCKING
+===================================================== */
+
+async function loadCurrentUser(){
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient.auth.getUser();
+
+if(!error && data && data.user){
+
+currentUser =
+data.user;
+
+}
+
+}catch(error){
+
+console.log(
+"Authentication check skipped:",
+error
+);
+
+}
+
+}
+
+
+/* =====================================================
    LOAD REPOSITORY
 ===================================================== */
 
@@ -863,74 +947,78 @@ async function loadRepository(){
 try{
 
 
-/* USER */
+/* -----------------------------------------------
+   CHECK ID
+------------------------------------------------ */
 
-const {
-data,
-error:userError
-} =
-await supabaseClient
-.auth
-.getUser();
+if(!repoId){
 
-
-if(userError){
-
-throw userError;
-
-}
-
-
-if(!data.user){
-
-window.location.href =
-"login.html";
+showError(
+"Repository ID is missing."
+);
 
 return;
 
 }
 
 
-currentUser =
-data.user;
-
-
-/* REPOSITORY ID */
-
-if(!repoId){
-
-throw new Error(
-"Repository ID is missing."
-);
-
-}
-
-
-/* REPOSITORY */
+/* -----------------------------------------------
+   LOAD REPOSITORY FIRST
+------------------------------------------------ */
 
 const {
 data:repo,
 error:repoError
 } =
 await supabaseClient
+
 .from("repositories")
-.select("*")
+
+.select(`
+id,
+owner_id,
+name,
+description,
+is_private,
+created_at,
+updated_at,
+language,
+is_published,
+published_at,
+default_branch,
+stars_count,
+forks_count
+`)
+
 .eq("id",repoId)
+
 .single();
 
 
 if(repoError){
 
-throw repoError;
+console.error(
+"Repository load error:",
+repoError
+);
+
+showError(
+"Unable to load repository: " +
+(repoError.message || "Unknown error")
+);
+
+return;
 
 }
 
 
 if(!repo){
 
-throw new Error(
+showError(
 "Repository not found."
 );
+
+return;
 
 }
 
@@ -939,12 +1027,21 @@ repository =
 repo;
 
 
-/* HEADER */
+/* -----------------------------------------------
+   LOAD USER IN BACKGROUND
+------------------------------------------------ */
+
+loadCurrentUser();
+
+
+/* -----------------------------------------------
+   REPOSITORY HEADER
+------------------------------------------------ */
 
 document.getElementById(
 "repoName"
 ).textContent =
-repo.name;
+repo.name || "Repository";
 
 
 document.getElementById(
@@ -954,88 +1051,10 @@ repo.description ||
 "No description provided.";
 
 
-/* VISIBILITY */
-
-const visibility =
-document.getElementById(
-"visibilityBadge"
-);
-
-
-if(repo.is_private){
-
-visibility.textContent =
-"🔒 Private";
-
-visibility.className =
-"badge";
-
-}else{
-
-visibility.textContent =
-"🌎 Public";
-
-visibility.className =
-"badge public";
-
-}
-
-
-/* PUBLISH STATUS */
-
-updatePublishStatus(
-repo.is_published
-);
-
-
-/* LINKS */
-
-const query =
-"?repository_id=" +
-encodeURIComponent(repoId);
-
-
-document.getElementById(
-"filesButton"
-).href =
-"repository-files.html" +
-query;
-
-
-document.getElementById(
-"explorerButton"
-).href =
-"repository-explorer.html" +
-query;
-
-
-document.getElementById(
-"newFileButton"
-).href =
-"repository-add-file.html" +
-query;
-
-
-document.getElementById(
-"openFilesAction"
-).href =
-"repository-files.html" +
-query;
-
-
-document.getElementById(
-"editAction"
-).href =
-"edit-repository.html" +
-query;
-
-
-/* README */
-
 document.getElementById(
 "readmeTitle"
 ).textContent =
-repo.name;
+repo.name || "Repository";
 
 
 document.getElementById(
@@ -1045,25 +1064,135 @@ repo.description ||
 "Welcome to this ASIM TECH repository.";
 
 
-/* LOAD FILES */
+/* -----------------------------------------------
+   VISIBILITY
+------------------------------------------------ */
 
-await loadFiles();
+const visibilityBadge =
+document.getElementById(
+"visibilityBadge"
+);
 
+if(repo.is_private){
 
-/* CHECK PUBLISHED WEBSITE */
+visibilityBadge.textContent =
+"🔒 Private";
 
-if(repo.is_published){
+visibilityBadge.className =
+"badge private";
 
-await loadPublishedWebsite();
+}else{
+
+visibilityBadge.textContent =
+"🌎 Public";
+
+visibilityBadge.className =
+"badge public";
 
 }
 
 
-/* SHOW */
+/* -----------------------------------------------
+   PUBLISHED STATUS
+------------------------------------------------ */
+
+updatePublishStatus(
+repo.is_published === true
+);
+
+
+/* -----------------------------------------------
+   BUTTON LINKS
+------------------------------------------------ */
+
+const filesUrl =
+"repository-files.html?repository_id=" +
+encodeURIComponent(repo.id);
+
+
+const explorerUrl =
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(repo.id);
+
+
+const addFileUrl =
+"repository-add-file.html?repository_id=" +
+encodeURIComponent(repo.id);
+
+
+const editUrl =
+"edit-repository.html?id=" +
+encodeURIComponent(repo.id);
+
+
+document.getElementById(
+"filesButton"
+).href =
+filesUrl;
+
+
+document.getElementById(
+"openFilesAction"
+).href =
+filesUrl;
+
+
+document.getElementById(
+"explorerButton"
+).href =
+explorerUrl;
+
+
+document.getElementById(
+"newFileButton"
+).href =
+addFileUrl;
+
+
+document.getElementById(
+"editAction"
+).href =
+editUrl;
+
+
+/* -----------------------------------------------
+   IMPORTANT:
+   VISIT WEBSITE USES REPOSITORY ID
+------------------------------------------------ */
+
+const visitButton =
+document.getElementById(
+"visitWebsiteButton"
+);
+
+visitButton.href =
+"published-website.html?repository_id=" +
+encodeURIComponent(repo.id);
+
+
+if(repo.is_published === true){
+
+visitButton.style.display =
+"inline-block";
+
+}
+
+
+/* -----------------------------------------------
+   LOAD FILES
+------------------------------------------------ */
+
+await loadFiles();
+
+
+/* -----------------------------------------------
+   SHOW PAGE
+------------------------------------------------ */
 
 document.getElementById(
 "loading"
 ).style.display="none";
+
 
 document.getElementById(
 "mainContent"
@@ -1072,10 +1201,12 @@ document.getElementById(
 
 }catch(error){
 
-console.error(error);
+console.error(
+"Repository page error:",
+error
+);
 
 showError(
-error.message ||
 "Unable to load repository."
 );
 
@@ -1095,36 +1226,63 @@ data,
 error
 } =
 await supabaseClient
+
 .from("repository_files")
-.select("*")
-.eq("repository_id",repoId)
-.order("file_path",{ascending:true});
+
+.select(`
+id,
+repository_id,
+file_path,
+content,
+language,
+created_at,
+updated_at,
+storage_path,
+mime_type,
+file_size,
+is_binary
+`)
+
+.eq(
+"repository_id",
+repoId
+)
+
+.order(
+"file_path",
+{
+ascending:true
+}
+);
 
 
 if(error){
 
-throw error;
+console.error(
+"Files error:",
+error
+);
+
+document.getElementById(
+"fileList"
+).innerHTML =
+
+'<div class="empty">' +
+'Unable to load files.' +
+'</div>';
+
+return;
 
 }
 
 
 allFiles =
-data ||
-[];
+data || [];
 
 
 renderFiles(
 allFiles
 );
-
-
-/* COUNT */
-
-document.getElementById(
-"fileCount"
-).textContent =
-allFiles.length +
-(allFiles.length === 1 ? " file" : " files");
 
 
 }
@@ -1136,22 +1294,33 @@ allFiles.length +
 
 function renderFiles(files){
 
-const container =
+const list =
 document.getElementById(
 "fileList"
 );
 
+
+document.getElementById(
+"fileCount"
+).textContent =
+files.length +
+(files.length === 1 ? " file" : " files");
+
+
 if(!files.length){
 
-container.innerHTML =
-'<div class="empty">No files found.</div>';
+list.innerHTML =
+
+'<div class="empty">' +
+'No files in this repository.' +
+'</div>';
 
 return;
 
 }
 
 
-container.innerHTML =
+list.innerHTML =
 "";
 
 
@@ -1190,9 +1359,13 @@ link.className =
 link.textContent =
 file.file_path;
 
+
 link.href =
-"repository-files.html?repository_id=" +
-encodeURIComponent(repoId);
+"repository-explorer.html?" +
+"repository_id=" +
+encodeURIComponent(repoId) +
+"&path=" +
+encodeURIComponent(file.file_path);
 
 
 const meta =
@@ -1201,20 +1374,32 @@ document.createElement("div");
 meta.className =
 "file-meta";
 
+
+if(file.is_binary){
+
+meta.textContent =
+"Binary file";
+
+}else{
+
 meta.textContent =
 file.language ||
-(file.is_binary ? "Binary" : "Text");
+"HTML";
+
+}
 
 
 info.appendChild(icon);
 
 info.appendChild(link);
 
+
 row.appendChild(info);
 
 row.appendChild(meta);
 
-container.appendChild(row);
+
+list.appendChild(row);
 
 });
 
@@ -1232,13 +1417,13 @@ document.getElementById(
 "searchInput"
 );
 
-const value =
-input.value
+const query =
+(input.value || "")
 .toLowerCase()
 .trim();
 
 
-if(!value){
+if(!query){
 
 renderFiles(
 allFiles
@@ -1250,13 +1435,15 @@ return;
 
 
 const filtered =
-allFiles.filter(function(file){
+allFiles.filter(
+function(file){
 
-return String(
-file.file_path || ""
+return (
+file.file_path ||
+""
 )
 .toLowerCase()
-.includes(value);
+.includes(query);
 
 });
 
@@ -1281,10 +1468,6 @@ document.getElementById(
 "publishBadge"
 );
 
-const button =
-document.getElementById(
-"publishAction"
-);
 
 const visit =
 document.getElementById(
@@ -1300,11 +1483,13 @@ badge.textContent =
 badge.className =
 "badge published";
 
-button.textContent =
-"✓ Published";
+
+if(visit){
 
 visit.style.display =
 "inline-block";
+
+}
 
 }else{
 
@@ -1314,70 +1499,13 @@ badge.textContent =
 badge.className =
 "badge";
 
-button.textContent =
-"🚀 Publish Website";
+
+if(visit){
 
 visit.style.display =
 "none";
 
 }
-
-}
-
-
-/* =====================================================
-   LOAD PUBLISHED WEBSITE
-===================================================== */
-
-async function loadPublishedWebsite(){
-
-try{
-
-const {
-data,
-error
-} =
-await supabaseClient
-.from("web_pages")
-.select("id")
-.eq("repository_id",repoId)
-.eq("is_published",true)
-.order("updated_at",{ascending:false})
-.limit(1)
-.maybeSingle();
-
-
-if(error){
-
-console.warn(
-"Published page lookup:",
-error
-);
-
-return;
-
-}
-
-
-if(data && data.id){
-
-const visitButton =
-document.getElementById(
-"visitWebsiteButton"
-);
-
-visitButton.href =
-"published-website.html?id=" +
-encodeURIComponent(data.id);
-
-visitButton.style.display =
-"inline-block";
-
-}
-
-}catch(error){
-
-console.warn(error);
 
 }
 
@@ -1392,7 +1520,7 @@ async function publishWebsite(){
 
 if(!repository){
 
-alert(
+showError(
 "Repository is not loaded."
 );
 
@@ -1401,12 +1529,13 @@ return;
 }
 
 
-/* ONLY OWNER */
+/* -----------------------------------------------
+   ONLY OWNER CAN PUBLISH
+------------------------------------------------ */
 
 if(
-repository.owner_id &&
 currentUser &&
-repository.owner_id !== currentUser.id
+currentUser.id !== repository.owner_id
 ){
 
 alert(
@@ -1418,76 +1547,118 @@ return;
 }
 
 
-const button =
-document.getElementById(
-"publishAction"
-);
-
-button.disabled =
-true;
-
-button.textContent =
-"Publishing...";
-
-
-try{
-
-
-/* FIND INDEX.HTML */
+/* -----------------------------------------------
+   FIND INDEX.HTML
+------------------------------------------------ */
 
 const {
 data:indexFile,
 error:fileError
 } =
 await supabaseClient
+
 .from("repository_files")
-.select("*")
-.eq("repository_id",repoId)
-.eq("file_path","index.html")
+
+.select(`
+id,
+file_path,
+content,
+language,
+is_binary
+`)
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"file_path",
+"index.html"
+)
+
+.eq(
+"is_binary",
+false
+)
+
 .maybeSingle();
 
 
 if(fileError){
 
-throw fileError;
+console.error(
+fileError
+);
+
+alert(
+"Unable to find index.html."
+);
+
+return;
 
 }
 
 
 if(!indexFile){
 
-throw new Error(
-"index.html is required before publishing the website."
+alert(
+"Please create an index.html file before publishing."
 );
+
+return;
 
 }
 
 
-/* CHECK EXISTING WEB PAGE */
+/* -----------------------------------------------
+   CHECK EXISTING WEB PAGE
+------------------------------------------------ */
 
 const {
 data:existingPage,
 error:pageFindError
 } =
 await supabaseClient
+
 .from("web_pages")
+
 .select("id")
-.eq("repository_id",repoId)
-.eq("page_name","index.html")
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"page_name",
+"index.html"
+)
+
 .maybeSingle();
 
 
 if(pageFindError){
 
-throw pageFindError;
+console.error(
+pageFindError
+);
+
+alert(
+"Unable to prepare website page."
+);
+
+return;
 
 }
 
 
-let pageId;
+/* -----------------------------------------------
+   CREATE / UPDATE WEB PAGE
+------------------------------------------------ */
 
+let pageId = null;
 
-/* UPDATE EXISTING PAGE */
 
 if(existingPage){
 
@@ -1496,42 +1667,48 @@ existingPage.id;
 
 
 const {
-error:updatePageError
+error:updateError
 } =
 await supabaseClient
+
 .from("web_pages")
+
 .update({
 
 html_content:
 indexFile.content || "",
 
-css_content:
-"",
-
-js_content:
-"",
+updated_at:
+new Date().toISOString(),
 
 is_published:
 true,
 
 published_at:
-new Date().toISOString(),
-
-updated_at:
 new Date().toISOString()
 
 })
-.eq("id",pageId);
+
+.eq(
+"id",
+pageId
+);
 
 
-if(updatePageError){
+if(updateError){
 
-throw updatePageError;
+console.error(
+updateError
+);
+
+alert(
+"Unable to publish website page."
+);
+
+return;
 
 }
 
-
-/* CREATE NEW PAGE */
 
 }else{
 
@@ -1540,14 +1717,16 @@ data:newPage,
 error:newPageError
 } =
 await supabaseClient
+
 .from("web_pages")
+
 .insert({
 
 repository_id:
 repoId,
 
 owner_id:
-currentUser.id,
+repository.owner_id,
 
 page_name:
 "index.html",
@@ -1568,13 +1747,23 @@ published_at:
 new Date().toISOString()
 
 })
+
 .select("id")
+
 .single();
 
 
 if(newPageError){
 
-throw newPageError;
+console.error(
+newPageError
+);
+
+alert(
+"Unable to create published website page."
+);
+
+return;
 
 }
 
@@ -1585,39 +1774,57 @@ newPage.id;
 }
 
 
-/* UPDATE REPOSITORY */
+/* -----------------------------------------------
+   UPDATE REPOSITORY
+------------------------------------------------ */
 
 const {
 error:repoUpdateError
 } =
 await supabaseClient
+
 .from("repositories")
+
 .update({
 
 is_published:
 true,
 
 published_at:
-new Date().toISOString(),
-
-updated_at:
 new Date().toISOString()
 
 })
-.eq("id",repoId);
+
+.eq(
+"id",
+repoId
+);
 
 
 if(repoUpdateError){
 
-throw repoUpdateError;
+console.error(
+repoUpdateError
+);
+
+alert(
+"Website page published, but repository status could not be updated."
+);
+
+return;
 
 }
 
 
-/* UPDATE LOCAL */
+/* -----------------------------------------------
+   UPDATE LOCAL STATE
+------------------------------------------------ */
 
 repository.is_published =
 true;
+
+repository.published_at =
+new Date().toISOString();
 
 
 updatePublishStatus(
@@ -1625,7 +1832,9 @@ true
 );
 
 
-/* VISIT URL */
+/* -----------------------------------------------
+   VISIT URL
+------------------------------------------------ */
 
 const visitButton =
 document.getElementById(
@@ -1633,8 +1842,9 @@ document.getElementById(
 );
 
 visitButton.href =
-"published-website.html?id=" +
-encodeURIComponent(pageId);
+"published-website.html?repository_id=" +
+encodeURIComponent(repoId);
+
 
 visitButton.style.display =
 "inline-block";
@@ -1648,37 +1858,6 @@ showSuccess(
 alert(
 "Website published successfully."
 );
-
-
-}catch(error){
-
-console.error(error);
-
-alert(
-"Publishing failed: " +
-(error.message ||
-"Unknown error")
-);
-
-
-}finally{
-
-button.disabled =
-false;
-
-if(repository.is_published){
-
-button.textContent =
-"✓ Published";
-
-}else{
-
-button.textContent =
-"🚀 Publish Website";
-
-}
-
-}
 
 }
 
@@ -1696,11 +1875,13 @@ document.getElementById(
 ).textContent =
 feature;
 
+
 document.getElementById(
 "modalText"
 ).textContent =
 feature +
 " feature is coming soon.";
+
 
 document.getElementById(
 "modal"
@@ -1732,5 +1913,7 @@ loadRepository();
 
 </script>
 
+
 </body>
+
 </html>
