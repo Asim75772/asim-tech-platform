@@ -105,6 +105,16 @@ color:#fff;
 background:#f85149;
 }
 
+.rename-btn{
+background:#6e40c9;
+border-color:#6e40c9;
+color:#fff;
+}
+
+.rename-btn:hover{
+background:#8957e5;
+}
+
 .search{
 flex:1;
 min-width:220px;
@@ -497,13 +507,9 @@ params.get("id");
 ========================= */
 
 let currentUser = null;
-
 let repository = null;
-
 let allFiles = [];
-
 let filteredFiles = [];
-
 let selectedFile = null;
 
 
@@ -577,7 +583,10 @@ repository = repo;
 
 /* OWNER CHECK */
 
-if(repo.owner_id !== user.id){
+if(
+repo.owner_id !==
+user.id
+){
 
 throw new Error(
 "You are not the repository owner."
@@ -601,7 +610,7 @@ repo.description ||
 "Repository File Explorer";
 
 
-/* BACK */
+/* BACK BUTTON */
 
 document.getElementById(
 "backButton"
@@ -610,7 +619,7 @@ document.getElementById(
 encodeURIComponent(repo.id);
 
 
-/* FILES */
+/* LOAD FILES */
 
 await loadFiles();
 
@@ -811,13 +820,13 @@ return;
 const root = {
 
 folders:{},
-
 files:[]
 
 };
 
 
-files.forEach(file=>{
+files.forEach(
+file=>{
 
 const parts =
 (file.file_path || "")
@@ -845,7 +854,6 @@ if(last){
 node.files.push({
 
 name:part,
-
 file:file
 
 });
@@ -857,7 +865,6 @@ if(!node.folders[part]){
 node.folders[part] = {
 
 folders:{},
-
 files:[]
 
 };
@@ -989,11 +996,17 @@ arrow.textContent =
 };
 
 
-wrapper.appendChild(row);
+wrapper.appendChild(
+row
+);
 
-wrapper.appendChild(children);
+wrapper.appendChild(
+children
+);
 
-container.appendChild(wrapper);
+container.appendChild(
+wrapper
+);
 
 
 renderNode(
@@ -1115,7 +1128,9 @@ document.getElementById(
 actions.innerHTML = "";
 
 
-/* EDIT BUTTON */
+/* =========================
+   EDIT BUTTON
+========================= */
 
 const editButton =
 document.createElement(
@@ -1155,7 +1170,42 @@ editButton
 );
 
 
-/* DELETE BUTTON */
+/* =========================
+   RENAME BUTTON
+========================= */
+
+const renameButton =
+document.createElement(
+"button"
+);
+
+
+renameButton.className =
+"btn rename-btn";
+
+
+renameButton.textContent =
+"✏️ Rename";
+
+
+renameButton.onclick =
+function(){
+
+renameFile(
+file
+);
+
+};
+
+
+actions.appendChild(
+renameButton
+);
+
+
+/* =========================
+   DELETE BUTTON
+========================= */
 
 const deleteButton =
 document.createElement(
@@ -1186,7 +1236,9 @@ deleteButton
 );
 
 
-/* DOWNLOAD BUTTON */
+/* =========================
+   DOWNLOAD BUTTON
+========================= */
 
 const downloadButton =
 document.createElement(
@@ -1217,7 +1269,9 @@ downloadButton
 );
 
 
-/* VIEW */
+/* =========================
+   PREVIEW
+========================= */
 
 document.getElementById(
 "viewerBody"
@@ -1304,6 +1358,199 @@ content
 
 
 /* =========================
+   RENAME FILE
+========================= */
+
+async function renameFile(file){
+
+if(!file)
+return;
+
+
+if(
+!repository ||
+repository.owner_id !==
+currentUser.id
+){
+
+alert(
+"You are not allowed to rename this file."
+);
+
+return;
+
+}
+
+
+const oldPath =
+file.file_path;
+
+
+const newPath =
+prompt(
+"Enter new file name / path:",
+oldPath
+);
+
+
+if(newPath === null)
+return;
+
+
+const cleanPath =
+newPath.trim();
+
+
+if(!cleanPath){
+
+alert(
+"File name is required."
+);
+
+return;
+
+}
+
+
+if(
+cleanPath.startsWith("/") ||
+cleanPath.endsWith("/") ||
+cleanPath.includes("..")
+){
+
+alert(
+"Please enter a valid file path."
+);
+
+return;
+
+}
+
+
+if(
+cleanPath === oldPath
+){
+
+return;
+
+}
+
+
+try{
+
+
+/* DUPLICATE CHECK */
+
+const {
+data:existing,
+error:checkError
+} =
+await supabaseClient
+.from("repository_files")
+.select("id")
+.eq("repository_id",repoId)
+.eq("file_path",cleanPath);
+
+
+if(checkError)
+throw checkError;
+
+
+if(
+existing &&
+existing.length > 0
+){
+
+alert(
+"A file with this name already exists."
+);
+
+return;
+
+}
+
+
+/* UPDATE */
+
+const {
+error
+} =
+await supabaseClient
+.from("repository_files")
+.update({
+
+file_path:
+cleanPath,
+
+updated_at:
+new Date().toISOString()
+
+})
+.eq("id",file.id)
+.eq(
+"repository_id",
+repoId
+);
+
+
+if(error)
+throw error;
+
+
+/* SUCCESS */
+
+alert(
+"File renamed successfully!"
+);
+
+
+/* REFRESH */
+
+selectedFile =
+null;
+
+
+document.getElementById(
+"viewerName"
+).textContent =
+"Select a file";
+
+
+document.getElementById(
+"viewerActions"
+).innerHTML =
+"";
+
+
+document.getElementById(
+"viewerBody"
+).innerHTML =
+
+'<div class="empty">' +
+
+"File renamed successfully." +
+
+"</div>";
+
+
+await loadFiles();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Unable to rename file.\n\n" +
+(error.message || "")
+);
+
+}
+
+}
+
+
+/* =========================
    DELETE FILE
 ========================= */
 
@@ -1311,6 +1558,21 @@ async function deleteFile(file){
 
 if(!file)
 return;
+
+
+if(
+!repository ||
+repository.owner_id !==
+currentUser.id
+){
+
+alert(
+"You are not allowed to delete this file."
+);
+
+return;
+
+}
 
 
 const confirmed =
@@ -1327,22 +1589,8 @@ return;
 
 try{
 
-/* OWNER CHECK */
 
-if(
-!repository ||
-repository.owner_id !==
-currentUser.id
-){
-
-throw new Error(
-"You are not allowed to delete this file."
-);
-
-}
-
-
-/* DELETE STORAGE OBJECT FIRST */
+/* DELETE STORAGE FILE */
 
 if(
 file.is_binary &&
@@ -1492,6 +1740,8 @@ const path =
 .toLowerCase();
 
 
+/* IMAGE */
+
 if(
 path.endsWith(".png") ||
 path.endsWith(".jpg") ||
@@ -1527,6 +1777,8 @@ return;
 }
 
 
+/* PDF */
+
 if(
 path.endsWith(".pdf")
 ){
@@ -1556,6 +1808,8 @@ return;
 
 }
 
+
+/* OTHER BINARY */
 
 document.getElementById(
 "viewerBody"
@@ -1673,7 +1927,7 @@ return;
 }
 
 
-/* TEXT DOWNLOAD */
+/* TEXT FILE */
 
 const blob =
 new Blob(
