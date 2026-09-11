@@ -20,21 +20,36 @@ margin:0;
 padding:0;
 }
 
+html,
 body{
-font-family:Arial,Helvetica,sans-serif;
-background:#f5f7fb;
-color:#1f2937;
-min-height:100vh;
+width:100%;
+height:100%;
 }
 
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:#ffffff;
+color:#1f2937;
+}
+
+/* ================================
+   LOADING
+================================ */
+
 #loading{
-min-height:100vh;
+position:fixed;
+inset:0;
 display:flex;
 align-items:center;
 justify-content:center;
+background:#ffffff;
 font-size:20px;
 color:#64748b;
 }
+
+/* ================================
+   ERROR
+================================ */
 
 #error{
 display:none;
@@ -47,10 +62,23 @@ border-radius:14px;
 text-align:center;
 }
 
+#error h2{
+margin-bottom:10px;
+}
+
+/* ================================
+   WEBSITE
+================================ */
+
 #website{
 display:none;
+width:100%;
 min-height:100vh;
 }
+
+/* ================================
+   TOP BAR
+================================ */
 
 .topbar{
 background:#0f172a;
@@ -75,9 +103,14 @@ font-size:12px;
 font-weight:bold;
 }
 
+/* ================================
+   WEBSITE FRAME
+================================ */
+
 .website-frame{
 width:100%;
 height:calc(100vh - 55px);
+min-height:500px;
 border:0;
 background:white;
 display:block;
@@ -87,22 +120,41 @@ display:block;
 
 </head>
 
+
 <body>
 
+
+<!-- ================================
+     LOADING
+================================ -->
+
 <div id="loading">
-🚀 Loading website...
+
+🚀 Loading repository...
+
 </div>
 
+
+<!-- ================================
+     ERROR
+================================ -->
 
 <div id="error">
-<h2>Website unavailable</h2>
 
-<p id="errorText"
-style="margin-top:10px;">
+<h2>
+Website unavailable
+</h2>
+
+<p id="errorText">
 Unable to load this website.
 </p>
+
 </div>
 
+
+<!-- ================================
+     WEBSITE
+================================ -->
 
 <div id="website">
 
@@ -122,15 +174,18 @@ Unable to load this website.
 <iframe
 id="websiteFrame"
 class="website-frame"
-sandbox="allow-scripts allow-forms allow-modals"
-></iframe>
+sandbox="allow-scripts allow-forms allow-modals allow-popups">
+</iframe>
 
 </div>
 
 
+
 <script>
 
-/* SUPABASE */
+/* =====================================================
+   SUPABASE CONFIG
+===================================================== */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -146,46 +201,76 @@ SUPABASE_KEY
 );
 
 
-/* GET PAGE ID */
+/* =====================================================
+   GET REPOSITORY ID
+===================================================== */
 
 const params =
 new URLSearchParams(
 window.location.search
 );
 
-const pageId =
+
+/*
+Accept both:
+
+?id=REPOSITORY_ID
+
+and
+
+?repository_id=REPOSITORY_ID
+*/
+
+const repositoryId =
+params.get("repository_id") ||
 params.get("id");
 
 
-/* ERROR */
+/* =====================================================
+   SHOW ERROR
+===================================================== */
 
 function showError(message){
 
-document.getElementById(
-"loading"
-).style.display="none";
+document.getElementById("loading")
+.style.display="none";
 
-document.getElementById(
-"error"
-).style.display="block";
 
-document.getElementById(
-"errorText"
-).textContent=message;
+document.getElementById("website")
+.style.display="none";
+
+
+const errorBox =
+document.getElementById("error");
+
+
+document.getElementById("errorText")
+.textContent =
+message;
+
+
+errorBox.style.display="block";
 
 }
 
 
-/* LOAD WEBSITE */
+/* =====================================================
+   LOAD PUBLISHED REPOSITORY
+===================================================== */
 
-async function loadWebsite(){
+async function loadPublishedWebsite(){
 
 try{
 
-if(!pageId){
+
+/* -----------------------------------------------
+   CHECK REPOSITORY ID
+------------------------------------------------ */
+
+if(!repositoryId){
 
 showError(
-"Website ID is missing."
+"Repository ID is missing."
 );
 
 return;
@@ -193,31 +278,41 @@ return;
 }
 
 
-/*
-LOAD PUBLISHED PAGE
-*/
+/* -----------------------------------------------
+   LOAD REPOSITORY
+------------------------------------------------ */
 
 const {
-data:page,
-error:pageError
+data:repository,
+error:repositoryError
 } =
 await supabaseClient
 
-.from("web_pages")
+.from("repositories")
 
-.select("*")
+.select(`
+id,
+name,
+description,
+is_private,
+is_published,
+default_branch
+`)
 
-.eq("id",pageId)
-
-.eq("is_published",true)
+.eq("id",repositoryId)
 
 .single();
 
 
-if(pageError || !page){
+if(repositoryError){
+
+console.error(
+"Repository error:",
+repositoryError
+);
 
 showError(
-"This website is not published or does not exist."
+"Unable to load repository."
 );
 
 return;
@@ -225,25 +320,158 @@ return;
 }
 
 
-/*
-BUILD WEBSITE
-*/
+/* -----------------------------------------------
+   CHECK PUBLISHED STATUS
+------------------------------------------------ */
+
+if(!repository.is_published){
+
+showError(
+"This repository has not been published yet."
+);
+
+return;
+
+}
+
+
+/* -----------------------------------------------
+   PRIVATE REPOSITORY CHECK
+------------------------------------------------ */
+
+if(repository.is_private){
+
+showError(
+"This website is private and cannot be viewed publicly."
+);
+
+return;
+
+}
+
+
+/* -----------------------------------------------
+   LOAD INDEX.HTML
+------------------------------------------------ */
+
+const {
+data:file,
+error:fileError
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.select(`
+file_path,
+content,
+language,
+is_binary,
+mime_type
+`)
+
+.eq(
+"repository_id",
+repositoryId
+)
+
+.eq(
+"file_path",
+"index.html"
+)
+
+.eq(
+"is_binary",
+false
+)
+
+.maybeSingle();
+
+
+if(fileError){
+
+console.error(
+"File error:",
+fileError
+);
+
+showError(
+"Unable to load index.html."
+);
+
+return;
+
+}
+
+
+/* -----------------------------------------------
+   INDEX.HTML CHECK
+------------------------------------------------ */
+
+if(!file){
+
+showError(
+"This published repository does not contain an index.html file."
+);
+
+return;
+
+}
+
+
+/* -----------------------------------------------
+   GET HTML
+------------------------------------------------ */
 
 const html =
-page.html_content || "";
+file.content || "";
 
-const css =
-page.css_content || "";
 
-const js =
-page.js_content || "";
+if(!html.trim()){
+
+showError(
+"The index.html file is empty."
+);
+
+return;
+
+}
+
+
+/* -----------------------------------------------
+   WEBSITE FRAME
+------------------------------------------------ */
+
+const frame =
+document.getElementById(
+"websiteFrame"
+);
+
+
+/* -----------------------------------------------
+   BUILD HTML
+------------------------------------------------ */
+
+let completeHtml;
 
 
 /*
-COMBINE HTML + CSS + JS
+If the uploaded index.html already contains
+<html>, <head> or <body>, use it directly.
+
+Otherwise create a complete HTML document.
 */
 
-const completeHtml = `
+if(
+/<html[\s>]/i.test(html) ||
+/<!DOCTYPE/i.test(html)
+){
+
+completeHtml = html;
+
+}else{
+
+completeHtml = `
 
 <!DOCTYPE html>
 
@@ -256,11 +484,9 @@ const completeHtml = `
 <meta name="viewport"
 content="width=device-width,initial-scale=1.0">
 
-<style>
-
-${css}
-
-</style>
+<title>
+${escapeHtml(repository.name || "ASIM TECH")}
+</title>
 
 </head>
 
@@ -268,57 +494,56 @@ ${css}
 
 ${html}
 
-<script>
-
-${js}
-
-<\/script>
-
 </body>
 
 </html>
 
 `;
 
+}
 
-/*
-DISPLAY
-*/
 
-const frame =
-document.getElementById(
-"websiteFrame"
-);
+/* -----------------------------------------------
+   DISPLAY WEBSITE
+------------------------------------------------ */
 
 frame.srcdoc =
 completeHtml;
 
 
-/*
-PAGE TITLE
-*/
+/* -----------------------------------------------
+   PAGE TITLE
+------------------------------------------------ */
 
 document.title =
-(page.page_name || "Website") +
+(repository.name || "Website") +
 " — ASIM TECH";
 
 
-/*
-SHOW
-*/
+/* -----------------------------------------------
+   SHOW WEBSITE
+------------------------------------------------ */
 
-document.getElementById(
-"loading"
-).style.display="none";
+document.getElementById("loading")
+.style.display="none";
 
-document.getElementById(
-"website"
-).style.display="block";
+
+document.getElementById("website")
+.style.display="block";
+
+
+console.log(
+"Published website loaded successfully:",
+repository.name
+);
 
 
 }catch(error){
 
-console.error(error);
+console.error(
+"Published website error:",
+error
+);
 
 showError(
 "Unable to load the published website."
@@ -329,13 +554,35 @@ showError(
 }
 
 
-/*
-START
-*/
+/* =====================================================
+   HTML ESCAPE
+===================================================== */
 
-loadWebsite();
+function escapeHtml(value){
+
+return String(value)
+
+.replace(/&/g,"&amp;")
+
+.replace(/</g,"&lt;")
+
+.replace(/>/g,"&gt;")
+
+.replace(/"/g,"&quot;")
+
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadPublishedWebsite();
 
 </script>
+
 
 </body>
 
