@@ -15,318 +15,435 @@ content="width=device-width, initial-scale=1.0">
 <style>
 
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+box-sizing:border-box;
+margin:0;
+padding:0;
 }
 
 body{
-    font-family:Arial,sans-serif;
-    background:linear-gradient(135deg,#07111f,#0b2233,#063b35);
-    color:#fff;
-    min-height:100vh;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#07111f,#0b2233,#063b35);
+color:#fff;
+min-height:100vh;
 }
 
 nav{
-    min-height:70px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:10px 6%;
-    background:rgba(5,12,22,.95);
-    border-bottom:1px solid rgba(255,255,255,.1);
+min-height:70px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:10px 6%;
+background:rgba(5,12,22,.95);
+border-bottom:1px solid rgba(255,255,255,.1);
 }
 
 .logo{
-    font-size:22px;
-    font-weight:bold;
-    color:#36e0b5;
+font-size:22px;
+font-weight:bold;
+color:#36e0b5;
 }
 
 .nav-links{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
+display:flex;
+align-items:center;
+gap:10px;
+flex-wrap:wrap;
 }
 
 .nav-links a,
 .nav-links button{
-    color:#ddd;
-    text-decoration:none;
-    background:transparent;
-    border:0;
-    padding:8px 10px;
-    cursor:pointer;
-    font-size:14px;
+color:#ddd;
+text-decoration:none;
+background:transparent;
+border:0;
+padding:8px 10px;
+cursor:pointer;
+font-size:14px;
 }
 
 .nav-links a:hover{
-    color:#36e0b5;
+color:#36e0b5;
 }
 
 .logout{
-    border:1px solid rgba(255,255,255,.15) !important;
-    border-radius:8px;
-    color:#ff9b9b !important;
+border:1px solid rgba(255,255,255,.15)!important;
+border-radius:8px;
+color:#ff9b9b!important;
 }
 
 .logout:hover{
-    background:#3b2025 !important;
+background:#3b2025!important;
 }
 
 .container{
-    width:92%;
-    max-width:1000px;
-    margin:35px auto;
+width:92%;
+max-width:1000px;
+margin:35px auto;
 }
 
 .header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
-    margin-bottom:25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:20px;
+margin-bottom:25px;
 }
 
 h1{
-    font-size:32px;
+font-size:32px;
 }
 
 .subtitle{
-    color:#aab7c4;
-    margin-top:8px;
-    font-size:16px;
+color:#aab7c4;
+margin-top:8px;
+font-size:16px;
 }
 
 .new-btn{
-    background:#36e0b5;
-    color:#06151a;
-    text-decoration:none;
-    padding:12px 18px;
-    border-radius:10px;
-    font-weight:bold;
-    display:inline-block;
-    text-align:center;
-    white-space:nowrap;
+background:#36e0b5;
+color:#06151a;
+text-decoration:none;
+padding:12px 18px;
+border-radius:10px;
+font-weight:bold;
+display:inline-block;
+white-space:nowrap;
 }
 
 .new-btn:hover{
-    background:#4be9c2;
+background:#4be9c2;
 }
 
 .search-box{
-    background:rgba(13,29,43,.95);
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:12px;
-    padding:16px;
-    margin-bottom:25px;
+background:rgba(13,29,43,.95);
+border:1px solid rgba(255,255,255,.1);
+border-radius:12px;
+padding:16px;
+margin-bottom:25px;
 }
 
 .search-label{
-    display:block;
-    color:#aab7c4;
-    margin-bottom:9px;
-    font-size:14px;
+display:block;
+color:#aab7c4;
+margin-bottom:9px;
+font-size:14px;
 }
 
 #searchInput{
-    width:100%;
-    padding:13px 15px;
-    border-radius:9px;
-    border:1px solid #3a4a57;
-    background:#081521;
-    color:#fff;
-    outline:none;
-    font-size:16px;
+width:100%;
+padding:13px 15px;
+border-radius:9px;
+border:1px solid #3a4a57;
+background:#081521;
+color:#fff;
+outline:none;
+font-size:16px;
 }
 
 #searchInput:focus{
-    border-color:#36e0b5;
+border-color:#36e0b5;
 }
 
 .search-info{
-    color:#8293a1;
-    font-size:13px;
-    margin-top:9px;
+color:#8293a1;
+font-size:13px;
+margin-top:9px;
 }
 
 .card{
-    background:rgba(13,29,43,.95);
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:15px;
-    padding:20px;
-    margin-bottom:15px;
+background:rgba(13,29,43,.95);
+border:1px solid rgba(255,255,255,.1);
+border-radius:15px;
+padding:20px;
+margin-bottom:15px;
 }
 
 .repo-card{
-    transition:transform .15s ease,
-                border-color .15s ease;
+transition:.15s ease;
 }
 
 .repo-card:hover{
-    transform:translateY(-2px);
-    border-color:rgba(54,224,181,.4);
+border-color:rgba(54,224,181,.4);
 }
 
 .repo-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:15px;
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:15px;
 }
 
 .repo-name{
-    font-size:21px;
-    font-weight:bold;
-    word-break:break-word;
+font-size:21px;
+font-weight:bold;
+word-break:break-word;
 }
 
 .repo-name a{
-    color:#58a6ff;
-    text-decoration:none;
+color:#58a6ff;
+text-decoration:none;
 }
 
 .repo-name a:hover{
-    text-decoration:underline;
+text-decoration:underline;
 }
 
 .badge{
-    display:inline-block;
-    padding:4px 9px;
-    border-radius:20px;
-    font-size:12px;
-    white-space:nowrap;
+display:inline-block;
+padding:4px 9px;
+border-radius:20px;
+font-size:12px;
+white-space:nowrap;
 }
 
 .public-badge{
-    background:#123b2d;
-    color:#36e0b5;
-    border:1px solid #236b52;
+background:#123b2d;
+color:#36e0b5;
+border:1px solid #236b52;
 }
 
 .private-badge{
-    background:#3d2920;
-    color:#ffcc8a;
-    border:1px solid #73502d;
+background:#3d2920;
+color:#ffcc8a;
+border:1px solid #73502d;
 }
 
 .repo-description{
-    color:#aab7c4;
-    margin:12px 0;
-    line-height:1.5;
-    word-break:break-word;
+color:#aab7c4;
+margin:12px 0;
+line-height:1.5;
+word-break:break-word;
 }
 
 .repo-meta{
-    color:#8293a1;
-    font-size:13px;
-    margin-bottom:15px;
+color:#8293a1;
+font-size:13px;
+margin-bottom:15px;
 }
 
 .repo-actions{
-    display:flex;
-    gap:9px;
-    flex-wrap:wrap;
+display:flex;
+gap:9px;
+flex-wrap:wrap;
+align-items:center;
 }
 
 .open-btn{
-    background:#17384a;
-    color:#8edfc9;
-    text-decoration:none;
-    padding:9px 13px;
-    border-radius:8px;
-    font-weight:bold;
-    font-size:14px;
+background:#17384a;
+color:#8edfc9;
+text-decoration:none;
+padding:9px 13px;
+border-radius:8px;
+font-weight:bold;
+font-size:14px;
 }
 
 .open-btn:hover{
-    background:#1d4a60;
+background:#1d4a60;
+}
+
+.menu-wrap{
+position:relative;
+margin-left:auto;
+}
+
+.menu-btn{
+background:#172c3d;
+color:#fff;
+border:1px solid #304555;
+border-radius:8px;
+padding:8px 12px;
+cursor:pointer;
+font-size:18px;
+}
+
+.menu-btn:hover{
+background:#243e52;
+}
+
+.dropdown{
+display:none;
+position:absolute;
+right:0;
+top:44px;
+min-width:190px;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:9px;
+box-shadow:0 12px 30px rgba(0,0,0,.45);
+z-index:100;
+overflow:hidden;
+}
+
+.dropdown.show{
+display:block;
+}
+
+.dropdown button{
+width:100%;
+border:0;
+background:transparent;
+color:#e6edf3;
+padding:12px 14px;
+text-align:left;
+cursor:pointer;
+font-size:14px;
+}
+
+.dropdown button:hover{
+background:#21262d;
+}
+
+.dropdown .danger{
+color:#ff7b72;
 }
 
 .empty{
-    text-align:center;
-    padding:50px 20px;
-    color:#aab7c4;
-}
-
-.empty h2{
-    margin-bottom:12px;
+text-align:center;
+padding:50px 20px;
+color:#aab7c4;
 }
 
 .loading{
-    text-align:center;
-    padding:45px 20px;
-    color:#aab7c4;
+text-align:center;
+padding:45px 20px;
+color:#aab7c4;
 }
 
 .error{
-    display:none;
-    background:#4b2027;
-    color:#ffb5bd;
-    padding:14px;
-    border-radius:9px;
-    margin-bottom:20px;
+display:none;
+background:#4b2027;
+color:#ffb5bd;
+padding:14px;
+border-radius:9px;
+margin-bottom:20px;
 }
 
 .stats{
-    color:#8293a1;
-    font-size:14px;
-    margin-bottom:15px;
+color:#8293a1;
+font-size:14px;
+margin-bottom:15px;
 }
 
-footer{
-    text-align:center;
-    color:#71818d;
-    padding:40px 10px;
-    margin-top:40px;
-    border-top:1px solid rgba(255,255,255,.08);
+.modal-overlay{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.7);
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:999;
+}
+
+.modal-overlay.show{
+display:flex;
+}
+
+.modal{
+width:100%;
+max-width:500px;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:14px;
+padding:25px;
+box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+
+.modal h2{
+margin-bottom:10px;
+}
+
+.modal p{
+color:#8b949e;
+margin-bottom:18px;
+}
+
+.modal input{
+width:100%;
+padding:13px;
+border-radius:8px;
+border:1px solid #30363d;
+background:#0d1117;
+color:#fff;
+font-size:16px;
+outline:none;
+}
+
+.modal input:focus{
+border-color:#58a6ff;
+}
+
+.modal-actions{
+display:flex;
+justify-content:flex-end;
+gap:10px;
+margin-top:20px;
+}
+
+.modal-actions button{
+padding:10px 16px;
+border-radius:8px;
+border:1px solid #30363d;
+cursor:pointer;
+font-weight:bold;
+}
+
+.cancel-btn{
+background:#21262d;
+color:#fff;
+}
+
+.rename-btn{
+background:#36e0b5;
+color:#06151a;
 }
 
 @media(max-width:600px){
 
-    nav{
-        padding:12px 5%;
-        align-items:flex-start;
-        flex-direction:column;
-        gap:12px;
-    }
+nav{
+padding:12px 5%;
+align-items:flex-start;
+flex-direction:column;
+gap:12px;
+}
 
-    .nav-links{
-        width:100%;
-        justify-content:flex-start;
-    }
+.nav-links{
+width:100%;
+justify-content:flex-start;
+}
 
-    .container{
-        width:92%;
-        margin:25px auto;
-    }
+.container{
+width:92%;
+margin:25px auto;
+}
 
-    .header{
-        flex-direction:column;
-        align-items:flex-start;
-    }
+.header{
+flex-direction:column;
+align-items:flex-start;
+}
 
-    .header .new-btn{
-        width:100%;
-    }
+.header .new-btn{
+width:100%;
+text-align:center;
+}
 
-    h1{
-        font-size:27px;
-    }
+h1{
+font-size:27px;
+}
 
-    .repo-header{
-        flex-direction:column;
-    }
+.repo-header{
+flex-direction:column;
+}
 
-    .repo-actions{
-        width:100%;
-    }
+.repo-actions{
+width:100%;
+}
 
-    .open-btn{
-        flex:1;
-        text-align:center;
-    }
+.open-btn{
+flex:1;
+text-align:center;
+}
 
 }
 
@@ -410,9 +527,6 @@ class="error">
 
 
 
-<!-- SEARCH -->
-
-
 <div class="search-box">
 
 <label
@@ -445,7 +559,6 @@ Loading repositories...
 <div
 id="stats"
 class="stats">
-
 </div>
 
 
@@ -454,9 +567,7 @@ class="stats">
 id="repoList">
 
 <div class="loading">
-
 Loading repositories...
-
 </div>
 
 </div>
@@ -474,24 +585,71 @@ Loading repositories...
 
 
 
+<!-- RENAME MODAL -->
+
+<div
+id="renameModal"
+class="modal-overlay">
+
+<div class="modal">
+
+<h2>
+✏️ Rename Repository
+</h2>
+
+<p>
+Enter new repository name
+</p>
+
+<input
+id="renameInput"
+type="text"
+maxlength="100"
+placeholder="New repository name">
+
+<div class="modal-actions">
+
+<button
+class="cancel-btn"
+onclick="closeRenameModal()">
+
+Cancel
+
+</button>
+
+<button
+class="rename-btn"
+onclick="confirmRename()">
+
+Rename
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
 <script>
 
 
-/* SUPABASE */
-
+/* =========================
+SUPABASE
+========================= */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
-
 const supabaseClient =
 window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+SUPABASE_URL,
+SUPABASE_KEY
 );
 
 
@@ -500,559 +658,1042 @@ let currentUser = null;
 
 let allRepositories = [];
 
+let repositoryToRename = null;
 
 
-/* ELEMENTS */
 
+/* =========================
+ELEMENTS
+========================= */
 
 const repoList =
 document.getElementById(
-    "repoList"
+"repoList"
 );
-
 
 const searchInput =
 document.getElementById(
-    "searchInput"
+"searchInput"
 );
-
 
 const searchInfo =
 document.getElementById(
-    "searchInfo"
+"searchInfo"
 );
-
 
 const stats =
 document.getElementById(
-    "stats"
+"stats"
 );
-
 
 const errorBox =
 document.getElementById(
-    "error"
+"error"
 );
-
 
 const logoutBtn =
 document.getElementById(
-    "logoutBtn"
+"logoutBtn"
+);
+
+const renameModal =
+document.getElementById(
+"renameModal"
+);
+
+const renameInput =
+document.getElementById(
+"renameInput"
 );
 
 
 
-/* ESCAPE HTML */
-
+/* =========================
+ESCAPE HTML
+========================= */
 
 function escapeHtml(value){
 
-    return String(
-        value ?? ""
-    ).replace(
-        /[&<>"']/g,
-        function(character){
+return String(
+value ?? ""
+)
+.replace(
+/[&<>"']/g,
+function(character){
 
-            return {
+return {
 
-                "&":"&amp;",
-                "<":"&lt;",
-                ">":"&gt;",
-                '"':"&quot;",
-                "'":"&#039;"
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
 
-            }[character];
+}[character];
 
-        }
-    );
+}
+);
 
 }
 
 
 
-/* SHOW ERROR */
-
+/* =========================
+ERROR
+========================= */
 
 function showError(message){
 
-    errorBox.textContent =
-        message;
+errorBox.textContent =
+"❌ " + message;
 
-    errorBox.style.display =
-        "block";
+errorBox.style.display =
+"block";
 
 }
-
-
-
-/* HIDE ERROR */
-
 
 function hideError(){
 
-    errorBox.style.display =
-        "none";
+errorBox.style.display =
+"none";
 
 }
 
 
 
-/* FORMAT DATE */
-
+/* =========================
+DATE
+========================= */
 
 function formatDate(value){
 
-    if(!value){
+if(!value)
+return "Unknown";
 
-        return "Unknown";
+const date =
+new Date(value);
 
-    }
-
-    const date =
-        new Date(value);
-
-    return date.toLocaleDateString(
-        "en-IN",
-        {
-            day:"2-digit",
-            month:"short",
-            year:"numeric"
-        }
-    );
+return date.toLocaleDateString(
+"en-IN",
+{
+day:"2-digit",
+month:"short",
+year:"numeric"
+}
+);
 
 }
 
 
 
-/* LOAD REPOSITORIES */
-
+/* =========================
+LOAD REPOSITORIES
+========================= */
 
 async function loadRepositories(){
 
-    try{
+try{
 
-        hideError();
+hideError();
 
-
-        /* CHECK LOGIN */
-
-
-        const {
-            data:{user},
-            error:userError
-        } =
-        await supabaseClient
-            .auth
-            .getUser();
+const {
+data:{user},
+error:userError
+} =
+await supabaseClient
+.auth
+.getUser();
 
 
-        if(userError){
-
-            throw userError;
-
-        }
+if(userError)
+throw userError;
 
 
-        if(!user){
+if(!user){
 
-            window.location.href =
-                "login.html";
+window.location.href =
+"login.html";
 
-            return;
+return;
 
-        }
-
-
-        currentUser =
-            user;
+}
 
 
-
-        /* LOAD REPOSITORIES */
-
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-
-            .from("repositories")
-
-            .select(
-                "id,owner_id,name,description,is_private,created_at,updated_at"
-            )
-
-            .order(
-                "updated_at",
-                {
-                    ascending:false
-                }
-            );
+currentUser =
+user;
 
 
-        if(error){
-
-            throw error;
-
-        }
-
-
-        allRepositories =
-            data || [];
-
-
-        renderRepositories(
-            allRepositories
-        );
-
-
-    }catch(error){
-
-        console.error(
-            "Repository error:",
-            error
-        );
+const {
+data,
+error
+} =
+await supabaseClient
+.from("repositories")
+.select(
+"id,owner_id,name,description,is_private,created_at,updated_at"
+)
+.order(
+"updated_at",
+{
+ascending:false
+}
+);
 
 
-        repoList.innerHTML = `
-
-            <div class="card empty">
-
-                <h2>
-                    ⚠️ Unable to load repositories
-                </h2>
-
-                <p style="margin-top:10px;">
-                    Please refresh the page.
-                </p>
-
-            </div>
-
-        `;
+if(error)
+throw error;
 
 
-        searchInfo.textContent =
-            "Unable to load repositories.";
+allRepositories =
+data || [];
 
 
-        showError(
-            error.message ||
-            "Unable to load repositories."
-        );
+renderRepositories(
+allRepositories
+);
 
-    }
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to load repositories."
+);
+
+repoList.innerHTML = `
+<div class="card empty">
+
+<h2>
+⚠️ Unable to load repositories
+</h2>
+
+<p style="margin-top:10px;">
+Please refresh the page.
+</p>
+
+</div>
+`;
+
+}
 
 }
 
 
 
-/* RENDER REPOSITORIES */
-
+/* =========================
+RENDER
+========================= */
 
 function renderRepositories(
-    repositories
+repositories
 ){
 
-    repoList.innerHTML =
-        "";
+repoList.innerHTML =
+"";
 
 
-    const searchTerm =
-        searchInput.value
-            .trim()
-            .toLowerCase();
+const searchTerm =
+searchInput.value
+.trim()
+.toLowerCase();
 
 
-    let filtered =
-        repositories.filter(
-            function(repo){
+const filtered =
+repositories.filter(
+function(repo){
 
-                if(!searchTerm){
+if(!searchTerm)
+return true;
 
-                    return true;
 
-                }
+const name =
+String(
+repo.name || ""
+)
+.toLowerCase();
 
 
-                const name =
-                    String(
-                        repo.name || ""
-                    ).toLowerCase();
+const description =
+String(
+repo.description || ""
+)
+.toLowerCase();
 
 
-                const description =
-                    String(
-                        repo.description || ""
-                    ).toLowerCase();
+return (
+name.includes(searchTerm) ||
+description.includes(searchTerm)
+);
 
+}
+);
 
-                return (
-                    name.includes(
-                        searchTerm
-                    ) ||
-                    description.includes(
-                        searchTerm
-                    )
-                );
 
-            }
-        );
+stats.textContent =
+filtered.length +
+(
+filtered.length === 1
+? " repository"
+: " repositories"
+);
 
 
+searchInfo.textContent =
+searchTerm
+?
+`Showing ${filtered.length} result(s) for "${searchInput.value.trim()}"`
+:
+`${repositories.length} repository(s) available`;
 
-    /* STATS */
 
+if(!filtered.length){
 
-    stats.textContent =
-        filtered.length +
-        " repository" +
-        (
-            filtered.length === 1
-            ? ""
-            : "ies"
-        );
+repoList.innerHTML = `
 
+<div class="card empty">
 
+<h2>
+🔎 No repositories found
+</h2>
 
-    searchInfo.textContent =
-        searchTerm
-        ? `Showing ${filtered.length} result(s) for "${searchInput.value.trim()}"`
-        : `${repositories.length} repository(s) available`;
+<p style="margin-top:10px;">
+Try another repository name or description.
+</p>
 
+</div>
 
+`;
 
-    /* EMPTY SEARCH RESULT */
-
-
-    if(filtered.length === 0){
-
-        repoList.innerHTML = `
-
-            <div class="card empty">
-
-                <h2>
-                    🔎 No repositories found
-                </h2>
-
-                <p>
-                    Try another repository name or description.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-
-    /* DISPLAY */
-
-
-    filtered.forEach(
-        function(repo){
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "card repo-card";
-
-
-            const badge =
-                repo.is_private
-
-                ? `
-                    <span class="badge private-badge">
-                        🔒 Private
-                    </span>
-                  `
-
-                : `
-                    <span class="badge public-badge">
-                        🌐 Public
-                    </span>
-                  `;
-
-
-
-            const description =
-                repo.description
-                ? escapeHtml(
-                    repo.description
-                  )
-                : "No description";
-
-
-
-            card.innerHTML = `
-
-                <div class="repo-header">
-
-                    <div>
-
-                        <div class="repo-name">
-
-                            <a
-                                href="repository-details.html?id=${encodeURIComponent(repo.id)}"
-                            >
-
-                                ${escapeHtml(repo.name)}
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-
-                    <div>
-
-                        ${badge}
-
-                    </div>
-
-                </div>
-
-
-                <div class="repo-description">
-
-                    ${description}
-
-                </div>
-
-
-                <div class="repo-meta">
-
-                    Updated:
-                    ${formatDate(
-                        repo.updated_at ||
-                        repo.created_at
-                    )}
-
-                </div>
-
-
-                <div class="repo-actions">
-
-                    <a
-                        class="open-btn"
-                        href="repository-details.html?id=${encodeURIComponent(repo.id)}"
-                    >
-
-                        📂 Open Repository →
-
-                    </a>
-
-                </div>
-
-            `;
-
-
-            repoList.appendChild(
-                card
-            );
-
-        }
-    );
+return;
 
 }
 
 
 
-/* SEARCH */
+filtered.forEach(
+function(repo){
 
+const card =
+document.createElement(
+"div"
+);
+
+card.className =
+"card repo-card";
+
+
+const badge =
+repo.is_private
+
+?
+
+`
+<span class="badge private-badge">
+🔒 Private
+</span>
+`
+
+:
+
+`
+<span class="badge public-badge">
+🌐 Public
+</span>
+`;
+
+
+const description =
+repo.description
+?
+escapeHtml(
+repo.description
+)
+:
+"No description";
+
+
+const isOwner =
+currentUser &&
+repo.owner_id ===
+currentUser.id;
+
+
+card.innerHTML = `
+
+<div class="repo-header">
+
+<div>
+
+<div class="repo-name">
+
+<a
+href="repository-details.html?id=${encodeURIComponent(repo.id)}">
+
+${escapeHtml(repo.name)}
+
+</a>
+
+</div>
+
+</div>
+
+
+<div>
+
+${badge}
+
+</div>
+
+</div>
+
+
+<div class="repo-description">
+
+${description}
+
+</div>
+
+
+<div class="repo-meta">
+
+Updated:
+${formatDate(
+repo.updated_at ||
+repo.created_at
+)}
+
+</div>
+
+
+<div class="repo-actions">
+
+
+<a
+class="open-btn"
+href="repository-details.html?id=${encodeURIComponent(repo.id)}">
+
+📁 Open Repository →
+
+</a>
+
+
+${
+isOwner
+?
+
+`
+
+<div class="menu-wrap">
+
+<button
+class="menu-btn"
+onclick="toggleMenu('${repo.id}')">
+
+⋯
+
+</button>
+
+
+<div
+class="dropdown"
+id="menu-${repo.id}">
+
+<button
+onclick="openRenameModal('${repo.id}',${JSON.stringify(repo.name).replace(/"/g,"&quot;")})">
+
+✏️ Rename
+
+</button>
+
+
+<button
+onclick="editDescription('${repo.id}',${JSON.stringify(repo.description || "").replace(/"/g,"&quot;")})">
+
+📝 Edit Description
+
+</button>
+
+
+<button
+onclick="changeVisibility('${repo.id}',${repo.is_private})">
+
+🌐 Change Visibility
+
+</button>
+
+
+<button
+class="danger"
+onclick="deleteRepository('${repo.id}',${JSON.stringify(repo.name).replace(/"/g,"&quot;")})">
+
+🗑 Delete
+
+</button>
+
+</div>
+
+</div>
+
+`
+
+:
+
+""
+}
+
+
+</div>
+
+`;
+
+
+repoList.appendChild(
+card
+);
+
+}
+);
+
+}
+
+
+
+/* =========================
+SEARCH
+========================= */
 
 searchInput.addEventListener(
-    "input",
-    function(){
+"input",
+function(){
 
-        renderRepositories(
-            allRepositories
-        );
+renderRepositories(
+allRepositories
+);
 
-    }
+}
 );
 
 
 
-/* LOGOUT */
+/* =========================
+MENU
+========================= */
 
+function toggleMenu(repoId){
+
+document
+.querySelectorAll(
+".dropdown"
+)
+.forEach(
+menu=>{
+
+if(
+menu.id !==
+"menu-" + repoId
+){
+
+menu.classList.remove(
+"show"
+);
+
+}
+
+}
+);
+
+
+const menu =
+document.getElementById(
+"menu-" + repoId
+);
+
+
+if(menu){
+
+menu.classList.toggle(
+"show"
+);
+
+}
+
+}
+
+
+
+document.addEventListener(
+"click",
+function(event){
+
+if(
+!event.target.closest(
+".menu-wrap"
+)
+){
+
+document
+.querySelectorAll(
+".dropdown"
+)
+.forEach(
+menu =>
+menu.classList.remove(
+"show"
+)
+);
+
+}
+
+}
+);
+
+
+
+/* =========================
+RENAME MODAL
+========================= */
+
+function openRenameModal(
+repoId,
+repoName
+){
+
+repositoryToRename =
+repoId;
+
+
+renameInput.value =
+repoName;
+
+
+renameModal.classList.add(
+"show"
+);
+
+
+setTimeout(
+function(){
+
+renameInput.focus();
+
+renameInput.select();
+
+},
+100
+);
+
+}
+
+
+
+function closeRenameModal(){
+
+repositoryToRename =
+null;
+
+renameModal.classList.remove(
+"show"
+);
+
+renameInput.value =
+"";
+
+}
+
+
+
+/* =========================
+CONFIRM RENAME
+========================= */
+
+async function confirmRename(){
+
+if(!repositoryToRename)
+return;
+
+
+const newName =
+renameInput.value
+.trim();
+
+
+if(!newName){
+
+alert(
+"Repository name is required."
+);
+
+return;
+
+}
+
+
+if(
+newName.length < 1 ||
+newName.length > 100
+){
+
+alert(
+"Please enter a valid repository name."
+);
+
+return;
+
+}
+
+
+const invalid =
+/[\/\\?#%]/;
+
+
+if(
+invalid.test(newName)
+){
+
+alert(
+"Repository name contains invalid characters."
+);
+
+return;
+
+}
+
+
+try{
+
+const {
+data:existing,
+error:checkError
+} =
+await supabaseClient
+.from("repositories")
+.select("id")
+.ilike("name",newName);
+
+
+if(checkError)
+throw checkError;
+
+
+const duplicate =
+(existing || [])
+.find(
+repo =>
+repo.id !==
+repositoryToRename
+);
+
+
+if(duplicate){
+
+alert(
+"A repository with this name already exists."
+);
+
+return;
+
+}
+
+
+
+const {
+error
+} =
+await supabaseClient
+.from("repositories")
+.update({
+
+name:newName,
+
+updated_at:
+new Date().toISOString()
+
+})
+.eq(
+"id",
+repositoryToRename
+)
+.eq(
+"owner_id",
+currentUser.id
+);
+
+
+if(error)
+throw error;
+
+
+closeRenameModal();
+
+
+alert(
+"Repository renamed successfully!"
+);
+
+
+await loadRepositories();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+error.message ||
+"Unable to rename repository."
+);
+
+}
+
+}
+
+
+
+/* =========================
+EDIT DESCRIPTION
+========================= */
+
+async function editDescription(
+repoId,
+currentDescription
+){
+
+const value =
+prompt(
+"Enter repository description:",
+currentDescription
+);
+
+
+if(value === null)
+return;
+
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+.from("repositories")
+.update({
+
+description:
+value.trim(),
+
+updated_at:
+new Date().toISOString()
+
+})
+.eq(
+"id",
+repoId
+)
+.eq(
+"owner_id",
+currentUser.id
+);
+
+
+if(error)
+throw error;
+
+
+await loadRepositories();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Unable to update description."
+);
+
+}
+
+}
+
+
+
+/* =========================
+CHANGE VISIBILITY
+========================= */
+
+async function changeVisibility(
+repoId,
+isPrivate
+){
+
+const newPrivate =
+!isPrivate;
+
+
+const message =
+newPrivate
+?
+"Make this repository PRIVATE?"
+:
+"Make this repository PUBLIC?";
+
+
+if(!confirm(message))
+return;
+
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+.from("repositories")
+.update({
+
+is_private:
+newPrivate,
+
+updated_at:
+new Date().toISOString()
+
+})
+.eq(
+"id",
+repoId
+)
+.eq(
+"owner_id",
+currentUser.id
+);
+
+
+if(error)
+throw error;
+
+
+await loadRepositories();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Unable to change visibility."
+);
+
+}
+
+}
+
+
+
+/* =========================
+DELETE
+========================= */
+
+async function deleteRepository(
+repoId,
+repoName
+){
+
+if(
+!confirm(
+`Are you sure you want to delete "${repoName}"?\n\nThis action cannot be undone.`
+)
+){
+
+return;
+
+}
+
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+.from("repositories")
+.delete()
+.eq(
+"id",
+repoId
+)
+.eq(
+"owner_id",
+currentUser.id
+);
+
+
+if(error)
+throw error;
+
+
+alert(
+"Repository deleted successfully."
+);
+
+
+await loadRepositories();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+error.message ||
+"Unable to delete repository."
+);
+
+}
+
+}
+
+
+
+/* =========================
+LOGOUT
+========================= */
 
 logoutBtn.addEventListener(
-    "click",
-    async function(){
+"click",
+async function(){
 
-        try{
+try{
 
-            logoutBtn.disabled =
-                true;
+await supabaseClient
+.auth
+.signOut();
 
-            logoutBtn.textContent =
-                "Logging out...";
+window.location.href =
+"login.html";
 
+}catch(error){
 
-            const {
-                error
-            } =
-            await supabaseClient
-                .auth
-                .signOut();
+console.error(error);
 
+alert(
+"Unable to logout."
+);
 
-            if(error){
+}
 
-                throw error;
-
-            }
-
-
-            window.location.href =
-                "login.html";
-
-
-        }catch(error){
-
-            console.error(
-                "Logout error:",
-                error
-            );
-
-
-            alert(
-                "Logout failed: " +
-                error.message
-            );
-
-
-            logoutBtn.disabled =
-                false;
-
-            logoutBtn.textContent =
-                "🚪 Logout";
-
-        }
-
-    }
+}
 );
 
 
 
-/* START */
-
+/* =========================
+START
+========================= */
 
 loadRepositories();
 
-
 </script>
 
-
 </body>
-
 </html>
