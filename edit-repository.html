@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Edit Repository — ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
 body{
 font-family:Arial,sans-serif;
@@ -41,6 +46,10 @@ gap:18px;
 .nav-links a{
 color:#ddd;
 text-decoration:none;
+}
+
+.nav-links a:hover{
+color:#36e0b5;
 }
 
 .container{
@@ -92,7 +101,8 @@ min-height:130px;
 resize:vertical;
 }
 
-input:focus,textarea:focus{
+input:focus,
+textarea:focus{
 border-color:#36e0b5;
 }
 
@@ -171,11 +181,29 @@ padding:40px 10px;
 }
 
 @media(max-width:600px){
-.container{width:92%;margin:25px auto}
-.card{padding:22px}
-h1{font-size:27px}
-.buttons{flex-direction:column}
-.nav-links{gap:10px;font-size:13px}
+
+.container{
+width:92%;
+margin:25px auto;
+}
+
+.card{
+padding:22px;
+}
+
+h1{
+font-size:27px;
+}
+
+.buttons{
+flex-direction:column;
+}
+
+.nav-links{
+gap:10px;
+font-size:13px;
+}
+
 }
 </style>
 </head>
@@ -183,30 +211,58 @@ h1{font-size:27px}
 <body>
 
 <nav>
-<div class="logo">⚡ ASIM TECH</div>
+
+<div class="logo">
+⚡ ASIM TECH
+</div>
 
 <div class="nav-links">
-<a href="index.html">Home</a>
-<a href="repositories.html">Repositories</a>
-<a href="dashboard.html">Dashboard</a>
+
+<a href="index.html">
+Home
+</a>
+
+<a href="repositories.html">
+Repositories
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
 </div>
+
 </nav>
+
 
 <div class="container">
 
-<a class="back" href="repositories.html">
+<a
+class="back"
+href="repositories.html"
+>
 ← Back to Repositories
 </a>
+
 
 <div id="loading">
 Loading repository...
 </div>
 
+
 <div id="message"></div>
 
-<div id="editor" class="card" style="display:none">
 
-<h1>✏️ Edit Repository</h1>
+<div
+id="editor"
+class="card"
+style="display:none"
+>
+
+<h1>
+✏️ Edit Repository
+</h1>
+
 
 <label for="name">
 Repository name
@@ -219,6 +275,7 @@ placeholder="Repository name"
 maxlength="100"
 >
 
+
 <label for="description">
 Description
 </label>
@@ -229,43 +286,58 @@ placeholder="What is this project about?"
 maxlength="500"
 ></textarea>
 
+
 <div class="visibility">
 
-<label>Repository visibility</label>
+<label>
+Repository visibility
+</label>
+
 
 <label class="option">
+
 <input
 type="radio"
 name="visibility"
 value="public"
 id="public"
 >
+
 🌐 Public
+
 </label>
 
+
 <label class="option">
+
 <input
 type="radio"
 name="visibility"
 value="private"
 id="private"
 >
+
 🔒 Private
+
 </label>
 
 </div>
+
 
 <div class="buttons">
 
 <button
 class="cancel"
-onclick="goBack()">
+onclick="goBack()"
+>
 Cancel
 </button>
 
+
 <button
 class="save"
-onclick="saveRepository()">
+onclick="saveRepository()"
+>
 💾 Save Changes
 </button>
 
@@ -275,11 +347,19 @@ onclick="saveRepository()">
 
 </div>
 
+
 <footer>
+
 © 2026 ASIM TECH — Code. Create. Innovate.
+
 </footer>
 
+
 <script>
+
+/* =========================
+   SUPABASE
+========================= */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -293,34 +373,66 @@ SUPABASE_URL,
 SUPABASE_PUBLISHABLE_KEY
 );
 
+
+/* =========================
+   URL PARAMETERS
+========================= */
+
 const params =
 new URLSearchParams(
 window.location.search
 );
 
+
+/*
+IMPORTANT FIX:
+Accept both id and repository_id
+*/
+
 const repoId =
-params.get("id");
+params.get("id") ||
+params.get("repository_id");
 
-let currentUser=null;
+
+let currentUser = null;
 
 
-function showMessage(text,type){
+/* =========================
+   MESSAGE
+========================= */
+
+function showMessage(
+text,
+type
+){
 
 const box =
-document.getElementById("message");
+document.getElementById(
+"message"
+);
 
-box.textContent=text;
+box.textContent =
+text;
 
-box.className=type;
+box.className =
+type;
 
-box.style.display="block";
+box.style.display =
+"block";
 
 }
 
 
+/* =========================
+   LOAD REPOSITORY
+========================= */
+
 async function loadRepository(){
 
 try{
+
+
+/* CHECK LOGIN */
 
 const {
 data:{user},
@@ -328,26 +440,42 @@ error:userError
 } =
 await supabaseClient.auth.getUser();
 
-if(userError) throw userError;
+
+if(userError)
+throw userError;
+
 
 if(!user){
 
-window.location.href="login.html";
+window.location.href =
+"login.html";
+
 return;
 
 }
 
-currentUser=user;
 
+currentUser =
+user;
+
+
+/* CHECK ID */
 
 if(!repoId){
 
-throw new Error("Repository ID missing");
+throw new Error(
+"Repository ID missing"
+);
 
 }
 
 
-const {data,error} =
+/* GET REPOSITORY */
+
+const {
+data,
+error
+} =
 await supabaseClient
 .from("repositories")
 .select("*")
@@ -356,37 +484,76 @@ await supabaseClient
 .single();
 
 
-if(error) throw error;
+if(error)
+throw error;
 
 
-document.getElementById("name").value =
-data.name || "";
+if(!data){
 
-document.getElementById("description").value =
-data.description || "";
-
-
-if(data.is_private){
-
-document.getElementById("private").checked=true;
-
-}else{
-
-document.getElementById("public").checked=true;
+throw new Error(
+"Repository not found"
+);
 
 }
 
 
-document.getElementById("loading").style.display="none";
+/* FILL FORM */
 
-document.getElementById("editor").style.display="block";
+document.getElementById(
+"name"
+).value =
+data.name || "";
+
+
+document.getElementById(
+"description"
+).value =
+data.description || "";
+
+
+/* VISIBILITY */
+
+if(data.is_private){
+
+document.getElementById(
+"private"
+).checked =
+true;
+
+}else{
+
+document.getElementById(
+"public"
+).checked =
+true;
+
+}
+
+
+/* SHOW EDITOR */
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
+
+document.getElementById(
+"editor"
+).style.display =
+"block";
 
 
 }catch(error){
 
 console.error(error);
 
-document.getElementById("loading").style.display="none";
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
 
 showMessage(
 "Repository not found or you do not have permission to edit it.",
@@ -398,20 +565,36 @@ showMessage(
 }
 
 
+/* =========================
+   SAVE REPOSITORY
+========================= */
+
 async function saveRepository(){
 
 const name =
-document.getElementById("name")
-.value.trim();
+document.getElementById(
+"name"
+)
+.value
+.trim();
+
 
 const description =
-document.getElementById("description")
-.value.trim();
+document.getElementById(
+"description"
+)
+.value
+.trim();
+
 
 const privateSelected =
-document.getElementById("private")
+document.getElementById(
+"private"
+)
 .checked;
 
+
+/* NAME REQUIRED */
 
 if(!name){
 
@@ -425,7 +608,11 @@ return;
 }
 
 
-if(!/^[a-zA-Z0-9._-]+$/.test(name)){
+/* VALID NAME */
+
+if(
+!/^[a-zA-Z0-9._-]+$/.test(name)
+){
 
 showMessage(
 "Use only letters, numbers, dots, hyphens and underscores.",
@@ -439,7 +626,13 @@ return;
 
 try{
 
-const {data:existing,error:checkError} =
+
+/* CHECK DUPLICATE NAME */
+
+const {
+data:existing,
+error:checkError
+} =
 await supabaseClient
 .from("repositories")
 .select("id")
@@ -448,10 +641,14 @@ await supabaseClient
 .neq("id",repoId);
 
 
-if(checkError) throw checkError;
+if(checkError)
+throw checkError;
 
 
-if(existing && existing.length>0){
+if(
+existing &&
+existing.length > 0
+){
 
 showMessage(
 "This repository name is already in use.",
@@ -463,23 +660,36 @@ return;
 }
 
 
-const {error} =
+/* UPDATE */
+
+const {
+error
+} =
 await supabaseClient
 .from("repositories")
 .update({
 
 name:name,
-description:description || null,
-is_private:privateSelected,
-updated_at:new Date().toISOString()
+
+description:
+description || null,
+
+is_private:
+privateSelected,
+
+updated_at:
+new Date().toISOString()
 
 })
 .eq("id",repoId)
 .eq("owner_id",currentUser.id);
 
 
-if(error) throw error;
+if(error)
+throw error;
 
+
+/* SUCCESS */
 
 showMessage(
 "Repository updated successfully!",
@@ -487,13 +697,18 @@ showMessage(
 );
 
 
-setTimeout(function(){
+/* GO BACK */
+
+setTimeout(
+function(){
 
 window.location.href =
 "repository-details.html?id=" +
 encodeURIComponent(repoId);
 
-},800);
+},
+800
+);
 
 
 }catch(error){
@@ -510,6 +725,10 @@ showMessage(
 }
 
 
+/* =========================
+   BACK
+========================= */
+
 function goBack(){
 
 window.location.href =
@@ -518,6 +737,10 @@ encodeURIComponent(repoId);
 
 }
 
+
+/* =========================
+   START
+========================= */
 
 loadRepository();
 
