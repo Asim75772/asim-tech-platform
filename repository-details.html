@@ -21,9 +21,8 @@ body{
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 background:#0d1117;
 color:#e6edf3;
+min-height:100vh;
 }
-
-/* NAVBAR */
 
 .navbar{
 height:64px;
@@ -51,15 +50,11 @@ font-size:14px;
 color:#58a6ff;
 }
 
-/* MAIN */
-
 .container{
 width:92%;
 max-width:1200px;
 margin:30px auto;
 }
-
-/* HEADER */
 
 .repo-header{
 border-bottom:1px solid #30363d;
@@ -97,11 +92,9 @@ font-size:12px;
 color:#8b949e;
 }
 
-.public{
+.badge.public{
 color:#3fb950;
 }
-
-/* TABS */
 
 .tabs{
 display:flex;
@@ -128,8 +121,6 @@ color:#e6edf3;
 font-weight:600;
 border-bottom-color:#f78166;
 }
-
-/* TOOLBAR */
 
 .toolbar{
 display:flex;
@@ -178,6 +169,10 @@ border-color:#1f6feb;
 color:white;
 }
 
+.btn-blue:hover{
+background:#388bfd;
+}
+
 .btn-purple{
 background:#8957e5;
 border-color:#8957e5;
@@ -187,8 +182,6 @@ color:white;
 .btn-purple:hover{
 background:#a371f7;
 }
-
-/* SEARCH */
 
 .search{
 width:100%;
@@ -204,8 +197,6 @@ outline:none;
 .search:focus{
 border-color:#58a6ff;
 }
-
-/* COMMIT BAR */
 
 .commit-bar{
 border:1px solid #30363d;
@@ -231,8 +222,6 @@ color:#58a6ff;
 .commit-right{
 color:#8b949e;
 }
-
-/* FILE LIST */
 
 .file-list{
 border:1px solid #30363d;
@@ -288,7 +277,11 @@ font-size:13px;
 text-align:right;
 }
 
-/* README */
+.empty{
+padding:18px;
+text-align:center;
+color:#8b949e;
+}
 
 .readme{
 margin-top:25px;
@@ -319,16 +312,12 @@ color:#e6edf3;
 margin-bottom:10px;
 }
 
-/* ACTIONS */
-
 .actions{
 display:flex;
 gap:8px;
 flex-wrap:wrap;
 margin-top:20px;
 }
-
-/* LOADING */
 
 .loading{
 padding:50px;
@@ -345,8 +334,6 @@ border-radius:6px;
 display:none;
 margin-bottom:20px;
 }
-
-/* MODAL */
 
 .modal{
 display:none;
@@ -380,12 +367,6 @@ color:#8b949e;
 margin-bottom:20px;
 }
 
-.modal-actions{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
-
 footer{
 text-align:center;
 padding:45px 10px;
@@ -393,11 +374,10 @@ color:#8b949e;
 font-size:13px;
 }
 
-/* MOBILE */
-
 @media(max-width:600px){
 
 .navbar{
+height:58px;
 padding:0 4%;
 gap:15px;
 }
@@ -444,9 +424,6 @@ margin-right:-5px;
 
 <body>
 
-
-<!-- NAVBAR -->
-
 <nav class="navbar">
 
 <div class="logo">
@@ -470,11 +447,9 @@ Dashboard
 
 <div class="container">
 
-
 <div id="loading" class="loading">
 Loading repository...
 </div>
-
 
 <div id="error" class="error"></div>
 
@@ -482,34 +457,47 @@ Loading repository...
 <div id="mainContent" style="display:none">
 
 
-<!-- REPOSITORY HEADER -->
-
 <div class="repo-header">
 
 <div class="repo-name">
 
-📁 <span id="repoOwner">
+📁
+
+<span id="repoOwner">
 ASIM TECH
 </span>
 
 /
 
-<strong id="repoName"></strong>
+<strong id="repoName">
+</strong>
 
 </div>
 
-<div id="repoDescription" class="description">
+
+<div id="repoDescription"
+class="description">
+
 No description provided.
+
 </div>
+
 
 <div class="badges">
 
-<span id="visibilityBadge" class="badge public">
-Public
+<span id="visibilityBadge"
+class="badge public">
+
+🌎 Public
+
 </span>
 
-<span id="publishBadge" class="badge">
+
+<span id="publishBadge"
+class="badge">
+
 Not published
+
 </span>
 
 </div>
@@ -521,50 +509,74 @@ Not published
 
 <div class="tabs">
 
-<a class="tab active" href="#">
+<a class="tab active"
+href="#">
+
 ◉ Code
+
 </a>
+
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Issues');return false;">
+
 Issues
+
 </a>
+
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Pull requests');return false;">
+
 Pull requests
+
 </a>
+
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Actions');return false;">
+
 Actions
+
 </a>
+
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Projects');return false;">
+
 Projects
+
 </a>
+
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Wiki');return false;">
+
 Wiki
+
 </a>
+
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Security');return false;">
+
 Security
+
 </a>
+
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Insights');return false;">
+
 Insights
+
 </a>
 
 </div>
@@ -576,33 +588,43 @@ Insights
 
 <div class="branch-box">
 
-<button class="btn">
+
+<button
+class="btn"
+type="button">
+
 🌿 main ▾
+
 </button>
 
 
-<a id="filesButton"
+<a
+id="filesButton"
 class="btn"
 href="#">
+
 📁 Files
+
 </a>
 
 
-<!-- NEW FILE EXPLORER -->
-
-<a id="explorerButton"
+<a
+id="explorerButton"
 class="btn btn-purple"
 href="#">
+
 📂 File Explorer
+
 </a>
 
 
-<!-- ADD FILE -->
-
-<a id="newFileButton"
+<a
+id="newFileButton"
 class="btn btn-green"
 href="#">
+
 ＋ Add file
+
 </a>
 
 </div>
@@ -613,8 +635,7 @@ id="searchInput"
 class="search"
 type="search"
 placeholder="🔎 Go to file..."
-oninput="filterFiles()"
->
+oninput="filterFiles()">
 
 </div>
 
@@ -628,15 +649,20 @@ oninput="filterFiles()"
 Latest commit:
 
 <strong id="latestCommit">
+
 Initial repository
+
 </strong>
 
 </div>
 
+
 <div class="commit-right">
 
 <span id="fileCount">
+
 0 files
+
 </span>
 
 </div>
@@ -646,11 +672,14 @@ Initial repository
 
 <!-- FILE LIST -->
 
-<div id="fileList"
+<div
+id="fileList"
 class="file-list">
 
 <div class="empty">
+
 Loading files...
+
 </div>
 
 </div>
@@ -661,21 +690,32 @@ Loading files...
 <div class="readme">
 
 <div class="readme-header">
+
 📖 README.md
+
 </div>
+
 
 <div class="readme-body">
 
 <h2 id="readmeTitle">
+
 Repository
+
 </h2>
 
+
 <p id="readmeDescription">
+
 Welcome to this ASIM TECH repository.
+
 </p>
 
+
 <p>
+
 This repository was created using ASIM TECH Platform.
+
 </p>
 
 </div>
@@ -687,17 +727,24 @@ This repository was created using ASIM TECH Platform.
 
 <div class="actions">
 
-<a id="openFilesAction"
+
+<a
+id="openFilesAction"
 class="btn"
 href="#">
+
 📂 Open Repository Files
+
 </a>
 
 
-<a id="editAction"
+<a
+id="editAction"
 class="btn"
 href="#">
+
 ✏️ Edit Repository
+
 </a>
 
 
@@ -705,7 +752,9 @@ href="#">
 id="publishAction"
 class="btn btn-blue"
 onclick="publishWebsite()">
+
 🚀 Publish Website
+
 </button>
 
 </div>
@@ -718,28 +767,33 @@ onclick="publishWebsite()">
 
 <!-- MODAL -->
 
-<div id="modal"
+<div
+id="modal"
 class="modal">
 
 <div class="modal-box">
 
 <h2 id="modalTitle">
+
 Coming Soon
+
 </h2>
 
+
 <p id="modalText">
+
 This feature is coming soon.
+
 </p>
 
-<div class="modal-actions">
 
 <button
 class="btn"
 onclick="closeModal()">
-Close
-</button>
 
-</div>
+Close
+
+</button>
 
 </div>
 
@@ -755,9 +809,9 @@ Close
 
 <script>
 
-/* =========================
+/* =====================================================
    SUPABASE
-========================= */
+===================================================== */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -772,22 +826,38 @@ SUPABASE_KEY
 );
 
 
-/* =========================
+/* =====================================================
    PARAMETERS
-========================= */
+===================================================== */
 
 const params =
 new URLSearchParams(
 window.location.search
 );
 
+
+/*
+IMPORTANT:
+
+Accept BOTH:
+
+?id=XXXX
+
+and
+
+?repository_id=XXXX
+
+This fixes the Repository ID missing error.
+*/
+
 const repoId =
-params.get("id");
+params.get("id") ||
+params.get("repository_id");
 
 
-/* =========================
+/* =====================================================
    VARIABLES
-========================= */
+===================================================== */
 
 let currentUser = null;
 
@@ -796,9 +866,9 @@ let repository = null;
 let allFiles = [];
 
 
-/* =========================
+/* =====================================================
    LOAD REPOSITORY
-========================= */
+===================================================== */
 
 async function loadRepository(){
 
@@ -808,14 +878,23 @@ try{
 /* USER */
 
 const {
-data:{user},
+data,
 error:userError
 } =
-await supabaseClient.auth.getUser();
+await supabaseClient
+.auth
+.getUser();
 
 
-if(userError)
+if(userError){
+
 throw userError;
+
+}
+
+
+const user =
+data.user;
 
 
 if(!user){
@@ -828,7 +907,8 @@ return;
 }
 
 
-currentUser = user;
+currentUser =
+user;
 
 
 /* REPOSITORY ID */
@@ -855,8 +935,11 @@ await supabaseClient
 .single();
 
 
-if(repoError)
+if(repoError){
+
 throw repoError;
+
+}
 
 
 if(!repo){
@@ -868,10 +951,13 @@ throw new Error(
 }
 
 
-repository = repo;
+repository =
+repo;
 
 
-/* HEADER */
+/* =====================================================
+   HEADER
+===================================================== */
 
 document.getElementById(
 "repoName"
@@ -886,7 +972,9 @@ repo.description ||
 "No description provided.";
 
 
-/* VISIBILITY */
+/* =====================================================
+   VISIBILITY
+===================================================== */
 
 const visibility =
 document.getElementById(
@@ -913,7 +1001,9 @@ visibility.className =
 }
 
 
-/* PUBLISH STATUS */
+/* =====================================================
+   PUBLISH STATUS
+===================================================== */
 
 const publishBadge =
 document.getElementById(
@@ -934,7 +1024,9 @@ publishBadge.textContent =
 }
 
 
-/* LINKS */
+/* =====================================================
+   LINKS
+===================================================== */
 
 const filesUrl =
 "repository-files.html?repository_id=" +
@@ -980,7 +1072,9 @@ document.getElementById(
 encodeURIComponent(repo.id);
 
 
-/* OWNER CONTROL */
+/* =====================================================
+   OWNER CONTROLS
+===================================================== */
 
 if(repo.owner_id !== user.id){
 
@@ -989,10 +1083,12 @@ document.getElementById(
 ).style.display =
 "none";
 
+
 document.getElementById(
 "newFileButton"
 ).style.display =
 "none";
+
 
 document.getElementById(
 "publishAction"
@@ -1002,7 +1098,9 @@ document.getElementById(
 }
 
 
-/* FILES */
+/* =====================================================
+   FILES
+===================================================== */
 
 const {
 data:files,
@@ -1012,21 +1110,33 @@ await supabaseClient
 .from("repository_files")
 .select("*")
 .eq("repository_id",repo.id)
-.order("file_path",{ascending:true});
+.order(
+"file_path",
+{
+ascending:true
+}
+);
 
 
-if(fileError)
+if(fileError){
+
 throw fileError;
+
+}
 
 
 allFiles =
 files || [];
 
 
-renderFiles(allFiles);
+renderFiles(
+allFiles
+);
 
 
-/* README */
+/* =====================================================
+   README
+===================================================== */
 
 document.getElementById(
 "readmeTitle"
@@ -1041,7 +1151,9 @@ repo.description ||
 "Welcome to this ASIM TECH repository.";
 
 
-/* SHOW */
+/* =====================================================
+   SHOW
+===================================================== */
 
 document.getElementById(
 "loading"
@@ -1055,7 +1167,8 @@ document.getElementById(
 "block";
 
 
-}catch(error){
+}
+catch(error){
 
 console.error(error);
 
@@ -1076,9 +1189,9 @@ error.message ||
 }
 
 
-/* =========================
+/* =====================================================
    RENDER FILES
-========================= */
+===================================================== */
 
 function renderFiles(files){
 
@@ -1088,48 +1201,61 @@ document.getElementById(
 );
 
 
-list.innerHTML = "";
+list.innerHTML =
+"";
 
 
 document.getElementById(
 "fileCount"
 ).textContent =
 files.length +
-(files.length === 1 ? " file" : " files");
+(
+files.length === 1
+? " file"
+: " files"
+);
 
 
 if(!files.length){
 
 list.innerHTML =
 '<div class="empty">' +
-'No files found.' +
-'</div>';
+"No files found." +
+"</div>";
 
 return;
 
 }
 
 
-/* CREATE ROW */
+/* FILE ROW */
 
-files.forEach(file=>{
+files.forEach(
+file=>{
+
 
 const row =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 row.className =
 "file-row";
 
 
 const info =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 info.className =
 "file-info";
 
 
 const icon =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 icon.className =
 "file-icon";
@@ -1139,62 +1265,85 @@ getFileIcon(file);
 
 
 const link =
-document.createElement("a");
+document.createElement(
+"a"
+);
 
 link.className =
 "file-name";
 
+
 link.href =
 "repository-explorer.html?repository_id=" +
-encodeURIComponent(repoId) +
+encodeURIComponent(
+repoId
+) +
 "&file=" +
-encodeURIComponent(file.file_path);
+encodeURIComponent(
+file.file_path
+);
+
 
 link.textContent =
 file.file_path;
 
 
 const meta =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 meta.className =
 "file-meta";
 
+
 meta.textContent =
-file.is_binary ?
-"Binary file" :
-"Text file";
+file.is_binary
+? "Binary file"
+: "Text file";
 
 
-info.appendChild(icon);
+info.appendChild(
+icon
+);
 
-info.appendChild(link);
+info.appendChild(
+link
+);
 
 
-row.appendChild(info);
+row.appendChild(
+info
+);
 
-row.appendChild(meta);
+row.appendChild(
+meta
+);
 
 
-list.appendChild(row);
+list.appendChild(
+row
+);
 
 });
 
 }
 
 
-/* =========================
+/* =====================================================
    FILE ICON
-========================= */
+===================================================== */
 
 function getFileIcon(file){
 
-if(file.is_binary){
-
 const path =
-(file.file_path || "")
-.toLowerCase();
+(
+file.file_path ||
+""
+).toLowerCase();
 
+
+if(file.is_binary){
 
 if(
 path.endsWith(".png") ||
@@ -1233,29 +1382,69 @@ return "📦";
 }
 
 
-const path =
-(file.file_path || "")
-.toLowerCase();
+if(
+path.endsWith(".html") ||
+path.endsWith(".htm")
+){
 
-
-if(path.endsWith(".html"))
 return "🌐";
 
+}
 
-if(path.endsWith(".css"))
+
+if(
+path.endsWith(".css")
+){
+
 return "🎨";
 
+}
 
-if(path.endsWith(".js"))
+
+if(
+path.endsWith(".js") ||
+path.endsWith(".mjs")
+){
+
 return "⚙️";
 
+}
 
-if(path.endsWith(".json"))
+
+if(
+path.endsWith(".json")
+){
+
 return "🔧";
 
+}
 
-if(path.endsWith(".md"))
+
+if(
+path.endsWith(".md")
+){
+
 return "📖";
+
+}
+
+
+if(
+path.endsWith(".py")
+){
+
+return "🐍";
+
+}
+
+
+if(
+path.endsWith(".php")
+){
+
+return "🐘";
+
+}
 
 
 return "📄";
@@ -1263,9 +1452,9 @@ return "📄";
 }
 
 
-/* =========================
+/* =====================================================
    SEARCH
-========================= */
+===================================================== */
 
 function filterFiles(){
 
@@ -1279,7 +1468,9 @@ document.getElementById(
 
 if(!search){
 
-renderFiles(allFiles);
+renderFiles(
+allFiles
+);
 
 return;
 
@@ -1287,21 +1478,29 @@ return;
 
 
 const filtered =
-allFiles.filter(file=>
-(file.file_path || "")
+allFiles.filter(
+file=>
+
+(
+file.file_path ||
+""
+)
 .toLowerCase()
 .includes(search)
+
 );
 
 
-renderFiles(filtered);
+renderFiles(
+filtered
+);
 
 }
 
 
-/* =========================
+/* =====================================================
    PUBLISH WEBSITE
-========================= */
+===================================================== */
 
 async function publishWebsite(){
 
@@ -1315,9 +1514,10 @@ return;
 }
 
 
-/* OWNER */
-
-if(repository.owner_id !== currentUser.id){
+if(
+repository.owner_id !==
+currentUser.id
+){
 
 showError(
 "You are not allowed to publish this repository."
@@ -1327,8 +1527,6 @@ return;
 
 }
 
-
-/* UPDATE */
 
 const {
 error
@@ -1343,21 +1541,26 @@ published_at:
 new Date().toISOString()
 
 })
-.eq("id",repository.id)
-.eq("owner_id",currentUser.id);
+.eq(
+"id",
+repository.id
+)
+.eq(
+"owner_id",
+currentUser.id
+);
 
 
-if(error)
+if(error){
+
 throw error;
 
+}
 
-/* UPDATE LOCAL */
 
 repository.is_published =
 true;
 
-
-/* BADGE */
 
 document.getElementById(
 "publishBadge"
@@ -1365,16 +1568,16 @@ document.getElementById(
 "✓ Published";
 
 
-/* SUCCESS */
-
 alert(
 "Website published successfully."
 );
 
 
-}catch(error){
+}
+catch(error){
 
 console.error(error);
+
 
 showError(
 error.message ||
@@ -1386,9 +1589,9 @@ error.message ||
 }
 
 
-/* =========================
+/* =====================================================
    COMING SOON
-========================= */
+===================================================== */
 
 function showComingSoon(name){
 
@@ -1423,9 +1626,9 @@ document.getElementById(
 }
 
 
-/* =========================
+/* =====================================================
    ERROR
-========================= */
+===================================================== */
 
 function showError(message){
 
@@ -1443,9 +1646,9 @@ box.style.display =
 }
 
 
-/* =========================
+/* =====================================================
    START
-========================= */
+===================================================== */
 
 loadRepository();
 
