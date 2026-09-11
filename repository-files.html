@@ -244,6 +244,11 @@ color:#8b949e;
 font-weight:bold;
 }
 
+.draft-status{
+color:#e3b341;
+font-weight:bold;
+}
+
 .web-actions{
 display:flex;
 gap:8px;
@@ -611,9 +616,7 @@ params.get("repository_id");
 
 
 /* =========================
-   IMPORTANT:
-   SET BUTTON LINKS
-   IMMEDIATELY
+   BUTTON LINKS
 ========================= */
 
 const newFileBtn =
@@ -1244,6 +1247,16 @@ const published =
 page.is_published;
 
 
+/*
+CHECK WHETHER A DRAFT EXISTS
+*/
+
+const hasDraft =
+page.draft_html_content !== null ||
+page.draft_css_content !== null ||
+page.draft_js_content !== null;
+
+
 let actions = `
 
 <button
@@ -1310,8 +1323,13 @@ Publish
 
 `;
 
+
 }
 
+
+/*
+DELETE
+*/
 
 actions += `
 
@@ -1348,6 +1366,59 @@ Open Live
 }
 
 
+/*
+STATUS TEXT
+*/
+
+let statusText = "";
+
+if(published){
+
+statusText = `
+<span class="published">
+Published
+</span>
+`;
+
+}else{
+
+statusText = `
+<span class="unpublished">
+Not Published
+</span>
+`;
+
+}
+
+
+/*
+DRAFT INDICATOR
+*/
+
+let draftText = "";
+
+if(
+isOwner &&
+hasDraft
+){
+
+draftText = `
+
+<div class="web-page-info">
+
+Draft:
+
+<span class="draft-status">
+Available
+</span>
+
+</div>
+
+`;
+
+}
+
+
 card.innerHTML = `
 
 <div class="web-page-name">
@@ -1360,21 +1431,11 @@ card.innerHTML = `
 
 Status:
 
-<span class="${
-published
-? "published"
-: "unpublished"
-}">
-
-${
-published
-? "Published"
-: "Not Published"
-}
-
-</span>
+${statusText}
 
 </div>
+
+${draftText}
 
 <div class="web-page-info">
 
@@ -1449,7 +1510,7 @@ filtered
 
 
 /* =========================
-   PREVIEW
+   PREVIEW PAGE
 ========================= */
 
 async function previewPage(pageId){
@@ -1483,14 +1544,72 @@ throw new Error(
 }
 
 
-const html =
+/*
+OWNER CHECK
+*/
+
+const isOwner =
+repository &&
+currentUser &&
+repository.owner_id ===
+currentUser.id;
+
+
+/*
+FOR OWNER:
+
+If draft exists, preview draft.
+
+FOR PUBLIC:
+
+Always preview live content.
+*/
+
+const hasDraft =
+page.draft_html_content !== null ||
+page.draft_css_content !== null ||
+page.draft_js_content !== null;
+
+
+let html = "";
+let css = "";
+let js = "";
+
+
+if(
+isOwner &&
+hasDraft
+){
+
+html =
+page.draft_html_content !== null
+? page.draft_html_content
+: (page.html_content || "");
+
+
+css =
+page.draft_css_content !== null
+? page.draft_css_content
+: (page.css_content || "");
+
+
+js =
+page.draft_js_content !== null
+? page.draft_js_content
+: (page.js_content || "");
+
+}else{
+
+html =
 page.html_content || "";
 
-const css =
+css =
 page.css_content || "";
 
-const js =
+js =
 page.js_content || "";
+
+}
 
 
 const fullHtml = `
@@ -1534,7 +1653,11 @@ ${js}
 document.getElementById(
 "modalTitle"
 ).textContent =
-"Preview — " +
+
+(isOwner && hasDraft
+? "Draft Preview — "
+: "Preview — ") +
+
 (page.page_name || "Web Page");
 
 
@@ -1617,6 +1740,7 @@ encodeURIComponent(pageId);
 
 /* =========================
    PUBLISH PAGE
+   DRAFT → LIVE
 ========================= */
 
 async function publishPage(pageId){
@@ -1639,14 +1763,107 @@ return;
 
 try{
 
+
+/*
+STEP 1:
+LOAD DRAFT CONTENT
+*/
+
 const {
-error
+data:page,
+error:loadError
+} =
+await supabaseClient
+.from("web_pages")
+.select(
+"html_content,css_content,js_content,draft_html_content,draft_css_content,draft_js_content,is_published"
+)
+.eq("id",pageId)
+.eq("repository_id",repoId)
+.single();
+
+
+if(loadError){
+
+throw loadError;
+
+}
+
+
+if(!page){
+
+throw new Error(
+"Web page not found."
+);
+
+}
+
+
+/*
+STEP 2:
+USE DRAFT CONTENT
+
+If a draft field is null,
+keep the current live content.
+*/
+
+const html =
+page.draft_html_content !== null
+? page.draft_html_content
+: (page.html_content || "");
+
+
+const css =
+page.draft_css_content !== null
+? page.draft_css_content
+: (page.css_content || "");
+
+
+const js =
+page.draft_js_content !== null
+? page.draft_js_content
+: (page.js_content || "");
+
+
+/*
+STEP 3:
+CONFIRM
+*/
+
+if(
+!confirm(
+"Publish this draft as the live version?"
+)
+){
+
+return;
+
+}
+
+
+/*
+STEP 4:
+COPY DRAFT → LIVE
+*/
+
+const {
+error:updateError
 } =
 await supabaseClient
 .from("web_pages")
 .update({
 
-is_published:true,
+html_content:
+html,
+
+css_content:
+css,
+
+js_content:
+js,
+
+is_published:
+true,
 
 published_at:
 new Date().toISOString()
@@ -1656,21 +1873,30 @@ new Date().toISOString()
 .eq("repository_id",repoId);
 
 
-if(error){
+if(updateError){
 
-throw error;
+throw updateError;
 
 }
 
 
+/*
+SUCCESS
+*/
+
 alert(
-"Web page published successfully."
+"Web page published successfully!"
 );
 
 location.reload();
 
 
 }catch(error){
+
+console.error(
+"Publish error:",
+error
+);
 
 alert(
 error.message ||
@@ -1684,6 +1910,7 @@ error.message ||
 
 /* =========================
    UNPUBLISH PAGE
+   KEEP LIVE CONTENT
 ========================= */
 
 async function unpublishPage(pageId){
@@ -1706,6 +1933,27 @@ return;
 
 try{
 
+
+if(
+!confirm(
+"Are you sure you want to unpublish this page?"
+)
+){
+
+return;
+
+}
+
+
+/*
+IMPORTANT:
+
+Only change publishing status.
+
+DO NOT DELETE OR CHANGE
+LIVE HTML/CSS/JS.
+*/
+
 const {
 error
 } =
@@ -1713,9 +1961,11 @@ await supabaseClient
 .from("web_pages")
 .update({
 
-is_published:false,
+is_published:
+false,
 
-published_at:null
+published_at:
+null
 
 })
 .eq("id",pageId)
@@ -1730,13 +1980,18 @@ throw error;
 
 
 alert(
-"Web page unpublished."
+"Web page unpublished successfully."
 );
 
 location.reload();
 
 
 }catch(error){
+
+console.error(
+"Unpublish error:",
+error
+);
 
 alert(
 error.message ||
@@ -1823,6 +2078,11 @@ location.reload();
 
 
 }catch(error){
+
+console.error(
+"Delete page error:",
+error
+);
 
 alert(
 error.message ||
