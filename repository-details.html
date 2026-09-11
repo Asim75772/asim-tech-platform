@@ -96,6 +96,10 @@ color:#8b949e;
 color:#3fb950;
 }
 
+.badge.published{
+color:#3fb950;
+}
+
 .tabs{
 display:flex;
 gap:5px;
@@ -181,6 +185,17 @@ color:white;
 
 .btn-purple:hover{
 background:#a371f7;
+}
+
+.btn-visit{
+background:#238636;
+border-color:#238636;
+color:white;
+font-weight:600;
+}
+
+.btn-visit:hover{
+background:#2ea043;
 }
 
 .search{
@@ -335,6 +350,16 @@ display:none;
 margin-bottom:20px;
 }
 
+.success{
+background:#132b1b;
+border:1px solid #238636;
+color:#3fb950;
+padding:15px;
+border-radius:6px;
+display:none;
+margin-bottom:20px;
+}
+
 .modal{
 display:none;
 position:fixed;
@@ -447,6 +472,8 @@ Loading repository...
 
 <div id="error" class="error"></div>
 
+<div id="success" class="success"></div>
+
 
 <div id="mainContent" style="display:none">
 
@@ -457,7 +484,7 @@ Loading repository...
 
 📁
 
-<span id="repoOwner">
+<span>
 ASIM TECH
 </span>
 
@@ -686,6 +713,16 @@ onclick="publishWebsite()">
 🚀 Publish Website
 </button>
 
+
+<a
+id="visitWebsiteButton"
+class="btn btn-visit"
+href="#"
+target="_blank"
+style="display:none;">
+🌐 Visit Published Website
+</a>
+
 </div>
 
 
@@ -730,7 +767,7 @@ Close
 <script>
 
 /* =====================================================
-   SUPABASE CONFIGURATION
+   SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
@@ -755,20 +792,6 @@ new URLSearchParams(
 window.location.search
 );
 
-
-/*
-IMPORTANT FIX
-
-The page can now receive repository ID
-from either URL format:
-
-repository-details.html?id=XXXX
-
-OR
-
-repository-details.html?repository_id=XXXX
-*/
-
 const repoId =
 params.get("id") ||
 params.get("repository_id");
@@ -783,6 +806,52 @@ let currentUser = null;
 let repository = null;
 
 let allFiles = [];
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(message){
+
+document.getElementById("loading")
+.style.display="none";
+
+document.getElementById("mainContent")
+.style.display="none";
+
+const errorBox =
+document.getElementById("error");
+
+errorBox.textContent =
+message;
+
+errorBox.style.display="block";
+
+}
+
+
+/* =====================================================
+   SUCCESS
+===================================================== */
+
+function showSuccess(message){
+
+const box =
+document.getElementById("success");
+
+box.textContent =
+message;
+
+box.style.display="block";
+
+setTimeout(function(){
+
+box.style.display="none";
+
+},5000);
+
+}
 
 
 /* =====================================================
@@ -870,9 +939,7 @@ repository =
 repo;
 
 
-/* =====================================================
-   HEADER
-===================================================== */
+/* HEADER */
 
 document.getElementById(
 "repoName"
@@ -887,9 +954,7 @@ repo.description ||
 "No description provided.";
 
 
-/* =====================================================
-   VISIBILITY
-===================================================== */
+/* VISIBILITY */
 
 const visibility =
 document.getElementById(
@@ -916,150 +981,56 @@ visibility.className =
 }
 
 
-/* =====================================================
-   PUBLISH STATUS
-===================================================== */
+/* PUBLISH STATUS */
 
-const publishBadge =
-document.getElementById(
-"publishBadge"
+updatePublishStatus(
+repo.is_published
 );
 
 
-if(repo.is_published){
+/* LINKS */
 
-publishBadge.textContent =
-"✓ Published";
-
-}else{
-
-publishBadge.textContent =
-"Not published";
-
-}
-
-
-/* =====================================================
-   LINKS
-===================================================== */
-
-const filesUrl =
-"repository-files.html?repository_id=" +
-encodeURIComponent(
-repo.id
-);
+const query =
+"?repository_id=" +
+encodeURIComponent(repoId);
 
 
 document.getElementById(
 "filesButton"
 ).href =
-filesUrl;
+"repository-files.html" +
+query;
+
+
+document.getElementById(
+"explorerButton"
+).href =
+"repository-explorer.html" +
+query;
+
+
+document.getElementById(
+"newFileButton"
+).href =
+"repository-add-file.html" +
+query;
 
 
 document.getElementById(
 "openFilesAction"
 ).href =
-filesUrl;
+"repository-files.html" +
+query;
 
-
-/* FILE EXPLORER */
-
-document.getElementById(
-"explorerButton"
-).href =
-"repository-explorer.html?repository_id=" +
-encodeURIComponent(
-repo.id
-);
-
-
-/* ADD FILE */
-
-document.getElementById(
-"newFileButton"
-).href =
-"repository-add-file.html?repository_id=" +
-encodeURIComponent(
-repo.id
-);
-
-
-/* EDIT */
 
 document.getElementById(
 "editAction"
 ).href =
-"edit-repository.html?id=" +
-encodeURIComponent(
-repo.id
-);
+"edit-repository.html" +
+query;
 
 
-/* =====================================================
-   OWNER CONTROLS
-===================================================== */
-
-if(repo.owner_id !== currentUser.id){
-
-document.getElementById(
-"editAction"
-).style.display =
-"none";
-
-
-document.getElementById(
-"newFileButton"
-).style.display =
-"none";
-
-
-document.getElementById(
-"publishAction"
-).style.display =
-"none";
-
-}
-
-
-/* =====================================================
-   LOAD FILES
-===================================================== */
-
-const {
-data:files,
-error:fileError
-} =
-await supabaseClient
-.from("repository_files")
-.select("*")
-.eq("repository_id",repo.id)
-.order(
-"file_path",
-{
-ascending:true
-}
-);
-
-
-if(fileError){
-
-throw fileError;
-
-}
-
-
-allFiles =
-files || [];
-
-
-renderFiles(
-allFiles
-);
-
-
-/* =====================================================
-   README
-===================================================== */
+/* README */
 
 document.getElementById(
 "readmeTitle"
@@ -1074,33 +1045,34 @@ repo.description ||
 "Welcome to this ASIM TECH repository.";
 
 
-/* =====================================================
-   SHOW PAGE
-===================================================== */
+/* LOAD FILES */
+
+await loadFiles();
+
+
+/* CHECK PUBLISHED WEBSITE */
+
+if(repo.is_published){
+
+await loadPublishedWebsite();
+
+}
+
+
+/* SHOW */
 
 document.getElementById(
 "loading"
-).style.display =
-"none";
-
+).style.display="none";
 
 document.getElementById(
 "mainContent"
-).style.display =
-"block";
+).style.display="block";
 
 
-}
-catch(error){
+}catch(error){
 
 console.error(error);
-
-
-document.getElementById(
-"loading"
-).style.display =
-"none";
-
 
 showError(
 error.message ||
@@ -1113,138 +1085,136 @@ error.message ||
 
 
 /* =====================================================
+   LOAD FILES
+===================================================== */
+
+async function loadFiles(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("repository_files")
+.select("*")
+.eq("repository_id",repoId)
+.order("file_path",{ascending:true});
+
+
+if(error){
+
+throw error;
+
+}
+
+
+allFiles =
+data ||
+[];
+
+
+renderFiles(
+allFiles
+);
+
+
+/* COUNT */
+
+document.getElementById(
+"fileCount"
+).textContent =
+allFiles.length +
+(allFiles.length === 1 ? " file" : " files");
+
+
+}
+
+
+/* =====================================================
    RENDER FILES
 ===================================================== */
 
 function renderFiles(files){
 
-const list =
+const container =
 document.getElementById(
 "fileList"
 );
 
-
-list.innerHTML =
-"";
-
-
-document.getElementById(
-"fileCount"
-).textContent =
-files.length +
-(
-files.length === 1
-? " file"
-: " files"
-);
-
-
 if(!files.length){
 
-list.innerHTML =
-'<div class="empty">' +
-"No files found." +
-"</div>";
+container.innerHTML =
+'<div class="empty">No files found.</div>';
 
 return;
 
 }
 
 
-files.forEach(
-file=>{
+container.innerHTML =
+"";
 
+
+files.forEach(function(file){
 
 const row =
-document.createElement(
-"div"
-);
+document.createElement("div");
 
 row.className =
 "file-row";
 
 
 const info =
-document.createElement(
-"div"
-);
+document.createElement("div");
 
 info.className =
 "file-info";
 
 
 const icon =
-document.createElement(
-"div"
-);
+document.createElement("div");
 
 icon.className =
 "file-icon";
 
 icon.textContent =
-getFileIcon(file);
+file.is_binary ? "📦" : "📄";
 
 
 const link =
-document.createElement(
-"a"
-);
+document.createElement("a");
 
 link.className =
 "file-name";
 
-
-link.href =
-"repository-explorer.html?repository_id=" +
-encodeURIComponent(
-repoId
-) +
-"&file=" +
-encodeURIComponent(
-file.file_path
-);
-
-
 link.textContent =
 file.file_path;
 
+link.href =
+"repository-files.html?repository_id=" +
+encodeURIComponent(repoId);
+
 
 const meta =
-document.createElement(
-"div"
-);
+document.createElement("div");
 
 meta.className =
 "file-meta";
 
-
 meta.textContent =
-file.is_binary
-? "Binary file"
-: "Text file";
+file.language ||
+(file.is_binary ? "Binary" : "Text");
 
 
-info.appendChild(
-icon
-);
+info.appendChild(icon);
 
-info.appendChild(
-link
-);
+info.appendChild(link);
 
+row.appendChild(info);
 
-row.appendChild(
-info
-);
+row.appendChild(meta);
 
-row.appendChild(
-meta
-);
-
-
-list.appendChild(
-row
-);
+container.appendChild(row);
 
 });
 
@@ -1252,142 +1222,23 @@ row
 
 
 /* =====================================================
-   FILE ICON
-===================================================== */
-
-function getFileIcon(file){
-
-const path =
-(
-file.file_path ||
-""
-).toLowerCase();
-
-
-if(file.is_binary){
-
-if(
-path.endsWith(".png") ||
-path.endsWith(".jpg") ||
-path.endsWith(".jpeg") ||
-path.endsWith(".gif") ||
-path.endsWith(".webp") ||
-path.endsWith(".svg")
-){
-
-return "🖼️";
-
-}
-
-
-if(
-path.endsWith(".pdf")
-){
-
-return "📕";
-
-}
-
-
-if(
-path.endsWith(".zip")
-){
-
-return "🗜️";
-
-}
-
-
-return "📦";
-
-}
-
-
-if(
-path.endsWith(".html") ||
-path.endsWith(".htm")
-){
-
-return "🌐";
-
-}
-
-
-if(
-path.endsWith(".css")
-){
-
-return "🎨";
-
-}
-
-
-if(
-path.endsWith(".js") ||
-path.endsWith(".mjs")
-){
-
-return "⚙️";
-
-}
-
-
-if(
-path.endsWith(".json")
-){
-
-return "🔧";
-
-}
-
-
-if(
-path.endsWith(".md")
-){
-
-return "📖";
-
-}
-
-
-if(
-path.endsWith(".py")
-){
-
-return "🐍";
-
-}
-
-
-if(
-path.endsWith(".php")
-){
-
-return "🐘";
-
-}
-
-
-return "📄";
-
-}
-
-
-/* =====================================================
-   SEARCH
+   SEARCH FILES
 ===================================================== */
 
 function filterFiles(){
 
-const search =
+const input =
 document.getElementById(
 "searchInput"
-).value
-.trim()
-.toLowerCase();
+);
+
+const value =
+input.value
+.toLowerCase()
+.trim();
 
 
-if(!search){
+if(!value){
 
 renderFiles(
 allFiles
@@ -1399,17 +1250,15 @@ return;
 
 
 const filtered =
-allFiles.filter(
-file =>
+allFiles.filter(function(file){
 
-(
-file.file_path ||
-""
+return String(
+file.file_path || ""
 )
 .toLowerCase()
-.includes(search)
+.includes(value);
 
-);
+});
 
 
 renderFiles(
@@ -1420,28 +1269,131 @@ filtered
 
 
 /* =====================================================
+   PUBLISH STATUS
+===================================================== */
+
+function updatePublishStatus(
+published
+){
+
+const badge =
+document.getElementById(
+"publishBadge"
+);
+
+const button =
+document.getElementById(
+"publishAction"
+);
+
+const visit =
+document.getElementById(
+"visitWebsiteButton"
+);
+
+
+if(published){
+
+badge.textContent =
+"✓ Published";
+
+badge.className =
+"badge published";
+
+button.textContent =
+"✓ Published";
+
+visit.style.display =
+"inline-block";
+
+}else{
+
+badge.textContent =
+"Not published";
+
+badge.className =
+"badge";
+
+button.textContent =
+"🚀 Publish Website";
+
+visit.style.display =
+"none";
+
+}
+
+}
+
+
+/* =====================================================
+   LOAD PUBLISHED WEBSITE
+===================================================== */
+
+async function loadPublishedWebsite(){
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("web_pages")
+.select("id")
+.eq("repository_id",repoId)
+.eq("is_published",true)
+.order("updated_at",{ascending:false})
+.limit(1)
+.maybeSingle();
+
+
+if(error){
+
+console.warn(
+"Published page lookup:",
+error
+);
+
+return;
+
+}
+
+
+if(data && data.id){
+
+const visitButton =
+document.getElementById(
+"visitWebsiteButton"
+);
+
+visitButton.href =
+"published-website.html?id=" +
+encodeURIComponent(data.id);
+
+visitButton.style.display =
+"inline-block";
+
+}
+
+}catch(error){
+
+console.warn(error);
+
+}
+
+}
+
+
+/* =====================================================
    PUBLISH WEBSITE
 ===================================================== */
 
 async function publishWebsite(){
 
-try{
-
-
 if(!repository){
 
-return;
-
-}
-
-
-if(
-repository.owner_id !==
-currentUser.id
-){
-
-showError(
-"You are not allowed to publish this repository."
+alert(
+"Repository is not loaded."
 );
 
 return;
@@ -1449,44 +1401,248 @@ return;
 }
 
 
+/* ONLY OWNER */
+
+if(
+repository.owner_id &&
+currentUser &&
+repository.owner_id !== currentUser.id
+){
+
+alert(
+"Only the repository owner can publish this website."
+);
+
+return;
+
+}
+
+
+const button =
+document.getElementById(
+"publishAction"
+);
+
+button.disabled =
+true;
+
+button.textContent =
+"Publishing...";
+
+
+try{
+
+
+/* FIND INDEX.HTML */
+
 const {
-error
+data:indexFile,
+error:fileError
 } =
 await supabaseClient
-.from("repositories")
+.from("repository_files")
+.select("*")
+.eq("repository_id",repoId)
+.eq("file_path","index.html")
+.maybeSingle();
+
+
+if(fileError){
+
+throw fileError;
+
+}
+
+
+if(!indexFile){
+
+throw new Error(
+"index.html is required before publishing the website."
+);
+
+}
+
+
+/* CHECK EXISTING WEB PAGE */
+
+const {
+data:existingPage,
+error:pageFindError
+} =
+await supabaseClient
+.from("web_pages")
+.select("id")
+.eq("repository_id",repoId)
+.eq("page_name","index.html")
+.maybeSingle();
+
+
+if(pageFindError){
+
+throw pageFindError;
+
+}
+
+
+let pageId;
+
+
+/* UPDATE EXISTING PAGE */
+
+if(existingPage){
+
+pageId =
+existingPage.id;
+
+
+const {
+error:updatePageError
+} =
+await supabaseClient
+.from("web_pages")
 .update({
 
-is_published:true,
+html_content:
+indexFile.content || "",
+
+css_content:
+"",
+
+js_content:
+"",
+
+is_published:
+true,
+
+published_at:
+new Date().toISOString(),
+
+updated_at:
+new Date().toISOString()
+
+})
+.eq("id",pageId);
+
+
+if(updatePageError){
+
+throw updatePageError;
+
+}
+
+
+/* CREATE NEW PAGE */
+
+}else{
+
+const {
+data:newPage,
+error:newPageError
+} =
+await supabaseClient
+.from("web_pages")
+.insert({
+
+repository_id:
+repoId,
+
+owner_id:
+currentUser.id,
+
+page_name:
+"index.html",
+
+html_content:
+indexFile.content || "",
+
+css_content:
+"",
+
+js_content:
+"",
+
+is_published:
+true,
 
 published_at:
 new Date().toISOString()
 
 })
-.eq(
-"id",
-repository.id
-)
-.eq(
-"owner_id",
-currentUser.id
-);
+.select("id")
+.single();
 
 
-if(error){
+if(newPageError){
 
-throw error;
+throw newPageError;
 
 }
 
+
+pageId =
+newPage.id;
+
+}
+
+
+/* UPDATE REPOSITORY */
+
+const {
+error:repoUpdateError
+} =
+await supabaseClient
+.from("repositories")
+.update({
+
+is_published:
+true,
+
+published_at:
+new Date().toISOString(),
+
+updated_at:
+new Date().toISOString()
+
+})
+.eq("id",repoId);
+
+
+if(repoUpdateError){
+
+throw repoUpdateError;
+
+}
+
+
+/* UPDATE LOCAL */
 
 repository.is_published =
 true;
 
 
+updatePublishStatus(
+true
+);
+
+
+/* VISIT URL */
+
+const visitButton =
 document.getElementById(
-"publishBadge"
-).textContent =
-"✓ Published";
+"visitWebsiteButton"
+);
+
+visitButton.href =
+"published-website.html?id=" +
+encodeURIComponent(pageId);
+
+visitButton.style.display =
+"inline-block";
+
+
+showSuccess(
+"Website published successfully."
+);
 
 
 alert(
@@ -1494,16 +1650,33 @@ alert(
 );
 
 
-}
-catch(error){
+}catch(error){
 
 console.error(error);
 
-
-showError(
-error.message ||
-"Unable to publish website."
+alert(
+"Publishing failed: " +
+(error.message ||
+"Unknown error")
 );
+
+
+}finally{
+
+button.disabled =
+false;
+
+if(repository.is_published){
+
+button.textContent =
+"✓ Published";
+
+}else{
+
+button.textContent =
+"🚀 Publish Website";
+
+}
 
 }
 
@@ -1514,20 +1687,20 @@ error.message ||
    COMING SOON
 ===================================================== */
 
-function showComingSoon(name){
+function showComingSoon(
+feature
+){
 
 document.getElementById(
 "modalTitle"
 ).textContent =
-name;
-
+feature;
 
 document.getElementById(
 "modalText"
 ).textContent =
-name +
-" feature is coming soon in ASIM TECH.";
-
+feature +
+" feature is coming soon.";
 
 document.getElementById(
 "modal"
@@ -1537,32 +1710,16 @@ document.getElementById(
 }
 
 
+/* =====================================================
+   CLOSE MODAL
+===================================================== */
+
 function closeModal(){
 
 document.getElementById(
 "modal"
 ).style.display =
 "none";
-
-}
-
-
-/* =====================================================
-   ERROR
-===================================================== */
-
-function showError(message){
-
-const box =
-document.getElementById(
-"error"
-);
-
-box.textContent =
-message;
-
-box.style.display =
-"block";
 
 }
 
