@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>Web Page Builder - ASIM TECH</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
+<title>Web Page Builder - ASIM TECH</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
 
 *{
     box-sizing:border-box;
@@ -232,232 +223,153 @@ button{
 
 }
 
-</style>
+</style></head><body><nav><div class="logo">
+    ⚡ ASIM TECH
+</div>
 
-</head>
+<a href="dashboard.html">
+    Dashboard
+</a>
 
-
-<body>
-
-
-<nav>
-
-    <div class="logo">
-        ⚡ ASIM TECH
-    </div>
-
-    <a href="dashboard.html">
-        Dashboard
-    </a>
-
-</nav>
-
-
-<div class="container">
-
-
-<h1 id="pageTitle">
+</nav><div class="container"><h1 id="pageTitle">
     🌐 Web Page Builder
-</h1>
-
-
-<p class="subtitle">
+</h1><p class="subtitle">
     Create your webpage using HTML, CSS and JavaScript.
-</p>
-
-
-<div id="modeLabel" class="mode">
+</p><div id="modeLabel" class="mode">
     New Web Page
-</div>
-
-
-<!-- =========================
+</div><!-- =========================
      REPOSITORY
-========================= -->
+========================= --><div class="card"><div class="field">
 
-<div class="card">
+    <label>
+        📁 Repository
+    </label>
 
-    <div class="field">
+    <select id="repository">
 
-        <label>
-            📁 Repository
-        </label>
+        <option value="">
+            Loading repository...
+        </option>
 
-        <select id="repository">
-
-            <option value="">
-                Loading repository...
-            </option>
-
-        </select>
-
-    </div>
-
-
-    <div class="field">
-
-        <label>
-            📝 Page Name
-        </label>
-
-        <input
-            type="text"
-            id="pageName"
-            placeholder="Example: index.html"
-        >
-
-    </div>
+    </select>
 
 </div>
 
 
-<!-- =========================
+<div class="field">
+
+    <label>
+        📝 Page Name
+    </label>
+
+    <input
+        type="text"
+        id="pageName"
+        placeholder="Example: index.html"
+    >
+
+</div>
+
+</div><!-- =========================
      EDITORS
-========================= -->
-
-<div class="editors">
-
-
-<!-- HTML -->
-
-<div class="card">
-
-    <div class="editor-title html-title">
-        HTML
-    </div>
-
-    <textarea
-        id="htmlCode"
-        placeholder="Write your HTML here..."
-    ><h1>Welcome to ASIM TECH!</h1>
-<p>This is my published website.</p></textarea>
-
+========================= --><div class="editors"><!-- HTML --><div class="card"><div class="editor-title html-title">
+    HTML
 </div>
 
+<textarea
+    id="htmlCode"
+    placeholder="Write your HTML here..."
+><h1>Welcome to ASIM TECH!</h1>
 
-<!-- CSS -->
+<p>This is my published website.</p></textarea></div><!-- CSS --><div class="card"><div class="editor-title css-title">
+    CSS
+</div>
 
-<div class="card">
+<textarea
+    id="cssCode"
+    placeholder="Write your CSS here..."
+>body {
+font-family: Arial, sans-serif;
+padding: 30px;
+background: #f5f7fb;
 
-    <div class="editor-title css-title">
-        CSS
-    </div>
-
-    <textarea
-        id="cssCode"
-        placeholder="Write your CSS here..."
-    >body {
-    font-family: Arial, sans-serif;
-    padding: 30px;
-    background: #f5f7fb;
 }
 
 h1 {
-    color: #0b8f55;
+color: #0b8f55;
 }
 
 p {
-    font-size: 18px;
+font-size: 18px;
 }</textarea>
 
+</div><!-- JAVASCRIPT --><div class="card"><div class="editor-title js-title">
+    JavaScript
 </div>
 
+<textarea
+    id="jsCode"
+    placeholder="Write your JavaScript here..."
+>console.log("Hello from ASIM TECH!");</textarea>
 
-<!-- JAVASCRIPT -->
-
-<div class="card">
-
-    <div class="editor-title js-title">
-        JavaScript
-    </div>
-
-    <textarea
-        id="jsCode"
-        placeholder="Write your JavaScript here..."
-    >console.log("Hello from ASIM TECH!");</textarea>
-
-</div>
-
-
-</div>
-
-
-<!-- =========================
+</div></div><!-- =========================
      LIVE PREVIEW
-========================= -->
-
-<div class="card">
-
-    <div class="editor-title">
-        👁️ Live Preview
-    </div>
-
-
-    <iframe
-        id="preview"
-        class="preview"
-        sandbox="allow-scripts allow-forms allow-modals">
-    </iframe>
-
+========================= --><div class="card"><div class="editor-title">
+    👁️ Live Preview
 </div>
 
 
-<!-- =========================
+<iframe
+    id="preview"
+    class="preview"
+    sandbox="allow-scripts allow-forms allow-modals">
+</iframe>
+
+</div><!-- =========================
      BUTTONS
-========================= -->
-
-<div class="card">
-
-    <div class="buttons">
+========================= --><div class="card"><div class="buttons">
 
 
-        <button
-            type="button"
-            class="preview-btn"
-            onclick="updatePreview()">
+    <button
+        type="button"
+        class="preview-btn"
+        onclick="updatePreview()">
 
-            👁️ Preview
+        👁️ Preview
 
-        </button>
-
-
-        <button
-            type="button"
-            id="saveButton"
-            class="save"
-            onclick="savePage()">
-
-            💾 Save Page
-
-        </button>
+    </button>
 
 
-        <button
-            type="button"
-            class="back"
-            onclick="goBack()">
+    <button
+        type="button"
+        id="saveButton"
+        class="save"
+        onclick="savePage()">
 
-            ← Back
+        💾 Save Page
 
-        </button>
-
-
-    </div>
+    </button>
 
 
-    <div
-        id="status"
-        class="status">
-    </div>
+    <button
+        type="button"
+        class="back"
+        onclick="goBack()">
+
+        ← Back
+
+    </button>
 
 
 </div>
 
 
+<div
+    id="status"
+    class="status">
 </div>
 
-
-<script>
+</div></div><script>
 
 /* =====================================
    SUPABASE
@@ -636,11 +548,6 @@ async function initialize(){
 
         }
 
-
-        /*
-        Do NOT automatically run
-        preview before page is ready.
-        */
 
     }catch(error){
 
@@ -863,6 +770,7 @@ async function loadRepositories(){
 
 /* =====================================
    LOAD EXISTING PAGE
+   DRAFT FIRST
 ===================================== */
 
 async function loadExistingPage(){
@@ -935,7 +843,7 @@ async function loadExistingPage(){
 
 
     saveButton.textContent =
-        "💾 Update Page";
+        "💾 Save Draft";
 
 
     repository.value =
@@ -946,20 +854,45 @@ async function loadExistingPage(){
         page.page_name || "";
 
 
+    /*
+    IMPORTANT:
+
+    When editing a page, load DRAFT content
+    first.
+
+    If draft content is unavailable/null,
+    use existing live content as fallback.
+
+    Therefore published live content remains
+    untouched until Publish is performed.
+    */
+
+
     htmlCode.value =
-        page.html_content || "";
+        page.draft_html_content !== null &&
+        page.draft_html_content !== undefined
+            ? page.draft_html_content
+            : (page.html_content || "");
 
 
     cssCode.value =
-        page.css_content || "";
+        page.draft_css_content !== null &&
+        page.draft_css_content !== undefined
+            ? page.draft_css_content
+            : (page.css_content || "");
 
 
     jsCode.value =
-        page.js_content || "";
+        page.draft_js_content !== null &&
+        page.draft_js_content !== undefined
+            ? page.draft_js_content
+            : (page.js_content || "");
 
 
     setStatus(
-        "Web page loaded successfully.",
+        page.is_published
+            ? "Published page loaded. Your changes will be saved as Draft."
+            : "Draft page loaded successfully.",
         "success"
     );
 
@@ -987,16 +920,6 @@ function updatePreview(){
             jsCode.value;
 
 
-        /*
-        IMPORTANT:
-        We use a Blob instead of srcdoc.
-
-        This means the complete webpage,
-        including JavaScript, becomes a
-        separate HTML document.
-        */
-
-
         const fullPage = `
 <!DOCTYPE html>
 
@@ -1015,15 +938,7 @@ content="width=device-width,initial-scale=1.0"
 
 ${css}
 
-</style>
-
-</head>
-
-
-<body>
-
-${html}
-
+</style></head><body>${html}
 
 <script>
 
@@ -1038,10 +953,6 @@ ${js}
 `;
 
 
-        /*
-        Remove previous Blob URL.
-        */
-
         if(previewURL){
 
             URL.revokeObjectURL(
@@ -1051,10 +962,6 @@ ${js}
             previewURL = null;
         }
 
-
-        /*
-        Create Blob.
-        */
 
         const blob =
             new Blob(
@@ -1066,19 +973,11 @@ ${js}
             );
 
 
-        /*
-        Create temporary URL.
-        */
-
         previewURL =
             URL.createObjectURL(
                 blob
             );
 
-
-        /*
-        Load complete webpage.
-        */
 
         preview.src =
             previewURL;
@@ -1107,6 +1006,7 @@ ${js}
 
 /* =====================================
    SAVE PAGE
+   SAVE TO DRAFT
 ===================================== */
 
 async function savePage(){
@@ -1180,13 +1080,14 @@ async function savePage(){
 
 
         /* =================================
-           UPDATE
+           UPDATE EXISTING PAGE
+           ONLY DRAFT IS UPDATED
         ================================= */
 
         if(editingPage){
 
             setStatus(
-                "Updating page..."
+                "Saving draft..."
             );
 
 
@@ -1202,13 +1103,13 @@ async function savePage(){
                     page_name:
                         name,
 
-                    html_content:
+                    draft_html_content:
                         html,
 
-                    css_content:
+                    draft_css_content:
                         css,
 
-                    js_content:
+                    draft_js_content:
                         js
 
                 })
@@ -1233,7 +1134,7 @@ async function savePage(){
 
 
             alert(
-                "Web page updated successfully!"
+                "Draft saved successfully!"
             );
 
 
@@ -1298,11 +1199,14 @@ async function savePage(){
 
 
         /* =================================
-           INSERT
+           INSERT NEW PAGE
+           DRAFT + INITIAL LIVE COPY
+
+           Page remains UNPUBLISHED.
         ================================= */
 
         setStatus(
-            "Saving page..."
+            "Saving draft..."
         );
 
 
@@ -1321,6 +1225,12 @@ async function savePage(){
                 page_name:
                     name,
 
+                /*
+                Initial live content is kept
+                as the initial version, but the
+                page is unpublished.
+                */
+
                 html_content:
                     html,
 
@@ -1328,6 +1238,19 @@ async function savePage(){
                     css,
 
                 js_content:
+                    js,
+
+                /*
+                Draft content
+                */
+
+                draft_html_content:
+                    html,
+
+                draft_css_content:
+                    css,
+
+                draft_js_content:
                     js,
 
                 owner_id:
@@ -1351,7 +1274,7 @@ async function savePage(){
 
 
         alert(
-            "Web page saved successfully!"
+            "Draft saved successfully!"
         );
 
 
@@ -1368,14 +1291,14 @@ async function savePage(){
 
         setStatus(
             error.message ||
-            "Unable to save web page.",
+            "Unable to save draft.",
             "error"
         );
 
 
         alert(
             error.message ||
-            "Unable to save web page."
+            "Unable to save draft."
         );
 
     }
@@ -1413,8 +1336,5 @@ function goBack(){
 
 initialize();
 
-</script>
-
-
-</body>
+</script></body>
 </html>
