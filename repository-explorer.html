@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Repository Explorer — ASIM TECH</title>
 
@@ -89,7 +89,6 @@ border-radius:6px;
 cursor:pointer;
 text-decoration:none;
 font-size:14px;
-display:inline-block;
 }
 
 .btn:hover{
@@ -97,30 +96,13 @@ background:#30363d;
 }
 
 .delete-btn{
-color:#ff7b72;
-border-color:#6e2b2b;
+background:#da3633;
+border-color:#da3633;
+color:#fff;
 }
 
 .delete-btn:hover{
-background:#3d1f25;
-}
-
-.rename-btn{
-color:#79c0ff;
-border-color:#24558a;
-}
-
-.rename-btn:hover{
-background:#172b3d;
-}
-
-.folder-btn{
-color:#7ee787;
-border-color:#238636;
-}
-
-.folder-btn:hover{
-background:#16351f;
+background:#f85149;
 }
 
 .search{
@@ -250,8 +232,9 @@ padding:30px;
 pre{
 margin:0;
 padding:20px;
-font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,
-"Liberation Mono",monospace;
+font-family:
+ui-monospace,SFMono-Regular,Menlo,Monaco,
+Consolas,"Liberation Mono",monospace;
 font-size:13px;
 line-height:1.6;
 white-space:pre-wrap;
@@ -293,16 +276,6 @@ display:none;
 background:#3d1f25;
 border:1px solid #f85149;
 color:#ff7b72;
-padding:14px;
-border-radius:6px;
-margin-bottom:15px;
-}
-
-.success{
-display:none;
-background:#123d35;
-border:1px solid #238636;
-color:#7ee787;
 padding:14px;
 border-radius:6px;
 margin-bottom:15px;
@@ -367,22 +340,30 @@ height:450px;
 📁 <span id="repoName">Repository</span>
 </div>
 
-<div class="subtitle" id="repoDescription">
+<div
+class="subtitle"
+id="repoDescription"
+>
 Repository File Explorer
 </div>
 
 </div>
 
-<a id="backButton" class="btn" href="#">
+<a
+id="backButton"
+class="btn"
+href="#"
+>
 ← Repository
 </a>
 
 </div>
 
 
-<div id="error" class="error"></div>
-
-<div id="success" class="success"></div>
+<div
+id="error"
+class="error"
+></div>
 
 
 <div class="toolbar">
@@ -395,18 +376,20 @@ placeholder="🔎 Search files..."
 oninput="searchFiles()"
 >
 
-<button class="btn" onclick="loadFiles()">
+<button
+class="btn"
+onclick="loadFiles()"
+>
 ↻ Refresh
-</button>
-
-<button class="btn folder-btn" onclick="createFolder()">
-＋ New Folder
 </button>
 
 </div>
 
 
-<div class="status" id="status">
+<div
+class="status"
+id="status"
+>
 Loading files...
 </div>
 
@@ -422,7 +405,10 @@ Loading files...
 📂 Files & Folders
 </div>
 
-<div id="tree" class="tree">
+<div
+id="tree"
+class="tree"
+>
 
 <div class="loading">
 Loading...
@@ -439,17 +425,26 @@ Loading...
 
 <div class="viewer-head">
 
-<div id="viewerName" class="viewer-name">
+<div
+id="viewerName"
+class="viewer-name"
+>
 Select a file
 </div>
 
-<div id="viewerActions" class="viewer-actions">
+<div
+id="viewerActions"
+class="viewer-actions"
+>
 </div>
 
 </div>
 
 
-<div id="viewerBody" class="viewer-body">
+<div
+id="viewerBody"
+class="viewer-body"
+>
 
 <div class="empty">
 Select a file from the explorer to preview it.
@@ -491,7 +486,6 @@ const params =
 new URLSearchParams(
 window.location.search
 );
-
 
 const repoId =
 params.get("repository_id") ||
@@ -552,7 +546,6 @@ return;
 
 }
 
-
 currentUser = user;
 
 
@@ -582,6 +575,17 @@ throw new Error(
 repository = repo;
 
 
+/* OWNER CHECK */
+
+if(repo.owner_id !== user.id){
+
+throw new Error(
+"You are not the repository owner."
+);
+
+}
+
+
 /* HEADER */
 
 document.getElementById(
@@ -606,7 +610,7 @@ document.getElementById(
 encodeURIComponent(repo.id);
 
 
-/* LOAD FILES */
+/* FILES */
 
 await loadFiles();
 
@@ -717,12 +721,11 @@ allFiles.slice();
 }else{
 
 filteredFiles =
-allFiles.filter(file =>
-
+allFiles.filter(
+file =>
 (file.file_path || "")
 .toLowerCase()
 .includes(query)
-
 );
 
 }
@@ -792,16 +795,13 @@ document.getElementById(
 "tree"
 );
 
-
 tree.innerHTML = "";
 
 
 if(!files.length){
 
 tree.innerHTML =
-'<div class="empty" style="min-height:200px">' +
-"No files found." +
-"</div>";
+'<div class="empty" style="min-height:200px">No files found.</div>';
 
 return;
 
@@ -817,7 +817,7 @@ files:[]
 };
 
 
-files.forEach(file => {
+files.forEach(file=>{
 
 const parts =
 (file.file_path || "")
@@ -870,7 +870,9 @@ node.folders[part];
 
 }
 
-});
+}
+
+);
 
 });
 
@@ -1104,19 +1106,126 @@ document.getElementById(
 file.file_path;
 
 
+const actions =
 document.getElementById(
 "viewerActions"
-).innerHTML =
-"";
+);
 
+
+actions.innerHTML = "";
+
+
+/* EDIT BUTTON */
+
+const editButton =
+document.createElement(
+"a"
+);
+
+
+editButton.className =
+"btn";
+
+
+editButton.href =
+"file-editor.html" +
+
+"?repository_id=" +
+encodeURIComponent(
+repoId
+) +
+
+"&id=" +
+encodeURIComponent(
+repoId
+) +
+
+"&file_id=" +
+encodeURIComponent(
+file.id
+);
+
+
+editButton.textContent =
+"✏️ Edit";
+
+
+actions.appendChild(
+editButton
+);
+
+
+/* DELETE BUTTON */
+
+const deleteButton =
+document.createElement(
+"button"
+);
+
+
+deleteButton.className =
+"btn delete-btn";
+
+
+deleteButton.textContent =
+"🗑 Delete";
+
+
+deleteButton.onclick =
+function(){
+
+deleteFile(
+file
+);
+
+};
+
+
+actions.appendChild(
+deleteButton
+);
+
+
+/* DOWNLOAD BUTTON */
+
+const downloadButton =
+document.createElement(
+"button"
+);
+
+
+downloadButton.className =
+"btn";
+
+
+downloadButton.textContent =
+"⬇ Download";
+
+
+downloadButton.onclick =
+function(){
+
+downloadFile(
+file
+);
+
+};
+
+
+actions.appendChild(
+downloadButton
+);
+
+
+/* VIEW */
 
 document.getElementById(
 "viewerBody"
 ).innerHTML =
-'<div class="loading">' +
-"Opening file..." +
-"</div>";
+'<div class="loading">Opening file...</div>';
 
+
+/* BINARY */
 
 if(file.is_binary){
 
@@ -1129,67 +1238,55 @@ return;
 }
 
 
-openTextFile(
-file
-);
-
-}
-
-
-/* =========================
-   OPEN TEXT FILE
-========================= */
-
-function openTextFile(file){
+/* TEXT */
 
 const content =
 file.content || "";
 
 
-const editUrl =
-"file-editor.html" +
+const path =
+(file.file_path || "")
+.toLowerCase();
 
-"?file_id=" +
-encodeURIComponent(
-file.id
-) +
 
-"&repository_id=" +
-encodeURIComponent(
-repoId
+/* HTML PREVIEW */
+
+if(
+path.endsWith(".html") ||
+path.endsWith(".htm")
+){
+
+const frame =
+document.createElement(
+"iframe"
 );
 
 
+frame.className =
+"preview-frame";
+
+
+frame.sandbox =
+"allow-scripts";
+
+
+frame.srcdoc =
+content;
+
+
 document.getElementById(
-"viewerActions"
-).innerHTML =
+"viewerBody"
+).appendChild(
+frame
+);
 
-'<a class="btn" href="' +
-editUrl +
-'">' +
 
-"✏️ Edit" +
+return;
 
-"</a>" +
+}
 
-'<button class="btn" onclick="downloadTextFile()">' +
 
-"⬇ Download" +
-
-"</button>" +
-
-'<button class="btn rename-btn" onclick="renameFile()">' +
-
-"✏️ Rename" +
-
-"</button>" +
-
-'<button class="btn delete-btn" onclick="deleteFile()">' +
-
-"🗑️ Delete" +
-
-"</button>";
-
+/* TEXT PREVIEW */
 
 document.getElementById(
 "viewerBody"
@@ -1207,777 +1304,49 @@ content
 
 
 /* =========================
-   OPEN BINARY FILE
-========================= */
-
-async function openBinaryFile(
-file
-){
-
-if(!file.storage_path){
-
-document.getElementById(
-"viewerBody"
-).innerHTML =
-
-'<div class="binary-box">' +
-
-"⚠️ Storage path is missing." +
-
-"</div>";
-
-return;
-
-}
-
-
-try{
-
-const {
-data,
-error
-} =
-await supabaseClient
-.storage
-.from("repository-files")
-.createSignedUrl(
-file.storage_path,
-3600
-);
-
-
-if(error)
-throw error;
-
-
-const url =
-data.signedUrl;
-
-
-const mime =
-file.mime_type || "";
-
-
-document.getElementById(
-"viewerActions"
-).innerHTML =
-
-'<a class="btn" target="_blank" href="' +
-url +
-'">' +
-
-"↗ Open" +
-
-"</a>" +
-
-'<a class="btn" download href="' +
-url +
-'">' +
-
-"⬇ Download" +
-
-"</a>" +
-
-'<button class="btn rename-btn" onclick="renameFile()">' +
-
-"✏️ Rename" +
-
-"</button>" +
-
-'<button class="btn delete-btn" onclick="deleteFile()">' +
-
-"🗑️ Delete" +
-
-"</button>";
-
-
-if(
-mime.startsWith("image/") ||
-isImage(file.file_path)
-){
-
-document.getElementById(
-"viewerBody"
-).innerHTML =
-
-'<img class="preview-image" src="' +
-url +
-'" alt="Preview">';
-
-return;
-
-}
-
-
-if(
-mime === "application/pdf" ||
-(file.file_path || "")
-.toLowerCase()
-.endsWith(".pdf")
-){
-
-document.getElementById(
-"viewerBody"
-).innerHTML =
-
-'<iframe class="preview-frame" src="' +
-url +
-'"></iframe>';
-
-return;
-
-}
-
-
-document.getElementById(
-"viewerBody"
-).innerHTML =
-
-'<div class="binary-box">' +
-
-'<div style="font-size:45px;margin-bottom:15px">' +
-
-getIcon(file) +
-
-"</div>" +
-
-"<p>This file type cannot be previewed here.</p>" +
-
-"<br>" +
-
-'<a class="btn" target="_blank" href="' +
-url +
-'">' +
-
-"⬇ Download / Open" +
-
-"</a>" +
-
-"</div>";
-
-
-}catch(error){
-
-console.error(error);
-
-showError(
-error.message ||
-"Unable to preview file."
-);
-
-}
-
-}
-
-
-/* =========================
-   CREATE FOLDER
-========================= */
-
-async function createFolder(){
-
-/*
-ASK FOLDER NAME
-*/
-
-const folderName =
-prompt(
-"Enter new folder name:"
-);
-
-
-if(folderName === null){
-
-return;
-
-}
-
-
-const name =
-folderName.trim();
-
-
-if(!name){
-
-showError(
-"Folder name cannot be empty."
-);
-
-return;
-
-}
-
-
-/*
-INVALID CHARACTERS
-*/
-
-if(
-name.includes("/") ||
-name.includes("\\")
-){
-
-showError(
-"Please enter only the folder name."
-);
-
-return;
-
-}
-
-
-/*
-INVALID SPECIAL NAMES
-*/
-
-if(
-name === "." ||
-name === ".."
-){
-
-showError(
-"Invalid folder name."
-);
-
-return;
-
-}
-
-
-/*
-CHECK EXISTING FOLDER
-*/
-
-try{
-
-const folderExists =
-allFiles.some(
-file => {
-
-const path =
-file.file_path || "";
-
-const parts =
-path.split("/");
-
-return parts.includes(name);
-
-}
-);
-
-
-if(folderExists){
-
-showError(
-"A folder or file with this name already exists."
-);
-
-return;
-
-}
-
-
-/*
-CREATE FOLDER MARKER FILE
-
-Supabase database does not store
-empty folders directly.
-
-So we create a hidden marker file.
-*/
-
-const markerPath =
-name + "/.folder";
-
-
-const {
-data,
-error
-} =
-await supabaseClient
-.from("repository_files")
-.insert({
-
-repository_id:repoId,
-
-file_path:markerPath,
-
-content:"",
-
-language:"text",
-
-is_binary:false,
-
-storage_path:null,
-
-mime_type:"text/plain",
-
-file_size:0
-
-})
-.select("*")
-.single();
-
-
-if(error)
-throw error;
-
-
-/*
-SUCCESS
-*/
-
-showSuccess(
-'Folder "' +
-name +
-'" created successfully.'
-);
-
-
-/*
-RELOAD
-*/
-
-await loadFiles();
-
-
-/*
-OPEN NEW FOLDER
-*/
-
-setTimeout(
-function(){
-
-const folderRows =
-document.querySelectorAll(
-".tree-item.folder"
-);
-
-
-folderRows.forEach(
-row=>{
-
-const text =
-row.querySelector(
-".file-name"
-);
-
-if(
-text &&
-text.textContent ===
-name
-){
-
-row.click();
-
-}
-
-});
-
-},
-300
-);
-
-
-}catch(error){
-
-console.error(error);
-
-showError(
-error.message ||
-"Unable to create folder."
-);
-
-}
-
-}
-
-
-/* =========================
-   DOWNLOAD TEXT FILE
-========================= */
-
-function downloadTextFile(){
-
-if(!selectedFile)
-return;
-
-
-const blob =
-new Blob(
-[
-selectedFile.content || ""
-],
-{
-type:
-"text/plain;charset=utf-8"
-}
-);
-
-
-const url =
-URL.createObjectURL(
-blob
-);
-
-
-const a =
-document.createElement(
-"a"
-);
-
-
-a.href =
-url;
-
-
-a.download =
-selectedFile.file_path
-.split("/")
-.pop();
-
-
-document.body.appendChild(
-a
-);
-
-
-a.click();
-
-
-a.remove();
-
-
-URL.revokeObjectURL(
-url
-);
-
-}
-
-
-/* =========================
-   RENAME FILE
-========================= */
-
-async function renameFile(){
-
-if(!selectedFile){
-
-showError(
-"No file selected."
-);
-
-return;
-
-}
-
-
-const oldPath =
-selectedFile.file_path || "";
-
-
-const oldName =
-oldPath.split("/").pop();
-
-
-const newName =
-prompt(
-"Enter new file name:",
-oldName
-);
-
-
-if(newName === null){
-
-return;
-
-}
-
-
-const trimmedName =
-newName.trim();
-
-
-if(!trimmedName){
-
-showError(
-"File name cannot be empty."
-);
-
-return;
-
-}
-
-
-if(
-trimmedName.includes("/") ||
-trimmedName.includes("\\")
-){
-
-showError(
-"Please enter only the file name. Folder path cannot be changed here."
-);
-
-return;
-
-}
-
-
-if(trimmedName === oldName){
-
-return;
-
-}
-
-
-const folderPath =
-oldPath.includes("/")
-?
-oldPath.substring(
-0,
-oldPath.lastIndexOf("/")
-)
-:
-"";
-
-
-const newPath =
-folderPath
-?
-folderPath + "/" + trimmedName
-:
-trimmedName;
-
-
-try{
-
-const {
-data:existing,
-error:checkError
-} =
-await supabaseClient
-.from("repository_files")
-.select("id")
-.eq("repository_id",repoId)
-.eq("file_path",newPath)
-.maybeSingle();
-
-
-if(checkError)
-throw checkError;
-
-
-if(existing){
-
-showError(
-"A file with the same name already exists in this folder."
-);
-
-return;
-
-}
-
-
-document.getElementById(
-"viewerBody"
-).innerHTML =
-
-'<div class="loading">' +
-
-"Renaming file..." +
-
-"</div>";
-
-
-let newStoragePath =
-selectedFile.storage_path || null;
-
-
-if(
-selectedFile.is_binary &&
-selectedFile.storage_path
-){
-
-const oldStoragePath =
-selectedFile.storage_path;
-
-
-const storageFolder =
-oldStoragePath.includes("/")
-?
-oldStoragePath.substring(
-0,
-oldStoragePath.lastIndexOf("/")
-)
-:
-"";
-
-
-newStoragePath =
-storageFolder
-?
-storageFolder + "/" + trimmedName
-:
-trimmedName;
-
-
-const {
-error:moveError
-} =
-await supabaseClient
-.storage
-.from("repository-files")
-.move(
-oldStoragePath,
-newStoragePath
-);
-
-
-if(moveError)
-throw moveError;
-
-}
-
-
-const updateData = {
-
-file_path:newPath
-
-};
-
-
-if(
-selectedFile.is_binary &&
-selectedFile.storage_path
-){
-
-updateData.storage_path =
-newStoragePath;
-
-}
-
-
-const {
-data:updatedFile,
-error:updateError
-} =
-await supabaseClient
-.from("repository_files")
-.update(updateData)
-.eq(
-"id",
-selectedFile.id
-)
-.eq(
-"repository_id",
-repoId
-)
-.select("*")
-.single();
-
-
-if(updateError)
-throw updateError;
-
-
-selectedFile =
-updatedFile;
-
-
-showSuccess(
-"File renamed successfully."
-);
-
-
-await loadFiles();
-
-
-const renamedFile =
-allFiles.find(
-file =>
-file.id ===
-updatedFile.id
-);
-
-
-if(renamedFile){
-
-await openFile(
-renamedFile
-);
-
-}
-
-
-}catch(error){
-
-console.error(error);
-
-showError(
-error.message ||
-"Unable to rename file."
-);
-
-
-await loadFiles();
-
-}
-
-}
-
-
-/* =========================
    DELETE FILE
 ========================= */
 
-async function deleteFile(){
+async function deleteFile(file){
 
-if(!selectedFile){
-
-showError(
-"No file selected."
-);
-
+if(!file)
 return;
-
-}
-
-
-const fileName =
-selectedFile.file_path;
 
 
 const confirmed =
 confirm(
 'Are you sure you want to delete "' +
-fileName +
+file.file_path +
 '"?\n\nThis action cannot be undone.'
 );
 
 
-if(!confirmed){
-
+if(!confirmed)
 return;
-
-}
 
 
 try{
 
-document.getElementById(
-"viewerBody"
-).innerHTML =
-
-'<div class="loading">' +
-
-"Deleting file..." +
-
-"</div>";
-
+/* OWNER CHECK */
 
 if(
-selectedFile.is_binary &&
-selectedFile.storage_path
+!repository ||
+repository.owner_id !==
+currentUser.id
+){
+
+throw new Error(
+"You are not allowed to delete this file."
+);
+
+}
+
+
+/* DELETE STORAGE OBJECT FIRST */
+
+if(
+file.is_binary &&
+file.storage_path
 ){
 
 const {
@@ -1987,15 +1356,23 @@ await supabaseClient
 .storage
 .from("repository-files")
 .remove([
-selectedFile.storage_path
+file.storage_path
 ]);
 
 
-if(storageError)
-throw storageError;
+if(storageError){
+
+console.warn(
+"Storage delete warning:",
+storageError
+);
 
 }
 
+}
+
+
+/* DELETE DATABASE RECORD */
 
 const {
 error
@@ -2003,10 +1380,7 @@ error
 await supabaseClient
 .from("repository_files")
 .delete()
-.eq(
-"id",
-selectedFile.id
-)
+.eq("id",file.id)
 .eq(
 "repository_id",
 repoId
@@ -2017,10 +1391,7 @@ if(error)
 throw error;
 
 
-showSuccess(
-"File deleted successfully."
-);
-
+/* RESET */
 
 selectedFile =
 null;
@@ -2044,10 +1415,12 @@ document.getElementById(
 
 '<div class="empty">' +
 
-"Select a file from the explorer to preview it." +
+"File deleted successfully." +
 
 "</div>";
 
+
+/* REFRESH */
 
 await loadFiles();
 
@@ -2056,9 +1429,9 @@ await loadFiles();
 
 console.error(error);
 
-showError(
-error.message ||
-"Unable to delete file."
+alert(
+"Unable to delete file.\n\n" +
+(error.message || "")
 );
 
 }
@@ -2067,29 +1440,300 @@ error.message ||
 
 
 /* =========================
-   IMAGE CHECK
+   BINARY PREVIEW
 ========================= */
 
-function isImage(path){
+async function openBinaryFile(
+file
+){
 
-const p =
-(path || "")
+try{
+
+if(!file.storage_path){
+
+document.getElementById(
+"viewerBody"
+).innerHTML =
+
+'<div class="binary-box">' +
+
+"Binary file — no storage path available." +
+
+"</div>";
+
+return;
+
+}
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+.storage
+.from("repository-files")
+.createSignedUrl(
+file.storage_path,
+300
+);
+
+
+if(error)
+throw error;
+
+
+const url =
+data.signedUrl;
+
+
+const path =
+(file.file_path || "")
 .toLowerCase();
 
 
-return [
+if(
+path.endsWith(".png") ||
+path.endsWith(".jpg") ||
+path.endsWith(".jpeg") ||
+path.endsWith(".gif") ||
+path.endsWith(".webp") ||
+path.endsWith(".svg")
+){
 
-".png",
-".jpg",
-".jpeg",
-".gif",
-".webp",
-".svg"
-
-].some(
-ext =>
-p.endsWith(ext)
+const img =
+document.createElement(
+"img"
 );
+
+
+img.className =
+"preview-image";
+
+
+img.src =
+url;
+
+
+document.getElementById(
+"viewerBody"
+).appendChild(
+img
+);
+
+
+return;
+
+}
+
+
+if(
+path.endsWith(".pdf")
+){
+
+const frame =
+document.createElement(
+"iframe"
+);
+
+
+frame.className =
+"preview-frame";
+
+
+frame.src =
+url;
+
+
+document.getElementById(
+"viewerBody"
+).appendChild(
+frame
+);
+
+
+return;
+
+}
+
+
+document.getElementById(
+"viewerBody"
+).innerHTML =
+
+'<div class="binary-box">' +
+
+"📦 Binary file<br><br>" +
+
+'<a class="btn" href="' +
+
+escapeAttribute(
+url
+) +
+
+'" target="_blank">' +
+
+"Open / Download" +
+
+"</a>" +
+
+"</div>";
+
+
+}catch(error){
+
+console.error(error);
+
+document.getElementById(
+"viewerBody"
+).innerHTML =
+
+'<div class="binary-box">' +
+
+"Unable to preview this file." +
+
+"</div>";
+
+}
+
+}
+
+
+/* =========================
+   DOWNLOAD
+========================= */
+
+async function downloadFile(
+file
+){
+
+try{
+
+if(file.is_binary){
+
+if(!file.storage_path){
+
+throw new Error(
+"Storage path missing."
+);
+
+}
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+.storage
+.from("repository-files")
+.createSignedUrl(
+file.storage_path,
+300
+);
+
+
+if(error)
+throw error;
+
+
+const link =
+document.createElement(
+"a"
+);
+
+
+link.href =
+data.signedUrl;
+
+
+link.target =
+"_blank";
+
+
+link.download =
+file.file_path
+.split("/")
+.pop();
+
+
+document.body.appendChild(
+link
+);
+
+
+link.click();
+
+
+link.remove();
+
+
+return;
+
+}
+
+
+/* TEXT DOWNLOAD */
+
+const blob =
+new Blob(
+[
+file.content || ""
+],
+{
+type:
+"text/plain;charset=utf-8"
+}
+);
+
+
+const url =
+URL.createObjectURL(
+blob
+);
+
+
+const link =
+document.createElement(
+"a"
+);
+
+
+link.href =
+url;
+
+
+link.download =
+file.file_path
+.split("/")
+.pop();
+
+
+document.body.appendChild(
+link
+);
+
+
+link.click();
+
+
+link.remove();
+
+
+URL.revokeObjectURL(
+url
+);
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Unable to download file."
+);
+
+}
 
 }
 
@@ -2105,27 +1749,22 @@ value
 return String(
 value || ""
 )
-
 .replace(
 /&/g,
 "&amp;"
 )
-
 .replace(
 /</g,
 "&lt;"
 )
-
 .replace(
 />/g,
 "&gt;"
 )
-
 .replace(
 /"/g,
 "&quot;"
 )
-
 .replace(
 /'/g,
 "&#039;"
@@ -2134,8 +1773,35 @@ value || ""
 }
 
 
+function escapeAttribute(
+value
+){
+
+return String(
+value || ""
+)
+.replace(
+/&/g,
+"&amp;"
+)
+.replace(
+/"/g,
+"&quot;"
+)
+.replace(
+/</g,
+"&lt;"
+)
+.replace(
+/>/g,
+"&gt;"
+);
+
+}
+
+
 /* =========================
-   ERROR MESSAGE
+   ERROR
 ========================= */
 
 function showError(
@@ -2149,59 +1815,11 @@ document.getElementById(
 
 
 box.textContent =
-"❌ " +
-message;
+"❌ " + message;
 
 
 box.style.display =
 "block";
-
-
-setTimeout(
-function(){
-
-box.style.display =
-"none";
-
-},
-4000
-);
-
-}
-
-
-/* =========================
-   SUCCESS MESSAGE
-========================= */
-
-function showSuccess(
-message
-){
-
-const box =
-document.getElementById(
-"success"
-);
-
-
-box.textContent =
-"✅ " +
-message;
-
-
-box.style.display =
-"block";
-
-
-setTimeout(
-function(){
-
-box.style.display =
-"none";
-
-},
-3000
-);
 
 }
 
