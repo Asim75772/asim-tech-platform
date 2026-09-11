@@ -5,10 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Web Page Builder - ASIM TECH</title>
 
@@ -256,16 +253,13 @@ button{
 
 <div class="container">
 
-
 <h1 id="pageTitle">
     🌐 Web Page Builder
 </h1>
 
-
 <p class="subtitle">
     Create your webpage using HTML, CSS and JavaScript.
 </p>
-
 
 <div id="modeLabel" class="mode">
     New Web Page
@@ -380,7 +374,6 @@ font-size: 18px;
 
 </div>
 
-
 </div>
 
 
@@ -393,7 +386,6 @@ font-size: 18px;
 <div class="editor-title">
     👁️ Live Preview
 </div>
-
 
 <iframe
     id="preview"
@@ -411,7 +403,6 @@ font-size: 18px;
 <div class="card">
 
 <div class="buttons">
-
 
 <button
     type="button"
@@ -443,7 +434,6 @@ font-size: 18px;
 
 </button>
 
-
 </div>
 
 
@@ -454,12 +444,10 @@ font-size: 18px;
 
 </div>
 
-
 </div>
 
 
 <script>
-
 
 /* =====================================
    SUPABASE
@@ -468,10 +456,8 @@ font-size: 18px;
 const SUPABASE_URL =
     "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-
 const SUPABASE_KEY =
     "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
-
 
 const supabaseClient =
     window.supabase.createClient(
@@ -487,38 +473,29 @@ const supabaseClient =
 const repository =
     document.getElementById("repository");
 
-
 const pageName =
     document.getElementById("pageName");
-
 
 const htmlCode =
     document.getElementById("htmlCode");
 
-
 const cssCode =
     document.getElementById("cssCode");
-
 
 const jsCode =
     document.getElementById("jsCode");
 
-
 const preview =
     document.getElementById("preview");
-
 
 const statusBox =
     document.getElementById("status");
 
-
 const saveButton =
     document.getElementById("saveButton");
 
-
 const modeLabel =
     document.getElementById("modeLabel");
-
 
 const pageTitle =
     document.getElementById("pageTitle");
@@ -533,10 +510,8 @@ const params =
         window.location.search
     );
 
-
 const repositoryId =
     params.get("repository_id");
-
 
 const pageId =
     params.get("page_id");
@@ -567,6 +542,7 @@ function setStatus(
 
     statusBox.className =
         "status " + type;
+
 }
 
 
@@ -1176,20 +1152,24 @@ async function savePage(){
 
 
         /* =================================
-           DUPLICATE CHECK
-           IMPORTANT FIX
-
-           Existing page itself is excluded
-           from duplicate checking.
+           EXISTING PAGE
+           
+           CHECK DUPLICATE FIRST,
+           BUT EXCLUDE CURRENT PAGE
         ================================= */
 
-        setStatus(
-            "Checking page name..."
-        );
+        if(editingPage){
+
+            setStatus(
+                "Checking page name..."
+            );
 
 
-        let duplicateQuery =
-            supabaseClient
+            const {
+                data:existing,
+                error:checkError
+            } =
+            await supabaseClient
 
                 .from("web_pages")
 
@@ -1203,73 +1183,45 @@ async function savePage(){
                 .eq(
                     "page_name",
                     name
-                );
+                )
 
-
-        /*
-        If editing an existing page,
-        exclude the current page ID.
-
-        Therefore:
-
-        test-app.html
-        editing itself
-
-        will NOT be treated as duplicate.
-        */
-
-        if(editingPage){
-
-            duplicateQuery =
-                duplicateQuery.neq(
+                .neq(
                     "id",
                     editingPage.id
                 );
 
-        }
+
+            if(checkError){
+
+                console.error(checkError);
+
+                throw checkError;
+
+            }
 
 
-        const {
-            data:existing,
-            error:checkError
-        } =
-        await duplicateQuery;
+            if(
+                existing &&
+                existing.length > 0
+            ){
+
+                alert(
+                    "A web page with this name already exists in this repository."
+                );
+
+                setStatus(
+                    "Duplicate page name found.",
+                    "error"
+                );
+
+                return;
+
+            }
 
 
-        if(checkError){
-
-            console.error(checkError);
-
-            throw checkError;
-
-        }
-
-
-        if(
-            existing &&
-            existing.length > 0
-        ){
-
-            alert(
-                "A web page with this name already exists in this repository."
-            );
-
-            setStatus(
-                "Duplicate page name found.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        /* =================================
-           UPDATE EXISTING PAGE
-           ONLY DRAFT
-        ================================= */
-
-        if(editingPage){
+            /* =============================
+               SAVE ONLY DRAFT
+            ============================= */
 
             setStatus(
                 "Saving draft..."
@@ -1277,7 +1229,7 @@ async function savePage(){
 
 
             const {
-                error
+                error:updateError
             } =
             await supabaseClient
 
@@ -1310,11 +1262,11 @@ async function savePage(){
                 );
 
 
-            if(error){
+            if(updateError){
 
-                console.error(error);
+                console.error(updateError);
 
-                throw error;
+                throw updateError;
 
             }
 
@@ -1326,7 +1278,6 @@ async function savePage(){
 
             window.location.href =
                 "repository-files.html?repository_id=" +
-
                 encodeURIComponent(
                     selectedRepository
                 );
@@ -1338,10 +1289,70 @@ async function savePage(){
 
 
         /* =================================
-           INSERT NEW PAGE
+           NEW PAGE
+           DUPLICATE CHECK
+        ================================= */
+
+        setStatus(
+            "Checking page name..."
+        );
+
+
+        const {
+            data:existing,
+            error:checkError
+        } =
+        await supabaseClient
+
+            .from("web_pages")
+
+            .select("id")
+
+            .eq(
+                "repository_id",
+                selectedRepository
+            )
+
+            .eq(
+                "page_name",
+                name
+            );
+
+
+        if(checkError){
+
+            console.error(checkError);
+
+            throw checkError;
+
+        }
+
+
+        if(
+            existing &&
+            existing.length > 0
+        ){
+
+            alert(
+                "A web page with this name already exists in this repository."
+            );
+
+            setStatus(
+                "Duplicate page name found.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* =================================
+           CREATE NEW PAGE
+           
            DRAFT + INITIAL LIVE COPY
 
-           Page remains UNPUBLISHED.
+           UNPUBLISHED
         ================================= */
 
         setStatus(
@@ -1350,7 +1361,7 @@ async function savePage(){
 
 
         const {
-            error
+            error:insertError
         } =
         await supabaseClient
 
@@ -1394,11 +1405,11 @@ async function savePage(){
             });
 
 
-        if(error){
+        if(insertError){
 
-            console.error(error);
+            console.error(insertError);
 
-            throw error;
+            throw insertError;
 
         }
 
@@ -1410,7 +1421,6 @@ async function savePage(){
 
         window.location.href =
             "repository-files.html?repository_id=" +
-
             encodeURIComponent(
                 selectedRepository
             );
@@ -1447,7 +1457,6 @@ function goBack(){
 
         window.location.href =
             "repository-files.html?repository_id=" +
-
             encodeURIComponent(
                 repositoryId
             );
