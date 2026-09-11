@@ -430,17 +430,11 @@ margin-right:-5px;
 ⚡ ASIM TECH
 </div>
 
-<a href="index.html">
-Home
-</a>
+<a href="index.html">Home</a>
 
-<a href="repositories.html">
-Repositories
-</a>
+<a href="repositories.html">Repositories</a>
 
-<a href="dashboard.html">
-Dashboard
-</a>
+<a href="dashboard.html">Dashboard</a>
 
 </nav>
 
@@ -469,8 +463,7 @@ ASIM TECH
 
 /
 
-<strong id="repoName">
-</strong>
+<strong id="repoName"></strong>
 
 </div>
 
@@ -509,74 +502,50 @@ Not published
 
 <div class="tabs">
 
-<a class="tab active"
-href="#">
-
+<a class="tab active" href="#">
 ◉ Code
-
 </a>
-
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Issues');return false;">
-
 Issues
-
 </a>
-
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Pull requests');return false;">
-
 Pull requests
-
 </a>
-
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Actions');return false;">
-
 Actions
-
 </a>
-
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Projects');return false;">
-
 Projects
-
 </a>
-
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Wiki');return false;">
-
 Wiki
-
 </a>
-
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Security');return false;">
-
 Security
-
 </a>
-
 
 <a class="tab"
 href="#"
 onclick="showComingSoon('Insights');return false;">
-
 Insights
-
 </a>
 
 </div>
@@ -588,43 +557,30 @@ Insights
 
 <div class="branch-box">
 
-
-<button
-class="btn"
+<button class="btn"
 type="button">
-
 🌿 main ▾
-
 </button>
 
 
-<a
-id="filesButton"
+<a id="filesButton"
 class="btn"
 href="#">
-
 📁 Files
-
 </a>
 
 
-<a
-id="explorerButton"
+<a id="explorerButton"
 class="btn btn-purple"
 href="#">
-
 📂 File Explorer
-
 </a>
 
 
-<a
-id="newFileButton"
+<a id="newFileButton"
 class="btn btn-green"
 href="#">
-
 ＋ Add file
-
 </a>
 
 </div>
@@ -649,9 +605,7 @@ oninput="filterFiles()">
 Latest commit:
 
 <strong id="latestCommit">
-
 Initial repository
-
 </strong>
 
 </div>
@@ -660,9 +614,7 @@ Initial repository
 <div class="commit-right">
 
 <span id="fileCount">
-
 0 files
-
 </span>
 
 </div>
@@ -672,14 +624,11 @@ Initial repository
 
 <!-- FILE LIST -->
 
-<div
-id="fileList"
+<div id="fileList"
 class="file-list">
 
 <div class="empty">
-
 Loading files...
-
 </div>
 
 </div>
@@ -690,32 +639,21 @@ Loading files...
 <div class="readme">
 
 <div class="readme-header">
-
 📖 README.md
-
 </div>
-
 
 <div class="readme-body">
 
 <h2 id="readmeTitle">
-
 Repository
-
 </h2>
 
-
 <p id="readmeDescription">
-
 Welcome to this ASIM TECH repository.
-
 </p>
 
-
 <p>
-
 This repository was created using ASIM TECH Platform.
-
 </p>
 
 </div>
@@ -727,24 +665,17 @@ This repository was created using ASIM TECH Platform.
 
 <div class="actions">
 
-
-<a
-id="openFilesAction"
+<a id="openFilesAction"
 class="btn"
 href="#">
-
 📂 Open Repository Files
-
 </a>
 
 
-<a
-id="editAction"
+<a id="editAction"
 class="btn"
 href="#">
-
 ✏️ Edit Repository
-
 </a>
 
 
@@ -752,9 +683,7 @@ href="#">
 id="publishAction"
 class="btn btn-blue"
 onclick="publishWebsite()">
-
 🚀 Publish Website
-
 </button>
 
 </div>
@@ -767,32 +696,23 @@ onclick="publishWebsite()">
 
 <!-- MODAL -->
 
-<div
-id="modal"
+<div id="modal"
 class="modal">
 
 <div class="modal-box">
 
 <h2 id="modalTitle">
-
 Coming Soon
-
 </h2>
 
-
 <p id="modalText">
-
 This feature is coming soon.
-
 </p>
-
 
 <button
 class="btn"
 onclick="closeModal()">
-
 Close
-
 </button>
 
 </div>
@@ -810,7 +730,7 @@ Close
 <script>
 
 /* =====================================================
-   SUPABASE
+   SUPABASE CONFIGURATION
 ===================================================== */
 
 const SUPABASE_URL =
@@ -827,7 +747,7 @@ SUPABASE_KEY
 
 
 /* =====================================================
-   PARAMETERS
+   URL PARAMETERS
 ===================================================== */
 
 const params =
@@ -837,17 +757,16 @@ window.location.search
 
 
 /*
-IMPORTANT:
+IMPORTANT FIX
 
-Accept BOTH:
+The page can now receive repository ID
+from either URL format:
 
-?id=XXXX
+repository-details.html?id=XXXX
 
-and
+OR
 
-?repository_id=XXXX
-
-This fixes the Repository ID missing error.
+repository-details.html?repository_id=XXXX
 */
 
 const repoId =
@@ -893,11 +812,7 @@ throw userError;
 }
 
 
-const user =
-data.user;
-
-
-if(!user){
+if(!data.user){
 
 window.location.href =
 "login.html";
@@ -908,7 +823,7 @@ return;
 
 
 currentUser =
-user;
+data.user;
 
 
 /* REPOSITORY ID */
@@ -1030,7 +945,9 @@ publishBadge.textContent =
 
 const filesUrl =
 "repository-files.html?repository_id=" +
-encodeURIComponent(repo.id);
+encodeURIComponent(
+repo.id
+);
 
 
 document.getElementById(
@@ -1051,7 +968,9 @@ document.getElementById(
 "explorerButton"
 ).href =
 "repository-explorer.html?repository_id=" +
-encodeURIComponent(repo.id);
+encodeURIComponent(
+repo.id
+);
 
 
 /* ADD FILE */
@@ -1060,7 +979,9 @@ document.getElementById(
 "newFileButton"
 ).href =
 "repository-add-file.html?repository_id=" +
-encodeURIComponent(repo.id);
+encodeURIComponent(
+repo.id
+);
 
 
 /* EDIT */
@@ -1069,14 +990,16 @@ document.getElementById(
 "editAction"
 ).href =
 "edit-repository.html?id=" +
-encodeURIComponent(repo.id);
+encodeURIComponent(
+repo.id
+);
 
 
 /* =====================================================
    OWNER CONTROLS
 ===================================================== */
 
-if(repo.owner_id !== user.id){
+if(repo.owner_id !== currentUser.id){
 
 document.getElementById(
 "editAction"
@@ -1099,7 +1022,7 @@ document.getElementById(
 
 
 /* =====================================================
-   FILES
+   LOAD FILES
 ===================================================== */
 
 const {
@@ -1152,7 +1075,7 @@ repo.description ||
 
 
 /* =====================================================
-   SHOW
+   SHOW PAGE
 ===================================================== */
 
 document.getElementById(
@@ -1227,8 +1150,6 @@ return;
 
 }
 
-
-/* FILE ROW */
 
 files.forEach(
 file=>{
@@ -1479,7 +1400,7 @@ return;
 
 const filtered =
 allFiles.filter(
-file=>
+file =>
 
 (
 file.file_path ||
