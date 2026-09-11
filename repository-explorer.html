@@ -114,6 +114,15 @@ border-color:#24558a;
 background:#172b3d;
 }
 
+.folder-btn{
+color:#7ee787;
+border-color:#238636;
+}
+
+.folder-btn:hover{
+background:#16351f;
+}
+
 .search{
 flex:1;
 min-width:220px;
@@ -390,6 +399,10 @@ oninput="searchFiles()"
 ↻ Refresh
 </button>
 
+<button class="btn folder-btn" onclick="createFolder()">
+＋ New Folder
+</button>
+
 </div>
 
 
@@ -479,13 +492,6 @@ new URLSearchParams(
 window.location.search
 );
 
-
-/*
-Accept both:
-?repository_id=
-and
-?id=
-*/
 
 const repoId =
 params.get("repository_id") ||
@@ -1112,8 +1118,6 @@ document.getElementById(
 "</div>";
 
 
-/* BINARY */
-
 if(file.is_binary){
 
 await openBinaryFile(
@@ -1124,8 +1128,6 @@ return;
 
 }
 
-
-/* TEXT */
 
 openTextFile(
 file
@@ -1144,10 +1146,6 @@ const content =
 file.content || "";
 
 
-/*
-EDIT URL
-*/
-
 const editUrl =
 "file-editor.html" +
 
@@ -1161,10 +1159,6 @@ encodeURIComponent(
 repoId
 );
 
-
-/*
-ACTIONS
-*/
 
 document.getElementById(
 "viewerActions"
@@ -1196,10 +1190,6 @@ editUrl +
 
 "</button>";
 
-
-/*
-CONTENT
-*/
 
 document.getElementById(
 "viewerBody"
@@ -1268,10 +1258,6 @@ const mime =
 file.mime_type || "";
 
 
-/*
-ACTIONS
-*/
-
 document.getElementById(
 "viewerActions"
 ).innerHTML =
@@ -1305,10 +1291,6 @@ url +
 "</button>";
 
 
-/*
-IMAGE
-*/
-
 if(
 mime.startsWith("image/") ||
 isImage(file.file_path)
@@ -1326,10 +1308,6 @@ return;
 
 }
 
-
-/*
-PDF
-*/
 
 if(
 mime === "application/pdf" ||
@@ -1350,10 +1328,6 @@ return;
 
 }
 
-
-/*
-OTHER BINARY
-*/
 
 document.getElementById(
 "viewerBody"
@@ -1389,6 +1363,229 @@ console.error(error);
 showError(
 error.message ||
 "Unable to preview file."
+);
+
+}
+
+}
+
+
+/* =========================
+   CREATE FOLDER
+========================= */
+
+async function createFolder(){
+
+/*
+ASK FOLDER NAME
+*/
+
+const folderName =
+prompt(
+"Enter new folder name:"
+);
+
+
+if(folderName === null){
+
+return;
+
+}
+
+
+const name =
+folderName.trim();
+
+
+if(!name){
+
+showError(
+"Folder name cannot be empty."
+);
+
+return;
+
+}
+
+
+/*
+INVALID CHARACTERS
+*/
+
+if(
+name.includes("/") ||
+name.includes("\\")
+){
+
+showError(
+"Please enter only the folder name."
+);
+
+return;
+
+}
+
+
+/*
+INVALID SPECIAL NAMES
+*/
+
+if(
+name === "." ||
+name === ".."
+){
+
+showError(
+"Invalid folder name."
+);
+
+return;
+
+}
+
+
+/*
+CHECK EXISTING FOLDER
+*/
+
+try{
+
+const folderExists =
+allFiles.some(
+file => {
+
+const path =
+file.file_path || "";
+
+const parts =
+path.split("/");
+
+return parts.includes(name);
+
+}
+);
+
+
+if(folderExists){
+
+showError(
+"A folder or file with this name already exists."
+);
+
+return;
+
+}
+
+
+/*
+CREATE FOLDER MARKER FILE
+
+Supabase database does not store
+empty folders directly.
+
+So we create a hidden marker file.
+*/
+
+const markerPath =
+name + "/.folder";
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("repository_files")
+.insert({
+
+repository_id:repoId,
+
+file_path:markerPath,
+
+content:"",
+
+language:"text",
+
+is_binary:false,
+
+storage_path:null,
+
+mime_type:"text/plain",
+
+file_size:0
+
+})
+.select("*")
+.single();
+
+
+if(error)
+throw error;
+
+
+/*
+SUCCESS
+*/
+
+showSuccess(
+'Folder "' +
+name +
+'" created successfully.'
+);
+
+
+/*
+RELOAD
+*/
+
+await loadFiles();
+
+
+/*
+OPEN NEW FOLDER
+*/
+
+setTimeout(
+function(){
+
+const folderRows =
+document.querySelectorAll(
+".tree-item.folder"
+);
+
+
+folderRows.forEach(
+row=>{
+
+const text =
+row.querySelector(
+".file-name"
+);
+
+if(
+text &&
+text.textContent ===
+name
+){
+
+row.click();
+
+}
+
+});
+
+},
+300
+);
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to create folder."
 );
 
 }
@@ -1512,10 +1709,6 @@ return;
 }
 
 
-/*
-DO NOT ALLOW SLASH
-*/
-
 if(
 trimmedName.includes("/") ||
 trimmedName.includes("\\")
@@ -1530,20 +1723,12 @@ return;
 }
 
 
-/*
-NO CHANGE
-*/
-
 if(trimmedName === oldName){
 
 return;
 
 }
 
-
-/*
-NEW PATH
-*/
 
 const folderPath =
 oldPath.includes("/")
@@ -1563,10 +1748,6 @@ folderPath + "/" + trimmedName
 :
 trimmedName;
 
-
-/*
-CHECK DUPLICATE
-*/
 
 try{
 
@@ -1597,10 +1778,6 @@ return;
 }
 
 
-/*
-SHOW LOADING
-*/
-
 document.getElementById(
 "viewerBody"
 ).innerHTML =
@@ -1611,12 +1788,6 @@ document.getElementById(
 
 "</div>";
 
-
-/*
-=========================
-RENAME STORAGE FILE
-=========================
-*/
 
 let newStoragePath =
 selectedFile.storage_path || null;
@@ -1650,10 +1821,6 @@ storageFolder + "/" + trimmedName
 trimmedName;
 
 
-/*
-MOVE STORAGE FILE
-*/
-
 const {
 error:moveError
 } =
@@ -1671,12 +1838,6 @@ throw moveError;
 
 }
 
-
-/*
-=========================
-UPDATE DATABASE
-=========================
-*/
 
 const updateData = {
 
@@ -1719,10 +1880,6 @@ if(updateError)
 throw updateError;
 
 
-/*
-SUCCESS
-*/
-
 selectedFile =
 updatedFile;
 
@@ -1732,16 +1889,8 @@ showSuccess(
 );
 
 
-/*
-RELOAD FILES
-*/
-
 await loadFiles();
 
-
-/*
-OPEN RENAMED FILE AGAIN
-*/
 
 const renamedFile =
 allFiles.find(
@@ -1769,10 +1918,6 @@ error.message ||
 "Unable to rename file."
 );
 
-
-/*
-RELOAD IN CASE OF ERROR
-*/
 
 await loadFiles();
 
@@ -1802,10 +1947,6 @@ const fileName =
 selectedFile.file_path;
 
 
-/*
-CONFIRMATION
-*/
-
 const confirmed =
 confirm(
 'Are you sure you want to delete "' +
@@ -1823,10 +1964,6 @@ return;
 
 try{
 
-/*
-DISABLE / LOADING
-*/
-
 document.getElementById(
 "viewerBody"
 ).innerHTML =
@@ -1837,12 +1974,6 @@ document.getElementById(
 
 "</div>";
 
-
-/*
-=========================
-DELETE STORAGE FILE
-=========================
-*/
 
 if(
 selectedFile.is_binary &&
@@ -1866,12 +1997,6 @@ throw storageError;
 }
 
 
-/*
-=========================
-DELETE DATABASE RECORD
-=========================
-*/
-
 const {
 error
 } =
@@ -1892,20 +2017,10 @@ if(error)
 throw error;
 
 
-/*
-=========================
-SUCCESS
-=========================
-*/
-
 showSuccess(
 "File deleted successfully."
 );
 
-
-/*
-CLEAR VIEWER
-*/
 
 selectedFile =
 null;
@@ -1933,10 +2048,6 @@ document.getElementById(
 
 "</div>";
 
-
-/*
-REFRESH FILE LIST
-*/
 
 await loadFiles();
 
