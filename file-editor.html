@@ -227,21 +227,17 @@ flex-direction:column;
 
 </nav>
 
-
 <div class="container">
 
 <a id="backLink" class="back" href="repositories.html">
 ← Back
 </a>
 
-
 <div id="loading">
 Loading editor...
 </div>
 
-
 <div id="message"></div>
-
 
 <div id="editor" class="card" style="display:none">
 
@@ -252,7 +248,6 @@ Loading editor...
 <p id="repoTitle" class="subtitle">
 Repository
 </p>
-
 
 <div class="field">
 
@@ -268,7 +263,6 @@ maxlength="200"
 >
 
 </div>
-
 
 <div class="field">
 
@@ -293,7 +287,6 @@ Language
 
 </div>
 
-
 <div class="field">
 
 <label for="content">
@@ -307,7 +300,6 @@ spellcheck="false"
 ></textarea>
 
 </div>
-
 
 <div class="buttons">
 
@@ -329,11 +321,9 @@ onclick="saveFile()">
 
 </div>
 
-
 <footer>
 © 2026 ASIM TECH — Code. Create. Innovate.
 </footer>
-
 
 <script>
 
@@ -355,24 +345,36 @@ new URLSearchParams(
 window.location.search
 );
 
+
+/*
+IMPORTANT FIX
+*/
+
 const repositoryId =
-params.get("repository_id");
+params.get("repository_id") ||
+params.get("id");
+
 
 const fileId =
-params.get("file_id");
+params.get("file_id") ||
+params.get("file");
 
-let currentUser=null;
-let repository=null;
-let editing=false;
+
+let currentUser = null;
+let repository = null;
+let editing = false;
 
 
 function showMessage(text,type){
 
-const box=
+const box =
 document.getElementById("message");
 
-box.textContent=text;
-box.className=type;
+box.textContent =
+text;
+
+box.className =
+type;
 
 }
 
@@ -387,16 +389,22 @@ error:userError
 } =
 await supabaseClient.auth.getUser();
 
-if(userError) throw userError;
+if(userError)
+throw userError;
+
 
 if(!user){
 
-window.location.href="login.html";
+window.location.href =
+"login.html";
+
 return;
 
 }
 
-currentUser=user;
+
+currentUser =
+user;
 
 
 if(!repositoryId){
@@ -408,17 +416,44 @@ throw new Error(
 }
 
 
+if(!fileId){
+
+throw new Error(
+"File ID missing"
+);
+
+}
+
+
 const {
 data:repo,
 error:repoError
 } =
 await supabaseClient
+
 .from("repositories")
+
 .select("*")
-.eq("id",repositoryId)
+
+.eq(
+"id",
+repositoryId
+)
+
 .single();
 
-if(repoError) throw repoError;
+
+if(repoError)
+throw repoError;
+
+
+if(!repo){
+
+throw new Error(
+"Repository not found"
+);
+
+}
 
 
 if(repo.owner_id !== user.id){
@@ -430,77 +465,122 @@ throw new Error(
 }
 
 
-repository=repo;
+repository =
+repo;
 
 
-document.getElementById("repoTitle")
-.textContent=
-"Repository: " + repo.name;
+document.getElementById(
+"repoTitle"
+).textContent =
+"Repository: " +
+repo.name;
 
 
-document.getElementById("backLink").href =
-"repository-files.html?repository_id=" +
-encodeURIComponent(repositoryId);
+document.getElementById(
+"backLink"
+).href =
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(
+repositoryId
+);
 
 
-if(fileId){
-
-editing=true;
-
-document.getElementById("pageTitle")
-.textContent=
-"✏️ Edit File";
-
+/*
+LOAD EXISTING FILE
+*/
 
 const {
 data:file,
 error:fileError
 } =
 await supabaseClient
+
 .from("repository_files")
+
 .select("*")
-.eq("id",fileId)
-.eq("repository_id",repositoryId)
+
+.eq(
+"id",
+fileId
+)
+
+.eq(
+"repository_id",
+repositoryId
+)
+
 .single();
 
-if(fileError) throw fileError;
+
+if(fileError)
+throw fileError;
 
 
-document.getElementById("filePath")
-.value=file.file_path || "";
+if(!file){
 
-document.getElementById("language")
-.value=file.language || "text";
-
-document.getElementById("content")
-.value=file.content || "";
-
-}else{
-
-editing=false;
-
-document.getElementById("pageTitle")
-.textContent=
-"📄 Create New File";
+throw new Error(
+"File not found"
+);
 
 }
 
 
-document.getElementById("loading")
-.style.display="none";
+editing =
+true;
 
-document.getElementById("editor")
-.style.display="block";
+
+document.getElementById(
+"pageTitle"
+).textContent =
+"✏️ Edit File";
+
+
+document.getElementById(
+"filePath"
+).value =
+file.file_path ||
+"";
+
+
+document.getElementById(
+"language"
+).value =
+file.language ||
+"text";
+
+
+document.getElementById(
+"content"
+).value =
+file.content ||
+"";
+
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
+
+document.getElementById(
+"editor"
+).style.display =
+"block";
 
 
 }catch(error){
 
 console.error(error);
 
-document.getElementById("loading")
-.style.display="none";
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
 
 showMessage(
+error.message ||
 "Unable to load repository or file.",
 "error"
 );
@@ -512,17 +592,22 @@ showMessage(
 
 async function saveFile(){
 
-const filePath=
-document.getElementById("filePath")
-.value.trim();
+const filePath =
+document.getElementById(
+"filePath"
+).value.trim();
 
-const language=
-document.getElementById("language")
-.value;
 
-const content=
-document.getElementById("content")
-.value;
+const language =
+document.getElementById(
+"language"
+).value;
+
+
+const content =
+document.getElementById(
+"content"
+).value;
 
 
 if(!filePath){
@@ -537,9 +622,12 @@ return;
 }
 
 
-if(filePath.startsWith("/") ||
+if(
+filePath.startsWith("/") ||
 filePath.endsWith("/") ||
-filePath.includes("..")){
+filePath.includes("..") ||
+filePath.includes("\\")
+){
 
 showMessage(
 "Please enter a valid file path.",
@@ -560,25 +648,57 @@ const {
 error
 } =
 await supabaseClient
+
 .from("repository_files")
+
 .update({
 
-file_path:filePath,
-content:content,
-language:language,
-updated_at:new Date().toISOString()
+file_path:
+filePath,
+
+content:
+content,
+
+language:
+language,
+
+updated_at:
+new Date().toISOString()
 
 })
-.eq("id",fileId)
-.eq("repository_id",repositoryId);
+
+.eq(
+"id",
+fileId
+)
+
+.eq(
+"repository_id",
+repositoryId
+);
 
 
-if(error) throw error;
+if(error)
+throw error;
 
 
 showMessage(
 "File updated successfully!",
 "success"
+);
+
+
+setTimeout(
+function(){
+
+window.location.href =
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(
+repositoryId
+);
+
+},
+900
 );
 
 
@@ -590,16 +710,30 @@ data:existing,
 error:checkError
 } =
 await supabaseClient
+
 .from("repository_files")
+
 .select("id")
-.eq("repository_id",repositoryId)
-.eq("file_path",filePath);
+
+.eq(
+"repository_id",
+repositoryId
+)
+
+.eq(
+"file_path",
+filePath
+);
 
 
-if(checkError) throw checkError;
+if(checkError)
+throw checkError;
 
 
-if(existing && existing.length>0){
+if(
+existing &&
+existing.length > 0
+){
 
 showMessage(
 "A file with this name already exists.",
@@ -615,18 +749,28 @@ const {
 error
 } =
 await supabaseClient
+
 .from("repository_files")
+
 .insert({
 
-repository_id:repositoryId,
-file_path:filePath,
-content:content,
-language:language
+repository_id:
+repositoryId,
+
+file_path:
+filePath,
+
+content:
+content,
+
+language:
+language
 
 });
 
 
-if(error) throw error;
+if(error)
+throw error;
 
 
 showMessage(
@@ -634,23 +778,30 @@ showMessage(
 "success"
 );
 
-}
 
-
-setTimeout(function(){
+setTimeout(
+function(){
 
 window.location.href =
-"repository-files.html?repository_id=" +
-encodeURIComponent(repositoryId);
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(
+repositoryId
+);
 
-},900);
+},
+900
+);
+
+}
 
 
 }catch(error){
 
 console.error(error);
 
+
 showMessage(
+error.message ||
 "Unable to save file.",
 "error"
 );
@@ -663,8 +814,10 @@ showMessage(
 function goBack(){
 
 window.location.href =
-"repository-files.html?repository_id=" +
-encodeURIComponent(repositoryId);
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(
+repositoryId
+);
 
 }
 
