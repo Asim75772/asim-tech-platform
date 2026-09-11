@@ -1,519 +1,702 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Add File — ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+box-sizing:border-box;
+margin:0;
+padding:0;
 }
 
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-  background:#0d1117;
-  color:#e6edf3;
-  min-height:100vh;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+background:#0d1117;
+color:#e6edf3;
+min-height:100vh;
 }
 
 .navbar{
-  height:60px;
-  background:#010409;
-  border-bottom:1px solid #30363d;
-  display:flex;
-  align-items:center;
-  padding:0 5%;
-  gap:25px;
+height:64px;
+background:#010409;
+border-bottom:1px solid #30363d;
+display:flex;
+align-items:center;
+padding:0 5%;
+gap:25px;
 }
 
 .logo{
-  font-size:20px;
-  font-weight:700;
-  color:#fff;
+font-size:21px;
+font-weight:700;
+color:white;
 }
 
 .navbar a{
-  color:#e6edf3;
-  text-decoration:none;
-  font-size:14px;
+color:#e6edf3;
+text-decoration:none;
+font-size:14px;
 }
 
 .navbar a:hover{
-  color:#58a6ff;
+color:#58a6ff;
 }
 
 .container{
-  width:92%;
-  max-width:1000px;
-  margin:30px auto;
+width:92%;
+max-width:1000px;
+margin:30px auto;
 }
 
 .back{
-  display:inline-block;
-  margin-bottom:20px;
-  color:#58a6ff;
-  text-decoration:none;
-  font-size:14px;
+display:inline-block;
+margin-bottom:20px;
+color:#58a6ff;
+text-decoration:none;
+font-size:14px;
+}
+
+.back:hover{
+text-decoration:underline;
 }
 
 .header{
-  border-bottom:1px solid #30363d;
-  padding-bottom:20px;
-  margin-bottom:22px;
+border-bottom:1px solid #30363d;
+padding-bottom:20px;
+margin-bottom:22px;
 }
 
 .header h1{
-  font-size:25px;
-  margin-bottom:8px;
+font-size:26px;
+margin-bottom:8px;
 }
 
 .header p{
-  color:#8b949e;
-  font-size:14px;
+color:#8b949e;
+font-size:14px;
+}
+
+.repo-box{
+background:#161b22;
+border:1px solid #30363d;
+border-radius:6px;
+padding:13px 15px;
+margin-bottom:20px;
+font-size:14px;
+color:#8b949e;
+}
+
+.repo-box strong{
+color:#58a6ff;
 }
 
 .card{
-  background:#161b22;
-  border:1px solid #30363d;
-  border-radius:8px;
-  padding:22px;
-  margin-bottom:20px;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:8px;
+padding:22px;
 }
 
 .tabs{
-  display:flex;
-  gap:8px;
-  margin-bottom:20px;
-  flex-wrap:wrap;
+display:flex;
+gap:8px;
+margin-bottom:22px;
+border-bottom:1px solid #30363d;
+padding-bottom:12px;
 }
 
 .tab{
-  border:1px solid #30363d;
-  background:#21262d;
-  color:#e6edf3;
-  padding:9px 15px;
-  border-radius:6px;
-  cursor:pointer;
+border:1px solid #30363d;
+background:#21262d;
+color:#e6edf3;
+padding:9px 15px;
+border-radius:6px;
+cursor:pointer;
+font-size:14px;
+}
+
+.tab:hover{
+background:#30363d;
 }
 
 .tab.active{
-  background:#238636;
-  border-color:#238636;
-  color:white;
+background:#238636;
+border-color:#238636;
+color:white;
 }
 
 .panel{
-  display:none;
+display:none;
 }
 
 .panel.active{
-  display:block;
+display:block;
+}
+
+.field{
+margin-bottom:20px;
 }
 
 label{
-  display:block;
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:7px;
+display:block;
+font-size:14px;
+font-weight:600;
+margin-bottom:8px;
 }
 
 input[type="text"],
 textarea{
-  width:100%;
-  background:#0d1117;
-  border:1px solid #30363d;
-  border-radius:6px;
-  color:#e6edf3;
-  padding:11px 12px;
-  font-size:14px;
-  outline:none;
+width:100%;
+background:#0d1117;
+border:1px solid #30363d;
+border-radius:6px;
+color:#e6edf3;
+padding:11px 12px;
+font-size:14px;
+outline:none;
 }
 
 input[type="text"]:focus,
 textarea:focus{
-  border-color:#58a6ff;
-  box-shadow:0 0 0 2px rgba(88,166,255,.15);
+border-color:#58a6ff;
+box-shadow:0 0 0 2px rgba(88,166,255,.15);
 }
 
 textarea{
-  min-height:350px;
-  resize:vertical;
-  font-family:monospace;
-  line-height:1.5;
-}
-
-.field{
-  margin-bottom:18px;
+min-height:360px;
+resize:vertical;
+font-family:monospace;
+line-height:1.5;
 }
 
 .help{
-  color:#8b949e;
-  font-size:12px;
-  margin-top:6px;
+color:#8b949e;
+font-size:12px;
+margin-top:7px;
+line-height:1.5;
 }
 
 .drop-zone{
-  border:2px dashed #30363d;
-  border-radius:8px;
-  padding:45px 20px;
-  text-align:center;
-  cursor:pointer;
-  transition:.2s;
+border:2px dashed #30363d;
+border-radius:8px;
+padding:45px 20px;
+text-align:center;
+cursor:pointer;
+transition:.2s;
 }
 
 .drop-zone:hover,
 .drop-zone.drag{
-  border-color:#58a6ff;
-  background:#0d1117;
+border-color:#58a6ff;
+background:#0d1117;
 }
 
-.drop-zone .icon{
-  font-size:40px;
-  margin-bottom:12px;
+.drop-icon{
+font-size:42px;
+margin-bottom:12px;
 }
 
-.drop-zone strong{
-  display:block;
-  margin-bottom:7px;
+.drop-title{
+font-size:15px;
+font-weight:600;
+margin-bottom:7px;
 }
 
-.drop-zone span{
-  color:#8b949e;
-  font-size:13px;
+.drop-subtitle{
+color:#8b949e;
+font-size:13px;
 }
 
 .file-info{
-  display:none;
-  margin-top:15px;
-  padding:13px;
-  background:#0d1117;
-  border:1px solid #30363d;
-  border-radius:6px;
+display:none;
+margin-top:15px;
+padding:13px;
+background:#0d1117;
+border:1px solid #30363d;
+border-radius:6px;
 }
 
 .file-info.show{
-  display:block;
+display:block;
 }
 
 .file-name{
-  font-weight:600;
+font-weight:600;
+color:#e6edf3;
+word-break:break-word;
 }
 
 .file-size{
-  color:#8b949e;
-  font-size:12px;
-  margin-top:4px;
+color:#8b949e;
+font-size:12px;
+margin-top:5px;
 }
 
 .actions{
-  display:flex;
-  gap:10px;
-  margin-top:20px;
-  flex-wrap:wrap;
+display:flex;
+gap:10px;
+margin-top:22px;
+flex-wrap:wrap;
 }
 
-button,
 .btn{
-  border:1px solid #30363d;
-  background:#21262d;
-  color:#e6edf3;
-  padding:10px 16px;
-  border-radius:6px;
-  cursor:pointer;
-  font-size:14px;
-  text-decoration:none;
+border:1px solid #30363d;
+background:#21262d;
+color:#e6edf3;
+padding:9px 16px;
+border-radius:6px;
+cursor:pointer;
+font-size:14px;
+text-decoration:none;
+display:inline-block;
 }
 
-button:hover,
 .btn:hover{
-  background:#30363d;
+background:#30363d;
 }
 
-.primary{
-  background:#238636;
-  border-color:#238636;
-  color:white;
+.btn-green{
+background:#238636;
+border-color:#238636;
+color:white;
 }
 
-.primary:hover{
-  background:#2ea043;
+.btn-green:hover{
+background:#2ea043;
 }
 
-.primary:disabled{
-  opacity:.5;
-  cursor:not-allowed;
+.btn-green:disabled{
+opacity:.5;
+cursor:not-allowed;
+}
+
+.btn-blue{
+background:#1f6feb;
+border-color:#1f6feb;
+color:white;
+}
+
+.btn-blue:hover{
+background:#388bfd;
 }
 
 .message{
-  display:none;
-  padding:12px 14px;
-  border-radius:6px;
-  margin-bottom:18px;
-  font-size:14px;
+display:none;
+padding:12px 14px;
+border-radius:6px;
+margin-bottom:18px;
+font-size:14px;
+line-height:1.5;
 }
 
 .message.show{
-  display:block;
+display:block;
 }
 
 .message.success{
-  background:rgba(46,160,67,.15);
-  border:1px solid #238636;
-  color:#3fb950;
+background:rgba(46,160,67,.15);
+border:1px solid #238636;
+color:#3fb950;
 }
 
 .message.error{
-  background:rgba(248,81,73,.12);
-  border:1px solid #f85149;
-  color:#ff7b72;
+background:rgba(248,81,73,.12);
+border:1px solid #f85149;
+color:#ff7b72;
 }
 
 .loading{
-  text-align:center;
-  padding:40px;
-  color:#8b949e;
-}
-
-.repo-box{
-  background:#0d1117;
-  border:1px solid #30363d;
-  border-radius:6px;
-  padding:12px;
-  margin-bottom:20px;
-}
-
-.repo-box strong{
-  color:#fff;
+padding:60px 20px;
+text-align:center;
+color:#8b949e;
+font-size:15px;
 }
 
 footer{
-  text-align:center;
-  color:#6e7681;
-  font-size:12px;
-  padding:40px 0;
+text-align:center;
+padding:45px 10px;
+color:#6e7681;
+font-size:12px;
 }
 
 @media(max-width:600px){
-  .navbar{
-    padding:0 4%;
-    gap:15px;
-  }
 
-  .navbar a{
-    font-size:12px;
-  }
-
-  .container{
-    width:94%;
-    margin:20px auto;
-  }
-
-  .card{
-    padding:16px;
-  }
-
-  textarea{
-    min-height:280px;
-  }
+.navbar{
+height:58px;
+padding:0 4%;
+gap:14px;
 }
+
+.logo{
+font-size:18px;
+}
+
+.navbar a{
+font-size:12px;
+}
+
+.container{
+width:94%;
+margin:20px auto;
+}
+
+.header h1{
+font-size:23px;
+}
+
+.card{
+padding:16px;
+}
+
+.tabs{
+overflow-x:auto;
+}
+
+.tab{
+white-space:nowrap;
+}
+
+textarea{
+min-height:280px;
+}
+
+.drop-zone{
+padding:35px 15px;
+}
+
+}
+
 </style>
+
 </head>
 
 <body>
 
-<div class="navbar">
-  <div class="logo">⚡ ASIM TECH</div>
-  <a href="index.html">Home</a>
-  <a href="repositories.html">Repositories</a>
-  <a href="dashboard.html">Dashboard</a>
+<nav class="navbar">
+
+<div class="logo">
+⚡ ASIM TECH
 </div>
+
+<a href="index.html">
+Home
+</a>
+
+<a href="repositories.html">
+Repositories
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+</nav>
+
 
 <div class="container">
 
-  <a href="#" class="back" id="backBtn">← Back to repository</a>
-
-  <div class="header">
-    <h1>＋ Add file</h1>
-    <p>Create a new file or upload a file to this repository.</p>
-  </div>
-
-  <div id="loading" class="loading">
-    Loading repository...
-  </div>
-
-  <div id="mainContent" style="display:none;">
-
-    <div class="repo-box">
-      Repository:
-      <strong id="repoName">Loading...</strong>
-    </div>
-
-    <div id="message" class="message"></div>
-
-    <div class="card">
-
-      <div class="tabs">
-        <button class="tab active" id="createTab">
-          ✏️ Create file
-        </button>
-
-        <button class="tab" id="uploadTab">
-          📤 Upload file
-        </button>
-      </div>
-
-      <!-- CREATE FILE -->
-
-      <div class="panel active" id="createPanel">
-
-        <div class="field">
-          <label for="filePath">File name / path</label>
-
-          <input
-            type="text"
-            id="filePath"
-            placeholder="example.html or folder/example.html"
-          >
-
-          <div class="help">
-            Example: <b>index.html</b>,
-            <b>css/style.css</b>,
-            <b>js/app.js</b>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="fileContent">File content</label>
-
-          <textarea
-            id="fileContent"
-            placeholder="Write your file content here..."
-          ></textarea>
-        </div>
-
-        <div class="actions">
-          <button class="btn" id="cancelCreate">
-            Cancel
-          </button>
-
-          <button class="primary" id="createButton">
-            ✓ Create file
-          </button>
-        </div>
-
-      </div>
+<a href="#" id="backBtn" class="back">
+← Back to repository
+</a>
 
 
-      <!-- UPLOAD FILE -->
+<div class="header">
 
-      <div class="panel" id="uploadPanel">
+<h1>
+＋ Add file
+</h1>
 
-        <div class="field">
-          <label>Upload file</label>
+<p>
+Create a new file or upload a file to this repository.
+</p>
 
-          <div class="drop-zone" id="dropZone">
+</div>
 
-            <div class="icon">📁</div>
 
-            <strong>
-              Click to select a file
-            </strong>
+<div id="loading" class="loading">
+Loading repository...
+</div>
 
-            <span>
-              or drag & drop your file here
-            </span>
 
-            <input
-              type="file"
-              id="fileInput"
-              hidden
-            >
+<div id="mainContent" style="display:none;">
 
-          </div>
+<div class="repo-box">
 
-          <div class="help">
-            Maximum file size: 50 MB
-          </div>
+Repository:
 
-          <div class="file-info" id="fileInfo">
-            <div class="file-name" id="selectedFileName"></div>
-            <div class="file-size" id="selectedFileSize"></div>
-          </div>
+<strong id="repoName">
+Loading...
+</strong>
 
-        </div>
+</div>
 
-        <div class="field">
-          <label for="uploadPath">
-            File path
-          </label>
 
-          <input
-            type="text"
-            id="uploadPath"
-            placeholder="assets/myfile.png"
-          >
+<div id="message" class="message"></div>
 
-          <div class="help">
-            The file will be stored securely in Supabase Storage.
-          </div>
-        </div>
 
-        <div class="actions">
+<div class="card">
 
-          <button class="btn" id="cancelUpload">
-            Cancel
-          </button>
 
-          <button
-            class="primary"
-            id="uploadButton"
-            disabled
-          >
-            📤 Upload file
-          </button>
+<div class="tabs">
 
-        </div>
+<button
+type="button"
+class="tab active"
+id="createTab">
 
-      </div>
+✏️ Create file
 
-    </div>
+</button>
 
-  </div>
 
-  <footer>
-    © 2026 ASIM TECH — Code. Create. Innovate.
-  </footer>
+<button
+type="button"
+class="tab"
+id="uploadTab">
+
+📤 Upload file
+
+</button>
+
+</div>
+
+
+<!-- CREATE FILE -->
+
+<div
+id="createPanel"
+class="panel active">
+
+<div class="field">
+
+<label for="filePath">
+File name / path
+</label>
+
+<input
+type="text"
+id="filePath"
+placeholder="example.html"
+/>
+
+<div class="help">
+
+Examples:
+
+<strong>index.html</strong>
+•
+<strong>css/style.css</strong>
+•
+<strong>js/app.js</strong>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label for="fileContent">
+File content
+</label>
+
+<textarea
+id="fileContent"
+placeholder="Write your file content here..."
+></textarea>
+
+</div>
+
+
+<div class="actions">
+
+<button
+type="button"
+class="btn"
+id="cancelCreate">
+
+Cancel
+
+</button>
+
+
+<button
+type="button"
+class="btn btn-green"
+id="createButton">
+
+✓ Create file
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- UPLOAD FILE -->
+
+<div
+id="uploadPanel"
+class="panel">
+
+<div class="field">
+
+<label>
+Select file
+</label>
+
+
+<div
+class="drop-zone"
+id="dropZone">
+
+<div class="drop-icon">
+📁
+</div>
+
+<div class="drop-title">
+Click to select a file
+</div>
+
+<div class="drop-subtitle">
+or drag & drop your file here
+</div>
+
+<input
+type="file"
+id="fileInput"
+hidden
+>
+
+</div>
+
+
+<div class="help">
+Maximum file size: <strong>50 MB</strong>
+</div>
+
+
+<div
+id="fileInfo"
+class="file-info">
+
+<div
+id="selectedFileName"
+class="file-name">
+</div>
+
+<div
+id="selectedFileSize"
+class="file-size">
+</div>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label for="uploadPath">
+File path
+</label>
+
+<input
+type="text"
+id="uploadPath"
+placeholder="assets/myfile.png"
+/>
+
+<div class="help">
+
+The uploaded file will be stored securely in the
+<strong>repository-files</strong> storage bucket.
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+type="button"
+class="btn"
+id="cancelUpload">
+
+Cancel
+
+</button>
+
+
+<button
+type="button"
+class="btn btn-blue"
+id="uploadButton"
+disabled>
+
+📤 Upload file
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+
+© 2026 ASIM TECH — Code. Create. Innovate.
+
+</footer>
 
 </div>
 
 
 <script>
+
 /* =========================================================
-   SUPABASE
+   SUPABASE CONFIGURATION
 ========================================================= */
 
 const SUPABASE_URL =
-  "https://lgwaeqgiqrsjprsecwxx.supabase.co";
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-/*
- IMPORTANT:
- Use the same Supabase ANON/PUBLIC key that is already used
- by your existing ASIM TECH pages.
-*/
-const SUPABASE_ANON_KEY =
-  "PASTE_YOUR_EXISTING_SUPABASE_ANON_KEY_HERE";
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
 const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* =========================================================
+   URL PARAMETERS
+========================================================= */
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const repositoryId =
+params.get("repository_id") ||
+params.get("id");
 
 
 /* =========================================================
@@ -521,78 +704,67 @@ const supabaseClient =
 ========================================================= */
 
 const loading =
-  document.getElementById("loading");
+document.getElementById("loading");
 
 const mainContent =
-  document.getElementById("mainContent");
+document.getElementById("mainContent");
 
 const repoName =
-  document.getElementById("repoName");
+document.getElementById("repoName");
 
 const message =
-  document.getElementById("message");
+document.getElementById("message");
 
 const createTab =
-  document.getElementById("createTab");
+document.getElementById("createTab");
 
 const uploadTab =
-  document.getElementById("uploadTab");
+document.getElementById("uploadTab");
 
 const createPanel =
-  document.getElementById("createPanel");
+document.getElementById("createPanel");
 
 const uploadPanel =
-  document.getElementById("uploadPanel");
-
-const fileInput =
-  document.getElementById("fileInput");
-
-const dropZone =
-  document.getElementById("dropZone");
-
-const fileInfo =
-  document.getElementById("fileInfo");
-
-const selectedFileName =
-  document.getElementById("selectedFileName");
-
-const selectedFileSize =
-  document.getElementById("selectedFileSize");
-
-const uploadButton =
-  document.getElementById("uploadButton");
-
-const uploadPath =
-  document.getElementById("uploadPath");
+document.getElementById("uploadPanel");
 
 const filePath =
-  document.getElementById("filePath");
+document.getElementById("filePath");
 
 const fileContent =
-  document.getElementById("fileContent");
+document.getElementById("fileContent");
 
 const createButton =
-  document.getElementById("createButton");
+document.getElementById("createButton");
 
+const uploadButton =
+document.getElementById("uploadButton");
 
-/* =========================================================
-   REPOSITORY ID
-========================================================= */
+const fileInput =
+document.getElementById("fileInput");
 
-const params =
-  new URLSearchParams(window.location.search);
+const dropZone =
+document.getElementById("dropZone");
 
-const repositoryId =
-  params.get("repository_id") ||
-  params.get("id");
+const fileInfo =
+document.getElementById("fileInfo");
 
+const selectedFileName =
+document.getElementById("selectedFileName");
 
-/* =========================================================
-   CURRENT USER / REPOSITORY
-========================================================= */
+const selectedFileSize =
+document.getElementById("selectedFileSize");
+
+const uploadPath =
+document.getElementById("uploadPath");
+
+const backBtn =
+document.getElementById("backBtn");
+
 
 let currentUser = null;
+
 let repository = null;
+
 let selectedFile = null;
 
 
@@ -600,39 +772,55 @@ let selectedFile = null;
    MESSAGE
 ========================================================= */
 
-function showMessage(text, type){
+function showMessage(text,type){
 
-  message.textContent = text;
+message.textContent =
+text;
 
-  message.className =
-    "message show " + type;
+message.className =
+"message show " + type;
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
 }
 
 
 /* =========================================================
-   FORMAT FILE SIZE
+   FILE SIZE
 ========================================================= */
 
 function formatFileSize(bytes){
 
-  if(bytes < 1024){
-    return bytes + " B";
-  }
+if(bytes < 1024){
 
-  if(bytes < 1024 * 1024){
-    return (bytes / 1024).toFixed(1) + " KB";
-  }
+return bytes + " B";
 
-  if(bytes < 1024 * 1024 * 1024){
-    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-  }
+}
 
-  return (bytes / (1024 * 1024 * 1024)).toFixed(1) + " GB";
+if(bytes < 1024 * 1024){
+
+return (
+bytes / 1024
+).toFixed(1) + " KB";
+
+}
+
+if(bytes < 1024 * 1024 * 1024){
+
+return (
+bytes / (1024 * 1024)
+).toFixed(1) + " MB";
+
+}
+
+return (
+bytes /
+(1024 * 1024 * 1024)
+).toFixed(1) + " GB";
+
 }
 
 
@@ -642,59 +830,60 @@ function formatFileSize(bytes){
 
 function detectLanguage(path){
 
-  const ext =
-    path.split(".").pop().toLowerCase();
+const ext =
+path.split(".").pop().toLowerCase();
 
-  const languages = {
+const languages = {
 
-    html:"html",
-    htm:"html",
+html:"html",
+htm:"html",
 
-    css:"css",
+css:"css",
 
-    js:"javascript",
-    mjs:"javascript",
-    cjs:"javascript",
+js:"javascript",
+mjs:"javascript",
+cjs:"javascript",
 
-    ts:"typescript",
+ts:"typescript",
 
-    json:"json",
+json:"json",
 
-    xml:"xml",
+xml:"xml",
 
-    md:"markdown",
+md:"markdown",
 
-    txt:"text",
+txt:"text",
 
-    csv:"csv",
+csv:"csv",
 
-    php:"php",
+php:"php",
 
-    py:"python",
+py:"python",
 
-    java:"java",
+java:"java",
 
-    c:"c",
+c:"c",
 
-    cpp:"cpp",
+cpp:"cpp",
 
-    h:"c",
+h:"c",
 
-    hpp:"cpp",
+hpp:"cpp",
 
-    sql:"sql",
+sql:"sql",
 
-    sh:"shell",
+sh:"shell",
 
-    bash:"shell",
+bash:"shell",
 
-    yaml:"yaml",
+yaml:"yaml",
 
-    yml:"yaml"
+yml:"yaml"
 
-  };
+};
 
-  return languages[ext] || "text";
+return languages[ext] || "text";
+
 }
 
 
@@ -704,13 +893,11 @@ function detectLanguage(path){
 
 function cleanPath(path){
 
-  path = path.trim();
+return path
+.trim()
+.replace(/^\/+/,"")
+.replace(/\/+/g,"/");
 
-  path = path.replace(/^\/+/, "");
-
-  path = path.replace(/\/+/g, "/");
-
-  return path;
 }
 
 
@@ -720,130 +907,186 @@ function cleanPath(path){
 
 function validatePath(path){
 
-  if(!path){
-    return "File path is required.";
-  }
+if(!path){
 
-  if(path.includes("..")){
-    return "Invalid file path.";
-  }
+return "File path is required.";
 
-  if(path.startsWith("/")){
-    return "File path cannot start with /.";
-  }
+}
 
-  if(path.endsWith("/")){
-    return "Please enter a file name.";
-  }
+if(path.includes("..")){
 
-  if(path.length > 500){
-    return "File path is too long.";
-  }
+return "Invalid file path.";
 
-  return null;
+}
+
+if(path.startsWith("/")){
+
+return "File path cannot start with /.";
+
+}
+
+if(path.endsWith("/")){
+
+return "Please enter a file name.";
+
+}
+
+if(path.length > 500){
+
+return "File path is too long.";
+
+}
+
+return null;
+
 }
 
 
 /* =========================================================
-   INIT
+   INITIALIZE
 ========================================================= */
 
 async function init(){
 
-  if(!repositoryId){
+try{
 
-    loading.innerHTML =
-      "❌ Repository ID is missing.";
+if(!repositoryId){
 
-    return;
-  }
+loading.innerHTML =
+"❌ Repository ID is missing.";
 
-  try{
-
-    const {
-      data:authData,
-      error:authError
-    } =
-      await supabaseClient.auth.getUser();
-
-    if(authError || !authData.user){
-
-      loading.innerHTML =
-        "❌ Please login first.";
-
-      return;
-    }
-
-    currentUser =
-      authData.user;
-
-
-    /* GET REPOSITORY */
-
-    const {
-      data:repoData,
-      error:repoError
-    } =
-      await supabaseClient
-        .from("repositories")
-        .select("*")
-        .eq("id", repositoryId)
-        .single();
-
-    if(repoError || !repoData){
-
-      loading.innerHTML =
-        "❌ Repository not found.";
-
-      return;
-    }
-
-    repository =
-      repoData;
-
-
-    /* ONLY OWNER CAN ADD FILE */
-
-    if(repository.owner_id !== currentUser.id){
-
-      loading.innerHTML =
-        "❌ You do not have permission to add files to this repository.";
-
-      return;
-    }
-
-
-    repoName.textContent =
-      repository.name;
-
-
-    document.title =
-      "Add file — " +
-      repository.name +
-      " — ASIM TECH";
-
-
-    document.getElementById("backBtn").href =
-      "repository-details.html?repository_id=" +
-      encodeURIComponent(repository.id);
-
-
-    loading.style.display =
-      "none";
-
-    mainContent.style.display =
-      "block";
-
-  }catch(error){
-
-    console.error(error);
-
-    loading.innerHTML =
-      "❌ Something went wrong.";
-
-  }
+return;
 
 }
+
+
+/* AUTH */
+
+const {
+data,
+error
+} =
+await supabaseClient
+.auth
+.getUser();
+
+
+if(error){
+
+throw error;
+
+}
+
+
+if(!data.user){
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+currentUser =
+data.user;
+
+
+/* REPOSITORY */
+
+const {
+data:repo,
+error:repoError
+} =
+await supabaseClient
+.from("repositories")
+.select("*")
+.eq("id",repositoryId)
+.single();
+
+
+if(repoError){
+
+throw repoError;
+
+}
+
+
+if(!repo){
+
+loading.innerHTML =
+"❌ Repository not found.";
+
+return;
+
+}
+
+
+repository =
+repo;
+
+
+/* OWNER CHECK */
+
+if(repository.owner_id !== currentUser.id){
+
+loading.innerHTML =
+"❌ You do not have permission to add files to this repository.";
+
+return;
+
+}
+
+
+/* REPOSITORY NAME */
+
+repoName.textContent =
+repository.name;
+
+
+/* PAGE TITLE */
+
+document.title =
+"Add file — " +
+repository.name +
+" — ASIM TECH";
+
+
+/* BACK */
+
+backBtn.href =
+"repository-details.html?repository_id=" +
+encodeURIComponent(
+repository.id
+);
+
+
+/* SHOW */
+
+loading.style.display =
+"none";
+
+mainContent.style.display =
+"block";
+
+}
+catch(error){
+
+console.error(error);
+
+loading.innerHTML =
+"❌ " +
+(
+error.message ||
+"Something went wrong."
+);
+
+}
+
+}
+
+
+/* START */
 
 init();
 
@@ -852,53 +1095,66 @@ init();
    TABS
 ========================================================= */
 
-createTab.addEventListener("click", function(){
+createTab.addEventListener(
+"click",
+function(){
 
-  createTab.classList.add("active");
-  uploadTab.classList.remove("active");
+createTab.classList.add("active");
 
-  createPanel.classList.add("active");
-  uploadPanel.classList.remove("active");
+uploadTab.classList.remove("active");
 
-});
+createPanel.classList.add("active");
+
+uploadPanel.classList.remove("active");
+
+}
+);
 
 
-uploadTab.addEventListener("click", function(){
+uploadTab.addEventListener(
+"click",
+function(){
 
-  uploadTab.classList.add("active");
-  createTab.classList.remove("active");
+uploadTab.classList.add("active");
 
-  uploadPanel.classList.add("active");
-  createPanel.classList.remove("active");
+createTab.classList.remove("active");
 
-});
+uploadPanel.classList.add("active");
+
+createPanel.classList.remove("active");
+
+}
+);
 
 
 /* =========================================================
-   CHECK DUPLICATE PATH
+   CHECK DUPLICATE FILE
 ========================================================= */
 
 async function fileExists(path){
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("repository_files")
-      .select("id")
-      .eq("repository_id", repository.id)
-      .eq("file_path", path)
-      .limit(1);
+const {
+data,
+error
+} =
+await supabaseClient
+.from("repository_files")
+.select("id")
+.eq("repository_id",repository.id)
+.eq("file_path",path)
+.limit(1);
 
-  if(error){
 
-    console.error(error);
+if(error){
 
-    throw error;
-  }
+throw error;
 
-  return data && data.length > 0;
+}
+
+
+return data &&
+data.length > 0;
+
 }
 
 
@@ -907,176 +1163,207 @@ async function fileExists(path){
 ========================================================= */
 
 createButton.addEventListener(
-  "click",
-  async function(){
+"click",
+async function(){
 
-    message.className =
-      "message";
-
-    let path =
-      cleanPath(filePath.value);
-
-    const content =
-      fileContent.value;
-
-    const validation =
-      validatePath(path);
-
-    if(validation){
-
-      showMessage(
-        validation,
-        "error"
-      );
-
-      return;
-    }
-
-    if(!content){
-
-      showMessage(
-        "Please enter file content.",
-        "error"
-      );
-
-      return;
-    }
+message.className =
+"message";
 
 
-    createButton.disabled =
-      true;
+const path =
+cleanPath(
+filePath.value
+);
 
-    createButton.textContent =
-      "Creating...";
-
-
-    try{
-
-      const exists =
-        await fileExists(path);
-
-      if(exists){
-
-        showMessage(
-          "A file with this path already exists.",
-          "error"
-        );
-
-        return;
-      }
+const content =
+fileContent.value;
 
 
-      const language =
-        detectLanguage(path);
+const validation =
+validatePath(path);
 
 
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .from("repository_files")
-          .insert({
+if(validation){
 
-            repository_id:
-              repository.id,
+showMessage(
+validation,
+"error"
+);
 
-            file_path:
-              path,
+return;
 
-            content:
-              content,
-
-            language:
-              language,
-
-            is_binary:
-              false,
-
-            file_size:
-              new Blob([content]).size
-
-          })
-          .select()
-          .single();
+}
 
 
-      if(error){
+createButton.disabled =
+true;
 
-        console.error(error);
-
-        throw error;
-      }
-
-
-      showMessage(
-        "✓ File created successfully.",
-        "success"
-      );
+createButton.textContent =
+"Creating...";
 
 
-      filePath.value = "";
-      fileContent.value = "";
+try{
 
 
-      setTimeout(function(){
+/* DUPLICATE CHECK */
 
-        window.location.href =
-          "repository-details.html?repository_id=" +
-          encodeURIComponent(repository.id);
+if(
+await fileExists(path)
+){
 
-      }, 900);
+showMessage(
+"A file with this path already exists.",
+"error"
+);
+
+return;
+
+}
 
 
-    }catch(error){
+/* LANGUAGE */
 
-      console.error(error);
+const language =
+detectLanguage(path);
 
-      showMessage(
-        error.message ||
-        "Failed to create file.",
-        "error"
-      );
 
-    }finally{
+/* SIZE */
 
-      createButton.disabled =
-        false;
+const fileSize =
+new Blob(
+[content]
+).size;
 
-      createButton.textContent =
-        "✓ Create file";
 
-    }
+/* INSERT */
 
-  }
+const {
+error
+} =
+await supabaseClient
+.from("repository_files")
+.insert({
+
+repository_id:
+repository.id,
+
+file_path:
+path,
+
+content:
+content,
+
+language:
+language,
+
+file_size:
+fileSize,
+
+is_binary:
+false,
+
+mime_type:
+"text/plain"
+
+});
+
+
+if(error){
+
+throw error;
+
+}
+
+
+/* SUCCESS */
+
+showMessage(
+"✓ File created successfully.",
+"success"
+);
+
+
+/* CLEAR */
+
+filePath.value =
+"";
+
+fileContent.value =
+"";
+
+
+/* RETURN */
+
+setTimeout(
+function(){
+
+window.location.href =
+"repository-details.html?repository_id=" +
+encodeURIComponent(
+repository.id
+);
+
+},
+900
+);
+
+
+}
+catch(error){
+
+console.error(error);
+
+showMessage(
+error.message ||
+"Failed to create file.",
+"error"
+);
+
+}
+finally{
+
+createButton.disabled =
+false;
+
+createButton.textContent =
+"✓ Create file";
+
+}
+
+}
 );
 
 
 /* =========================================================
-   FILE SELECT
+   FILE INPUT
 ========================================================= */
 
 dropZone.addEventListener(
-  "click",
-  function(){
+"click",
+function(){
 
-    fileInput.click();
+fileInput.click();
 
-  }
+}
 );
 
 
 fileInput.addEventListener(
-  "change",
-  function(){
+"change",
+function(){
 
-    if(this.files.length){
+if(
+this.files &&
+this.files.length
+){
 
-      selectFile(this.files[0]);
+selectFile(
+this.files[0]
+);
 
-    }
+}
 
-  }
+}
 );
 
 
@@ -1085,45 +1372,58 @@ fileInput.addEventListener(
 ========================================================= */
 
 dropZone.addEventListener(
-  "dragover",
-  function(event){
+"dragover",
+function(event){
 
-    event.preventDefault();
+event.preventDefault();
 
-    dropZone.classList.add("drag");
+dropZone.classList.add(
+"drag"
+);
 
-  }
+}
 );
 
 
 dropZone.addEventListener(
-  "dragleave",
-  function(){
+"dragleave",
+function(){
 
-    dropZone.classList.remove("drag");
+dropZone.classList.remove(
+"drag"
+);
 
-  }
+}
 );
 
 
 dropZone.addEventListener(
-  "drop",
-  function(event){
+"drop",
+function(event){
 
-    event.preventDefault();
+event.preventDefault();
 
-    dropZone.classList.remove("drag");
+dropZone.classList.remove(
+"drag"
+);
 
-    const files =
-      event.dataTransfer.files;
 
-    if(files.length){
+const files =
+event.dataTransfer.files;
 
-      selectFile(files[0]);
 
-    }
+if(
+files &&
+files.length
+){
 
-  }
+selectFile(
+files[0]
+);
+
+}
+
+}
 );
 
 
@@ -1133,47 +1433,62 @@ dropZone.addEventListener(
 
 function selectFile(file){
 
-  if(file.size > 50 * 1024 * 1024){
-
-    showMessage(
-      "File size cannot exceed 50 MB.",
-      "error"
-    );
-
-    selectedFile =
-      null;
-
-    uploadButton.disabled =
-      true;
-
-    return;
-  }
+const maxSize =
+50 * 1024 * 1024;
 
 
-  selectedFile =
-    file;
+if(file.size > maxSize){
+
+showMessage(
+"File size cannot exceed 50 MB.",
+"error"
+);
+
+selectedFile =
+null;
+
+uploadButton.disabled =
+true;
+
+fileInfo.classList.remove(
+"show"
+);
+
+return;
+
+}
 
 
-  selectedFileName.textContent =
-    file.name;
-
-  selectedFileSize.textContent =
-    formatFileSize(file.size);
+selectedFile =
+file;
 
 
-  fileInfo.classList.add("show");
+selectedFileName.textContent =
+file.name;
 
 
-  uploadPath.value =
-    "assets/" + file.name;
+selectedFileSize.textContent =
+formatFileSize(
+file.size
+);
 
 
-  uploadButton.disabled =
-    false;
+fileInfo.classList.add(
+"show"
+);
 
 
-  message.className =
-    "message";
+uploadPath.value =
+"assets/" +
+file.name;
+
+
+uploadButton.disabled =
+false;
+
+
+message.className =
+"message";
 
 }
 
@@ -1183,243 +1498,271 @@ function selectFile(file){
 ========================================================= */
 
 uploadButton.addEventListener(
-  "click",
-  async function(){
+"click",
+async function(){
 
-    if(!selectedFile){
+if(!selectedFile){
 
-      showMessage(
-        "Please select a file.",
-        "error"
-      );
+showMessage(
+"Please select a file.",
+"error"
+);
 
-      return;
-    }
+return;
 
+}
 
-    let path =
-      cleanPath(uploadPath.value);
 
+const path =
+cleanPath(
+uploadPath.value
+);
 
-    const validation =
-      validatePath(path);
 
-    if(validation){
+const validation =
+validatePath(path);
 
-      showMessage(
-        validation,
-        "error"
-      );
 
-      return;
-    }
+if(validation){
 
+showMessage(
+validation,
+"error"
+);
 
-    uploadButton.disabled =
-      true;
+return;
 
-    uploadButton.textContent =
-      "Uploading...";
+}
 
 
-    let uploadedStoragePath =
-      null;
+uploadButton.disabled =
+true;
 
+uploadButton.textContent =
+"Uploading...";
 
-    try{
 
-      const exists =
-        await fileExists(path);
+let storagePath = null;
 
-      if(exists){
 
-        showMessage(
-          "A file with this path already exists.",
-          "error"
-        );
+try{
 
-        return;
-      }
 
+/* DUPLICATE */
 
-      /*
-       Storage path:
-       repository UUID / file path
-      */
+if(
+await fileExists(path)
+){
 
-      uploadedStoragePath =
-        repository.id +
-        "/" +
-        path;
+showMessage(
+"A file with this path already exists.",
+"error"
+);
 
+return;
 
-      /* UPLOAD TO PRIVATE STORAGE */
+}
 
-      const {
-        error:storageError
-      } =
-        await supabaseClient
-          .storage
-          .from("repository-files")
-          .upload(
-            uploadedStoragePath,
-            selectedFile,
-            {
-              upsert:false,
-              contentType:
-                selectedFile.type ||
-                "application/octet-stream"
-            }
-          );
 
+/* STORAGE PATH */
 
-      if(storageError){
+storagePath =
+repository.id +
+"/" +
+path;
 
-        console.error(storageError);
 
-        throw storageError;
-      }
+/* UPLOAD */
 
+const {
+error:storageError
+} =
+await supabaseClient
+.storage
+.from("repository-files")
+.upload(
+storagePath,
+selectedFile,
+{
+upsert:false,
+contentType:
+selectedFile.type ||
+"application/octet-stream"
+}
+);
 
-      /* SAVE METADATA */
 
-      const {
-        error:dbError
-      } =
-        await supabaseClient
-          .from("repository_files")
-          .insert({
+if(storageError){
 
-            repository_id:
-              repository.id,
+throw storageError;
 
-            file_path:
-              path,
+}
 
-            content:
-              null,
 
-            language:
-              detectLanguage(path),
+/* DATABASE RECORD */
 
-            storage_path:
-              uploadedStoragePath,
+const {
+error:dbError
+} =
+await supabaseClient
+.from("repository_files")
+.insert({
 
-            mime_type:
-              selectedFile.type ||
-              "application/octet-stream",
+repository_id:
+repository.id,
 
-            file_size:
-              selectedFile.size,
+file_path:
+path,
 
-            is_binary:
-              true
+content:
+null,
 
-          });
+language:
+detectLanguage(path),
 
+storage_path:
+storagePath,
 
-      if(dbError){
+mime_type:
+selectedFile.type ||
+"application/octet-stream",
 
-        console.error(dbError);
+file_size:
+selectedFile.size,
 
+is_binary:
+true
 
-        /*
-         Roll back storage upload
-         if database insert fails.
-        */
+});
 
-        await supabaseClient
-          .storage
-          .from("repository-files")
-          .remove([
-            uploadedStoragePath
-          ]);
 
+/* ROLLBACK */
 
-        throw dbError;
-      }
+if(dbError){
 
+await supabaseClient
+.storage
+.from("repository-files")
+.remove([
+storagePath
+]);
 
-      showMessage(
-        "✓ File uploaded successfully.",
-        "success"
-      );
+throw dbError;
 
+}
 
-      selectedFile =
-        null;
 
-      fileInput.value =
-        "";
+/* SUCCESS */
 
-      uploadPath.value =
-        "";
+showMessage(
+"✓ File uploaded successfully.",
+"success"
+);
 
-      fileInfo.classList.remove("show");
 
+selectedFile =
+null;
 
-      setTimeout(function(){
+fileInput.value =
+"";
 
-        window.location.href =
-          "repository-details.html?repository_id=" +
-          encodeURIComponent(repository.id);
+uploadPath.value =
+"";
 
-      }, 900);
+fileInfo.classList.remove(
+"show"
+);
 
 
-    }catch(error){
+/* RETURN */
 
-      console.error(error);
+setTimeout(
+function(){
 
-      showMessage(
-        error.message ||
-        "Failed to upload file.",
-        "error"
-      );
+window.location.href =
+"repository-details.html?repository_id=" +
+encodeURIComponent(
+repository.id
+);
 
-    }finally{
+},
+900
+);
 
-      uploadButton.disabled =
-        !selectedFile;
 
-      uploadButton.textContent =
-        "📤 Upload file";
+}
+catch(error){
 
-    }
+console.error(error);
 
-  }
+showMessage(
+error.message ||
+"Failed to upload file.",
+"error"
+);
+
+}
+finally{
+
+if(selectedFile){
+
+uploadButton.disabled =
+false;
+
+}
+else{
+
+uploadButton.disabled =
+true;
+
+}
+
+uploadButton.textContent =
+"📤 Upload file";
+
+}
+
+}
 );
 
 
 /* =========================================================
-   CANCEL
+   CANCEL CREATE
 ========================================================= */
 
 document.getElementById(
-  "cancelCreate"
+"cancelCreate"
 ).addEventListener(
-  "click",
-  function(){
+"click",
+function(){
 
-    window.location.href =
-      "repository-details.html?repository_id=" +
-      encodeURIComponent(repository.id);
+window.location.href =
+"repository-details.html?repository_id=" +
+encodeURIComponent(
+repository.id
+);
 
-  }
+}
 );
 
 
+/* =========================================================
+   CANCEL UPLOAD
+========================================================= */
+
 document.getElementById(
-  "cancelUpload"
+"cancelUpload"
 ).addEventListener(
-  "click",
-  function(){
+"click",
+function(){
 
-    window.location.href =
-      "repository-details.html?repository_id=" +
-      encodeURIComponent(repository.id);
+window.location.href =
+"repository-details.html?repository_id=" +
+encodeURIComponent(
+repository.id
+);
 
-  }
+}
 );
 
 </script>
