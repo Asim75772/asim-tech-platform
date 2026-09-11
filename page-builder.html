@@ -5,7 +5,8 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Web Page Builder - ASIM TECH</title>
 
@@ -173,6 +174,7 @@ button{
 .status{
     margin-top:15px;
     color:#aab7c4;
+    word-break:break-word;
 }
 
 .success{
@@ -529,6 +531,14 @@ let previewURL = null;
 
 
 /* =====================================
+   EDIT MODE
+===================================== */
+
+const isEditMode =
+    !!pageId;
+
+
+/* =====================================
    STATUS
 ===================================== */
 
@@ -587,6 +597,10 @@ async function initialize(){
             user;
 
 
+        /* =============================
+           LOAD REPOSITORY
+        ============================= */
+
         if(repositoryId){
 
             await loadSelectedRepository();
@@ -598,7 +612,11 @@ async function initialize(){
         }
 
 
-        if(pageId){
+        /* =============================
+           EDIT MODE
+        ============================= */
+
+        if(isEditMode){
 
             await loadExistingPage();
 
@@ -614,7 +632,10 @@ async function initialize(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Initialization error:",
+            error
+        );
 
         setStatus(
             error.message ||
@@ -660,7 +681,10 @@ async function loadSelectedRepository(){
 
     if(error){
 
-        console.error(error);
+        console.error(
+            "Repository error:",
+            error
+        );
 
         throw new Error(
             "Unable to load repository."
@@ -763,7 +787,10 @@ async function loadRepositories(){
 
     if(error){
 
-        console.error(error);
+        console.error(
+            "Repositories error:",
+            error
+        );
 
         throw new Error(
             "Unable to load repositories."
@@ -843,6 +870,15 @@ async function loadExistingPage(){
     );
 
 
+    if(!pageId){
+
+        throw new Error(
+            "Page ID missing."
+        );
+
+    }
+
+
     const {
         data:page,
         error
@@ -863,10 +899,14 @@ async function loadExistingPage(){
 
     if(error){
 
-        console.error(error);
+        console.error(
+            "Web page load error:",
+            error
+        );
 
         throw new Error(
-            "Unable to load web page."
+            "Unable to load web page: " +
+            error.message
         );
 
     }
@@ -897,6 +937,10 @@ async function loadExistingPage(){
         page;
 
 
+    /* =============================
+       PAGE TITLE
+    ============================= */
+
     pageTitle.textContent =
         "✏️ Edit Web Page";
 
@@ -909,17 +953,25 @@ async function loadExistingPage(){
         "💾 Save Draft";
 
 
+    /* =============================
+       REPOSITORY
+    ============================= */
+
     repository.value =
         page.repository_id;
 
+
+    /* =============================
+       PAGE NAME
+    ============================= */
 
     pageName.value =
         page.page_name || "";
 
 
-    /* =================================
+    /* =============================
        LOAD DRAFT FIRST
-    ================================= */
+    ============================= */
 
     htmlCode.value =
         page.draft_html_content !== null &&
@@ -948,11 +1000,18 @@ async function loadExistingPage(){
         : (page.js_content || "");
 
 
+    /* =============================
+       AUTOMATIC PREVIEW
+    ============================= */
+
+    updatePreview();
+
+
     setStatus(
 
         page.is_published
 
-        ? "Published page loaded. Your changes will be saved as Draft."
+        ? "Published page loaded. Changes will be saved as Draft."
 
         : "Draft page loaded successfully.",
 
@@ -965,7 +1024,6 @@ async function loadExistingPage(){
 
 /* =====================================
    LIVE PREVIEW
-   BLOB METHOD
 ===================================== */
 
 function updatePreview(){
@@ -1061,7 +1119,10 @@ ${js}
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Preview error:",
+            error
+        );
 
         setStatus(
             "Preview error: " +
@@ -1076,7 +1137,6 @@ ${js}
 
 /* =====================================
    SAVE PAGE
-   NEW + EXISTING
 ===================================== */
 
 async function savePage(){
@@ -1094,6 +1154,10 @@ async function savePage(){
         }
 
 
+        /* =================================
+           REPOSITORY
+        ================================= */
+
         const selectedRepository =
             repository.value;
 
@@ -1108,6 +1172,10 @@ async function savePage(){
 
         }
 
+
+        /* =================================
+           PAGE NAME
+        ================================= */
 
         let name =
             pageName.value.trim();
@@ -1125,7 +1193,7 @@ async function savePage(){
 
 
         /* =================================
-           ADD .HTML AUTOMATICALLY
+           ADD .HTML
         ================================= */
 
         if(
@@ -1139,41 +1207,128 @@ async function savePage(){
         }
 
 
+        /* =================================
+           CONTENT
+        ================================= */
+
         const html =
             htmlCode.value;
 
-
         const css =
             cssCode.value;
-
 
         const js =
             jsCode.value;
 
 
         /* =================================
-           EXISTING PAGE
-           
-           CHECK DUPLICATE FIRST,
-           BUT EXCLUDE CURRENT PAGE
+           IMPORTANT:
+           EXISTING PAGE IS DETERMINED
+           DIRECTLY FROM pageId
         ================================= */
 
-        if(editingPage){
+        if(isEditMode){
 
             setStatus(
-                "Checking page name..."
+                "Checking existing page..."
             );
 
 
+            /*
+             LOAD CURRENT PAGE DIRECTLY
+            */
+
             const {
-                data:existing,
-                error:checkError
+                data:currentPage,
+                error:currentPageError
             } =
             await supabaseClient
 
                 .from("web_pages")
 
-                .select("id")
+                .select(
+                    "id,page_name,repository_id,owner_id,is_published"
+                )
+
+                .eq(
+                    "id",
+                    pageId
+                )
+
+                .single();
+
+
+            if(currentPageError){
+
+                console.error(
+                    "Current page error:",
+                    currentPageError
+                );
+
+                throw new Error(
+                    "Unable to find the page you are editing: " +
+                    currentPageError.message
+                );
+
+            }
+
+
+            if(!currentPage){
+
+                throw new Error(
+                    "Web page not found."
+                );
+
+            }
+
+
+            /* =============================
+               OWNER CHECK
+            ============================= */
+
+            if(
+                currentPage.owner_id !==
+                currentUser.id
+            ){
+
+                throw new Error(
+                    "You are not allowed to edit this page."
+                );
+
+            }
+
+
+            /* =============================
+               REPOSITORY CHECK
+            ============================= */
+
+            if(
+                currentPage.repository_id !==
+                selectedRepository
+            ){
+
+                throw new Error(
+                    "Repository mismatch. Please go back and open Edit again."
+                );
+
+            }
+
+
+            /* =============================
+               DUPLICATE CHECK
+               
+               EXCLUDE CURRENT PAGE
+            ============================= */
+
+            const {
+                data:duplicatePages,
+                error:duplicateError
+            } =
+            await supabaseClient
+
+                .from("web_pages")
+
+                .select("id,page_name")
 
                 .eq(
                     "repository_id",
@@ -1187,26 +1342,29 @@ async function savePage(){
 
                 .neq(
                     "id",
-                    editingPage.id
+                    pageId
                 );
 
 
-            if(checkError){
+            if(duplicateError){
 
-                console.error(checkError);
+                console.error(
+                    "Duplicate check error:",
+                    duplicateError
+                );
 
-                throw checkError;
+                throw duplicateError;
 
             }
 
 
             if(
-                existing &&
-                existing.length > 0
+                duplicatePages &&
+                duplicatePages.length > 0
             ){
 
                 alert(
-                    "A web page with this name already exists in this repository."
+                    "A different web page with this name already exists in this repository."
                 );
 
                 setStatus(
@@ -1220,7 +1378,9 @@ async function savePage(){
 
 
             /* =============================
-               SAVE ONLY DRAFT
+               SAVE DRAFT
+               
+               LIVE CONTENT IS NOT TOUCHED
             ============================= */
 
             setStatus(
@@ -1229,6 +1389,7 @@ async function savePage(){
 
 
             const {
+                data:updateData,
                 error:updateError
             } =
             await supabaseClient
@@ -1253,23 +1414,46 @@ async function savePage(){
 
                 .eq(
                     "id",
-                    editingPage.id
+                    pageId
                 )
 
                 .eq(
                     "owner_id",
                     currentUser.id
+                )
+
+                .select(
+                    "id,page_name"
                 );
 
 
             if(updateError){
 
-                console.error(updateError);
+                console.error(
+                    "Draft update error:",
+                    updateError
+                );
 
                 throw updateError;
 
             }
 
+
+            if(
+                !updateData ||
+                updateData.length === 0
+            ){
+
+                throw new Error(
+                    "Draft was not saved. Please check your permissions."
+                );
+
+            }
+
+
+            /* =============================
+               SUCCESS
+            ============================= */
 
             alert(
                 "Draft saved successfully!"
@@ -1290,7 +1474,6 @@ async function savePage(){
 
         /* =================================
            NEW PAGE
-           DUPLICATE CHECK
         ================================= */
 
         setStatus(
@@ -1306,7 +1489,7 @@ async function savePage(){
 
             .from("web_pages")
 
-            .select("id")
+            .select("id,page_name")
 
             .eq(
                 "repository_id",
@@ -1321,7 +1504,10 @@ async function savePage(){
 
         if(checkError){
 
-            console.error(checkError);
+            console.error(
+                "New page duplicate check error:",
+                checkError
+            );
 
             throw checkError;
 
@@ -1349,10 +1535,6 @@ async function savePage(){
 
         /* =================================
            CREATE NEW PAGE
-           
-           DRAFT + INITIAL LIVE COPY
-
-           UNPUBLISHED
         ================================= */
 
         setStatus(
@@ -1361,6 +1543,7 @@ async function savePage(){
 
 
         const {
+            data:newPage,
             error:insertError
         } =
         await supabaseClient
@@ -1375,6 +1558,11 @@ async function savePage(){
                 page_name:
                     name,
 
+                /*
+                 INITIAL LIVE COPY
+                 BUT PAGE REMAINS UNPUBLISHED
+                */
+
                 html_content:
                     html,
 
@@ -1383,6 +1571,10 @@ async function savePage(){
 
                 js_content:
                     js,
+
+                /*
+                 DRAFT COPY
+                */
 
                 draft_html_content:
                     html,
@@ -1402,17 +1594,40 @@ async function savePage(){
                 published_at:
                     null
 
-            });
+            })
+
+            .select(
+                "id,page_name"
+            );
 
 
         if(insertError){
 
-            console.error(insertError);
+            console.error(
+                "New page insert error:",
+                insertError
+            );
 
             throw insertError;
 
         }
 
+
+        if(
+            !newPage ||
+            newPage.length === 0
+        ){
+
+            throw new Error(
+                "New web page was not created."
+            );
+
+        }
+
+
+        /* =============================
+           SUCCESS
+        ============================= */
 
         alert(
             "Draft saved successfully!"
@@ -1428,7 +1643,10 @@ async function savePage(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Save error:",
+            error
+        );
 
         setStatus(
             error.message ||
