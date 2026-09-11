@@ -105,6 +105,15 @@ border-color:#6e2b2b;
 background:#3d1f25;
 }
 
+.rename-btn{
+color:#79c0ff;
+border-color:#24558a;
+}
+
+.rename-btn:hover{
+background:#172b3d;
+}
+
 .search{
 flex:1;
 min-width:220px;
@@ -1175,6 +1184,12 @@ editUrl +
 
 "</button>" +
 
+'<button class="btn rename-btn" onclick="renameFile()">' +
+
+"✏️ Rename" +
+
+"</button>" +
+
 '<button class="btn delete-btn" onclick="deleteFile()">' +
 
 "🗑️ Delete" +
@@ -1276,6 +1291,12 @@ url +
 "⬇ Download" +
 
 "</a>" +
+
+'<button class="btn rename-btn" onclick="renameFile()">' +
+
+"✏️ Rename" +
+
+"</button>" +
 
 '<button class="btn delete-btn" onclick="deleteFile()">' +
 
@@ -1438,6 +1459,329 @@ url
 
 
 /* =========================
+   RENAME FILE
+========================= */
+
+async function renameFile(){
+
+if(!selectedFile){
+
+showError(
+"No file selected."
+);
+
+return;
+
+}
+
+
+const oldPath =
+selectedFile.file_path || "";
+
+
+const oldName =
+oldPath.split("/").pop();
+
+
+const newName =
+prompt(
+"Enter new file name:",
+oldName
+);
+
+
+if(newName === null){
+
+return;
+
+}
+
+
+const trimmedName =
+newName.trim();
+
+
+if(!trimmedName){
+
+showError(
+"File name cannot be empty."
+);
+
+return;
+
+}
+
+
+/*
+DO NOT ALLOW SLASH
+*/
+
+if(
+trimmedName.includes("/") ||
+trimmedName.includes("\\")
+){
+
+showError(
+"Please enter only the file name. Folder path cannot be changed here."
+);
+
+return;
+
+}
+
+
+/*
+NO CHANGE
+*/
+
+if(trimmedName === oldName){
+
+return;
+
+}
+
+
+/*
+NEW PATH
+*/
+
+const folderPath =
+oldPath.includes("/")
+?
+oldPath.substring(
+0,
+oldPath.lastIndexOf("/")
+)
+:
+"";
+
+
+const newPath =
+folderPath
+?
+folderPath + "/" + trimmedName
+:
+trimmedName;
+
+
+/*
+CHECK DUPLICATE
+*/
+
+try{
+
+const {
+data:existing,
+error:checkError
+} =
+await supabaseClient
+.from("repository_files")
+.select("id")
+.eq("repository_id",repoId)
+.eq("file_path",newPath)
+.maybeSingle();
+
+
+if(checkError)
+throw checkError;
+
+
+if(existing){
+
+showError(
+"A file with the same name already exists in this folder."
+);
+
+return;
+
+}
+
+
+/*
+SHOW LOADING
+*/
+
+document.getElementById(
+"viewerBody"
+).innerHTML =
+
+'<div class="loading">' +
+
+"Renaming file..." +
+
+"</div>";
+
+
+/*
+=========================
+RENAME STORAGE FILE
+=========================
+*/
+
+let newStoragePath =
+selectedFile.storage_path || null;
+
+
+if(
+selectedFile.is_binary &&
+selectedFile.storage_path
+){
+
+const oldStoragePath =
+selectedFile.storage_path;
+
+
+const storageFolder =
+oldStoragePath.includes("/")
+?
+oldStoragePath.substring(
+0,
+oldStoragePath.lastIndexOf("/")
+)
+:
+"";
+
+
+newStoragePath =
+storageFolder
+?
+storageFolder + "/" + trimmedName
+:
+trimmedName;
+
+
+/*
+MOVE STORAGE FILE
+*/
+
+const {
+error:moveError
+} =
+await supabaseClient
+.storage
+.from("repository-files")
+.move(
+oldStoragePath,
+newStoragePath
+);
+
+
+if(moveError)
+throw moveError;
+
+}
+
+
+/*
+=========================
+UPDATE DATABASE
+=========================
+*/
+
+const updateData = {
+
+file_path:newPath
+
+};
+
+
+if(
+selectedFile.is_binary &&
+selectedFile.storage_path
+){
+
+updateData.storage_path =
+newStoragePath;
+
+}
+
+
+const {
+data:updatedFile,
+error:updateError
+} =
+await supabaseClient
+.from("repository_files")
+.update(updateData)
+.eq(
+"id",
+selectedFile.id
+)
+.eq(
+"repository_id",
+repoId
+)
+.select("*")
+.single();
+
+
+if(updateError)
+throw updateError;
+
+
+/*
+SUCCESS
+*/
+
+selectedFile =
+updatedFile;
+
+
+showSuccess(
+"File renamed successfully."
+);
+
+
+/*
+RELOAD FILES
+*/
+
+await loadFiles();
+
+
+/*
+OPEN RENAMED FILE AGAIN
+*/
+
+const renamedFile =
+allFiles.find(
+file =>
+file.id ===
+updatedFile.id
+);
+
+
+if(renamedFile){
+
+await openFile(
+renamedFile
+);
+
+}
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to rename file."
+);
+
+
+/*
+RELOAD IN CASE OF ERROR
+*/
+
+await loadFiles();
+
+}
+
+}
+
+
+/* =========================
    DELETE FILE
 ========================= */
 
@@ -1480,7 +1824,7 @@ return;
 try{
 
 /*
-DISABLE BUTTONS
+DISABLE / LOADING
 */
 
 document.getElementById(
