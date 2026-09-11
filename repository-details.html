@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -58,7 +59,7 @@ max-width:1200px;
 margin:30px auto;
 }
 
-/* REPOSITORY HEADER */
+/* HEADER */
 
 .repo-header{
 border-bottom:1px solid #30363d;
@@ -177,6 +178,16 @@ border-color:#1f6feb;
 color:white;
 }
 
+.btn-purple{
+background:#8957e5;
+border-color:#8957e5;
+color:white;
+}
+
+.btn-purple:hover{
+background:#a371f7;
+}
+
 /* SEARCH */
 
 .search{
@@ -277,12 +288,6 @@ font-size:13px;
 text-align:right;
 }
 
-.empty{
-padding:45px;
-text-align:center;
-color:#8b949e;
-}
-
 /* README */
 
 .readme{
@@ -341,7 +346,45 @@ display:none;
 margin-bottom:20px;
 }
 
-/* FOOTER */
+/* MODAL */
+
+.modal{
+display:none;
+position:fixed;
+z-index:1000;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.7);
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.modal-box{
+width:100%;
+max-width:500px;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:8px;
+padding:25px;
+}
+
+.modal-box h2{
+margin-bottom:10px;
+}
+
+.modal-box p{
+color:#8b949e;
+margin-bottom:20px;
+}
+
+.modal-actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
 
 footer{
 text-align:center;
@@ -396,9 +439,13 @@ margin-right:-5px;
 }
 
 </style>
+
 </head>
 
 <body>
+
+
+<!-- NAVBAR -->
 
 <nav class="navbar">
 
@@ -423,9 +470,11 @@ Dashboard
 
 <div class="container">
 
+
 <div id="loading" class="loading">
 Loading repository...
 </div>
+
 
 <div id="error" class="error"></div>
 
@@ -439,7 +488,12 @@ Loading repository...
 
 <div class="repo-name">
 
-📁 <span id="repoOwner">ASIM TECH</span> /
+📁 <span id="repoOwner">
+ASIM TECH
+</span>
+
+/
+
 <strong id="repoName"></strong>
 
 </div>
@@ -455,7 +509,7 @@ Public
 </span>
 
 <span id="publishBadge" class="badge">
-Website
+Not published
 </span>
 
 </div>
@@ -463,7 +517,7 @@ Website
 </div>
 
 
-<!-- GITHUB STYLE TABS -->
+<!-- TABS -->
 
 <div class="tabs">
 
@@ -471,31 +525,45 @@ Website
 ◉ Code
 </a>
 
-<a class="tab" href="#" onclick="showComingSoon('Issues')">
+<a class="tab"
+href="#"
+onclick="showComingSoon('Issues');return false;">
 Issues
 </a>
 
-<a class="tab" href="#" onclick="showComingSoon('Pull requests')">
+<a class="tab"
+href="#"
+onclick="showComingSoon('Pull requests');return false;">
 Pull requests
 </a>
 
-<a class="tab" href="#" onclick="showComingSoon('Actions')">
+<a class="tab"
+href="#"
+onclick="showComingSoon('Actions');return false;">
 Actions
 </a>
 
-<a class="tab" href="#" onclick="showComingSoon('Projects')">
+<a class="tab"
+href="#"
+onclick="showComingSoon('Projects');return false;">
 Projects
 </a>
 
-<a class="tab" href="#" onclick="showComingSoon('Wiki')">
+<a class="tab"
+href="#"
+onclick="showComingSoon('Wiki');return false;">
 Wiki
 </a>
 
-<a class="tab" href="#" onclick="showComingSoon('Security')">
+<a class="tab"
+href="#"
+onclick="showComingSoon('Security');return false;">
 Security
 </a>
 
-<a class="tab" href="#" onclick="showComingSoon('Insights')">
+<a class="tab"
+href="#"
+onclick="showComingSoon('Insights');return false;">
 Insights
 </a>
 
@@ -512,11 +580,24 @@ Insights
 🌿 main ▾
 </button>
 
+
 <a id="filesButton"
 class="btn"
 href="#">
 📁 Files
 </a>
+
+
+<!-- NEW FILE EXPLORER -->
+
+<a id="explorerButton"
+class="btn btn-purple"
+href="#">
+📂 File Explorer
+</a>
+
+
+<!-- ADD FILE -->
 
 <a id="newFileButton"
 class="btn btn-green"
@@ -525,6 +606,7 @@ href="#">
 </a>
 
 </div>
+
 
 <input
 id="searchInput"
@@ -544,6 +626,7 @@ oninput="filterFiles()"
 <div class="commit-left">
 
 Latest commit:
+
 <strong id="latestCommit">
 Initial repository
 </strong>
@@ -610,17 +693,50 @@ href="#">
 📂 Open Repository Files
 </a>
 
+
 <a id="editAction"
 class="btn"
 href="#">
 ✏️ Edit Repository
 </a>
 
+
 <button
 id="publishAction"
 class="btn btn-blue"
 onclick="publishWebsite()">
 🚀 Publish Website
+</button>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div id="modal"
+class="modal">
+
+<div class="modal-box">
+
+<h2 id="modalTitle">
+Coming Soon
+</h2>
+
+<p id="modalText">
+This feature is coming soon.
+</p>
+
+<div class="modal-actions">
+
+<button
+class="btn"
+onclick="closeModal()">
+Close
 </button>
 
 </div>
@@ -674,17 +790,20 @@ params.get("id");
 ========================= */
 
 let currentUser = null;
+
 let repository = null;
+
 let allFiles = [];
 
 
 /* =========================
-   LOAD
+   LOAD REPOSITORY
 ========================= */
 
 async function loadRepository(){
 
 try{
+
 
 /* USER */
 
@@ -694,8 +813,10 @@ error:userError
 } =
 await supabaseClient.auth.getUser();
 
+
 if(userError)
 throw userError;
+
 
 if(!user){
 
@@ -705,6 +826,7 @@ window.location.href =
 return;
 
 }
+
 
 currentUser = user;
 
@@ -732,13 +854,19 @@ await supabaseClient
 .eq("id",repoId)
 .single();
 
+
 if(repoError)
 throw repoError;
 
-if(!repo)
+
+if(!repo){
+
 throw new Error(
 "Repository not found."
 );
+
+}
+
 
 repository = repo;
 
@@ -749,6 +877,7 @@ document.getElementById(
 "repoName"
 ).textContent =
 repo.name;
+
 
 document.getElementById(
 "repoDescription"
@@ -763,6 +892,7 @@ const visibility =
 document.getElementById(
 "visibilityBadge"
 );
+
 
 if(repo.is_private){
 
@@ -790,6 +920,7 @@ document.getElementById(
 "publishBadge"
 );
 
+
 if(repo.is_published){
 
 publishBadge.textContent =
@@ -809,21 +940,38 @@ const filesUrl =
 "repository-files.html?repository_id=" +
 encodeURIComponent(repo.id);
 
+
 document.getElementById(
 "filesButton"
 ).href =
 filesUrl;
+
 
 document.getElementById(
 "openFilesAction"
 ).href =
 filesUrl;
 
+
+/* FILE EXPLORER */
+
+document.getElementById(
+"explorerButton"
+).href =
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(repo.id);
+
+
+/* ADD FILE */
+
 document.getElementById(
 "newFileButton"
 ).href =
-"file-editor.html?repository_id=" +
+"repository-add-file.html?repository_id=" +
 encodeURIComponent(repo.id);
+
+
+/* EDIT */
 
 document.getElementById(
 "editAction"
@@ -832,7 +980,7 @@ document.getElementById(
 encodeURIComponent(repo.id);
 
 
-/* OWNER */
+/* OWNER CONTROL */
 
 if(repo.owner_id !== user.id){
 
@@ -866,11 +1014,14 @@ await supabaseClient
 .eq("repository_id",repo.id)
 .order("file_path",{ascending:true});
 
+
 if(fileError)
 throw fileError;
 
+
 allFiles =
 files || [];
+
 
 renderFiles(allFiles);
 
@@ -881,6 +1032,7 @@ document.getElementById(
 "readmeTitle"
 ).textContent =
 repo.name;
+
 
 document.getElementById(
 "readmeDescription"
@@ -896,6 +1048,7 @@ document.getElementById(
 ).style.display =
 "none";
 
+
 document.getElementById(
 "mainContent"
 ).style.display =
@@ -906,22 +1059,17 @@ document.getElementById(
 
 console.error(error);
 
+
 document.getElementById(
 "loading"
 ).style.display =
 "none";
 
-const errorBox =
-document.getElementById(
-"error"
-);
 
-errorBox.textContent =
+showError(
 error.message ||
-"Unable to load repository.";
-
-errorBox.style.display =
-"block";
+"Unable to load repository."
+);
 
 }
 
@@ -934,52 +1082,37 @@ errorBox.style.display =
 
 function renderFiles(files){
 
-const container =
+const list =
 document.getElementById(
 "fileList"
 );
 
-container.innerHTML = "";
 
-
-if(!files.length){
-
-container.innerHTML = `
-
-<div class="empty">
-
-📂 This repository is empty.
-
-<br><br>
-
-Create your first file using
-<strong>Add file</strong>.
-
-</div>
-
-`;
-
-document.getElementById(
-"fileCount"
-).textContent =
-"0 files";
-
-return;
-
-}
+list.innerHTML = "";
 
 
 document.getElementById(
 "fileCount"
 ).textContent =
 files.length +
-(files.length === 1
-? " file"
-: " files");
+(files.length === 1 ? " file" : " files");
 
 
-files.forEach(
-function(file){
+if(!files.length){
+
+list.innerHTML =
+'<div class="empty">' +
+'No files found.' +
+'</div>';
+
+return;
+
+}
+
+
+/* CREATE ROW */
+
+files.forEach(file=>{
 
 const row =
 document.createElement("div");
@@ -987,67 +1120,145 @@ document.createElement("div");
 row.className =
 "file-row";
 
-let icon = "📄";
 
-const path =
-file.file_path || "";
+const info =
+document.createElement("div");
 
-if(path.endsWith("/")){
-icon = "📁";
-}else if(
-path.endsWith(".html")
-){
-icon = "🌐";
-}else if(
-path.endsWith(".css")
-){
-icon = "🎨";
-}else if(
-path.endsWith(".js")
-){
-icon = "⚡";
-}else if(
-path.endsWith(".json")
-){
-icon = "🔧";
-}else if(
-path.endsWith(".md")
-){
-icon = "📖";
+info.className =
+"file-info";
+
+
+const icon =
+document.createElement("div");
+
+icon.className =
+"file-icon";
+
+icon.textContent =
+getFileIcon(file);
+
+
+const link =
+document.createElement("a");
+
+link.className =
+"file-name";
+
+link.href =
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(repoId) +
+"&file=" +
+encodeURIComponent(file.file_path);
+
+link.textContent =
+file.file_path;
+
+
+const meta =
+document.createElement("div");
+
+meta.className =
+"file-meta";
+
+meta.textContent =
+file.is_binary ?
+"Binary file" :
+"Text file";
+
+
+info.appendChild(icon);
+
+info.appendChild(link);
+
+
+row.appendChild(info);
+
+row.appendChild(meta);
+
+
+list.appendChild(row);
+
+});
+
 }
 
 
-row.innerHTML = `
+/* =========================
+   FILE ICON
+========================= */
 
-<div class="file-info">
+function getFileIcon(file){
 
-<div class="file-icon">
-${icon}
-</div>
+if(file.is_binary){
 
-<a
-class="file-name"
-href="file-editor.html?repository_id=${encodeURIComponent(repoId)}&file_id=${encodeURIComponent(file.id)}">
+const path =
+(file.file_path || "")
+.toLowerCase();
 
-${escapeHtml(path)}
 
-</a>
+if(
+path.endsWith(".png") ||
+path.endsWith(".jpg") ||
+path.endsWith(".jpeg") ||
+path.endsWith(".gif") ||
+path.endsWith(".webp") ||
+path.endsWith(".svg")
+){
 
-</div>
+return "🖼️";
 
-<div class="file-meta">
+}
 
-${escapeHtml(
-file.language || "text"
-)}
 
-</div>
+if(
+path.endsWith(".pdf")
+){
 
-`;
+return "📕";
 
-container.appendChild(row);
+}
 
-});
+
+if(
+path.endsWith(".zip")
+){
+
+return "🗜️";
+
+}
+
+
+return "📦";
+
+}
+
+
+const path =
+(file.file_path || "")
+.toLowerCase();
+
+
+if(path.endsWith(".html"))
+return "🌐";
+
+
+if(path.endsWith(".css"))
+return "🎨";
+
+
+if(path.endsWith(".js"))
+return "⚙️";
+
+
+if(path.endsWith(".json"))
+return "🔧";
+
+
+if(path.endsWith(".md"))
+return "📖";
+
+
+return "📄";
 
 }
 
@@ -1058,14 +1269,15 @@ container.appendChild(row);
 
 function filterFiles(){
 
-const query =
+const search =
 document.getElementById(
 "searchInput"
 ).value
-.toLowerCase()
-.trim();
+.trim()
+.toLowerCase();
 
-if(!query){
+
+if(!search){
 
 renderFiles(allFiles);
 
@@ -1073,13 +1285,14 @@ return;
 
 }
 
+
 const filtered =
-allFiles.filter(
-file =>
+allFiles.filter(file=>
 (file.file_path || "")
 .toLowerCase()
-.includes(query)
+.includes(search)
 );
+
 
 renderFiles(filtered);
 
@@ -1087,17 +1300,88 @@ renderFiles(filtered);
 
 
 /* =========================
-   ESCAPE
+   PUBLISH WEBSITE
 ========================= */
 
-function escapeHtml(value){
+async function publishWebsite(){
 
-return String(value ?? "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+try{
+
+
+if(!repository){
+
+return;
+
+}
+
+
+/* OWNER */
+
+if(repository.owner_id !== currentUser.id){
+
+showError(
+"You are not allowed to publish this repository."
+);
+
+return;
+
+}
+
+
+/* UPDATE */
+
+const {
+error
+} =
+await supabaseClient
+.from("repositories")
+.update({
+
+is_published:true,
+
+published_at:
+new Date().toISOString()
+
+})
+.eq("id",repository.id)
+.eq("owner_id",currentUser.id);
+
+
+if(error)
+throw error;
+
+
+/* UPDATE LOCAL */
+
+repository.is_published =
+true;
+
+
+/* BADGE */
+
+document.getElementById(
+"publishBadge"
+).textContent =
+"✓ Published";
+
+
+/* SUCCESS */
+
+alert(
+"Website published successfully."
+);
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to publish website."
+);
+
+}
 
 }
 
@@ -1108,40 +1392,53 @@ return String(value ?? "")
 
 function showComingSoon(name){
 
-alert(
+document.getElementById(
+"modalTitle"
+).textContent =
+name;
+
+
+document.getElementById(
+"modalText"
+).textContent =
 name +
-" functionality will be added in the next ASIM TECH upgrade."
-);
+" feature is coming soon in ASIM TECH.";
+
+
+document.getElementById(
+"modal"
+).style.display =
+"flex";
+
+}
+
+
+function closeModal(){
+
+document.getElementById(
+"modal"
+).style.display =
+"none";
 
 }
 
 
 /* =========================
-   PUBLISH
+   ERROR
 ========================= */
 
-async function publishWebsite(){
+function showError(message){
 
-if(!repository ||
-!currentUser){
-
-return;
-
-}
-
-if(repository.owner_id !== currentUser.id){
-
-alert(
-"Only repository owner can publish."
+const box =
+document.getElementById(
+"error"
 );
 
-return;
+box.textContent =
+message;
 
-}
-
-alert(
-"Website publishing will use the ASIM TECH Web Page Builder."
-);
+box.style.display =
+"block";
 
 }
 
