@@ -8,11 +8,15 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Code — ASIM TECH</title>
+<title>Repository — ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
+/* =========================
+   RESET
+========================= */
 
 *{
 box-sizing:border-box;
@@ -20,864 +24,892 @@ margin:0;
 padding:0;
 }
 
+
+/* =========================
+   BODY
+========================= */
+
 body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+
+font-family:
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+Arial,
+sans-serif;
+
 background:#0d1117;
+
 color:#e6edf3;
-min-height:100vh;
+
 }
 
-/* ================= NAVBAR ================= */
+
+/* =========================
+   NAVBAR
+========================= */
 
 .navbar{
+
+height:64px;
+
 background:#010409;
-border-bottom:1px solid #30363d;
-padding:14px 4%;
+
+border-bottom:
+1px solid #30363d;
+
 display:flex;
+
 align-items:center;
-justify-content:space-between;
-gap:20px;
-position:sticky;
-top:0;
-z-index:100;
+
+padding:0 5%;
+
+gap:25px;
+
 }
 
 .logo{
+
 font-size:21px;
+
 font-weight:700;
-color:#36e0b5;
-white-space:nowrap;
+
+color:white;
+
 }
 
-.nav-links{
-display:flex;
-gap:20px;
-align-items:center;
-overflow-x:auto;
-}
+.navbar a{
 
-.nav-links a{
 color:#e6edf3;
+
 text-decoration:none;
+
 font-size:14px;
-white-space:nowrap;
+
 }
 
-.nav-links a:hover{
-color:#36e0b5;
+.navbar a:hover{
+
+color:#58a6ff;
+
 }
 
-/* ================= MAIN ================= */
+
+/* =========================
+   MAIN
+========================= */
 
 .container{
-width:94%;
-max-width:1250px;
-margin:28px auto;
+
+width:92%;
+
+max-width:1200px;
+
+margin:30px auto;
+
 }
 
-/* ================= REPOSITORY HEADER ================= */
+
+/* =========================
+   LOADING
+========================= */
+
+.loading{
+
+padding:50px;
+
+text-align:center;
+
+color:#8b949e;
+
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+.error{
+
+background:#3d1f25;
+
+border:
+1px solid #f85149;
+
+color:#ff7b72;
+
+padding:15px;
+
+border-radius:6px;
+
+display:none;
+
+margin-bottom:20px;
+
+}
+
+
+/* =========================
+   REPOSITORY HEADER
+========================= */
 
 .repo-header{
+
+border-bottom:
+1px solid #30363d;
+
+padding-bottom:22px;
+
 margin-bottom:20px;
+
 }
 
-.back{
+.repo-name{
+
+font-size:27px;
+
+font-weight:500;
+
+margin-bottom:10px;
+
+}
+
+.repo-name span{
+
 color:#8b949e;
-text-decoration:none;
+
+}
+
+.description{
+
+color:#8b949e;
+
 font-size:14px;
-display:inline-block;
-margin-bottom:18px;
-padding:5px 0;
-}
 
-.back:hover{
-color:#58a6ff;
-}
-
-.repo-title{
-font-size:28px;
-font-weight:600;
-margin-bottom:8px;
-line-height:1.3;
-word-break:break-word;
-}
-
-.repo-title span{
-color:#8b949e;
-font-weight:400;
-}
-
-.repo-description{
-color:#8b949e;
-font-size:14px;
 margin-bottom:15px;
-line-height:1.6;
+
 }
 
 .badges{
+
 display:flex;
+
 gap:8px;
+
 flex-wrap:wrap;
+
 }
 
 .badge{
-border:1px solid #30363d;
+
+border:
+1px solid #30363d;
+
 border-radius:20px;
-padding:5px 11px;
+
+padding:5px 10px;
+
 font-size:12px;
-background:#161b22;
+
+color:#8b949e;
+
 }
 
 .public{
+
 color:#3fb950;
+
 }
 
-.private{
-color:#f85149;
-}
 
-/* ================= TABS ================= */
+/* =========================
+   TABS
+========================= */
 
 .tabs{
-display:flex;
-gap:4px;
-border-bottom:1px solid #30363d;
-margin-bottom:22px;
-overflow-x:auto;
-scrollbar-width:none;
-}
 
-.tabs::-webkit-scrollbar{
-display:none;
+display:flex;
+
+gap:5px;
+
+border-bottom:
+1px solid #30363d;
+
+overflow-x:auto;
+
 }
 
 .tab{
-padding:12px 15px;
+
+padding:12px 16px;
+
 color:#8b949e;
+
 text-decoration:none;
+
 font-size:14px;
+
 white-space:nowrap;
-border-bottom:2px solid transparent;
+
+border-bottom:
+2px solid transparent;
+
+cursor:pointer;
+
 }
 
 .tab:hover{
+
 color:#e6edf3;
-border-bottom-color:#8b949e;
+
 }
 
 .tab.active{
+
 color:#e6edf3;
+
 font-weight:600;
+
 border-bottom-color:#f78166;
+
 }
 
-/* ================= TOOLBAR ================= */
+
+/* =========================
+   TOOLBAR
+========================= */
 
 .toolbar{
+
 display:flex;
+
 justify-content:space-between;
+
 align-items:center;
-gap:12px;
-margin-bottom:16px;
+
+gap:15px;
+
+margin:20px 0;
+
 flex-wrap:wrap;
-background:#161b22;
-border:1px solid #30363d;
-padding:12px;
-border-radius:8px;
+
 }
 
-.toolbar-left,
-.toolbar-right{
+.branch-box{
+
 display:flex;
+
 gap:8px;
+
 flex-wrap:wrap;
+
 align-items:center;
+
 }
+
+
+/* =========================
+   BUTTON
+========================= */
 
 .btn{
-border:1px solid #30363d;
+
+border:
+1px solid #30363d;
+
 background:#21262d;
+
 color:#e6edf3;
-padding:9px 15px;
-min-height:42px;
-border-radius:8px;
+
+padding:8px 14px;
+
+border-radius:6px;
+
 font-size:14px;
-font-weight:600;
+
 cursor:pointer;
+
 text-decoration:none;
-display:inline-flex;
-align-items:center;
-justify-content:center;
-transition:all .15s ease;
+
+display:inline-block;
+
 }
 
 .btn:hover{
-background:#30363d;
-}
 
-.btn:active{
-transform:scale(.97);
+background:#30363d;
+
 }
 
 .btn-green{
+
 background:#238636;
-border-color:#2ea043;
+
+border-color:#238636;
+
 color:white;
+
 }
 
 .btn-green:hover{
+
 background:#2ea043;
+
 }
 
 .btn-blue{
+
 background:#1f6feb;
-border-color:#388bfd;
+
+border-color:#1f6feb;
+
 color:white;
+
 }
 
-.btn-blue:hover{
-background:#388bfd;
-}
 
-.btn-purple{
-background:#8957e5;
-border-color:#8957e5;
-color:white;
-}
+/* =========================
+   ADD FILE MENU
+========================= */
 
-/* ================= BRANCH ================= */
+.add-file-wrapper{
 
-.branch{
 position:relative;
+
+display:inline-block;
+
 }
 
-.branch-btn{
-font-weight:600;
+.add-file-menu{
+
+display:none;
+
+position:absolute;
+
+top:43px;
+
+left:0;
+
+background:#161b22;
+
+border:
+1px solid #30363d;
+
+border-radius:6px;
+
+min-width:210px;
+
+z-index:1000;
+
+box-shadow:
+0 8px 25px rgba(0,0,0,.5);
+
+overflow:hidden;
+
 }
 
-/* ================= FILE SEARCH ================= */
+.add-file-menu.show{
+
+display:block;
+
+}
+
+.add-file-menu a{
+
+display:block;
+
+padding:12px 15px;
+
+color:#e6edf3;
+
+text-decoration:none;
+
+font-size:14px;
+
+}
+
+.add-file-menu a:hover{
+
+background:#21262d;
+
+color:#58a6ff;
+
+}
+
+
+/* =========================
+   SEARCH
+========================= */
 
 .search{
-width:270px;
-min-height:42px;
+
+width:100%;
+
+max-width:420px;
+
 background:#0d1117;
-border:1px solid #30363d;
-color:#e6edf3;
+
+border:
+1px solid #30363d;
+
+border-radius:6px;
+
 padding:9px 12px;
-border-radius:8px;
+
+color:#e6edf3;
+
 outline:none;
-font-size:14px;
+
 }
 
 .search:focus{
+
 border-color:#58a6ff;
-box-shadow:0 0 0 2px rgba(56,139,253,.15);
+
 }
 
-.search::placeholder,
-.web-search::placeholder{
-color:#8b949e;
-}
 
-/* ================= COMMIT BAR ================= */
+/* =========================
+   COMMIT BAR
+========================= */
 
 .commit-bar{
+
+border:
+1px solid #30363d;
+
 background:#161b22;
-border:1px solid #30363d;
-border-radius:8px 8px 0 0;
-padding:13px 16px;
+
+border-radius:
+6px 6px 0 0;
+
+padding:13px 15px;
+
 display:flex;
+
 justify-content:space-between;
+
 align-items:center;
-gap:15px;
+
+gap:10px;
+
 flex-wrap:wrap;
-}
 
-.commit-info{
-color:#8b949e;
 font-size:13px;
-line-height:1.5;
+
 }
 
-.commit-info strong{
-color:#e6edf3;
-}
+.commit-left{
 
-.commit-date{
 color:#8b949e;
-font-size:12px;
+
 }
 
-/* ================= FILE LIST ================= */
+.commit-left strong{
+
+color:#58a6ff;
+
+}
+
+.commit-right{
+
+color:#8b949e;
+
+}
+
+
+/* =========================
+   FILE LIST
+========================= */
 
 .file-list{
-border:1px solid #30363d;
+
+border:
+1px solid #30363d;
+
 border-top:0;
-border-radius:0 0 8px 8px;
+
+border-radius:
+0 0 6px 6px;
+
 overflow:hidden;
-background:#0d1117;
+
 }
 
 .file-row{
+
 display:flex;
+
 align-items:center;
+
 justify-content:space-between;
-gap:20px;
+
 padding:13px 16px;
-min-height:60px;
-border-bottom:1px solid #21262d;
-transition:background .15s ease;
+
+border-bottom:
+1px solid #21262d;
+
+gap:15px;
+
 }
 
 .file-row:last-child{
+
 border-bottom:0;
+
 }
 
 .file-row:hover{
+
 background:#161b22;
+
 }
 
-.file-main{
+.file-info{
+
 display:flex;
+
 align-items:center;
+
 gap:12px;
+
 min-width:0;
-flex:1;
+
 }
 
 .file-icon{
+
 font-size:20px;
-width:24px;
+
+width:25px;
+
 text-align:center;
-flex-shrink:0;
+
 }
 
 .file-name{
+
 color:#58a6ff;
-text-decoration:none;
+
 font-size:14px;
-font-weight:500;
+
+text-decoration:none;
+
 word-break:break-word;
-line-height:1.5;
+
 }
 
 .file-name:hover{
+
 text-decoration:underline;
+
 }
 
-.file-language{
+.file-meta{
+
 color:#8b949e;
-font-size:12px;
+
+font-size:13px;
+
+text-align:right;
+
+}
+
+
+/* =========================
+   FILE TYPE BADGE
+========================= */
+
+.file-type{
+
+display:inline-block;
+
 margin-left:8px;
-white-space:nowrap;
+
+padding:
+2px 6px;
+
+border:
+1px solid #30363d;
+
+border-radius:10px;
+
+font-size:10px;
+
+color:#8b949e;
+
 }
 
-.file-actions{
-display:flex;
-gap:6px;
-flex-wrap:wrap;
-flex-shrink:0;
-}
 
-.small-btn{
-padding:8px 11px;
-min-height:38px;
-font-size:12px;
-border-radius:7px;
-}
-
-/* ================= EMPTY ================= */
+/* =========================
+   EMPTY
+========================= */
 
 .empty{
-padding:50px 20px;
+
+padding:45px;
+
 text-align:center;
-border:1px solid #30363d;
-border-radius:8px;
-background:#0d1117;
-}
 
-.empty h2{
-margin-bottom:10px;
-font-size:20px;
-}
-
-.empty p{
 color:#8b949e;
-margin-bottom:20px;
-line-height:1.6;
+
 }
 
-/* ================= README ================= */
+
+/* =========================
+   README
+========================= */
 
 .readme{
-margin-top:24px;
-border:1px solid #30363d;
-border-radius:8px;
-background:#0d1117;
+
+margin-top:25px;
+
+border:
+1px solid #30363d;
+
+border-radius:6px;
+
 overflow:hidden;
+
 }
 
 .readme-header{
+
 background:#161b22;
-padding:13px 16px;
-border-bottom:1px solid #30363d;
+
+padding:12px 16px;
+
 font-weight:600;
+
+border-bottom:
+1px solid #30363d;
+
 }
 
 .readme-body{
+
 padding:25px;
-white-space:pre-wrap;
-word-break:break-word;
+
+line-height:1.7;
+
 color:#c9d1d9;
-font-size:15px;
-line-height:1.8;
+
 }
 
-/* ================= WEB PAGES ================= */
+.readme-body h2{
 
-.section-title{
-font-size:21px;
-font-weight:600;
-margin:38px 0 15px;
-}
+margin-bottom:10px;
 
-.web-box{
-border:1px solid #30363d;
-border-radius:8px;
-background:#0d1117;
-overflow:hidden;
-}
-
-.web-top{
-padding:16px;
-background:#161b22;
-border-bottom:1px solid #30363d;
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:15px;
-flex-wrap:wrap;
-}
-
-.web-description{
-color:#8b949e;
-font-size:13px;
-line-height:1.5;
-}
-
-.web-search{
-width:280px;
-min-height:42px;
-background:#0d1117;
-border:1px solid #30363d;
 color:#e6edf3;
-padding:9px 12px;
-border-radius:8px;
-outline:none;
-font-size:14px;
+
 }
 
-.web-search:focus{
-border-color:#58a6ff;
-box-shadow:0 0 0 2px rgba(56,139,253,.15);
+.readme-body p{
+
+margin-bottom:10px;
+
 }
 
-.web-count{
-padding:12px 16px;
-color:#8b949e;
-font-size:13px;
-border-bottom:1px solid #21262d;
-}
 
-.web-card{
-padding:16px;
-border-bottom:1px solid #21262d;
-transition:background .15s ease;
-}
+/* =========================
+   ACTIONS
+========================= */
 
-.web-card:hover{
-background:#161b22;
-}
+.actions{
 
-.web-card:last-child{
-border-bottom:0;
-}
-
-.web-name{
-font-size:16px;
-font-weight:600;
-color:#58a6ff;
-word-break:break-word;
-line-height:1.5;
-}
-
-.web-meta{
-color:#8b949e;
-font-size:12px;
-margin-top:6px;
-line-height:1.5;
-}
-
-.web-status{
-margin-top:8px;
-font-size:12px;
-}
-
-.status-published{
-color:#3fb950;
-}
-
-.status-unpublished{
-color:#8b949e;
-}
-
-.status-draft{
-color:#d29922;
-}
-
-.web-actions{
-margin-top:12px;
 display:flex;
-gap:7px;
+
+gap:8px;
+
 flex-wrap:wrap;
+
+margin-top:20px;
+
 }
 
-/* ================= PREVIEW MODAL ================= */
 
-.modal{
-display:none;
-position:fixed;
-z-index:9999;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.85);
-padding:25px;
-}
-
-.modal-content{
-height:100%;
-max-width:1200px;
-margin:auto;
-background:white;
-border-radius:8px;
-overflow:hidden;
-display:flex;
-flex-direction:column;
-}
-
-.modal-header{
-height:58px;
-background:#161b22;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 16px;
-}
-
-.modal-title{
-font-weight:600;
-}
-
-.close{
-background:#da3633;
-border:0;
-color:white;
-padding:8px 13px;
-min-height:40px;
-border-radius:7px;
-cursor:pointer;
-font-weight:600;
-}
-
-.close:hover{
-background:#f85149;
-}
-
-#previewFrame{
-width:100%;
-height:calc(100% - 58px);
-border:0;
-background:white;
-}
-
-/* ================= LOADING / ERROR ================= */
-
-.loading{
-text-align:center;
-padding:50px;
-color:#8b949e;
-}
-
-#error{
-display:none;
-background:#3d1d1d;
-border:1px solid #f85149;
-color:#ff7b72;
-padding:15px;
-border-radius:8px;
-margin-bottom:20px;
-line-height:1.5;
-}
-
-/* ================= FOOTER ================= */
+/* =========================
+   FOOTER
+========================= */
 
 footer{
+
 text-align:center;
-color:#6e7681;
-padding:40px 10px;
+
+padding:45px 10px;
+
+color:#8b949e;
+
 font-size:13px;
+
 }
 
-/* =====================================================
-   MOBILE USER FRIENDLY
-   ===================================================== */
 
-@media(max-width:700px){
+/* =========================
+   COMING SOON
+========================= */
+
+.coming-modal{
+
+display:none;
+
+position:fixed;
+
+inset:0;
+
+background:
+rgba(0,0,0,.7);
+
+align-items:center;
+
+justify-content:center;
+
+z-index:2000;
+
+}
+
+.coming-card{
+
+width:90%;
+
+max-width:400px;
+
+background:#161b22;
+
+border:
+1px solid #30363d;
+
+border-radius:8px;
+
+padding:25px;
+
+text-align:center;
+
+}
+
+.coming-card h2{
+
+margin-bottom:10px;
+
+}
+
+.coming-card p{
+
+color:#8b949e;
+
+margin-bottom:20px;
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px){
 
 .navbar{
-padding:12px 4%;
-gap:10px;
+
+padding:0 4%;
+
+gap:15px;
+
 }
 
-.logo{
-font-size:18px;
-}
+.navbar a{
 
-.nav-links{
-gap:8px;
-max-width:65%;
-}
+font-size:12px;
 
-.nav-links a{
-font-size:13px;
 }
 
 .container{
+
 width:94%;
-margin:18px auto;
+
+margin:20px auto;
+
 }
 
-.repo-title{
-font-size:21px;
-}
+.repo-name{
 
-.repo-description{
-font-size:13px;
-}
+font-size:23px;
 
-.back{
-margin-bottom:12px;
 }
-
-.tabs{
-margin-left:-2%;
-margin-right:-2%;
-padding-left:2%;
-padding-right:2%;
-margin-bottom:18px;
-}
-
-.tab{
-padding:11px 13px;
-font-size:13px;
-}
-
-/* Toolbar */
 
 .toolbar{
-padding:10px;
-gap:10px;
+
 align-items:stretch;
-}
 
-.toolbar-left,
-.toolbar-right{
-width:100%;
-}
-
-.toolbar-left{
-display:grid;
-grid-template-columns:1fr 1fr;
-}
-
-.toolbar-left .btn{
-width:100%;
 }
 
 .search{
-width:100%;
+
+max-width:none;
+
 }
-
-/* Commit */
-
-.commit-bar{
-padding:12px;
-gap:7px;
-}
-
-/* Files */
 
 .file-row{
+
 align-items:flex-start;
-flex-direction:column;
-padding:14px 12px;
-gap:12px;
+
 }
 
-.file-main{
-width:100%;
-align-items:flex-start;
+.file-meta{
+
+display:none;
+
 }
 
-.file-icon{
-margin-top:2px;
+.tabs{
+
+margin-left:-5px;
+
+margin-right:-5px;
+
 }
 
-.file-name{
-font-size:15px;
-}
+.add-file-menu{
 
-.file-language{
-display:block;
-margin-left:0;
-margin-top:3px;
-}
+position:fixed;
 
-.file-actions{
-width:100%;
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:6px;
-}
+left:20px;
 
-.file-actions .small-btn{
-width:100%;
-text-align:center;
-}
+right:20px;
 
-/* README */
+top:120px;
 
-.readme-body{
-padding:18px;
-font-size:14px;
-}
+min-width:auto;
 
-/* Web pages */
-
-.section-title{
-font-size:19px;
-margin-top:30px;
-}
-
-.web-top{
-padding:13px;
-}
-
-.web-search{
-width:100%;
-margin-top:7px;
-}
-
-.web-card{
-padding:14px 12px;
-}
-
-.web-name{
-font-size:15px;
-}
-
-.web-actions{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:7px;
-}
-
-.web-actions .btn{
-width:100%;
-text-align:center;
-}
-
-/* New page */
-
-#newWebPage{
-display:block;
-width:100%;
-text-align:center;
-}
-
-/* Modal */
-
-.modal{
-padding:5px;
-}
-
-.modal-content{
-border-radius:6px;
-}
-
-.modal-header{
-height:54px;
-padding:0 10px;
-}
-
-#previewFrame{
-height:calc(100% - 54px);
 }
 
 }
 
-/* =====================================================
-   VERY SMALL PHONES
-   ===================================================== */
 
-@media(max-width:400px){
+/* =========================
+   DELETE BUTTON
+========================= */
 
-.toolbar-left{
-grid-template-columns:1fr;
-}
+.delete-file{
 
-.file-actions{
-grid-template-columns:1fr;
-}
+border:0;
 
-.web-actions{
-grid-template-columns:1fr;
-}
+background:transparent;
 
-.repo-title{
-font-size:19px;
-}
+color:#f85149;
 
-.nav-links{
-max-width:60%;
-}
+cursor:pointer;
 
-.nav-links a{
-font-size:12px;
-}
+font-size:13px;
+
+padding:5px 8px;
 
 }
 
-/* =====================================================
-   TOUCH DEVICE IMPROVEMENT
-   ===================================================== */
+.delete-file:hover{
 
-@media(hover:none){
+background:#3d1f25;
 
-.btn{
-min-height:44px;
-}
-
-.small-btn{
-min-height:40px;
-}
-
-.tab{
-padding-top:13px;
-padding-bottom:13px;
-}
+border-radius:5px;
 
 }
 
@@ -889,13 +921,15 @@ padding-bottom:13px;
 <body>
 
 
+<!-- =========================
+     NAVBAR
+========================= -->
+
 <nav class="navbar">
 
 <div class="logo">
 ⚡ ASIM TECH
 </div>
-
-<div class="nav-links">
 
 <a href="index.html">
 Home
@@ -909,18 +943,19 @@ Repositories
 Dashboard
 </a>
 
-</div>
-
 </nav>
+
 
 
 <div class="container">
 
 
-<div id="error"></div>
+<!-- =========================
+     LOADING
+========================= -->
 
-
-<div id="loading"
+<div
+id="loading"
 class="loading">
 
 Loading repository...
@@ -928,49 +963,74 @@ Loading repository...
 </div>
 
 
-<div id="content"
-style="display:none;">
+
+<!-- =========================
+     ERROR
+========================= -->
+
+<div
+id="error"
+class="error">
+</div>
 
 
-<!-- ================= REPOSITORY HEADER ================= -->
+
+<!-- =========================
+     MAIN CONTENT
+========================= -->
+
+<div
+id="mainContent"
+style="display:none">
+
+
+<!-- =========================
+     REPOSITORY HEADER
+========================= -->
 
 <div class="repo-header">
 
-<a href="repositories.html"
-class="back">
+<div class="repo-name">
 
-← Back to Repositories
+📁
 
-</a>
-
-
-<div class="repo-title">
-
-<span id="ownerName">
+<span id="repoOwner">
 ASIM TECH
 </span>
+
 /
-<strong id="repoName">
-Repository
-</strong>
+
+<strong id="repoName"></strong>
 
 </div>
 
 
-<div id="repoDescription"
-class="repo-description">
+<div
+id="repoDescription"
+class="description">
+
+No description provided.
 
 </div>
 
 
 <div class="badges">
 
-<span id="visibilityBadge"
-class="badge">
+<span
+id="visibilityBadge"
+class="badge public">
+
+Public
+
 </span>
 
-<span id="websiteBadge"
+
+<span
+id="publishBadge"
 class="badge">
+
+Website
+
 </span>
 
 </div>
@@ -978,69 +1038,86 @@ class="badge">
 </div>
 
 
-<!-- ================= TABS ================= -->
+
+<!-- =========================
+     TABS
+========================= -->
 
 <div class="tabs">
 
-<a href="#"
+<a
 class="tab active"
-onclick="return codeTab()">
+href="#">
 
-Code
+◉ Code
 
 </a>
 
-<a href="#"
+
+<a
 class="tab"
-onclick="comingSoon('Issues')">
+href="#"
+onclick="showComingSoon('Issues');return false;">
 
 Issues
 
 </a>
 
-<a href="#"
+
+<a
 class="tab"
-onclick="comingSoon('Pull requests')">
+href="#"
+onclick="showComingSoon('Pull requests');return false;">
 
 Pull requests
 
 </a>
 
-<a href="#"
+
+<a
 class="tab"
-onclick="comingSoon('Actions')">
+href="#"
+onclick="showComingSoon('Actions');return false;">
 
 Actions
 
 </a>
 
-<a href="#"
+
+<a
 class="tab"
-onclick="comingSoon('Projects')">
+href="#"
+onclick="showComingSoon('Projects');return false;">
 
 Projects
 
 </a>
 
-<a href="#"
+
+<a
 class="tab"
-onclick="comingSoon('Wiki')">
+href="#"
+onclick="showComingSoon('Wiki');return false;">
 
 Wiki
 
 </a>
 
-<a href="#"
+
+<a
 class="tab"
-onclick="comingSoon('Security')">
+href="#"
+onclick="showComingSoon('Security');return false;">
 
 Security
 
 </a>
 
-<a href="#"
+
+<a
 class="tab"
-onclick="comingSoon('Insights')">
+href="#"
+onclick="showComingSoon('Insights');return false;">
 
 Insights
 
@@ -1049,154 +1126,264 @@ Insights
 </div>
 
 
-<!-- ================= TOOLBAR ================= -->
+
+<!-- =========================
+     TOOLBAR
+========================= -->
 
 <div class="toolbar">
 
 
-<div class="toolbar-left">
+<div class="branch-box">
 
-
-<div class="branch">
 
 <button
-class="btn branch-btn"
-onclick="branchInfo()">
+class="btn"
+onclick="showComingSoon('Branches')">
 
 🌿 main ▾
+
+</button>
+
+
+
+<a
+id="filesButton"
+class="btn"
+href="#">
+
+📁 Files
+
+</a>
+
+
+
+<!-- ADD FILE -->
+
+<div class="add-file-wrapper">
+
+<button
+id="addFileButton"
+class="btn btn-green"
+onclick="toggleAddFileMenu()">
+
+＋ Add file ▾
+
+</button>
+
+
+<div
+id="addFileMenu"
+class="add-file-menu">
+
+
+<a
+id="createFileMenu"
+href="#">
+
+📄 Create new file
+
+</a>
+
+
+<a
+id="uploadFileMenu"
+href="#">
+
+📤 Upload files
+
+</a>
+
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<input
+id="searchInput"
+class="search"
+type="search"
+placeholder="🔎 Go to file..."
+oninput="filterFiles()">
+
+</div>
+
+
+
+<!-- =========================
+     COMMIT BAR
+========================= -->
+
+<div class="commit-bar">
+
+<div class="commit-left">
+
+Latest commit:
+
+<strong id="latestCommit">
+
+Initial repository
+
+</strong>
+
+</div>
+
+
+<div class="commit-right">
+
+<span id="fileCount">
+
+0 files
+
+</span>
+
+</div>
+
+</div>
+
+
+
+<!-- =========================
+     FILE LIST
+========================= -->
+
+<div
+id="fileList"
+class="file-list">
+
+<div class="empty">
+
+Loading files...
+
+</div>
+
+</div>
+
+
+
+<!-- =========================
+     README
+========================= -->
+
+<div class="readme">
+
+<div class="readme-header">
+
+📖 README.md
+
+</div>
+
+
+<div class="readme-body">
+
+<h2 id="readmeTitle">
+
+Repository
+
+</h2>
+
+
+<p id="readmeDescription">
+
+Welcome to this ASIM TECH repository.
+
+</p>
+
+
+<p>
+
+This repository was created using ASIM TECH Platform.
+
+</p>
+
+</div>
+
+</div>
+
+
+
+<!-- =========================
+     ACTIONS
+========================= -->
+
+<div class="actions">
+
+
+<a
+id="openFilesAction"
+class="btn"
+href="#">
+
+📂 Open Repository Files
+
+</a>
+
+
+<a
+id="editAction"
+class="btn"
+href="#">
+
+✏️ Edit Repository
+
+</a>
+
+
+<button
+id="publishAction"
+class="btn btn-blue"
+onclick="publishWebsite()">
+
+🚀 Publish Website
 
 </button>
 
 </div>
 
 
-<a id="addFile"
+</div>
+
+</div>
+
+
+
+<!-- =========================
+     COMING SOON MODAL
+========================= -->
+
+<div
+id="comingModal"
+class="coming-modal">
+
+<div class="coming-card">
+
+<h2 id="comingTitle">
+Coming Soon
+</h2>
+
+<p id="comingText">
+
+This ASIM TECH feature is under development.
+
+</p>
+
+<button
 class="btn"
-href="#">
+onclick="closeComingSoon()">
 
-＋ Add file ▾
+Close
 
-</a>
-
-
-</div>
-
-
-<div class="toolbar-right">
-
-<input
-id="fileSearch"
-class="search"
-type="search"
-placeholder="🔎 Go to file...">
+</button>
 
 </div>
 
 </div>
 
-
-<!-- ================= COMMIT BAR ================= -->
-
-<div class="commit-bar">
-
-<div class="commit-info">
-
-<strong>Latest update</strong>
-&nbsp; • &nbsp;
-ASIM TECH repository
-
-</div>
-
-<div id="commitDate"
-class="commit-date">
-
-—
-
-</div>
-
-</div>
-
-
-<!-- ================= FILES ================= -->
-
-<div id="files"></div>
-
-
-<!-- ================= README ================= -->
-
-<div id="readme"></div>
-
-
-<!-- ================= WEB PAGES ================= -->
-
-<div class="section-title">
-
-🌐 Web Pages
-
-</div>
-
-
-<div class="web-box">
-
-
-<div class="web-top">
-
-<div>
-
-<strong>
-ASIM TECH Web Page Builder
-</strong>
-
-<div class="web-description"
-style="margin-top:5px;">
-
-Create and publish webpages using HTML, CSS and JavaScript.
-
-</div>
-
-</div>
-
-
-<input
-id="webSearch"
-class="web-search"
-type="search"
-placeholder="🔎 Search web pages...">
-
-</div>
-
-
-<div id="webCount"
-class="web-count">
-
-Loading web pages...
-
-</div>
-
-
-<div style="padding:15px;">
-
-<a id="newWebPage"
-class="btn btn-blue"
-href="#">
-
-＋ New Web Page
-
-</a>
-
-</div>
-
-
-<div id="webPages"></div>
-
-
-</div>
-
-
-</div>
-
-
-</div>
 
 
 <footer>
@@ -1206,59 +1393,21 @@ href="#">
 </footer>
 
 
-<!-- ================= PREVIEW ================= -->
-
-<div id="previewModal"
-class="modal">
-
-
-<div class="modal-content">
-
-
-<div class="modal-header">
-
-<div id="modalTitle"
-class="modal-title">
-
-Web Page Preview
-
-</div>
-
-
-<button
-class="close"
-onclick="closePreview()">
-
-✕ Close
-
-</button>
-
-</div>
-
-
-<iframe
-id="previewFrame"
-sandbox="allow-scripts allow-forms allow-modals">
-
-</iframe>
-
-
-</div>
-
-</div>
-
 
 <script>
 
-/* =========================
+
+/* =========================================
    SUPABASE
-========================= */
+========================================= */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
+
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
 
 const supabaseClient =
 window.supabase.createClient(
@@ -1267,18 +1416,25 @@ SUPABASE_KEY
 );
 
 
-/* =========================
-   URL
-========================= */
+
+/* =========================================
+   PARAMETERS
+========================================= */
 
 const params =
 new URLSearchParams(
 window.location.search
 );
 
-const repoId =
-params.get("repository_id");
 
+const repoId =
+params.get("id");
+
+
+
+/* =========================================
+   VARIABLES
+========================================= */
 
 let currentUser = null;
 
@@ -1286,76 +1442,48 @@ let repository = null;
 
 let allFiles = [];
 
-let allWebPages = [];
 
 
-/* =========================
-   HTML ESCAPE
-========================= */
-
-function escapeHtml(value){
-
-return String(value ?? "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
-}
-
-
-/* =========================
-   DATE
-========================= */
-
-function formatDate(date){
-
-if(!date){
-return "—";
-}
-
-return new Date(date).toLocaleDateString(
-"en-IN",
-{
-day:"numeric",
-month:"short",
-year:"numeric"
-}
-);
-
-}
-
-
-/* =========================
-   ERROR
-========================= */
-
-function showError(message){
-
-document.getElementById(
-"loading"
-).style.display="none";
-
-document.getElementById(
-"error"
-).textContent=message;
-
-document.getElementById(
-"error"
-).style.display="block";
-
-}
-
-
-/* =========================
-   LOAD
-========================= */
+/* =========================================
+   LOAD REPOSITORY
+========================================= */
 
 async function loadRepository(){
 
 try{
 
+
+/* USER */
+
+const {
+data:{user},
+error:userError
+} =
+await supabaseClient
+.auth
+.getUser();
+
+
+if(userError)
+throw userError;
+
+
+if(!user){
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+currentUser =
+user;
+
+
+
+/* REPOSITORY ID */
 
 if(!repoId){
 
@@ -1365,33 +1493,6 @@ throw new Error(
 
 }
 
-
-/* USER */
-
-const {
-data:{user},
-error:userError
-} =
-await supabaseClient.auth.getUser();
-
-
-if(userError){
-
-throw userError;
-
-}
-
-
-if(!user){
-
-window.location.href="login.html";
-
-return;
-
-}
-
-
-currentUser=user;
 
 
 /* REPOSITORY */
@@ -1411,11 +1512,8 @@ await supabaseClient
 .single();
 
 
-if(repoError){
-
+if(repoError)
 throw repoError;
-
-}
 
 
 if(!repo){
@@ -1427,7 +1525,9 @@ throw new Error(
 }
 
 
-repository=repo;
+repository =
+repo;
+
 
 
 /* HEADER */
@@ -1435,14 +1535,15 @@ repository=repo;
 document.getElementById(
 "repoName"
 ).textContent =
-repository.name;
+repo.name;
 
 
 document.getElementById(
 "repoDescription"
 ).textContent =
-repository.description ||
+repo.description ||
 "No description provided.";
+
 
 
 /* VISIBILITY */
@@ -1452,96 +1553,135 @@ document.getElementById(
 "visibilityBadge"
 );
 
-if(repository.is_private){
 
-visibility.textContent="🔒 Private";
+if(repo.is_private){
 
-visibility.className=
-"badge private";
+visibility.textContent =
+"🔒 Private";
 
-}else{
-
-visibility.textContent="🌐 Public";
-
-visibility.className=
-"badge public";
-
-}
-
-
-/* WEBSITE */
-
-const website =
-document.getElementById(
-"websiteBadge"
-);
-
-if(repository.is_published){
-
-website.textContent=
-"✓ Website Published";
-
-website.className=
-"badge public";
-
-}else{
-
-website.textContent=
-"Website Not Published";
-
-website.className=
+visibility.className =
 "badge";
 
+}else{
+
+visibility.textContent =
+"🌎 Public";
+
+visibility.className =
+"badge public";
+
 }
 
 
-/* OWNER */
 
-if(repository.owner_id === currentUser.id){
+/* PUBLISH STATUS */
 
+const publishBadge =
 document.getElementById(
-"ownerName"
-).textContent="You";
+"publishBadge"
+);
+
+
+if(repo.is_published){
+
+publishBadge.textContent =
+"✓ Published";
 
 }else{
 
-document.getElementById(
-"ownerName"
-).textContent="ASIM TECH";
+publishBadge.textContent =
+"Not published";
 
 }
 
 
-/* BUTTON LINKS */
 
-if(repository.owner_id === currentUser.id){
+/* =========================================
+   LINKS
+========================================= */
+
+const filesUrl =
+"repository-files.html?repository_id=" +
+encodeURIComponent(repo.id);
+
 
 document.getElementById(
-"addFile"
+"filesButton"
 ).href =
-"file-editor.html?repository_id=" +
-encodeURIComponent(repoId);
+filesUrl;
+
 
 document.getElementById(
-"newWebPage"
+"openFilesAction"
 ).href =
-"page-builder.html?repository_id=" +
-encodeURIComponent(repoId);
+filesUrl;
 
-}else{
+
+/* CREATE */
+
+const addFileUrl =
+"repository-add-file.html?repository_id=" +
+encodeURIComponent(repo.id);
+
 
 document.getElementById(
-"addFile"
-).style.display="none";
+"createFileMenu"
+).href =
+addFileUrl +
+"&mode=create";
+
 
 document.getElementById(
-"newWebPage"
-).style.display="none";
+"uploadFileMenu"
+).href =
+addFileUrl +
+"&mode=upload";
+
+
+/* EDIT */
+
+document.getElementById(
+"editAction"
+).href =
+"edit-repository.html?id=" +
+encodeURIComponent(repo.id);
+
+
+
+/* =========================================
+   OWNER CONTROL
+========================================= */
+
+const isOwner =
+repo.owner_id === user.id;
+
+
+if(!isOwner){
+
+document.getElementById(
+"editAction"
+).style.display =
+"none";
+
+
+document.getElementById(
+"publishAction"
+).style.display =
+"none";
+
+
+document.getElementById(
+"addFileButton"
+).style.display =
+"none";
 
 }
 
 
-/* FILES */
+
+/* =========================================
+   LOAD FILES
+========================================= */
 
 const {
 data:files,
@@ -1553,185 +1693,217 @@ await supabaseClient
 
 .select("*")
 
-.eq("repository_id",repoId)
+.eq(
+"repository_id",
+repo.id
+)
 
 .order(
 "file_path",
-{ascending:true}
+{
+ascending:true
+}
 );
 
 
-if(fileError){
-
+if(fileError)
 throw fileError;
 
-}
+
+allFiles =
+files || [];
 
 
-allFiles=files || [];
-
-renderFiles(allFiles);
-
-
-/* README */
-
-renderReadme(allFiles);
-
-
-/* WEB PAGES */
-
-const {
-data:pages,
-error:pageError
-} =
-await supabaseClient
-
-.from("web_pages")
-
-.select("*")
-
-.eq("repository_id",repoId)
-
-.order(
-"page_name",
-{ascending:true}
+renderFiles(
+allFiles,
+isOwner
 );
 
 
-if(pageError){
 
-console.error(pageError);
-
-allWebPages=[];
-
-}else{
-
-allWebPages=pages || [];
-
-}
-
-
-renderWebPages(allWebPages);
-
-
-/* DATE */
+/* =========================================
+   README
+========================================= */
 
 document.getElementById(
-"commitDate"
+"readmeTitle"
 ).textContent =
-"Updated " +
-formatDate(repository.updated_at);
+repo.name;
 
 
-/* SHOW */
+document.getElementById(
+"readmeDescription"
+).textContent =
+repo.description ||
+"Welcome to this ASIM TECH repository.";
+
+
+
+/* =========================================
+   SHOW
+========================================= */
 
 document.getElementById(
 "loading"
-).style.display="none";
+).style.display =
+"none";
+
 
 document.getElementById(
-"content"
-).style.display="block";
+"mainContent"
+).style.display =
+"block";
 
 
-}catch(error){
+}
+catch(error){
 
 console.error(error);
 
-showError(
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
+
+const errorBox =
+document.getElementById(
+"error"
+);
+
+
+errorBox.textContent =
+"❌ " +
+(
 error.message ||
 "Unable to load repository."
 );
 
-}
+
+errorBox.style.display =
+"block";
 
 }
 
+}
 
-/* =========================
+
+
+/* =========================================
    FILE ICON
-========================= */
+========================================= */
 
-function getFileIcon(path){
+function getFileIcon(file){
 
-const name =
-path.toLowerCase();
+if(file.is_binary){
 
-if(name.endsWith(".html")){
-return "🌐";
-}
+const type =
+(file.mime_type || "")
+.toLowerCase();
 
-if(name.endsWith(".css")){
-return "🎨";
-}
 
-if(name.endsWith(".js")){
-return "📜";
-}
-
-if(name.endsWith(".json")){
-return "⚙️";
-}
-
-if(name.endsWith(".md")){
-return "📘";
-}
-
-if(
-name.endsWith(".png") ||
-name.endsWith(".jpg") ||
-name.endsWith(".jpeg") ||
-name.endsWith(".gif")
-){
-
+if(type.startsWith("image/"))
 return "🖼️";
 
+
+if(type === "application/pdf")
+return "📕";
+
+
+if(type.includes("word"))
+return "📘";
+
+
+if(type.includes("sheet") ||
+type.includes("excel"))
+return "📊";
+
+
+if(type.includes("zip"))
+return "🗜️";
+
+
+return "📦";
+
 }
+
+
+const path =
+file.file_path.toLowerCase();
+
+
+if(path.endsWith(".html") ||
+path.endsWith(".htm"))
+return "🌐";
+
+
+if(path.endsWith(".css"))
+return "🎨";
+
+
+if(path.endsWith(".js"))
+return "⚡";
+
+
+if(path.endsWith(".json"))
+return "📋";
+
+
+if(path.endsWith(".md"))
+return "📖";
+
+
+if(path.endsWith(".txt"))
+return "📄";
+
 
 return "📄";
 
 }
 
 
-/* =========================
-   FILES
-========================= */
 
-function renderFiles(files){
+/* =========================================
+   RENDER FILES
+========================================= */
 
-const container =
+function renderFiles(
+files,
+isOwner
+){
+
+const list =
 document.getElementById(
-"files"
+"fileList"
 );
+
+
+document.getElementById(
+"fileCount"
+).textContent =
+files.length +
+(
+files.length === 1
+? " file"
+: " files"
+);
+
 
 if(!files.length){
 
-container.innerHTML=`
+list.innerHTML = `
 
 <div class="empty">
 
-<h2>📂 No files yet</h2>
+📂 This repository is empty.
 
-<p>
-This repository does not contain any files yet.
-</p>
+<br><br>
 
 ${
-repository &&
-repository.owner_id === currentUser.id
-?
-`
-<a
-class="btn btn-green"
-href="file-editor.html?repository_id=${encodeURIComponent(repoId)}">
-
-＋ Create your first file
-
-</a>
-`
-:
-""
-
+isOwner
+? "Use ＋ Add file to create or upload your first file."
+: ""
 }
 
 </div>
@@ -1743,75 +1915,103 @@ return;
 }
 
 
-container.innerHTML=`
+list.innerHTML =
+files.map(
+file => {
 
-<div class="file-list">
+const icon =
+getFileIcon(file);
 
-${files.map(file=>{
+
+const binary =
+file.is_binary === true;
+
+
+const type =
+binary
+? (
+file.mime_type ||
+"binary"
+)
+: (
+file.language ||
+"Text"
+);
+
 
 return `
 
 <div
 class="file-row"
-data-file="${escapeHtml(file.file_path)}">
+data-file-path="${escapeHtml(file.file_path)}">
 
-<div class="file-main">
+
+<div class="file-info">
 
 <div class="file-icon">
 
-${getFileIcon(file.file_path)}
+${icon}
 
 </div>
 
+
+<div>
+
 <a
 class="file-name"
-href="file-editor.html?repository_id=${encodeURIComponent(repoId)}&file_id=${encodeURIComponent(file.id)}">
+href="#"
+onclick="openFile('${encodeURIComponent(file.id)}');return false;">
 
 ${escapeHtml(file.file_path)}
 
 </a>
 
-<span class="file-language">
 
-${escapeHtml(file.language || "")}
+<span class="file-type">
+
+${escapeHtml(type)}
 
 </span>
 
 </div>
 
+</div>
 
-<div class="file-actions">
 
-<a
-class="btn small-btn"
-href="file-editor.html?repository_id=${encodeURIComponent(repoId)}&file_id=${encodeURIComponent(file.id)}">
 
-Open
-
-</a>
+<div class="file-meta">
 
 ${
-repository.owner_id === currentUser.id
+file.file_size
 ?
-`
-<a
-class="btn small-btn"
-href="file-editor.html?repository_id=${encodeURIComponent(repoId)}&file_id=${encodeURIComponent(file.id)}">
-
-✏️ Edit
-
-</a>
-
-<button
-class="btn small-btn"
-onclick="deleteFile('${file.id}')">
-
-🗑️ Delete
-
-</button>
-`
+formatSize(file.file_size)
 :
+(
+binary
+?
+"Binary file"
+:
+"Text file"
+)
+}
+
+
+${
+isOwner
+?
+
+`<button
+class="delete-file"
+onclick="deleteFile('${encodeURIComponent(file.id)}');event.stopPropagation();">
+
+Delete
+
+</button>`
+
+:
+
 ""
+
 }
 
 </div>
@@ -1820,164 +2020,360 @@ onclick="deleteFile('${file.id}')">
 
 `;
 
-}).join("")}
-
-</div>
-
-`;
+}
+).join("");
 
 }
 
 
-/* =========================
-   README
-========================= */
 
-function renderReadme(files){
+/* =========================================
+   ESCAPE HTML
+========================================= */
 
-const readme =
-files.find(
-file =>
-(file.file_path || "")
-.toLowerCase() ===
-"readme.md"
-);
+function escapeHtml(value){
+
+return String(value || "")
+
+.replace(/&/g,"&amp;")
+
+.replace(/</g,"&lt;")
+
+.replace(/>/g,"&gt;")
+
+.replace(/"/g,"&quot;")
+
+.replace(/'/g,"&#039;");
+
+}
 
 
-const container =
+
+/* =========================================
+   FORMAT SIZE
+========================================= */
+
+function formatSize(bytes){
+
+if(!bytes)
+return "";
+
+
+if(bytes < 1024)
+return bytes + " B";
+
+
+if(bytes < 1024 * 1024)
+return (
+bytes / 1024
+).toFixed(1) + " KB";
+
+
+if(bytes < 1024 * 1024 * 1024)
+return (
+bytes /
+(1024 * 1024)
+).toFixed(1) + " MB";
+
+
+return (
+bytes /
+(1024 * 1024 * 1024)
+).toFixed(1) + " GB";
+
+}
+
+
+
+/* =========================================
+   FILTER FILES
+========================================= */
+
+function filterFiles(){
+
+const search =
 document.getElementById(
-"readme"
+"searchInput"
+).value
+.toLowerCase()
+.trim();
+
+
+const filtered =
+allFiles.filter(
+file =>
+file.file_path
+.toLowerCase()
+.includes(search)
 );
 
 
-if(!readme){
+renderFiles(
+filtered,
+repository.owner_id ===
+currentUser.id
+);
 
-container.innerHTML="";
+}
+
+
+
+/* =========================================
+   ADD FILE MENU
+========================================= */
+
+function toggleAddFileMenu(){
+
+const menu =
+document.getElementById(
+"addFileMenu"
+);
+
+
+menu.classList.toggle(
+"show"
+);
+
+}
+
+
+
+/* =========================================
+   CLOSE MENU
+========================================= */
+
+document.addEventListener(
+"click",
+function(event){
+
+const wrapper =
+document.querySelector(
+".add-file-wrapper"
+);
+
+
+if(
+wrapper &&
+!wrapper.contains(event.target)
+){
+
+document
+.getElementById(
+"addFileMenu"
+)
+.classList
+.remove("show");
+
+}
+
+}
+);
+
+
+
+/* =========================================
+   OPEN FILE
+========================================= */
+
+async function openFile(
+encodedId
+){
+
+try{
+
+const id =
+decodeURIComponent(
+encodedId
+);
+
+
+const file =
+allFiles.find(
+item =>
+item.id === id
+);
+
+
+if(!file)
+return;
+
+
+if(file.is_binary){
+
+if(!file.storage_path){
+
+alert(
+"Storage path is missing."
+);
 
 return;
 
 }
 
 
-container.innerHTML=`
+/* SIGNED URL */
 
-<div class="readme">
+const {
+data,
+error
+} =
+await supabaseClient
+.storage
+.from("repository-files")
+.createSignedUrl(
+file.storage_path,
+3600
+);
 
-<div class="readme-header">
 
-📘 README.md
+if(error)
+throw error;
 
-</div>
 
-<div class="readme-body">
+if(data &&
+data.signedUrl){
 
-${escapeHtml(readme.content || "")}
+window.open(
+data.signedUrl,
+"_blank"
+);
 
-</div>
+}
 
-</div>
-
-`;
+return;
 
 }
 
 
-/* =========================
-   FILE SEARCH
-========================= */
+/* TEXT FILE */
 
-document.getElementById(
-"fileSearch"
-).addEventListener(
-"input",
-function(){
+window.location.href =
+"file-editor.html?id=" +
+encodeURIComponent(file.id) +
+"&repository_id=" +
+encodeURIComponent(repoId);
 
-const value =
-this.value
-.toLowerCase()
-.trim();
+}
+catch(error){
 
-document.querySelectorAll(
-".file-row"
-).forEach(
-row=>{
+console.error(error);
 
-const name =
-row.dataset.file
-.toLowerCase();
+alert(
+"Unable to open file: " +
+error.message
+);
 
-row.style.display =
-!value ||
-name.includes(value)
-?
-"flex"
-:
-"none";
+}
 
-});
-
-});
+}
 
 
-/* =========================
+
+/* =========================================
    DELETE FILE
-========================= */
+========================================= */
 
-async function deleteFile(fileId){
+async function deleteFile(
+encodedId
+){
+
+const id =
+decodeURIComponent(
+encodedId
+);
+
+
+if(!confirm(
+"Are you sure you want to delete this file?"
+)){
+
+return;
+
+}
+
+
+try{
 
 if(!repository ||
 repository.owner_id !== currentUser.id){
 
-alert(
-"Only the repository owner can delete files."
+throw new Error(
+"You are not authorized."
 );
-
-return;
 
 }
 
 
-const confirmed =
-confirm(
-"Are you sure you want to delete this file?"
+const file =
+allFiles.find(
+item =>
+item.id === id
 );
 
 
-if(!confirmed){
+if(!file)
+throw new Error(
+"File not found."
+);
 
-return;
+
+/* DELETE STORAGE */
+
+if(
+file.is_binary &&
+file.storage_path
+){
+
+const {
+error:storageError
+} =
+await supabaseClient
+.storage
+.from("repository-files")
+.remove([
+file.storage_path
+]);
+
+
+if(storageError)
+throw storageError;
 
 }
 
+
+/* DELETE DATABASE RECORD */
 
 const {
 error
 } =
 await supabaseClient
-
 .from("repository_files")
 
 .delete()
 
-.eq("id",fileId)
+.eq("id",id)
 
 .eq(
 "repository_id",
-repoId
+repository.id
 );
 
 
-if(error){
+if(error)
+throw error;
 
-console.error(error);
 
-alert(
-"Unable to delete file."
+allFiles =
+allFiles.filter(
+item =>
+item.id !== id
 );
 
-return;
 
-}
+renderFiles(
+allFiles,
+true
+);
 
 
 alert(
@@ -1985,412 +2381,39 @@ alert(
 );
 
 
-loadRepository();
-
 }
-
-
-/* =========================
-   WEB PAGES
-========================= */
-
-function renderWebPages(pages){
-
-renderFilteredWebPages(
-pages
-);
-
-}
-
-
-/* =========================
-   FILTER WEB PAGES
-========================= */
-
-function renderFilteredWebPages(pages){
-
-const container =
-document.getElementById(
-"webPages"
-);
-
-const count =
-document.getElementById(
-"webCount"
-);
-
-
-count.textContent =
-pages.length +
-" web page(s)";
-
-
-if(!pages.length){
-
-container.innerHTML=`
-
-<div class="empty"
-style="border:0;border-radius:0;">
-
-<h2>🌐 No web pages yet</h2>
-
-<p>
-Create a webpage using the ASIM TECH Web Page Builder.
-</p>
-
-${
-repository &&
-repository.owner_id === currentUser.id
-?
-`
-<a
-class="btn btn-blue"
-href="page-builder.html?repository_id=${encodeURIComponent(repoId)}">
-
-＋ New Web Page
-
-</a>
-`
-:
-""
-
-}
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-container.innerHTML =
-pages.map(
-page=>{
-
-let status="";
-
-if(page.is_published){
-
-status=
-`<span class="status-published">
-● Published
-</span>`;
-
-}else if(
-page.draft_html_content !== null ||
-page.draft_css_content !== null ||
-page.draft_js_content !== null
-){
-
-status=
-`<span class="status-draft">
-● Draft Available
-</span>`;
-
-}else{
-
-status=
-`<span class="status-unpublished">
-● Not Published
-</span>`;
-
-}
-
-
-return `
-
-<div class="web-card">
-
-<div class="web-name">
-
-🌐 ${escapeHtml(page.page_name)}
-
-</div>
-
-
-<div class="web-meta">
-
-Created:
-${formatDate(page.created_at)}
-
-&nbsp; • &nbsp;
-
-Updated:
-${formatDate(page.updated_at)}
-
-</div>
-
-
-<div class="web-status">
-
-${status}
-
-</div>
-
-
-<div class="web-actions">
-
-<button
-class="btn small-btn btn-blue"
-onclick="previewPage('${page.id}')">
-
-👁 Preview
-
-</button>
-
-
-${
-repository.owner_id === currentUser.id
-?
-`
-<a
-class="btn small-btn"
-href="page-builder.html?repository_id=${encodeURIComponent(repoId)}&page_id=${encodeURIComponent(page.id)}">
-
-✏️ Edit
-
-</a>
-
-${
-page.is_published
-?
-`
-<button
-class="btn small-btn"
-onclick="unpublishPage('${page.id}')">
-
-🔴 Unpublish
-
-</button>
-`
-:
-`
-<button
-class="btn small-btn btn-green"
-onclick="publishPage('${page.id}')">
-
-🚀 Publish
-
-</button>
-`
-}
-
-<button
-class="btn small-btn"
-onclick="deletePage('${page.id}')">
-
-🗑️ Delete
-
-</button>
-
-${
-page.is_published
-?
-`
-<button
-class="btn small-btn btn-purple"
-onclick="openLive('${page.id}')">
-
-🌐 Live
-
-</button>
-`
-:
-""
-}
-
-`
-:
-""
-}
-
-</div>
-
-</div>
-
-`;
-
-}).join("");
-
-}
-
-
-/* =========================
-   WEB SEARCH
-========================= */
-
-document.getElementById(
-"webSearch"
-).addEventListener(
-"input",
-function(){
-
-const value =
-this.value
-.toLowerCase()
-.trim();
-
-const filtered =
-allWebPages.filter(
-page=>
-(page.page_name || "")
-.toLowerCase()
-.includes(value)
-);
-
-renderFilteredWebPages(
-filtered
-);
-
-});
-
-
-/* =========================
-   PREVIEW
-========================= */
-
-async function previewPage(pageId){
-
-const {
-data:page,
-error
-} =
-await supabaseClient
-
-.from("web_pages")
-
-.select(
-"page_name,html_content,css_content,js_content,draft_html_content,draft_css_content,draft_js_content"
-)
-
-.eq("id",pageId)
-
-.single();
-
-
-if(error){
+catch(error){
 
 console.error(error);
 
 alert(
-"Unable to load preview."
+"Delete failed: " +
+error.message
 );
 
+}
+
+}
+
+
+
+/* =========================================
+   PUBLISH WEBSITE
+========================================= */
+
+async function publishWebsite(){
+
+if(!repository)
 return;
 
-}
-
-
-const html =
-page.draft_html_content ??
-page.html_content ??
-"";
-
-
-const css =
-page.draft_css_content ??
-page.css_content ??
-"";
-
-
-const js =
-page.draft_js_content ??
-page.js_content ??
-"";
-
-
-document.getElementById(
-"modalTitle"
-).textContent =
-"Preview — " +
-page.page_name;
-
-
-const doc = `
-
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1.0">
-
-<style>
-
-${css}
-
-</style>
-
-</head>
-
-<body>
-
-${html}
-
-<script>
-
-${js}
-
-<\/script>
-
-</body>
-
-</html>
-
-`;
-
-
-document.getElementById(
-"previewFrame"
-).srcdoc =
-doc;
-
-
-document.getElementById(
-"previewModal"
-).style.display =
-"block";
-
-}
-
-
-/* =========================
-   CLOSE PREVIEW
-========================= */
-
-function closePreview(){
-
-document.getElementById(
-"previewModal"
-).style.display =
-"none";
-
-document.getElementById(
-"previewFrame"
-).srcdoc="";
-
-}
-
-
-/* =========================
-   PUBLISH PAGE
-========================= */
-
-async function publishPage(pageId){
 
 if(
-!repository ||
-repository.owner_id !== currentUser.id
+repository.owner_id !==
+currentUser.id
 ){
 
 alert(
-"Only the repository owner can publish."
+"You are not authorized to publish this repository."
 );
 
 return;
@@ -2398,315 +2421,114 @@ return;
 }
 
 
-const confirmed =
-confirm(
-"Publish this webpage?"
-);
-
-
-if(!confirmed){
-
-return;
-
-}
-
-
-/*
-GET DRAFT
-*/
+try{
 
 const {
-data:page,
-error:pageError
+error
 } =
 await supabaseClient
 
-.from("web_pages")
-
-.select(
-"html_content,css_content,js_content,draft_html_content,draft_css_content,draft_js_content"
-)
-
-.eq("id",pageId)
-
-.single();
-
-
-if(pageError){
-
-console.error(pageError);
-
-alert(
-"Unable to load webpage."
-);
-
-return;
-
-}
-
-
-const result =
-await supabaseClient
-
-.from("web_pages")
+.from("repositories")
 
 .update({
-
-html_content:
-page.draft_html_content ??
-page.html_content ??
-"",
-
-css_content:
-page.draft_css_content ??
-page.css_content ??
-"",
-
-js_content:
-page.draft_js_content ??
-page.js_content ??
-"",
 
 is_published:true,
 
 published_at:
-new Date().toISOString(),
-
-updated_at:
 new Date().toISOString()
 
 })
 
-.eq("id",pageId)
+.eq(
+"id",
+repository.id
+)
 
-.eq("repository_id",repoId)
-
-.eq("owner_id",currentUser.id);
-
-
-if(result.error){
-
-console.error(result.error);
-
-alert(
-"Unable to publish webpage."
-);
-
-return;
-
-}
-
-
-alert(
-"Web page published successfully!"
+.eq(
+"owner_id",
+currentUser.id
 );
 
 
-loadRepository();
-
-}
-
-
-/* =========================
-   UNPUBLISH PAGE
-========================= */
-
-async function unpublishPage(pageId){
-
-if(
-!repository ||
-repository.owner_id !== currentUser.id
-){
-
-alert(
-"Only the repository owner can unpublish."
-);
-
-return;
-
-}
+if(error)
+throw error;
 
 
-const confirmed =
-confirm(
-"Unpublish this webpage?"
-);
+repository.is_published =
+true;
 
 
-if(!confirmed){
-
-return;
-
-}
-
-
-const result =
-await supabaseClient
-
-.from("web_pages")
-
-.update({
-
-is_published:false,
-
-published_at:null
-
-})
-
-.eq("id",pageId)
-
-.eq("repository_id",repoId)
-
-.eq("owner_id",currentUser.id);
-
-
-if(result.error){
-
-console.error(result.error);
-
-alert(
-"Unable to unpublish webpage."
-);
-
-return;
-
-}
+document.getElementById(
+"publishBadge"
+).textContent =
+"✓ Published";
 
 
 alert(
-"Web page unpublished."
+"Website published successfully."
 );
 
 
-loadRepository();
-
 }
+catch(error){
 
-
-/* =========================
-   LIVE
-========================= */
-
-function openLive(pageId){
-
-window.open(
-"web-page.html?id=" +
-encodeURIComponent(pageId),
-"_blank"
-);
-
-}
-
-
-/* =========================
-   DELETE PAGE
-========================= */
-
-async function deletePage(pageId){
-
-if(
-!repository ||
-repository.owner_id !== currentUser.id
-){
+console.error(error);
 
 alert(
-"Only the repository owner can delete webpages."
+"Publish failed: " +
+error.message
 );
 
-return;
+}
 
 }
 
 
-const confirmed =
-confirm(
-"Are you sure you want to delete this webpage?"
-);
 
-
-if(!confirmed){
-
-return;
-
-}
-
-
-const result =
-await supabaseClient
-
-.from("web_pages")
-
-.delete()
-
-.eq("id",pageId)
-
-.eq("repository_id",repoId)
-
-.eq("owner_id",currentUser.id);
-
-
-if(result.error){
-
-console.error(result.error);
-
-alert(
-"Unable to delete webpage."
-);
-
-return;
-
-}
-
-
-alert(
-"Web page deleted successfully."
-);
-
-
-loadRepository();
-
-}
-
-
-/* =========================
+/* =========================================
    COMING SOON
-========================= */
+========================================= */
 
-function comingSoon(name){
+function showComingSoon(
+feature
+){
 
-alert(
-name +
-" is planned for the next ASIM TECH development step."
-);
-
-return false;
-
-}
+document.getElementById(
+"comingTitle"
+).textContent =
+feature;
 
 
-function codeTab(){
+document.getElementById(
+"comingText"
+).textContent =
+feature +
+" is coming soon in ASIM TECH.";
 
-return true;
 
-}
-
-
-/* =========================
-   BRANCH
-========================= */
-
-function branchInfo(){
-
-alert(
-"Current branch: main\n\nReal branch management will be added in the next development step."
-);
+document.getElementById(
+"comingModal"
+).style.display =
+"flex";
 
 }
 
 
-/* =========================
+
+function closeComingSoon(){
+
+document.getElementById(
+"comingModal"
+).style.display =
+"none";
+
+}
+
+
+
+/* =========================================
    START
-========================= */
+========================================= */
 
 loadRepository();
 
