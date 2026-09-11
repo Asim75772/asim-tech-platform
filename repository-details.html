@@ -552,6 +552,8 @@ Not published
 </div>
 
 
+<!-- ================= TABS ================= -->
+
 <div class="tabs">
 
 <a class="tab active"
@@ -561,13 +563,15 @@ href="#">
 
 </a>
 
-<a class="tab"
-href="#"
-onclick="showComingSoon('Issues');return false;">
+
+<a id="issuesButton"
+class="tab"
+href="#">
 
 Issues
 
 </a>
+
 
 <a class="tab"
 href="#"
@@ -577,6 +581,7 @@ Pull requests
 
 </a>
 
+
 <a class="tab"
 href="#"
 onclick="showComingSoon('Actions');return false;">
@@ -584,6 +589,7 @@ onclick="showComingSoon('Actions');return false;">
 Actions
 
 </a>
+
 
 <a class="tab"
 href="#"
@@ -593,6 +599,7 @@ Projects
 
 </a>
 
+
 <a class="tab"
 href="#"
 onclick="showComingSoon('Wiki');return false;">
@@ -601,6 +608,7 @@ Wiki
 
 </a>
 
+
 <a class="tab"
 href="#"
 onclick="showComingSoon('Security');return false;">
@@ -608,6 +616,7 @@ onclick="showComingSoon('Security');return false;">
 Security
 
 </a>
+
 
 <a class="tab"
 href="#"
@@ -620,11 +629,14 @@ Insights
 </div>
 
 
+<!-- ================= TOOLBAR ================= -->
+
 <div class="toolbar">
 
 <div class="branch-box">
 
-<button class="btn"
+<button
+class="btn"
 type="button">
 
 🌿 main ▾
@@ -671,6 +683,8 @@ oninput="filterFiles()">
 </div>
 
 
+<!-- ================= COMMIT BAR ================= -->
+
 <div class="commit-bar">
 
 <div class="commit-left">
@@ -695,21 +709,30 @@ Repository
 </div>
 
 
+<!-- ================= FILE LIST ================= -->
+
 <div id="fileList"
 class="file-list">
 
 <div class="empty">
+
 Loading files...
-</div>
 
 </div>
 
+</div>
+
+
+<!-- ================= README ================= -->
 
 <div class="readme">
 
 <div class="readme-header">
+
 📖 README.md
+
 </div>
+
 
 <div class="readme-body">
 
@@ -717,18 +740,26 @@ Loading files...
 Repository
 </h2>
 
+
 <p id="readmeDescription">
+
 Welcome to this ASIM TECH repository.
+
 </p>
+
 
 <p>
+
 This repository was created using ASIM TECH Platform.
+
 </p>
 
 </div>
 
 </div>
 
+
+<!-- ================= ACTIONS ================= -->
 
 <div class="actions">
 
@@ -780,6 +811,8 @@ style="display:none;">
 
 </div>
 
+
+<!-- ================= MODAL ================= -->
 
 <div id="modal"
 class="modal">
@@ -834,7 +867,7 @@ SUPABASE_KEY
 
 
 /* =====================================================
-   URL
+   URL PARAMETERS
 ===================================================== */
 
 const params =
@@ -864,14 +897,20 @@ let allFiles = [];
 
 function showError(message){
 
-document.getElementById("loading")
-.style.display="none";
+document.getElementById(
+"loading"
+).style.display="none";
 
-document.getElementById("mainContent")
-.style.display="none";
+
+document.getElementById(
+"mainContent"
+).style.display="none";
+
 
 const box =
-document.getElementById("error");
+document.getElementById(
+"error"
+);
 
 box.textContent =
 message;
@@ -888,12 +927,15 @@ box.style.display="block";
 function showSuccess(message){
 
 const box =
-document.getElementById("success");
+document.getElementById(
+"success"
+);
 
 box.textContent =
 message;
 
 box.style.display="block";
+
 
 setTimeout(function(){
 
@@ -905,7 +947,7 @@ box.style.display="none";
 
 
 /* =====================================================
-   GET CURRENT USER
+   USER
    NON-BLOCKING
 ===================================================== */
 
@@ -917,9 +959,14 @@ const {
 data,
 error
 } =
-await supabaseClient.auth.getUser();
+await supabaseClient
+.auth
+.getUser();
 
-if(!error && data && data.user){
+
+if(!error &&
+data &&
+data.user){
 
 currentUser =
 data.user;
@@ -929,8 +976,7 @@ data.user;
 }catch(error){
 
 console.log(
-"Authentication check skipped:",
-error
+"Authentication check skipped."
 );
 
 }
@@ -947,9 +993,7 @@ async function loadRepository(){
 try{
 
 
-/* -----------------------------------------------
-   CHECK ID
------------------------------------------------- */
+/* ID CHECK */
 
 if(!repoId){
 
@@ -990,7 +1034,10 @@ stars_count,
 forks_count
 `)
 
-.eq("id",repoId)
+.eq(
+"id",
+repoId
+)
 
 .single();
 
@@ -998,7 +1045,6 @@ forks_count
 if(repoError){
 
 console.error(
-"Repository load error:",
 repoError
 );
 
@@ -1027,21 +1073,20 @@ repository =
 repo;
 
 
-/* -----------------------------------------------
-   LOAD USER IN BACKGROUND
------------------------------------------------- */
+/* USER CHECK IN BACKGROUND */
 
 loadCurrentUser();
 
 
 /* -----------------------------------------------
-   REPOSITORY HEADER
+   HEADER
 ------------------------------------------------ */
 
 document.getElementById(
 "repoName"
 ).textContent =
-repo.name || "Repository";
+repo.name ||
+"Repository";
 
 
 document.getElementById(
@@ -1054,7 +1099,8 @@ repo.description ||
 document.getElementById(
 "readmeTitle"
 ).textContent =
-repo.name || "Repository";
+repo.name ||
+"Repository";
 
 
 document.getElementById(
@@ -1062,6 +1108,11 @@ document.getElementById(
 ).textContent =
 repo.description ||
 "Welcome to this ASIM TECH repository.";
+
+
+document.title =
+repo.name +
+" — Repository — ASIM TECH";
 
 
 /* -----------------------------------------------
@@ -1072,6 +1123,7 @@ const visibilityBadge =
 document.getElementById(
 "visibilityBadge"
 );
+
 
 if(repo.is_private){
 
@@ -1093,7 +1145,7 @@ visibilityBadge.className =
 
 
 /* -----------------------------------------------
-   PUBLISHED STATUS
+   PUBLISH STATUS
 ------------------------------------------------ */
 
 updatePublishStatus(
@@ -1102,7 +1154,7 @@ repo.is_published === true
 
 
 /* -----------------------------------------------
-   BUTTON LINKS
+   LINKS
 ------------------------------------------------ */
 
 const filesUrl =
@@ -1156,8 +1208,18 @@ editUrl;
 
 
 /* -----------------------------------------------
-   IMPORTANT:
-   VISIT WEBSITE USES REPOSITORY ID
+   ISSUES LINK
+------------------------------------------------ */
+
+document.getElementById(
+"issuesButton"
+).href =
+"issues.html?repository_id=" +
+encodeURIComponent(repo.id);
+
+
+/* -----------------------------------------------
+   VISIT WEBSITE
 ------------------------------------------------ */
 
 const visitButton =
@@ -1165,12 +1227,13 @@ document.getElementById(
 "visitWebsiteButton"
 );
 
+
 visitButton.href =
 "published-website.html?repository_id=" +
 encodeURIComponent(repo.id);
 
 
-if(repo.is_published === true){
+if(repo.is_published){
 
 visitButton.style.display =
 "inline-block";
@@ -1179,14 +1242,14 @@ visitButton.style.display =
 
 
 /* -----------------------------------------------
-   LOAD FILES
+   FILES
 ------------------------------------------------ */
 
 await loadFiles();
 
 
 /* -----------------------------------------------
-   SHOW PAGE
+   SHOW
 ------------------------------------------------ */
 
 document.getElementById(
@@ -1202,7 +1265,6 @@ document.getElementById(
 }catch(error){
 
 console.error(
-"Repository page error:",
 error
 );
 
@@ -1259,7 +1321,6 @@ ascending:true
 if(error){
 
 console.error(
-"Files error:",
 error
 );
 
@@ -1284,7 +1345,6 @@ renderFiles(
 allFiles
 );
 
-
 }
 
 
@@ -1304,7 +1364,13 @@ document.getElementById(
 "fileCount"
 ).textContent =
 files.length +
-(files.length === 1 ? " file" : " files");
+(
+files.length === 1
+?
+" file"
+:
+" files"
+);
 
 
 if(!files.length){
@@ -1324,34 +1390,47 @@ list.innerHTML =
 "";
 
 
-files.forEach(function(file){
+files.forEach(
+function(file){
 
 const row =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 row.className =
 "file-row";
 
 
 const info =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 info.className =
 "file-info";
 
 
 const icon =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 icon.className =
 "file-icon";
 
 icon.textContent =
-file.is_binary ? "📦" : "📄";
+file.is_binary
+?
+"📦"
+:
+"📄";
 
 
 const link =
-document.createElement("a");
+document.createElement(
+"a"
+);
 
 link.className =
 "file-name";
@@ -1369,37 +1448,46 @@ encodeURIComponent(file.file_path);
 
 
 const meta =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 meta.className =
 "file-meta";
 
 
-if(file.is_binary){
-
 meta.textContent =
-"Binary file";
-
-}else{
-
-meta.textContent =
+file.is_binary
+?
+"Binary file"
+:
+(
 file.language ||
-"HTML";
-
-}
-
-
-info.appendChild(icon);
-
-info.appendChild(link);
+"HTML"
+);
 
 
-row.appendChild(info);
+info.appendChild(
+icon
+);
 
-row.appendChild(meta);
+info.appendChild(
+link
+);
 
 
-list.appendChild(row);
+row.appendChild(
+info
+);
+
+row.appendChild(
+meta
+);
+
+
+list.appendChild(
+row
+);
 
 });
 
@@ -1407,7 +1495,7 @@ list.appendChild(row);
 
 
 /* =====================================================
-   SEARCH FILES
+   FILTER
 ===================================================== */
 
 function filterFiles(){
@@ -1417,8 +1505,12 @@ document.getElementById(
 "searchInput"
 );
 
+
 const query =
-(input.value || "")
+(
+input.value ||
+""
+)
 .toLowerCase()
 .trim();
 
@@ -1520,7 +1612,7 @@ async function publishWebsite(){
 
 if(!repository){
 
-showError(
+alert(
 "Repository is not loaded."
 );
 
@@ -1529,27 +1621,7 @@ return;
 }
 
 
-/* -----------------------------------------------
-   ONLY OWNER CAN PUBLISH
------------------------------------------------- */
-
-if(
-currentUser &&
-currentUser.id !== repository.owner_id
-){
-
-alert(
-"Only the repository owner can publish this website."
-);
-
-return;
-
-}
-
-
-/* -----------------------------------------------
-   FIND INDEX.HTML
------------------------------------------------- */
+/* INDEX */
 
 const {
 data:indexFile,
@@ -1611,9 +1683,7 @@ return;
 }
 
 
-/* -----------------------------------------------
-   CHECK EXISTING WEB PAGE
------------------------------------------------- */
+/* EXISTING WEB PAGE */
 
 const {
 data:existingPage,
@@ -1653,12 +1723,10 @@ return;
 }
 
 
-/* -----------------------------------------------
-   CREATE / UPDATE WEB PAGE
------------------------------------------------- */
-
 let pageId = null;
 
+
+/* UPDATE */
 
 if(existingPage){
 
@@ -1709,8 +1777,12 @@ return;
 
 }
 
+}
 
-}else{
+
+/* CREATE */
+
+else{
 
 const {
 data:newPage,
@@ -1774,9 +1846,7 @@ newPage.id;
 }
 
 
-/* -----------------------------------------------
-   UPDATE REPOSITORY
------------------------------------------------- */
+/* REPOSITORY STATUS */
 
 const {
 error:repoUpdateError
@@ -1816,15 +1886,10 @@ return;
 }
 
 
-/* -----------------------------------------------
-   UPDATE LOCAL STATE
------------------------------------------------- */
+/* LOCAL */
 
 repository.is_published =
 true;
-
-repository.published_at =
-new Date().toISOString();
 
 
 updatePublishStatus(
@@ -1832,14 +1897,13 @@ true
 );
 
 
-/* -----------------------------------------------
-   VISIT URL
------------------------------------------------- */
+/* VISIT */
 
 const visitButton =
 document.getElementById(
 "visitWebsiteButton"
 );
+
 
 visitButton.href =
 "published-website.html?repository_id=" +
