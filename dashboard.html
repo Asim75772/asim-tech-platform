@@ -73,6 +73,34 @@ body{
     background:#30363d;
 }
 
+.notifications{
+    color:#ffffff;
+    text-decoration:none;
+    background:#21262d;
+    border:1px solid #30363d;
+    padding:9px 13px;
+    border-radius:8px;
+    font-weight:bold;
+    position:relative;
+}
+
+.notifications:hover{
+    background:#30363d;
+}
+
+.notification-count{
+    display:none;
+    background:#f85149;
+    color:#ffffff;
+    font-size:11px;
+    min-width:18px;
+    height:18px;
+    padding:2px 5px;
+    border-radius:20px;
+    text-align:center;
+    margin-left:5px;
+}
+
 .logout{
     color:#ff7b72;
     background:#21262d;
@@ -268,7 +296,7 @@ footer{
     margin-top:40px;
 }
 
-@media(max-width:600px){
+@media(max-width:700px){
 
     .navbar{
         padding:10px 15px;
@@ -288,6 +316,7 @@ footer{
 
     .home,
     .profile,
+    .notifications,
     .logout{
         font-size:13px;
     }
@@ -342,6 +371,25 @@ footer{
         >
 
             Home
+
+        </a>
+
+
+        <a
+            href="notifications.html"
+            class="notifications"
+        >
+
+            🔔 Notifications
+
+            <span
+                id="notificationCount"
+                class="notification-count"
+            >
+
+                0
+
+            </span>
 
         </a>
 
@@ -521,6 +569,10 @@ footer{
 <script>
 
 
+/* =====================================================
+   SUPABASE
+===================================================== */
+
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
@@ -549,13 +601,20 @@ document.getElementById(
 );
 
 
+const notificationCount =
+document.getElementById(
+    "notificationCount"
+);
+
+
 
 let currentUser = null;
 
 
 
-/* LOAD DASHBOARD */
-
+/* =====================================================
+   LOAD DASHBOARD
+===================================================== */
 
 async function loadDashboard(){
 
@@ -587,7 +646,14 @@ async function loadDashboard(){
         }
 
 
-        currentUser = user;
+        currentUser =
+        user;
+
+
+
+        /* LOAD NOTIFICATIONS */
+
+        await loadNotificationCount();
 
 
 
@@ -783,9 +849,96 @@ async function loadDashboard(){
 }
 
 
+/* =====================================================
+   LOAD NOTIFICATION COUNT
+===================================================== */
 
-/* RECENT ACTIVITY */
+async function loadNotificationCount(){
 
+    if(!currentUser){
+
+        return;
+
+    }
+
+
+    try{
+
+
+        const {
+            count,
+            error
+        } =
+        await supabaseClient
+
+            .from("notifications")
+
+            .select(
+                "id",
+                {
+                    count:"exact",
+                    head:true
+                }
+            )
+
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+
+            .eq(
+                "is_read",
+                false
+            );
+
+
+        if(error){
+
+            console.error(
+                "Notification count error:",
+                error
+            );
+
+            return;
+
+        }
+
+
+        const unreadCount =
+        count || 0;
+
+
+        if(unreadCount > 0){
+
+            notificationCount.textContent =
+            unreadCount;
+
+            notificationCount.style.display =
+            "inline-block";
+
+        }else{
+
+            notificationCount.style.display =
+            "none";
+
+        }
+
+
+    }catch(error){
+
+        console.error(
+            "Notification error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RECENT ACTIVITY
+===================================================== */
 
 async function loadRecentActivity(){
 
@@ -1026,7 +1179,7 @@ async function loadRecentActivity(){
 
 
 
-        /* SORT BY DATE */
+        /* SORT */
 
 
         activities.sort(
@@ -1172,9 +1325,9 @@ async function loadRecentActivity(){
 }
 
 
-
-/* LOGOUT */
-
+/* =====================================================
+   LOGOUT
+===================================================== */
 
 async function logoutUser(){
 
@@ -1190,7 +1343,8 @@ async function logoutUser(){
 
         if(logoutButton){
 
-            logoutButton.disabled = true;
+            logoutButton.disabled =
+            true;
 
             logoutButton.textContent =
             "Logging out...";
@@ -1236,7 +1390,8 @@ async function logoutUser(){
 
         if(logoutButton){
 
-            logoutButton.disabled = false;
+            logoutButton.disabled =
+            false;
 
             logoutButton.textContent =
             "🚪 Logout";
@@ -1250,9 +1405,9 @@ async function logoutUser(){
 }
 
 
-
-/* ESCAPE HTML */
-
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
 function escapeHtml(value){
 
@@ -1291,9 +1446,9 @@ function escapeHtml(value){
 }
 
 
-
-/* FORMAT DATE */
-
+/* =====================================================
+   FORMAT DATE
+===================================================== */
 
 function formatDate(value){
 
@@ -1327,12 +1482,11 @@ function formatDate(value){
 }
 
 
-
-/* START */
-
+/* =====================================================
+   START
+===================================================== */
 
 loadDashboard();
-
 
 </script>
 
