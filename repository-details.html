@@ -178,6 +178,7 @@ text-decoration:none;
 font-size:14px;
 white-space:nowrap;
 border-bottom:2px solid transparent;
+cursor:pointer;
 }
 
 .tab:hover{
@@ -722,9 +723,9 @@ Issues
 </a>
 
 
-<a class="tab"
-href="#"
-onclick="showComingSoon('Pull requests');return false;">
+<a id="pullRequestsButton"
+class="tab"
+href="#">
 
 Pull requests
 
@@ -1357,27 +1358,12 @@ repo.is_published === true
    STAR
 ================================================== */
 
-/*
-   First show stored counter.
-*/
-
 updateStarCount(
 repo.stars_count || 0
 );
 
 
-/*
-   Check whether current user
-   already starred.
-*/
-
 await checkUserStar();
-
-
-/*
-   Then calculate the real count
-   directly from repository_stars.
-*/
 
 await refreshStarCount();
 
@@ -1444,6 +1430,17 @@ document.getElementById(
 "issuesButton"
 ).href =
 "issues.html?repository_id=" +
+encodeURIComponent(repo.id);
+
+
+/* =================================================
+   PULL REQUESTS
+================================================== */
+
+document.getElementById(
+"pullRequestsButton"
+).href =
+"pull-requests.html?repository_id=" +
 encodeURIComponent(repo.id);
 
 
@@ -1662,9 +1659,7 @@ return;
 }
 
 
-/* =================================================
-   LOGIN CHECK
-================================================== */
+/* LOGIN */
 
 if(!currentUser){
 
@@ -1680,9 +1675,7 @@ return;
 }
 
 
-/* =================================================
-   PRIVATE REPOSITORY
-================================================== */
+/* PRIVATE */
 
 if(repository.is_private){
 
@@ -1747,7 +1740,6 @@ false;
 
 updateStarButton();
 
-
 await refreshStarCount();
 
 
@@ -1791,10 +1783,6 @@ error
 );
 
 
-/*
-   Duplicate star protection.
-*/
-
 if(
 error.code === "23505"
 ){
@@ -1830,7 +1818,6 @@ true;
 
 updateStarButton();
 
-
 await refreshStarCount();
 
 
@@ -1853,11 +1840,6 @@ return;
 
 }
 
-
-/*
-   Count rows directly from
-   repository_stars.
-*/
 
 const {
 count,
@@ -2252,9 +2234,7 @@ return;
 }
 
 
-/* =================================================
-   INDEX FILE
-================================================== */
+/* INDEX */
 
 const {
 data:indexFile,
@@ -2316,9 +2296,7 @@ return;
 }
 
 
-/* =================================================
-   EXISTING WEB PAGE
-================================================== */
+/* EXISTING PAGE */
 
 const {
 data:existingPage,
@@ -2364,9 +2342,7 @@ let pageId =
 null;
 
 
-/* =================================================
-   UPDATE
-================================================== */
+/* UPDATE */
 
 if(existingPage){
 
@@ -2420,9 +2396,7 @@ return;
 }
 
 
-/* =================================================
-   CREATE
-================================================== */
+/* CREATE */
 
 else{
 
@@ -2490,9 +2464,7 @@ newPage.id;
 }
 
 
-/* =================================================
-   REPOSITORY STATUS
-================================================== */
+/* REPOSITORY STATUS */
 
 const {
 error:repoUpdateError
@@ -2532,9 +2504,7 @@ return;
 }
 
 
-/* =================================================
-   LOCAL
-================================================== */
+/* LOCAL */
 
 repository.is_published =
 true;
@@ -2545,9 +2515,7 @@ true
 );
 
 
-/* =================================================
-   VISIT
-================================================== */
+/* VISIT */
 
 const visitButton =
 document.getElementById(
