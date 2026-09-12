@@ -108,10 +108,7 @@ color:#f0883e;
 color:#3fb950;
 }
 
-
-/* =====================================================
-   STAR
-===================================================== */
+/* STAR */
 
 .star-area{
 margin-top:16px;
@@ -134,17 +131,12 @@ gap:7px;
 
 .star-button:hover{
 background:#30363d;
-border-color:#8b949e;
 }
 
 .star-button.starred{
 background:#238636;
 border-color:#238636;
 color:white;
-}
-
-.star-button.starred:hover{
-background:#2ea043;
 }
 
 .star-count{
@@ -159,10 +151,7 @@ min-width:48px;
 text-align:center;
 }
 
-
-/* =====================================================
-   TABS
-===================================================== */
+/* TABS */
 
 .tabs{
 display:flex;
@@ -191,10 +180,35 @@ font-weight:600;
 border-bottom-color:#f78166;
 }
 
+/* COMING SOON */
 
-/* =====================================================
-   TOOLBAR
-===================================================== */
+.coming-soon-tab{
+position:relative;
+transition:all .25s ease;
+}
+
+.coming-soon-tab:hover{
+color:#a371f7;
+transform:translateY(-2px);
+}
+
+.coming-soon-tab::after{
+content:"";
+position:absolute;
+left:14px;
+right:14px;
+bottom:2px;
+height:2px;
+background:#8957e5;
+transform:scaleX(0);
+transition:transform .25s ease;
+}
+
+.coming-soon-tab:hover::after{
+transform:scaleX(1);
+}
+
+/* TOOLBAR */
 
 .toolbar{
 display:flex;
@@ -264,10 +278,6 @@ color:white;
 font-weight:600;
 }
 
-.btn-visit:hover{
-background:#2ea043;
-}
-
 .search{
 width:100%;
 max-width:420px;
@@ -283,10 +293,7 @@ outline:none;
 border-color:#58a6ff;
 }
 
-
-/* =====================================================
-   COMMIT
-===================================================== */
+/* COMMIT */
 
 .commit-bar{
 border:1px solid #30363d;
@@ -313,10 +320,7 @@ color:#58a6ff;
 color:#8b949e;
 }
 
-
-/* =====================================================
-   FILES
-===================================================== */
+/* FILES */
 
 .file-list{
 border:1px solid #30363d;
@@ -378,10 +382,7 @@ text-align:center;
 color:#8b949e;
 }
 
-
-/* =====================================================
-   README
-===================================================== */
+/* README */
 
 .readme{
 margin-top:25px;
@@ -412,10 +413,7 @@ color:#e6edf3;
 margin-bottom:10px;
 }
 
-
-/* =====================================================
-   ACTIONS
-===================================================== */
+/* ACTIONS */
 
 .actions{
 display:flex;
@@ -424,10 +422,7 @@ flex-wrap:wrap;
 margin-top:20px;
 }
 
-
-/* =====================================================
-   STATUS
-===================================================== */
+/* STATUS */
 
 .loading{
 padding:50px;
@@ -456,10 +451,7 @@ display:none;
 margin-bottom:20px;
 }
 
-
-/* =====================================================
-   MODAL
-===================================================== */
+/* MODAL */
 
 .modal{
 display:none;
@@ -493,10 +485,11 @@ color:#8b949e;
 margin-bottom:20px;
 }
 
+.modal-close{
+margin-top:15px;
+}
 
-/* =====================================================
-   FOOTER
-===================================================== */
+/* FOOTER */
 
 footer{
 text-align:center;
@@ -505,10 +498,7 @@ color:#8b949e;
 font-size:13px;
 }
 
-
-/* =====================================================
-   MOBILE
-===================================================== */
+/* MOBILE */
 
 @media(max-width:600px){
 
@@ -662,10 +652,6 @@ Not published
 </div>
 
 
-<!-- =================================================
-     STAR BUTTON
-================================================== -->
-
 <div class="star-area">
 
 <button
@@ -699,9 +685,7 @@ class="star-count">
 </div>
 
 
-<!-- =================================================
-     TABS
-================================================== -->
+<!-- TABS -->
 
 <div class="tabs">
 
@@ -732,7 +716,7 @@ Pull requests
 </a>
 
 
-<a class="tab"
+<a class="tab coming-soon-tab"
 href="#"
 onclick="showComingSoon('Actions');return false;">
 
@@ -741,7 +725,7 @@ Actions
 </a>
 
 
-<a class="tab"
+<a class="tab coming-soon-tab"
 href="#"
 onclick="showComingSoon('Projects');return false;">
 
@@ -750,7 +734,7 @@ Projects
 </a>
 
 
-<a class="tab"
+<a class="tab coming-soon-tab"
 href="#"
 onclick="showComingSoon('Wiki');return false;">
 
@@ -759,7 +743,7 @@ Wiki
 </a>
 
 
-<a class="tab"
+<a class="tab coming-soon-tab"
 href="#"
 onclick="showComingSoon('Security');return false;">
 
@@ -768,7 +752,7 @@ Security
 </a>
 
 
-<a class="tab"
+<a class="tab coming-soon-tab"
 href="#"
 onclick="showComingSoon('Insights');return false;">
 
@@ -780,9 +764,7 @@ Insights
 </div>
 
 
-<!-- =================================================
-     TOOLBAR
-================================================== -->
+<!-- TOOLBAR -->
 
 <div class="toolbar">
 
@@ -840,12 +822,9 @@ oninput="filterFiles()">
 </div>
 
 
-<!-- =================================================
-     COMMIT BAR
-================================================== -->
+<!-- COMMIT BAR -->
 
 <div class="commit-bar">
-
 
 <div class="commit-left">
 
@@ -866,13 +845,10 @@ Repository
 
 </div>
 
-
 </div>
 
 
-<!-- =================================================
-     FILE LIST
-================================================== -->
+<!-- FILE LIST -->
 
 <div id="fileList"
 class="file-list">
@@ -886,9 +862,7 @@ Loading files...
 </div>
 
 
-<!-- =================================================
-     README
-================================================== -->
+<!-- README -->
 
 <div class="readme">
 
@@ -927,9 +901,7 @@ This repository was created using ASIM TECH Platform.
 </div>
 
 
-<!-- =================================================
-     ACTIONS
-================================================== -->
+<!-- ACTIONS -->
 
 <div class="actions">
 
@@ -982,39 +954,31 @@ style="display:none;">
 </div>
 
 
-<!-- =================================================
-     MODAL
-================================================== -->
+<!-- MODAL -->
 
-<div id="modal"
+<div
+id="modal"
 class="modal">
-
 
 <div class="modal-box">
 
-
 <h2 id="modalTitle">
-
 Coming Soon
-
 </h2>
 
+<p id="modalMessage">
 
-<p id="modalText">
-
-This feature is coming soon.
+This feature is coming soon to ASIM TECH.
 
 </p>
 
-
 <button
-class="btn"
+class="btn modal-close"
 onclick="closeModal()">
 
 Close
 
 </button>
-
 
 </div>
 
@@ -1023,13 +987,12 @@ Close
 
 <footer>
 
-© 2026 ASIM TECH — Code. Create. Innovate.
+ASIM TECH Platform
 
 </footer>
 
 
 <script>
-
 
 /* =====================================================
    SUPABASE
@@ -1038,10 +1001,8 @@ Close
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
-
 
 const supabaseClient =
 window.supabase.createClient(
@@ -1051,135 +1012,151 @@ SUPABASE_KEY
 
 
 /* =====================================================
-   URL PARAMETERS
+   GLOBAL VARIABLES
 ===================================================== */
 
-const params =
-new URLSearchParams(
-window.location.search
-);
-
-
-const repoId =
-params.get("id") ||
-params.get("repository_id");
-
-
-/* =====================================================
-   VARIABLES
-===================================================== */
+let repositoryId = null;
 
 let repository = null;
 
-let currentUser = null;
-
 let allFiles = [];
 
-let userHasStarred = false;
+let currentUser = null;
+
+let mainBranch = null;
 
 
 /* =====================================================
-   ERROR
+   GET REPOSITORY ID
+===================================================== */
+
+function getRepositoryId(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    return params.get("repository_id");
+
+}
+
+
+/* =====================================================
+   SHOW ERROR
 ===================================================== */
 
 function showError(message){
 
-document.getElementById(
-"loading"
-).style.display =
-"none";
+    const error =
+        document.getElementById("error");
 
+    error.textContent =
+        "❌ " + message;
 
-document.getElementById(
-"mainContent"
-).style.display =
-"none";
+    error.style.display =
+        "block";
 
-
-const box =
-document.getElementById(
-"error"
-);
-
-
-box.textContent =
-message;
-
-
-box.style.display =
-"block";
+    document.getElementById("loading")
+        .style.display = "none";
 
 }
 
 
 /* =====================================================
-   SUCCESS
+   SHOW SUCCESS
 ===================================================== */
 
 function showSuccess(message){
 
-const box =
-document.getElementById(
-"success"
-);
+    const success =
+        document.getElementById("success");
 
+    success.textContent =
+        "✓ " + message;
 
-box.textContent =
-message;
+    success.style.display =
+        "block";
 
+    setTimeout(function(){
 
-box.style.display =
-"block";
+        success.style.display =
+            "none";
 
-
-setTimeout(
-function(){
-
-box.style.display =
-"none";
-
-},
-5000
-);
+    },4000);
 
 }
 
 
 /* =====================================================
-   USER
+   INITIALIZE
 ===================================================== */
 
-async function loadCurrentUser(){
+async function init(){
 
-try{
-
-const {
-data,
-error
-} =
-await supabaseClient
-.auth
-.getUser();
+    repositoryId =
+        getRepositoryId();
 
 
-if(
-!error &&
-data &&
-data.user
-){
+    if(!repositoryId){
 
-currentUser =
-data.user;
+        showError(
+            "Repository ID is missing."
+        );
 
-}
+        return;
 
-}catch(error){
+    }
 
-console.log(
-"Authentication check skipped."
-);
 
-}
+    try{
+
+        const {
+            data:userData
+        } =
+        await supabaseClient.auth.getUser();
+
+        currentUser =
+            userData?.user || null;
+
+
+        await loadRepository();
+
+
+        await loadMainBranch();
+
+
+        await loadFiles();
+
+
+        await loadStar();
+
+
+        setupRepositoryLinks(
+            repository
+        );
+
+
+        document.getElementById(
+            "loading"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "mainContent"
+        ).style.display = "block";
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showError(
+            error.message ||
+            "Unable to load repository."
+        );
+
+    }
 
 }
 
@@ -1190,698 +1167,183 @@ console.log(
 
 async function loadRepository(){
 
-try{
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("repositories")
+        .select("*")
+        .eq("id",repositoryId)
+        .single();
 
 
-/* ID CHECK */
+    if(error){
 
-if(!repoId){
+        throw error;
 
-showError(
-"Repository ID is missing."
-);
-
-return;
-
-}
+    }
 
 
-/* =================================================
-   LOAD REPOSITORY
-================================================== */
+    if(!data){
 
-const {
-data:repo,
-error:repoError
-} =
-await supabaseClient
+        throw new Error(
+            "Repository not found."
+        );
 
-.from("repositories")
-
-.select(`
-id,
-owner_id,
-name,
-description,
-is_private,
-created_at,
-updated_at,
-language,
-is_published,
-published_at,
-default_branch,
-stars_count,
-forks_count
-`)
-
-.eq(
-"id",
-repoId
-)
-
-.single();
+    }
 
 
-if(repoError){
-
-console.error(
-repoError
-);
-
-showError(
-"Unable to load repository: " +
-(repoError.message ||
-"Unknown error")
-);
-
-return;
-
-}
+    repository =
+        data;
 
 
-if(!repo){
-
-showError(
-"Repository not found."
-);
-
-return;
-
-}
+    document.getElementById(
+        "repoName"
+    ).textContent =
+        repository.name || "Repository";
 
 
-repository =
-repo;
+    document.getElementById(
+        "repoDescription"
+    ).textContent =
+        repository.description ||
+        "No description provided.";
 
 
-/* USER */
-
-await loadCurrentUser();
-
-
-/* =================================================
-   HEADER
-================================================== */
-
-document.getElementById(
-"repoName"
-).textContent =
-repo.name ||
-"Repository";
+    document.getElementById(
+        "readmeTitle"
+    ).textContent =
+        repository.name ||
+        "Repository";
 
 
-document.getElementById(
-"repoDescription"
-).textContent =
-repo.description ||
-"No description provided.";
+    document.getElementById(
+        "readmeDescription"
+    ).textContent =
+        repository.description ||
+        "Welcome to this ASIM TECH repository.";
 
 
-document.getElementById(
-"readmeTitle"
-).textContent =
-repo.name ||
-"Repository";
+    const visibilityBadge =
+        document.getElementById(
+            "visibilityBadge"
+        );
 
 
-document.getElementById(
-"readmeDescription"
-).textContent =
-repo.description ||
-"Welcome to this ASIM TECH repository.";
+    if(repository.is_private){
+
+        visibilityBadge.textContent =
+            "🔒 Private";
+
+        visibilityBadge.className =
+            "badge private";
+
+    }else{
+
+        visibilityBadge.textContent =
+            "🌎 Public";
+
+        visibilityBadge.className =
+            "badge public";
+
+    }
 
 
-document.title =
-repo.name +
-" — Repository — ASIM TECH";
-
-
-/* =================================================
-   VISIBILITY
-================================================== */
-
-const visibilityBadge =
-document.getElementById(
-"visibilityBadge"
-);
-
-
-if(repo.is_private){
-
-visibilityBadge.textContent =
-"🔒 Private";
-
-visibilityBadge.className =
-"badge private";
-
-}else{
-
-visibilityBadge.textContent =
-"🌎 Public";
-
-visibilityBadge.className =
-"badge public";
+    updatePublishStatus();
 
 }
 
 
-/* =================================================
+/* =====================================================
    PUBLISH STATUS
-================================================== */
+===================================================== */
 
-updatePublishStatus(
-repo.is_published === true
-);
+function updatePublishStatus(){
 
-
-/* =================================================
-   STAR
-================================================== */
-
-updateStarCount(
-repo.stars_count || 0
-);
+    const badge =
+        document.getElementById(
+            "publishBadge"
+        );
 
 
-await checkUserStar();
-
-await refreshStarCount();
-
-
-/* =================================================
-   LINKS
-================================================== */
-
-const filesUrl =
-"repository-files.html?repository_id=" +
-encodeURIComponent(repo.id);
+    const visit =
+        document.getElementById(
+            "visitWebsiteButton"
+        );
 
 
-const explorerUrl =
-"repository-explorer.html?repository_id=" +
-encodeURIComponent(repo.id);
+    if(repository.is_published){
+
+        badge.textContent =
+            "✓ Published";
+
+        badge.className =
+            "badge published";
 
 
-const addFileUrl =
-"repository-add-file.html?repository_id=" +
-encodeURIComponent(repo.id);
+        visit.style.display =
+            "inline-block";
 
 
-const editUrl =
-"edit-repository.html?id=" +
-encodeURIComponent(repo.id);
+        visit.href =
+            "published-website.html?repository_id=" +
+            encodeURIComponent(
+                repository.id
+            );
 
 
-document.getElementById(
-"filesButton"
-).href =
-filesUrl;
+    }else{
 
+        badge.textContent =
+            "Not published";
 
-document.getElementById(
-"openFilesAction"
-).href =
-filesUrl;
+        badge.className =
+            "badge";
 
+        visit.style.display =
+            "none";
 
-document.getElementById(
-"explorerButton"
-).href =
-explorerUrl;
-
-
-document.getElementById(
-"newFileButton"
-).href =
-addFileUrl;
-
-
-document.getElementById(
-"editAction"
-).href =
-editUrl;
-
-
-/* =================================================
-   ISSUES
-================================================== */
-
-document.getElementById(
-"issuesButton"
-).href =
-"issues.html?repository_id=" +
-encodeURIComponent(repo.id);
-
-
-/* =================================================
-   PULL REQUESTS
-================================================== */
-
-document.getElementById(
-"pullRequestsButton"
-).href =
-"pull-requests.html?repository_id=" +
-encodeURIComponent(repo.id);
-
-
-/* =================================================
-   VISIT WEBSITE
-================================================== */
-
-const visitButton =
-document.getElementById(
-"visitWebsiteButton"
-);
-
-
-visitButton.href =
-"published-website.html?repository_id=" +
-encodeURIComponent(repo.id);
-
-
-if(repo.is_published){
-
-visitButton.style.display =
-"inline-block";
-
-}
-
-
-/* =================================================
-   FILES
-================================================== */
-
-await loadFiles();
-
-
-/* =================================================
-   SHOW PAGE
-================================================== */
-
-document.getElementById(
-"loading"
-).style.display =
-"none";
-
-
-document.getElementById(
-"mainContent"
-).style.display =
-"block";
-
-
-}catch(error){
-
-console.error(
-error
-);
-
-showError(
-"Unable to load repository."
-);
-
-}
+    }
 
 }
 
 
 /* =====================================================
-   CHECK USER STAR
+   LOAD MAIN BRANCH
 ===================================================== */
 
-async function checkUserStar(){
+async function loadMainBranch(){
 
-userHasStarred =
-false;
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("repository_branches")
+        .select("*")
+        .eq("repository_id",repositoryId)
+        .eq("name",
+            repository.default_branch ||
+            "main"
+        )
+        .maybeSingle();
 
 
-if(
-!currentUser ||
-!repository
-){
+    if(error){
 
-updateStarButton();
+        console.error(
+            "Branch error:",
+            error
+        );
 
-return;
+        return;
 
-}
+    }
 
 
-const {
-data,
-error
-} =
-await supabaseClient
-
-.from("repository_stars")
-
-.select(
-"repository_id"
-)
-
-.eq(
-"repository_id",
-repository.id
-)
-
-.eq(
-"user_id",
-currentUser.id
-)
-
-.maybeSingle();
-
-
-if(error){
-
-console.error(
-"Star check error:",
-error
-);
-
-updateStarButton();
-
-return;
-
-}
-
-
-if(data){
-
-userHasStarred =
-true;
-
-}
-
-
-updateStarButton();
-
-}
-
-
-/* =====================================================
-   UPDATE STAR COUNT
-===================================================== */
-
-function updateStarCount(count){
-
-document.getElementById(
-"starCount"
-).textContent =
-Number(count) || 0;
-
-}
-
-
-/* =====================================================
-   UPDATE STAR BUTTON
-===================================================== */
-
-function updateStarButton(){
-
-const button =
-document.getElementById(
-"starButton"
-);
-
-
-const icon =
-document.getElementById(
-"starIcon"
-);
-
-
-const text =
-document.getElementById(
-"starText"
-);
-
-
-if(userHasStarred){
-
-button.classList.add(
-"starred"
-);
-
-icon.textContent =
-"★";
-
-text.textContent =
-"Unstar";
-
-}else{
-
-button.classList.remove(
-"starred"
-);
-
-icon.textContent =
-"☆";
-
-text.textContent =
-"Star";
-
-}
-
-}
-
-
-/* =====================================================
-   TOGGLE STAR
-===================================================== */
-
-async function toggleStar(){
-
-if(!repository){
-
-return;
-
-}
-
-
-/* LOGIN */
-
-if(!currentUser){
-
-alert(
-"Please login to star this repository."
-);
-
-window.location.href =
-"login.html";
-
-return;
-
-}
-
-
-/* PRIVATE */
-
-if(repository.is_private){
-
-alert(
-"Private repositories cannot be starred."
-);
-
-return;
-
-}
-
-
-/* =================================================
-   UNSTAR
-================================================== */
-
-if(userHasStarred){
-
-const {
-error
-} =
-await supabaseClient
-
-.from("repository_stars")
-
-.delete()
-
-.eq(
-"repository_id",
-repository.id
-)
-
-.eq(
-"user_id",
-currentUser.id
-);
-
-
-if(error){
-
-console.error(
-"Unstar error:",
-error
-);
-
-alert(
-"Unable to remove star: " +
-(
-error.message ||
-"Unknown error"
-)
-);
-
-return;
-
-}
-
-
-userHasStarred =
-false;
-
-
-updateStarButton();
-
-await refreshStarCount();
-
-
-showSuccess(
-"Repository unstarred."
-);
-
-
-return;
-
-}
-
-
-/* =================================================
-   STAR
-================================================== */
-
-const {
-error
-} =
-await supabaseClient
-
-.from("repository_stars")
-
-.insert({
-
-repository_id:
-repository.id,
-
-user_id:
-currentUser.id
-
-});
-
-
-if(error){
-
-console.error(
-"Star error:",
-error
-);
-
-
-if(
-error.code === "23505"
-){
-
-userHasStarred =
-true;
-
-updateStarButton();
-
-await refreshStarCount();
-
-return;
-
-}
-
-
-alert(
-"Unable to star repository: " +
-(
-error.message ||
-"Unknown error"
-)
-);
-
-return;
-
-}
-
-
-userHasStarred =
-true;
-
-
-updateStarButton();
-
-await refreshStarCount();
-
-
-showSuccess(
-"Repository starred."
-);
-
-}
-
-
-/* =====================================================
-   REFRESH STAR COUNT
-===================================================== */
-
-async function refreshStarCount(){
-
-if(!repository){
-
-return;
-
-}
-
-
-const {
-count,
-error
-} =
-await supabaseClient
-
-.from("repository_stars")
-
-.select(
-"repository_id",
-{
-count:"exact",
-head:true
-}
-)
-
-.eq(
-"repository_id",
-repository.id
-);
-
-
-if(error){
-
-console.error(
-"Unable to refresh star count:",
-error
-);
-
-return;
-
-}
-
-
-repository.stars_count =
-count || 0;
-
-
-updateStarCount(
-repository.stars_count
-);
+    mainBranch =
+        data || null;
 
 }
 
@@ -1892,67 +1354,67 @@ repository.stars_count
 
 async function loadFiles(){
 
-const {
-data,
-error
-} =
-await supabaseClient
-
-.from("repository_files")
-
-.select(`
-id,
-repository_id,
-file_path,
-content,
-language,
-created_at,
-updated_at,
-storage_path,
-mime_type,
-file_size,
-is_binary
-`)
-
-.eq(
-"repository_id",
-repoId
-)
-
-.order(
-"file_path",
-{
-ascending:true
-}
-);
+    let query =
+        supabaseClient
+            .from("repository_files")
+            .select("*")
+            .eq(
+                "repository_id",
+                repositoryId
+            );
 
 
-if(error){
+    if(mainBranch){
 
-console.error(
-error
-);
+        query =
+            query.eq(
+                "branch_id",
+                mainBranch.id
+            );
 
-document.getElementById(
-"fileList"
-).innerHTML =
-
-'<div class="empty">' +
-'Unable to load files.' +
-'</div>';
-
-return;
-
-}
+    }
 
 
-allFiles =
-data || [];
+    const {
+        data,
+        error
+    } =
+    await query
+        .order(
+            "file_path",
+            {
+                ascending:true
+            }
+        );
 
 
-renderFiles(
-allFiles
-);
+    if(error){
+
+        console.error(error);
+
+        return;
+
+    }
+
+
+    allFiles =
+        data || [];
+
+
+    renderFiles(
+        allFiles
+    );
+
+
+    document.getElementById(
+        "fileCount"
+    ).textContent =
+        allFiles.length +
+        (
+            allFiles.length === 1
+            ? " file"
+            : " files"
+        );
 
 }
 
@@ -1963,146 +1425,64 @@ allFiles
 
 function renderFiles(files){
 
-const list =
-document.getElementById(
-"fileList"
-);
+    const container =
+        document.getElementById(
+            "fileList"
+        );
 
 
-document.getElementById(
-"fileCount"
-).textContent =
-files.length +
-(
-files.length === 1
-?
-" file"
-:
-" files"
-);
+    if(!files.length){
+
+        container.innerHTML =
+            `
+            <div class="empty">
+                No files found.
+            </div>
+            `;
+
+        return;
+
+    }
 
 
-if(!files.length){
+    container.innerHTML =
+        files.map(function(file){
 
-list.innerHTML =
-
-'<div class="empty">' +
-'No files in this repository.' +
-'</div>';
-
-return;
-
-}
+            const icon =
+                file.is_binary
+                ? "📦"
+                : "📄";
 
 
-list.innerHTML =
-"";
+            return `
+                <div
+                    class="file-row"
+                    data-file-name="${escapeHtml(file.file_path || "")}"
+                >
 
+                    <div class="file-info">
 
-files.forEach(
-function(file){
+                        <div class="file-icon">
+                            ${icon}
+                        </div>
 
-const row =
-document.createElement(
-"div"
-);
+                        <a
+                            class="file-name"
+                            href="repository-explorer.html?repository_id=${encodeURIComponent(repositoryId)}&branch_id=${encodeURIComponent(file.branch_id || "")}"
+                        >
+                            ${escapeHtml(file.file_path || "")}
+                        </a>
 
-row.className =
-"file-row";
+                    </div>
 
+                    <div class="file-meta">
+                        ${file.language || "File"}
+                    </div>
 
-const info =
-document.createElement(
-"div"
-);
+                </div>
+            `;
 
-info.className =
-"file-info";
-
-
-const icon =
-document.createElement(
-"div"
-);
-
-icon.className =
-"file-icon";
-
-
-icon.textContent =
-file.is_binary
-?
-"📦"
-:
-"📄";
-
-
-const link =
-document.createElement(
-"a"
-);
-
-link.className =
-"file-name";
-
-
-link.textContent =
-file.file_path;
-
-
-link.href =
-"repository-explorer.html?" +
-"repository_id=" +
-encodeURIComponent(repoId) +
-"&path=" +
-encodeURIComponent(
-file.file_path
-);
-
-
-const meta =
-document.createElement(
-"div"
-);
-
-meta.className =
-"file-meta";
-
-
-meta.textContent =
-file.is_binary
-?
-"Binary file"
-:
-(
-file.language ||
-"HTML"
-);
-
-
-info.appendChild(
-icon
-);
-
-info.appendChild(
-link
-);
-
-
-row.appendChild(
-info
-);
-
-row.appendChild(
-meta
-);
-
-
-list.appendChild(
-row
-);
-
-});
+        }).join("");
 
 }
 
@@ -2113,106 +1493,461 @@ row
 
 function filterFiles(){
 
-const input =
-document.getElementById(
-"searchInput"
-);
+    const search =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .toLowerCase()
+        .trim();
 
 
-const query =
-(
-input.value ||
-""
-)
-.toLowerCase()
-.trim();
+    const rows =
+        document.querySelectorAll(
+            ".file-row"
+        );
 
 
-if(!query){
+    rows.forEach(function(row){
 
-renderFiles(
-allFiles
-);
-
-return;
-
-}
+        const name =
+            (
+                row.dataset.fileName ||
+                ""
+            ).toLowerCase();
 
 
-const filtered =
-allFiles.filter(
-function(file){
+        row.style.display =
+            !search ||
+            name.includes(search)
+            ? "flex"
+            : "none";
 
-return (
-file.file_path ||
-""
-)
-.toLowerCase()
-.includes(query);
-
-});
-
-
-renderFiles(
-filtered
-);
+    });
 
 }
 
 
 /* =====================================================
-   PUBLISH STATUS
+   ESCAPE HTML
 ===================================================== */
 
-function updatePublishStatus(
-published
-){
+function escapeHtml(value){
 
-const badge =
-document.getElementById(
-"publishBadge"
-);
-
-
-const visit =
-document.getElementById(
-"visitWebsiteButton"
-);
-
-
-if(published){
-
-badge.textContent =
-"✓ Published";
-
-badge.className =
-"badge published";
-
-
-if(visit){
-
-visit.style.display =
-"inline-block";
+    return String(value || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 
 }
 
-}else{
 
-badge.textContent =
-"Not published";
+/* =====================================================
+   SETUP ALL REPOSITORY LINKS
+===================================================== */
 
-badge.className =
-"badge";
+function setupRepositoryLinks(repo){
+
+    if(!repo || !repo.id){
+
+        console.error(
+            "Repository ID is missing."
+        );
+
+        return;
+
+    }
 
 
-if(visit){
+    const id =
+        encodeURIComponent(
+            repo.id
+        );
 
-visit.style.display =
-"none";
+
+    /* ISSUES */
+
+    const issuesButton =
+        document.getElementById(
+            "issuesButton"
+        );
+
+
+    if(issuesButton){
+
+        issuesButton.href =
+            "issues.html?repository_id=" +
+            id;
+
+    }
+
+
+    /* PULL REQUESTS */
+
+    const pullRequestsButton =
+        document.getElementById(
+            "pullRequestsButton"
+        );
+
+
+    if(pullRequestsButton){
+
+        pullRequestsButton.href =
+            "pull-requests.html?repository_id=" +
+            id;
+
+    }
+
+
+    /* FILES */
+
+    const filesButton =
+        document.getElementById(
+            "filesButton"
+        );
+
+
+    if(filesButton){
+
+        filesButton.href =
+            "repository-files.html?repository_id=" +
+            id;
+
+    }
+
+
+    /* FILE EXPLORER */
+
+    const explorerButton =
+        document.getElementById(
+            "explorerButton"
+        );
+
+
+    if(explorerButton){
+
+        explorerButton.href =
+            "repository-explorer.html?repository_id=" +
+            id;
+
+    }
+
+
+    /* ADD FILE */
+
+    const newFileButton =
+        document.getElementById(
+            "newFileButton"
+        );
+
+
+    if(newFileButton){
+
+        newFileButton.href =
+            "repository-add-file.html?repository_id=" +
+            id;
+
+    }
+
+
+    /* OPEN FILES */
+
+    const openFilesAction =
+        document.getElementById(
+            "openFilesAction"
+        );
+
+
+    if(openFilesAction){
+
+        openFilesAction.href =
+            "repository-files.html?repository_id=" +
+            id;
+
+    }
+
+
+    /* EDIT REPOSITORY */
+
+    const editAction =
+        document.getElementById(
+            "editAction"
+        );
+
+
+    if(editAction){
+
+        editAction.href =
+            "repository-edit.html?repository_id=" +
+            id;
+
+    }
 
 }
 
+
+/* =====================================================
+   LOAD STAR
+===================================================== */
+
+async function loadStar(){
+
+    if(!repository){
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "starCount"
+    ).textContent =
+        repository.stars_count || 0;
+
+
+    if(!currentUser){
+
+        return;
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("repository_stars")
+        .select("repository_id")
+        .eq(
+            "repository_id",
+            repository.id
+        )
+        .eq(
+            "user_id",
+            currentUser.id
+        )
+        .maybeSingle();
+
+
+    if(error){
+
+        console.error(error);
+
+        return;
+
+    }
+
+
+    if(data){
+
+        setStarred(true);
+
+    }
+
 }
+
+
+/* =====================================================
+   SET STARRED
+===================================================== */
+
+function setStarred(value){
+
+    const button =
+        document.getElementById(
+            "starButton"
+        );
+
+    const icon =
+        document.getElementById(
+            "starIcon"
+        );
+
+    const text =
+        document.getElementById(
+            "starText"
+        );
+
+
+    if(value){
+
+        button.classList.add(
+            "starred"
+        );
+
+        icon.textContent =
+            "★";
+
+        text.textContent =
+            "Starred";
+
+    }else{
+
+        button.classList.remove(
+            "starred"
+        );
+
+        icon.textContent =
+            "☆";
+
+        text.textContent =
+            "Star";
+
+    }
+
+}
+
+
+/* =====================================================
+   TOGGLE STAR
+===================================================== */
+
+async function toggleStar(){
+
+    if(!currentUser){
+
+        alert(
+            "Please login first to star this repository."
+        );
+
+        return;
+
+    }
+
+
+    if(repository.is_private){
+
+        alert(
+            "Private repositories cannot be starred."
+        );
+
+        return;
+
+    }
+
+
+    const {
+        data:existing
+    } =
+    await supabaseClient
+        .from("repository_stars")
+        .select("repository_id")
+        .eq(
+            "repository_id",
+            repository.id
+        )
+        .eq(
+            "user_id",
+            currentUser.id
+        )
+        .maybeSingle();
+
+
+    if(existing){
+
+        const {
+            error
+        } =
+        await supabaseClient
+            .from("repository_stars")
+            .delete()
+            .eq(
+                "repository_id",
+                repository.id
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            );
+
+
+        if(error){
+
+            alert(
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        setStarred(false);
+
+
+    }else{
+
+        const {
+            error
+        } =
+        await supabaseClient
+            .from("repository_stars")
+            .insert({
+
+                repository_id:
+                    repository.id,
+
+                user_id:
+                    currentUser.id
+
+            });
+
+
+        if(error){
+
+            alert(
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        setStarred(true);
+
+    }
+
+
+    await refreshStarCount();
+
+}
+
+
+/* =====================================================
+   REFRESH STAR COUNT
+===================================================== */
+
+async function refreshStarCount(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("repositories")
+        .select("stars_count")
+        .eq(
+            "id",
+            repository.id
+        )
+        .single();
+
+
+    if(!error && data){
+
+        repository.stars_count =
+            data.stars_count || 0;
+
+
+        document.getElementById(
+            "starCount"
+        ).textContent =
+            repository.stars_count;
+
+    }
 
 }
 
@@ -2223,323 +1958,142 @@ visit.style.display =
 
 async function publishWebsite(){
 
-if(!repository){
+    if(!repository){
 
-alert(
-"Repository is not loaded."
-);
+        return;
 
-return;
+    }
 
-}
 
+    if(!currentUser){
 
-/* INDEX */
+        alert(
+            "Please login first."
+        );
 
-const {
-data:indexFile,
-error:fileError
-} =
-await supabaseClient
+        return;
 
-.from("repository_files")
+    }
 
-.select(`
-id,
-file_path,
-content,
-language,
-is_binary
-`)
 
-.eq(
-"repository_id",
-repoId
-)
+    const button =
+        document.getElementById(
+            "publishAction"
+        );
 
-.eq(
-"file_path",
-"index.html"
-)
 
-.eq(
-"is_binary",
-false
-)
+    button.disabled =
+        true;
 
-.maybeSingle();
+    button.textContent =
+        "Publishing...";
 
 
-if(fileError){
+    try{
 
-console.error(
-fileError
-);
+        const {
+            data:indexFile,
+            error:fileError
+        } =
+        await supabaseClient
+            .from("repository_files")
+            .select("id")
+            .eq(
+                "repository_id",
+                repository.id
+            )
+            .eq(
+                "file_path",
+                "index.html"
+            )
+            .eq(
+                "branch_id",
+                mainBranch
+                ? mainBranch.id
+                : null
+            )
+            .maybeSingle();
 
-alert(
-"Unable to find index.html."
-);
 
-return;
+        if(fileError){
 
-}
+            throw fileError;
 
+        }
 
-if(!indexFile){
 
-alert(
-"Please create an index.html file before publishing."
-);
+        if(!indexFile){
 
-return;
+            alert(
+                "index.html was not found in the main branch."
+            );
 
-}
+            return;
 
+        }
 
-/* EXISTING PAGE */
 
-const {
-data:existingPage,
-error:pageFindError
-} =
-await supabaseClient
+        const {
+            error
+        } =
+        await supabaseClient
+            .from("repositories")
+            .update({
 
-.from("web_pages")
+                is_published:true,
 
-.select(
-"id"
-)
+                published_at:
+                    new Date().toISOString()
 
-.eq(
-"repository_id",
-repoId
-)
+            })
+            .eq(
+                "id",
+                repository.id
+            );
 
-.eq(
-"page_name",
-"index.html"
-)
 
-.maybeSingle();
+        if(error){
 
+            throw error;
 
-if(pageFindError){
+        }
 
-console.error(
-pageFindError
-);
 
-alert(
-"Unable to prepare website page."
-);
+        repository.is_published =
+            true;
 
-return;
 
-}
+        repository.published_at =
+            new Date().toISOString();
 
 
-let pageId =
-null;
+        updatePublishStatus();
 
 
-/* UPDATE */
+        showSuccess(
+            "Website published successfully."
+        );
 
-if(existingPage){
 
-pageId =
-existingPage.id;
+    }catch(error){
 
+        console.error(error);
 
-const {
-error:updateError
-} =
-await supabaseClient
+        alert(
+            error.message ||
+            "Publishing failed."
+        );
 
-.from("web_pages")
 
-.update({
+    }finally{
 
-html_content:
-indexFile.content || "",
+        button.disabled =
+            false;
 
-updated_at:
-new Date().toISOString(),
+        button.textContent =
+            "🚀 Publish Website";
 
-is_published:
-true,
-
-published_at:
-new Date().toISOString()
-
-})
-
-.eq(
-"id",
-pageId
-);
-
-
-if(updateError){
-
-console.error(
-updateError
-);
-
-alert(
-"Unable to publish website page."
-);
-
-return;
-
-}
-
-}
-
-
-/* CREATE */
-
-else{
-
-const {
-data:newPage,
-error:newPageError
-} =
-await supabaseClient
-
-.from("web_pages")
-
-.insert({
-
-repository_id:
-repoId,
-
-owner_id:
-repository.owner_id,
-
-page_name:
-"index.html",
-
-html_content:
-indexFile.content || "",
-
-css_content:
-"",
-
-js_content:
-"",
-
-is_published:
-true,
-
-published_at:
-new Date().toISOString()
-
-})
-
-.select(
-"id"
-)
-
-.single();
-
-
-if(newPageError){
-
-console.error(
-newPageError
-);
-
-alert(
-"Unable to create published website page."
-);
-
-return;
-
-}
-
-
-pageId =
-newPage.id;
-
-}
-
-
-/* REPOSITORY STATUS */
-
-const {
-error:repoUpdateError
-} =
-await supabaseClient
-
-.from("repositories")
-
-.update({
-
-is_published:
-true,
-
-published_at:
-new Date().toISOString()
-
-})
-
-.eq(
-"id",
-repoId
-);
-
-
-if(repoUpdateError){
-
-console.error(
-repoUpdateError
-);
-
-alert(
-"Website page published, but repository status could not be updated."
-);
-
-return;
-
-}
-
-
-/* LOCAL */
-
-repository.is_published =
-true;
-
-
-updatePublishStatus(
-true
-);
-
-
-/* VISIT */
-
-const visitButton =
-document.getElementById(
-"visitWebsiteButton"
-);
-
-
-visitButton.href =
-"published-website.html?repository_id=" +
-encodeURIComponent(repoId);
-
-
-visitButton.style.display =
-"inline-block";
-
-
-showSuccess(
-"Website published successfully."
-);
-
-
-alert(
-"Website published successfully."
-);
+    }
 
 }
 
@@ -2548,27 +2102,25 @@ alert(
    COMING SOON
 ===================================================== */
 
-function showComingSoon(
-feature
-){
+function showComingSoon(feature){
 
-document.getElementById(
-"modalTitle"
-).textContent =
-feature;
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        feature + " — Coming Soon";
 
 
-document.getElementById(
-"modalText"
-).textContent =
-feature +
-" feature is coming soon.";
+    document.getElementById(
+        "modalMessage"
+    ).textContent =
+        feature +
+        " feature is coming soon to ASIM TECH.";
 
 
-document.getElementById(
-"modal"
-).style.display =
-"flex";
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
 
 }
 
@@ -2579,19 +2131,43 @@ document.getElementById(
 
 function closeModal(){
 
-document.getElementById(
-"modal"
-).style.display =
-"none";
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "none";
 
 }
+
+
+/* =====================================================
+   CLOSE MODAL OUTSIDE
+===================================================== */
+
+window.addEventListener(
+    "click",
+    function(event){
+
+        const modal =
+            document.getElementById(
+                "modal"
+            );
+
+
+        if(event.target === modal){
+
+            closeModal();
+
+        }
+
+    }
+);
 
 
 /* =====================================================
    START
 ===================================================== */
 
-loadRepository();
+init();
 
 </script>
 
