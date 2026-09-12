@@ -1,0 +1,2419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Pull Requests — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+background:#0d1117;
+color:#e6edf3;
+min-height:100vh;
+}
+
+.navbar{
+height:64px;
+background:#010409;
+border-bottom:1px solid #30363d;
+display:flex;
+align-items:center;
+padding:0 5%;
+gap:25px;
+}
+
+.logo{
+font-size:21px;
+font-weight:700;
+color:white;
+}
+
+.navbar a{
+color:#e6edf3;
+text-decoration:none;
+font-size:14px;
+}
+
+.navbar a:hover{
+color:#58a6ff;
+}
+
+.container{
+width:92%;
+max-width:1100px;
+margin:30px auto;
+}
+
+.repo-header{
+margin-bottom:25px;
+}
+
+.repo-name{
+font-size:26px;
+margin-bottom:8px;
+}
+
+.description{
+color:#8b949e;
+font-size:14px;
+}
+
+.top-actions{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.pr-tabs{
+display:flex;
+gap:18px;
+align-items:center;
+}
+
+.pr-tab{
+color:#8b949e;
+text-decoration:none;
+font-size:14px;
+cursor:pointer;
+}
+
+.pr-tab.active{
+color:#e6edf3;
+font-weight:600;
+}
+
+.pr-count{
+background:#30363d;
+padding:2px 7px;
+border-radius:20px;
+font-size:11px;
+}
+
+.btn{
+border:1px solid #30363d;
+background:#21262d;
+color:#e6edf3;
+padding:8px 14px;
+border-radius:6px;
+font-size:14px;
+cursor:pointer;
+text-decoration:none;
+display:inline-block;
+}
+
+.btn:hover{
+background:#30363d;
+}
+
+.btn-green{
+background:#238636;
+border-color:#238636;
+color:white;
+}
+
+.btn-green:hover{
+background:#2ea043;
+}
+
+.btn-red{
+background:#da3633;
+border-color:#da3633;
+color:white;
+}
+
+.btn-red:hover{
+background:#f85149;
+}
+
+.btn-purple{
+background:#8250df;
+border-color:#8250df;
+color:white;
+}
+
+.search-row{
+display:flex;
+gap:10px;
+margin-bottom:15px;
+}
+
+.search{
+flex:1;
+background:#0d1117;
+border:1px solid #30363d;
+border-radius:6px;
+padding:9px 12px;
+color:#e6edf3;
+outline:none;
+}
+
+.search:focus{
+border-color:#58a6ff;
+}
+
+.pr-list{
+border:1px solid #30363d;
+border-radius:6px;
+overflow:hidden;
+}
+
+.pr-row{
+padding:17px;
+border-bottom:1px solid #21262d;
+display:flex;
+gap:14px;
+}
+
+.pr-row:last-child{
+border-bottom:0;
+}
+
+.pr-icon{
+font-size:22px;
+width:28px;
+}
+
+.pr-icon.open{
+color:#3fb950;
+}
+
+.pr-icon.closed{
+color:#8b949e;
+}
+
+.pr-icon.merged{
+color:#a371f7;
+}
+
+.pr-main{
+flex:1;
+min-width:0;
+}
+
+.pr-title{
+font-size:16px;
+font-weight:600;
+color:#58a6ff;
+cursor:pointer;
+margin-bottom:7px;
+word-break:break-word;
+}
+
+.pr-title:hover{
+text-decoration:underline;
+}
+
+.pr-meta{
+font-size:12px;
+color:#8b949e;
+line-height:1.7;
+}
+
+.branch{
+background:#21262d;
+border:1px solid #30363d;
+padding:2px 6px;
+border-radius:5px;
+font-family:monospace;
+color:#c9d1d9;
+}
+
+.badge{
+display:inline-block;
+padding:2px 8px;
+border-radius:20px;
+font-size:11px;
+font-weight:600;
+margin-right:6px;
+}
+
+.badge-open{
+background:#1a7f37;
+color:white;
+}
+
+.badge-closed{
+background:#6e7681;
+color:white;
+}
+
+.badge-merged{
+background:#8250df;
+color:white;
+}
+
+.pr-body{
+color:#c9d1d9;
+font-size:13px;
+margin-top:8px;
+white-space:pre-wrap;
+word-break:break-word;
+}
+
+.pr-actions{
+display:flex;
+gap:6px;
+align-items:flex-start;
+flex-wrap:wrap;
+}
+
+.small-btn{
+border:1px solid #30363d;
+background:#21262d;
+color:#e6edf3;
+padding:5px 9px;
+border-radius:6px;
+cursor:pointer;
+font-size:12px;
+}
+
+.small-btn:hover{
+background:#30363d;
+}
+
+.empty{
+padding:55px 20px;
+text-align:center;
+color:#8b949e;
+}
+
+.loading{
+padding:50px;
+text-align:center;
+color:#8b949e;
+}
+
+.error{
+display:none;
+background:#3d1f25;
+border:1px solid #f85149;
+color:#ff7b72;
+padding:14px;
+border-radius:6px;
+margin-bottom:20px;
+}
+
+.success{
+display:none;
+background:#173b25;
+border:1px solid #3fb950;
+color:#7ee787;
+padding:14px;
+border-radius:6px;
+margin-bottom:20px;
+}
+
+/* MODAL */
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.7);
+z-index:1000;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.modal-box{
+width:100%;
+max-width:600px;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:8px;
+padding:25px;
+}
+
+.modal-box h2{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+font-size:13px;
+color:#8b949e;
+margin-bottom:7px;
+}
+
+input,
+textarea{
+width:100%;
+background:#0d1117;
+border:1px solid #30363d;
+border-radius:6px;
+padding:10px;
+color:#e6edf3;
+outline:none;
+margin-bottom:18px;
+font-family:inherit;
+}
+
+textarea{
+min-height:140px;
+resize:vertical;
+}
+
+input:focus,
+textarea:focus{
+border-color:#58a6ff;
+}
+
+.modal-actions{
+display:flex;
+justify-content:flex-end;
+gap:8px;
+}
+
+.modal-error{
+display:none;
+background:#3d1f25;
+border:1px solid #f85149;
+color:#ff7b72;
+padding:10px;
+border-radius:6px;
+margin-bottom:15px;
+font-size:13px;
+}
+
+footer{
+text-align:center;
+padding:45px 10px;
+color:#8b949e;
+font-size:13px;
+}
+
+@media(max-width:600px){
+
+.navbar{
+height:58px;
+padding:0 4%;
+gap:15px;
+}
+
+.navbar a{
+font-size:12px;
+}
+
+.container{
+width:94%;
+margin:20px auto;
+}
+
+.pr-row{
+padding:13px;
+}
+
+.pr-actions{
+flex-direction:column;
+}
+
+.search-row{
+flex-direction:column;
+}
+
+.pr-tabs{
+gap:10px;
+flex-wrap:wrap;
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+<div class="logo">
+⚡ ASIM TECH
+</div>
+
+<a href="index.html">
+Home
+</a>
+
+<a href="repositories.html">
+Repositories
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+</nav>
+
+
+<div class="container">
+
+
+<div id="loading"
+class="loading">
+
+Loading pull requests...
+
+</div>
+
+
+<div id="error"
+class="error">
+</div>
+
+
+<div id="success"
+class="success">
+</div>
+
+
+<div id="mainContent"
+style="display:none;">
+
+
+<div class="repo-header">
+
+<div class="repo-name">
+
+📁 ASIM TECH
+/
+<strong id="repoName">
+Repository
+</strong>
+
+</div>
+
+<div id="repoDescription"
+class="description">
+
+</div>
+
+</div>
+
+
+<div class="top-actions">
+
+<div class="pr-tabs">
+
+
+<a id="openTab"
+class="pr-tab active"
+onclick="setState('open')">
+
+🟢 Open
+
+<span id="openCount"
+class="pr-count">
+0
+</span>
+
+</a>
+
+
+<a id="closedTab"
+class="pr-tab"
+onclick="setState('closed')">
+
+⚫ Closed
+
+<span id="closedCount"
+class="pr-count">
+0
+</span>
+
+</a>
+
+
+<a id="mergedTab"
+class="pr-tab"
+onclick="setState('merged')">
+
+🟣 Merged
+
+<span id="mergedCount"
+class="pr-count">
+0
+</span>
+
+</a>
+
+
+<a id="allTab"
+class="pr-tab"
+onclick="setState('all')">
+
+All
+
+<span id="allCount"
+class="pr-count">
+0
+</span>
+
+</a>
+
+</div>
+
+
+<button
+class="btn btn-green"
+onclick="openNewPR()">
+
+＋ New pull request
+
+</button>
+
+</div>
+
+
+<div class="search-row">
+
+<input
+id="searchInput"
+class="search"
+type="search"
+placeholder="🔎 Search pull requests..."
+oninput="renderPullRequests()">
+
+</div>
+
+
+<div id="prList"
+class="pr-list">
+
+<div class="empty">
+
+Loading pull requests...
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- NEW PULL REQUEST MODAL -->
+
+<div id="newPRModal"
+class="modal">
+
+<div class="modal-box">
+
+<h2>
+Create new pull request
+</h2>
+
+
+<label>
+Title
+</label>
+
+<input
+id="prTitle"
+type="text"
+placeholder="Pull request title">
+
+
+<label>
+Description
+</label>
+
+<textarea
+id="prBody"
+placeholder="Describe the changes..."></textarea>
+
+
+<label>
+Source branch
+</label>
+
+<input
+id="sourceBranch"
+type="text"
+placeholder="feature-branch">
+
+
+<label>
+Target branch
+</label>
+
+<input
+id="targetBranch"
+type="text"
+placeholder="main"
+value="main">
+
+
+<div id="modalError"
+class="modal-error">
+</div>
+
+
+<div class="modal-actions">
+
+<button
+class="btn"
+onclick="closeNewPR()">
+
+Cancel
+
+</button>
+
+
+<button
+id="createButton"
+class="btn btn-green"
+onclick="createPullRequest()">
+
+Create pull request
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+
+© 2026 ASIM TECH — Code. Create. Innovate.
+
+</footer>
+
+
+<script>
+
+
+/* =====================================================
+   SUPABASE CONFIGURATION
+===================================================== */
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* =====================================================
+   URL
+===================================================== */
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const repositoryId =
+params.get("repository_id") ||
+params.get("id");
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let repository = null;
+
+let currentUser = null;
+
+let pullRequests = [];
+
+let currentState = "open";
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+async function loadPage(){
+
+try{
+
+if(!repositoryId){
+
+showError(
+"Repository ID is missing."
+);
+
+return;
+
+}
+
+
+/* USER */
+
+const {
+data:userData
+} =
+await supabaseClient
+.auth
+.getUser();
+
+if(userData &&
+userData.user){
+
+currentUser =
+userData.user;
+
+}
+
+
+/* REPOSITORY */
+
+const {
+data:repo,
+error:repoError
+} =
+await supabaseClient
+
+.from("repositories")
+
+.select(`
+id,
+owner_id,
+name,
+description,
+is_private,
+default_branch
+`)
+
+.eq(
+"id",
+repositoryId
+)
+
+.single();
+
+
+if(repoError){
+
+throw repoError;
+
+}
+
+if(!repo){
+
+throw new Error(
+"Repository not found."
+);
+
+}
+
+
+repository =
+repo;
+
+
+document.getElementById(
+"repoName"
+).textContent =
+repo.name;
+
+
+document.getElementById(
+"repoDescription"
+).textContent =
+repo.description ||
+"Repository pull requests";
+
+
+document.title =
+"Pull Requests — " +
+repo.name +
+" — ASIM TECH";
+
+
+/* DEFAULT BRANCH */
+
+document.getElementById(
+"targetBranch"
+).value =
+repo.default_branch ||
+"main";
+
+
+await loadPullRequests();
+
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
+
+document.getElementById(
+"mainContent"
+).style.display =
+"block";
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to load pull requests."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   LOAD PULL REQUESTS
+===================================================== */
+
+async function loadPullRequests(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_pull_requests")
+
+.select(`
+id,
+repository_id,
+author_id,
+title,
+body,
+source_branch,
+target_branch,
+state,
+created_at,
+updated_at,
+closed_at,
+merged_at
+`)
+
+.eq(
+"repository_id",
+repositoryId
+)
+
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+pullRequests =
+data || [];
+
+
+updateCounts();
+
+renderPullRequests();
+
+}
+
+
+/* =====================================================
+   COUNTS
+===================================================== */
+
+function updateCounts(){
+
+const open =
+pullRequests.filter(
+pr => pr.state === "open"
+).length;
+
+
+const closed =
+pullRequests.filter(
+pr => pr.state === "closed"
+).length;
+
+
+const merged =
+pullRequests.filter(
+pr => pr.state === "merged"
+).length;
+
+
+document.getElementById(
+"openCount"
+).textContent =
+open;
+
+
+document.getElementById(
+"closedCount"
+).textContent =
+closed;
+
+
+document.getElementById(
+"mergedCount"
+).textContent =
+merged;
+
+
+document.getElementById(
+"allCount"
+).textContent =
+pullRequests.length;
+
+}
+
+
+/* =====================================================
+   STATE FILTER
+===================================================== */
+
+function setState(state){
+
+currentState =
+state;
+
+
+document
+.querySelectorAll(".pr-tab")
+.forEach(
+tab =>
+tab.classList.remove("active")
+);
+
+
+if(state === "open"){
+
+document.getElementById(
+"openTab"
+).classList.add("active");
+
+}
+
+
+if(state === "closed"){
+
+document.getElementById(
+"closedTab"
+).classList.add("active");
+
+}
+
+
+if(state === "merged"){
+
+document.getElementById(
+"mergedTab"
+).classList.add("active");
+
+}
+
+
+if(state === "all"){
+
+document.getElementById(
+"allTab"
+).classList.add("active");
+
+}
+
+
+renderPullRequests();
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function renderPullRequests(){
+
+const list =
+document.getElementById(
+"prList"
+);
+
+
+const search =
+(
+document.getElementById(
+"searchInput"
+).value ||
+""
+)
+.toLowerCase()
+.trim();
+
+
+const filtered =
+pullRequests.filter(
+pr => {
+
+
+if(
+currentState !== "all" &&
+pr.state !== currentState
+){
+
+return false;
+
+}
+
+
+if(!search){
+
+return true;
+
+}
+
+
+return (
+
+(pr.title || "")
+.toLowerCase()
+.includes(search)
+
+||
+
+(pr.body || "")
+.toLowerCase()
+.includes(search)
+
+||
+
+(pr.source_branch || "")
+.toLowerCase()
+.includes(search)
+
+||
+
+(pr.target_branch || "")
+.toLowerCase()
+.includes(search)
+
+);
+
+}
+);
+
+
+if(!filtered.length){
+
+let message =
+"No pull requests found.";
+
+if(currentState === "open"){
+
+message =
+"No open pull requests.";
+
+}
+
+if(currentState === "closed"){
+
+message =
+"No closed pull requests.";
+
+}
+
+if(currentState === "merged"){
+
+message =
+"No merged pull requests.";
+
+}
+
+
+list.innerHTML = `
+
+<div class="empty">
+
+<div style="font-size:38px;">
+🔀
+</div>
+
+<h3 style="margin:10px 0;">
+${message}
+</h3>
+
+<p>
+Create a new pull request to get started.
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+list.innerHTML =
+"";
+
+
+filtered.forEach(
+function(pr){
+
+const row =
+document.createElement(
+"div"
+);
+
+row.className =
+"pr-row";
+
+
+const icon =
+document.createElement(
+"div"
+);
+
+icon.className =
+"pr-icon " +
+(
+pr.state === "open"
+?
+"open"
+:
+pr.state === "merged"
+?
+"merged"
+:
+"closed"
+);
+
+icon.textContent =
+pr.state === "open"
+?
+"●"
+:
+pr.state === "merged"
+?
+"◆"
+:
+"●";
+
+
+const main =
+document.createElement(
+"div"
+);
+
+main.className =
+"pr-main";
+
+
+const title =
+document.createElement(
+"div"
+);
+
+title.className =
+"pr-title";
+
+title.textContent =
+pr.title;
+
+title.onclick =
+function(){
+
+showPR(pr);
+
+};
+
+
+const meta =
+document.createElement(
+"div"
+);
+
+meta.className =
+"pr-meta";
+
+
+meta.innerHTML =
+
+getBadge(pr.state)
+
++
+
+" #" +
+escapeHtml(
+pr.id.substring(0,8)
+)
+
++
+
+" · " +
+
+escapeHtml(
+pr.source_branch ||
+"main"
+)
+
++
+
+" → " +
+
+escapeHtml(
+pr.target_branch ||
+"main"
+)
+
++
+
+" · " +
+
+formatDate(
+pr.created_at
+);
+
+
+const body =
+document.createElement(
+"div"
+);
+
+body.className =
+"pr-body";
+
+body.textContent =
+pr.body ||
+"";
+
+
+main.appendChild(
+title
+);
+
+main.appendChild(
+meta
+);
+
+if(pr.body){
+
+main.appendChild(
+body
+);
+
+}
+
+
+const actions =
+document.createElement(
+"div"
+);
+
+actions.className =
+"pr-actions";
+
+
+const canManage =
+currentUser &&
+(
+currentUser.id ===
+pr.author_id
+||
+currentUser.id ===
+repository.owner_id
+);
+
+
+const viewButton =
+document.createElement(
+"button"
+);
+
+viewButton.className =
+"small-btn";
+
+viewButton.textContent =
+"View";
+
+viewButton.onclick =
+function(){
+
+showPR(pr);
+
+};
+
+actions.appendChild(
+viewButton
+);
+
+
+if(
+pr.state === "open" &&
+canManage
+){
+
+const closeButton =
+document.createElement(
+"button"
+);
+
+closeButton.className =
+"small-btn";
+
+closeButton.textContent =
+"Close";
+
+closeButton.onclick =
+function(){
+
+closePR(pr.id);
+
+};
+
+actions.appendChild(
+closeButton
+);
+
+}
+
+
+if(
+pr.state === "closed" &&
+canManage
+){
+
+const reopenButton =
+document.createElement(
+"button"
+);
+
+reopenButton.className =
+"small-btn";
+
+reopenButton.textContent =
+"Reopen";
+
+reopenButton.onclick =
+function(){
+
+reopenPR(pr.id);
+
+};
+
+actions.appendChild(
+reopenButton
+);
+
+}
+
+
+if(
+pr.state === "open" &&
+canManage
+){
+
+const mergeButton =
+document.createElement(
+"button"
+);
+
+mergeButton.className =
+"small-btn";
+
+mergeButton.textContent =
+"Merge";
+
+mergeButton.onclick =
+function(){
+
+mergePR(pr.id);
+
+};
+
+actions.appendChild(
+mergeButton
+);
+
+}
+
+
+if(canManage){
+
+const deleteButton =
+document.createElement(
+"button"
+);
+
+deleteButton.className =
+"small-btn";
+
+deleteButton.textContent =
+"Delete";
+
+deleteButton.onclick =
+function(){
+
+deletePR(pr.id);
+
+};
+
+actions.appendChild(
+deleteButton
+);
+
+}
+
+
+row.appendChild(
+icon
+);
+
+row.appendChild(
+main
+);
+
+row.appendChild(
+actions
+);
+
+list.appendChild(
+row
+);
+
+});
+
+}
+
+
+/* =====================================================
+   BADGE
+===================================================== */
+
+function getBadge(state){
+
+if(state === "merged"){
+
+return `
+<span class="badge badge-merged">
+🟣 Merged
+</span>
+`;
+
+}
+
+
+if(state === "closed"){
+
+return `
+<span class="badge badge-closed">
+⚫ Closed
+</span>
+`;
+
+}
+
+
+return `
+<span class="badge badge-open">
+🟢 Open
+</span>
+`;
+
+}
+
+
+/* =====================================================
+   NEW PR
+===================================================== */
+
+function openNewPR(){
+
+if(!currentUser){
+
+alert(
+"Please login first to create a pull request."
+);
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+document.getElementById(
+"newPRModal"
+).style.display =
+"flex";
+
+
+document.getElementById(
+"prTitle"
+).focus();
+
+}
+
+
+function closeNewPR(){
+
+document.getElementById(
+"newPRModal"
+).style.display =
+"none";
+
+
+document.getElementById(
+"modalError"
+).style.display =
+"none";
+
+}
+
+
+/* =====================================================
+   CREATE PR
+===================================================== */
+
+async function createPullRequest(){
+
+if(!currentUser){
+
+showModalError(
+"Please login first."
+);
+
+return;
+
+}
+
+
+const title =
+document.getElementById(
+"prTitle"
+).value.trim();
+
+
+const body =
+document.getElementById(
+"prBody"
+).value.trim();
+
+
+const sourceBranch =
+document.getElementById(
+"sourceBranch"
+).value.trim();
+
+
+const targetBranch =
+document.getElementById(
+"targetBranch"
+).value.trim();
+
+
+if(!title){
+
+showModalError(
+"Pull request title is required."
+);
+
+return;
+
+}
+
+
+if(!sourceBranch){
+
+showModalError(
+"Source branch is required."
+);
+
+return;
+
+}
+
+
+if(!targetBranch){
+
+showModalError(
+"Target branch is required."
+);
+
+return;
+
+}
+
+
+if(
+sourceBranch ===
+targetBranch
+){
+
+showModalError(
+"Source and target branch must be different."
+);
+
+return;
+
+}
+
+
+const button =
+document.getElementById(
+"createButton"
+);
+
+button.disabled =
+true;
+
+button.textContent =
+"Creating...";
+
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from(
+"repository_pull_requests"
+)
+
+.insert({
+
+repository_id:
+repositoryId,
+
+author_id:
+currentUser.id,
+
+title:
+title,
+
+body:
+body,
+
+source_branch:
+sourceBranch,
+
+target_branch:
+targetBranch,
+
+state:
+"open"
+
+})
+
+.select()
+
+.single();
+
+
+if(error){
+
+throw error;
+
+}
+
+
+pullRequests.unshift(
+data
+);
+
+
+updateCounts();
+
+renderPullRequests();
+
+closeNewPR();
+
+clearForm();
+
+showSuccess(
+"Pull Request created successfully."
+);
+
+
+}catch(error){
+
+console.error(error);
+
+showModalError(
+error.message ||
+"Unable to create pull request."
+);
+
+}finally{
+
+button.disabled =
+false;
+
+button.textContent =
+"Create pull request";
+
+}
+
+}
+
+
+/* =====================================================
+   SHOW PR
+===================================================== */
+
+function showPR(pr){
+
+let text =
+"Pull Request\n\n";
+
+text +=
+"Title: " +
+pr.title +
+"\n\n";
+
+text +=
+"State: " +
+pr.state +
+"\n\n";
+
+text +=
+"Source: " +
+pr.source_branch +
+"\n";
+
+text +=
+"Target: " +
+pr.target_branch +
+"\n\n";
+
+text +=
+"Description:\n" +
+(
+pr.body ||
+"No description."
+);
+
+
+alert(text);
+
+}
+
+
+/* =====================================================
+   CLOSE
+===================================================== */
+
+async function closePR(id){
+
+if(
+!confirm(
+"Close this pull request?"
+)
+){
+
+return;
+
+}
+
+
+try{
+
+const now =
+new Date().toISOString();
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from(
+"repository_pull_requests"
+)
+
+.update({
+
+state:
+"closed",
+
+closed_at:
+now,
+
+updated_at:
+now
+
+})
+
+.eq(
+"id",
+id
+);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+const pr =
+pullRequests.find(
+item =>
+item.id === id
+);
+
+
+if(pr){
+
+pr.state =
+"closed";
+
+pr.closed_at =
+now;
+
+pr.updated_at =
+now;
+
+}
+
+
+updateCounts();
+
+renderPullRequests();
+
+showSuccess(
+"Pull Request closed."
+);
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to close pull request."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   REOPEN
+===================================================== */
+
+async function reopenPR(id){
+
+try{
+
+const now =
+new Date().toISOString();
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from(
+"repository_pull_requests"
+)
+
+.update({
+
+state:
+"open",
+
+closed_at:
+null,
+
+updated_at:
+now
+
+})
+
+.eq(
+"id",
+id
+);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+const pr =
+pullRequests.find(
+item =>
+item.id === id
+);
+
+
+if(pr){
+
+pr.state =
+"open";
+
+pr.closed_at =
+null;
+
+pr.updated_at =
+now;
+
+}
+
+
+updateCounts();
+
+renderPullRequests();
+
+showSuccess(
+"Pull Request reopened."
+);
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to reopen pull request."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   MERGE
+===================================================== */
+
+async function mergePR(id){
+
+if(
+!confirm(
+"Merge this pull request?"
+)
+){
+
+return;
+
+}
+
+
+try{
+
+const now =
+new Date().toISOString();
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from(
+"repository_pull_requests"
+)
+
+.update({
+
+state:
+"merged",
+
+merged_at:
+now,
+
+updated_at:
+now
+
+})
+
+.eq(
+"id",
+id
+);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+const pr =
+pullRequests.find(
+item =>
+item.id === id
+);
+
+
+if(pr){
+
+pr.state =
+"merged";
+
+pr.merged_at =
+now;
+
+pr.updated_at =
+now;
+
+}
+
+
+updateCounts();
+
+renderPullRequests();
+
+showSuccess(
+"Pull Request marked as merged."
+);
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to merge pull request."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   DELETE
+===================================================== */
+
+async function deletePR(id){
+
+if(
+!confirm(
+"Delete this pull request permanently?"
+)
+){
+
+return;
+
+}
+
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+
+.from(
+"repository_pull_requests"
+)
+
+.delete()
+
+.eq(
+"id",
+id
+);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+pullRequests =
+pullRequests.filter(
+pr =>
+pr.id !== id
+);
+
+
+updateCounts();
+
+renderPullRequests();
+
+showSuccess(
+"Pull Request deleted."
+);
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to delete pull request."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   CLEAR FORM
+===================================================== */
+
+function clearForm(){
+
+document.getElementById(
+"prTitle"
+).value =
+"";
+
+
+document.getElementById(
+"prBody"
+).value =
+"";
+
+
+document.getElementById(
+"sourceBranch"
+).value =
+"feature";
+
+
+document.getElementById(
+"targetBranch"
+).value =
+repository?.default_branch ||
+"main";
+
+}
+
+
+/* =====================================================
+   ERROR / SUCCESS
+===================================================== */
+
+function showError(message){
+
+const box =
+document.getElementById(
+"error"
+);
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+}
+
+
+function showSuccess(message){
+
+const box =
+document.getElementById(
+"success"
+);
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+
+setTimeout(
+function(){
+
+box.style.display =
+"none";
+
+},
+4000
+);
+
+}
+
+
+function showModalError(message){
+
+const box =
+document.getElementById(
+"modalError"
+);
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(date){
+
+if(!date){
+
+return "";
+
+}
+
+
+return new Date(date)
+.toLocaleString(
+"en-IN",
+{
+
+day:"2-digit",
+
+month:"short",
+
+year:"numeric",
+
+hour:"2-digit",
+
+minute:"2-digit"
+
+}
+);
+
+}
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+function escapeHtml(value){
+
+if(
+value === null ||
+value === undefined
+){
+
+return "";
+
+}
+
+
+return String(value)
+
+.replace(
+/&/g,
+"&amp;"
+)
+
+.replace(
+/</g,
+"&lt;"
+)
+
+.replace(
+/>/g,
+"&gt;"
+)
+
+.replace(
+/"/g,
+"&quot;"
+)
+
+.replace(
+/'/g,
+"&#039;"
+);
+
+}
+
+
+/* =====================================================
+   MODAL OUTSIDE CLICK
+===================================================== */
+
+document
+.getElementById(
+"newPRModal"
+)
+.addEventListener(
+"click",
+function(event){
+
+if(
+event.target === this
+){
+
+closeNewPR();
+
+}
+
+}
+);
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadPage();
+
+</script>
+
+</body>
+
+</html>
