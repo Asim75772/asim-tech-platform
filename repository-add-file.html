@@ -1,9 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Add File — ASIM TECH</title>
 
@@ -88,14 +92,51 @@ font-size:14px;
 background:#161b22;
 border:1px solid #30363d;
 border-radius:6px;
-padding:13px 15px;
-margin-bottom:20px;
+padding:14px 15px;
+margin-bottom:15px;
 font-size:14px;
 color:#8b949e;
 }
 
 .repo-box strong{
 color:#58a6ff;
+}
+
+.branch-box{
+background:#161b22;
+border:1px solid #30363d;
+border-radius:6px;
+padding:15px;
+margin-bottom:20px;
+display:flex;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.branch-label{
+font-weight:600;
+}
+
+.branch-select{
+background:#21262d;
+border:1px solid #30363d;
+color:#e6edf3;
+padding:9px 12px;
+border-radius:6px;
+font-size:14px;
+min-width:220px;
+outline:none;
+cursor:pointer;
+}
+
+.branch-select:focus{
+border-color:#58a6ff;
+}
+
+.branch-info{
+color:#8b949e;
+font-size:13px;
 }
 
 .card{
@@ -288,6 +329,11 @@ color:white;
 background:#388bfd;
 }
 
+.btn-blue:disabled{
+opacity:.5;
+cursor:not-allowed;
+}
+
 .message{
 display:none;
 padding:12px 14px;
@@ -372,6 +418,11 @@ min-height:280px;
 padding:35px 15px;
 }
 
+.branch-select{
+width:100%;
+min-width:0;
+}
+
 }
 
 </style>
@@ -379,6 +430,7 @@ padding:35px 15px;
 </head>
 
 <body>
+
 
 <nav class="navbar">
 
@@ -403,6 +455,7 @@ Dashboard
 
 <div class="container">
 
+
 <a href="#" id="backBtn" class="back">
 ← Back to repository
 </a>
@@ -422,11 +475,12 @@ Create a new file or upload a file to this repository.
 
 
 <div id="loading" class="loading">
-Loading repository...
+Loading repository and branches...
 </div>
 
 
 <div id="mainContent" style="display:none;">
+
 
 <div class="repo-box">
 
@@ -435,6 +489,33 @@ Repository:
 <strong id="repoName">
 Loading...
 </strong>
+
+</div>
+
+
+<!-- BRANCH -->
+
+<div class="branch-box">
+
+<div class="branch-label">
+🌿 Branch:
+</div>
+
+<select
+id="branchSelect"
+class="branch-select">
+
+<option value="">
+Loading branches...
+</option>
+
+</select>
+
+<div
+id="branchInfo"
+class="branch-info">
+
+</div>
 
 </div>
 
@@ -474,6 +555,7 @@ id="uploadTab">
 <div
 id="createPanel"
 class="panel active">
+
 
 <div class="field">
 
@@ -518,14 +600,14 @@ placeholder="Write your file content here..."
 
 <div class="actions">
 
-<button
-type="button"
-class="btn"
-id="cancelCreate">
+<a
+href="#"
+id="cancelCreate"
+class="btn">
 
 Cancel
 
-</button>
+</a>
 
 
 <button
@@ -547,6 +629,7 @@ id="createButton">
 <div
 id="uploadPanel"
 class="panel">
+
 
 <div class="field">
 
@@ -619,7 +702,8 @@ placeholder="assets/myfile.png"
 <div class="help">
 
 The uploaded file will be stored securely in the
-<strong>repository-files</strong> storage bucket.
+<strong>repository-files</strong>
+storage bucket.
 
 </div>
 
@@ -628,14 +712,14 @@ The uploaded file will be stored securely in the
 
 <div class="actions">
 
-<button
-type="button"
-class="btn"
-id="cancelUpload">
+<a
+href="#"
+id="cancelUpload"
+class="btn">
 
 Cancel
 
-</button>
+</a>
 
 
 <button
@@ -652,6 +736,9 @@ disabled>
 
 </div>
 
+
+</div>
+
 </div>
 
 </div>
@@ -663,14 +750,12 @@ disabled>
 
 </footer>
 
-</div>
-
 
 <script>
 
-/* =========================================================
-   SUPABASE CONFIGURATION
-========================================================= */
+/* =====================================================
+   SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -685,23 +770,47 @@ SUPABASE_KEY
 );
 
 
-/* =========================================================
-   URL PARAMETERS
-========================================================= */
+/* =====================================================
+   URL
+===================================================== */
 
 const params =
 new URLSearchParams(
 window.location.search
 );
 
+
 const repositoryId =
 params.get("repository_id") ||
 params.get("id");
 
 
-/* =========================================================
+const requestedBranchId =
+params.get("branch_id");
+
+
+const requestedBranchName =
+params.get("branch");
+
+
+/* =====================================================
+   GLOBALS
+===================================================== */
+
+let currentUser = null;
+
+let repository = null;
+
+let branches = [];
+
+let currentBranch = null;
+
+let selectedFile = null;
+
+
+/* =====================================================
    ELEMENTS
-========================================================= */
+===================================================== */
 
 const loading =
 document.getElementById("loading");
@@ -711,6 +820,12 @@ document.getElementById("mainContent");
 
 const repoName =
 document.getElementById("repoName");
+
+const branchSelect =
+document.getElementById("branchSelect");
+
+const branchInfo =
+document.getElementById("branchInfo");
 
 const message =
 document.getElementById("message");
@@ -760,25 +875,28 @@ document.getElementById("uploadPath");
 const backBtn =
 document.getElementById("backBtn");
 
+const cancelCreate =
+document.getElementById("cancelCreate");
 
-let currentUser = null;
-
-let repository = null;
-
-let selectedFile = null;
+const cancelUpload =
+document.getElementById("cancelUpload");
 
 
-/* =========================================================
+/* =====================================================
    MESSAGE
-========================================================= */
+===================================================== */
 
-function showMessage(text,type){
+function showMessage(
+text,
+type
+){
 
 message.textContent =
 text;
 
 message.className =
-"message show " + type;
+"message show " +
+type;
 
 window.scrollTo({
 top:0,
@@ -788,52 +906,600 @@ behavior:"smooth"
 }
 
 
-/* =========================================================
-   FILE SIZE
-========================================================= */
+/* =====================================================
+   INIT
+===================================================== */
 
-function formatFileSize(bytes){
+async function init(){
 
-if(bytes < 1024){
+if(!repositoryId){
 
-return bytes + " B";
+showError(
+"Repository ID is missing."
+);
 
-}
-
-if(bytes < 1024 * 1024){
-
-return (
-bytes / 1024
-).toFixed(1) + " KB";
-
-}
-
-if(bytes < 1024 * 1024 * 1024){
-
-return (
-bytes / (1024 * 1024)
-).toFixed(1) + " MB";
-
-}
-
-return (
-bytes /
-(1024 * 1024 * 1024)
-).toFixed(1) + " GB";
+return;
 
 }
 
 
-/* =========================================================
-   LANGUAGE DETECTION
-========================================================= */
+try{
+
+const {
+data:userData
+} =
+await supabaseClient
+.auth
+.getUser();
+
+
+currentUser =
+userData?.user || null;
+
+
+await loadRepository();
+
+await loadBranches();
+
+setupLinks();
+
+loading.style.display =
+"none";
+
+mainContent.style.display =
+"block";
+
+
+}catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to load repository."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(
+text
+){
+
+loading.style.display =
+"none";
+
+message.textContent =
+"❌ " + text;
+
+message.className =
+"message show error";
+
+}
+
+
+/* =====================================================
+   LOAD REPOSITORY
+===================================================== */
+
+async function loadRepository(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("repositories")
+.select("*")
+.eq(
+"id",
+repositoryId
+)
+.single();
+
+
+if(error){
+
+throw error;
+
+}
+
+
+if(!data){
+
+throw new Error(
+"Repository not found."
+);
+
+}
+
+
+repository =
+data;
+
+
+if(
+repository.is_private &&
+(
+!currentUser ||
+currentUser.id !== repository.owner_id
+)
+){
+
+throw new Error(
+"You do not have access to this private repository."
+);
+
+}
+
+
+repoName.textContent =
+repository.name ||
+"Repository";
+
+}
+
+
+/* =====================================================
+   LOAD BRANCHES
+===================================================== */
+
+async function loadBranches(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("repository_branches")
+.select(
+"id,name,repository_id,created_by,created_at"
+)
+.eq(
+"repository_id",
+repositoryId
+)
+.order(
+"name",
+{
+ascending:true
+}
+);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+branches =
+data || [];
+
+
+if(!branches.length){
+
+throw new Error(
+"No branches found for this repository."
+);
+
+}
+
+
+let selected = null;
+
+
+/* URL branch ID */
+
+if(requestedBranchId){
+
+selected =
+branches.find(
+branch =>
+branch.id ===
+requestedBranchId
+);
+
+}
+
+
+/* URL branch name */
+
+if(
+!selected &&
+requestedBranchName
+){
+
+selected =
+branches.find(
+branch =>
+branch.name ===
+requestedBranchName
+);
+
+}
+
+
+/* Default branch */
+
+if(!selected){
+
+selected =
+branches.find(
+branch =>
+branch.name ===
+(
+repository.default_branch ||
+"main"
+)
+);
+
+}
+
+
+/* First branch */
+
+if(!selected){
+
+selected =
+branches[0];
+
+}
+
+
+currentBranch =
+selected;
+
+
+renderBranches();
+
+}
+
+
+/* =====================================================
+   RENDER BRANCHES
+===================================================== */
+
+function renderBranches(){
+
+branchSelect.innerHTML =
+"";
+
+
+branches.forEach(
+function(branch){
+
+const option =
+document.createElement(
+"option"
+);
+
+
+option.value =
+branch.id;
+
+
+option.textContent =
+"🌿 " +
+branch.name;
+
+
+if(
+currentBranch &&
+branch.id ===
+currentBranch.id
+){
+
+option.selected =
+true;
+
+}
+
+
+branchSelect.appendChild(
+option
+);
+
+});
+
+
+updateBranchInfo();
+
+}
+
+
+/* =====================================================
+   BRANCH CHANGE
+===================================================== */
+
+branchSelect.addEventListener(
+"change",
+function(){
+
+const branch =
+branches.find(
+item =>
+item.id ===
+branchSelect.value
+);
+
+
+if(!branch){
+
+return;
+
+}
+
+
+currentBranch =
+branch;
+
+
+updateBranchInfo();
+
+updateUrl();
+
+clearForm();
+
+});
+
+
+/* =====================================================
+   BRANCH INFO
+===================================================== */
+
+function updateBranchInfo(){
+
+if(!currentBranch){
+
+branchInfo.textContent =
+"";
+
+return;
+
+}
+
+
+branchInfo.textContent =
+"Files created or uploaded here will belong to this branch.";
+
+}
+
+
+/* =====================================================
+   UPDATE URL
+===================================================== */
+
+function updateUrl(){
+
+const url =
+new URL(
+window.location.href
+);
+
+
+url.searchParams.set(
+"repository_id",
+repositoryId
+);
+
+
+if(currentBranch){
+
+url.searchParams.set(
+"branch_id",
+currentBranch.id
+);
+
+}
+
+
+window.history.replaceState(
+{},
+"",
+url.toString()
+);
+
+}
+
+
+/* =====================================================
+   LINKS
+===================================================== */
+
+function setupLinks(){
+
+backBtn.href =
+"repository-details.html?id=" +
+encodeURIComponent(
+repositoryId
+);
+
+
+cancelCreate.href =
+"repository-details.html?id=" +
+encodeURIComponent(
+repositoryId
+);
+
+
+cancelUpload.href =
+"repository-details.html?id=" +
+encodeURIComponent(
+repositoryId
+);
+
+}
+
+
+/* =====================================================
+   CLEAR FORM
+===================================================== */
+
+function clearForm(){
+
+filePath.value =
+"";
+
+fileContent.value =
+"";
+
+uploadPath.value =
+"";
+
+selectedFile =
+null;
+
+fileInput.value =
+"";
+
+fileInfo.classList.remove(
+"show"
+);
+
+uploadButton.disabled =
+true;
+
+}
+
+
+/* =====================================================
+   TAB SWITCH
+===================================================== */
+
+createTab.addEventListener(
+"click",
+function(){
+
+createTab.classList.add(
+"active"
+);
+
+uploadTab.classList.remove(
+"active"
+);
+
+createPanel.classList.add(
+"active"
+);
+
+uploadPanel.classList.remove(
+"active"
+);
+
+});
+
+
+uploadTab.addEventListener(
+"click",
+function(){
+
+uploadTab.classList.add(
+"active"
+);
+
+createTab.classList.remove(
+"active"
+);
+
+uploadPanel.classList.add(
+"active"
+);
+
+createPanel.classList.remove(
+"active"
+);
+
+});
+
+
+/* =====================================================
+   CLEAN PATH
+===================================================== */
+
+function cleanPath(path){
+
+return path
+.trim()
+.replace(
+/^\/+/,
+""
+)
+.replace(
+/\/+/g,
+"/"
+);
+
+}
+
+
+/* =====================================================
+   VALIDATE PATH
+===================================================== */
+
+function validatePath(path){
+
+if(!path){
+
+return "File path is required.";
+
+}
+
+
+if(path.includes("..")){
+
+return "Invalid file path.";
+
+}
+
+
+if(path.startsWith("/")){
+
+return "File path cannot start with /.";
+
+}
+
+
+if(path.endsWith("/")){
+
+return "Please enter a file name.";
+
+}
+
+
+if(path.length > 500){
+
+return "File path is too long.";
+
+}
+
+
+return null;
+
+}
+
+
+/* =====================================================
+   LANGUAGE
+===================================================== */
 
 function detectLanguage(path){
 
 const ext =
-path.split(".").pop().toLowerCase();
+path
+.split(".")
+.pop()
+.toLowerCase();
 
-const languages = {
+
+const map = {
 
 html:"html",
 htm:"html",
@@ -882,311 +1548,126 @@ yml:"yaml"
 
 };
 
-return languages[ext] || "text";
+
+return map[ext] ||
+"text";
 
 }
 
 
-/* =========================================================
-   CLEAN PATH
-========================================================= */
-
-function cleanPath(path){
-
-return path
-.trim()
-.replace(/^\/+/,"")
-.replace(/\/+/g,"/");
-
-}
-
-
-/* =========================================================
-   VALIDATE PATH
-========================================================= */
-
-function validatePath(path){
-
-if(!path){
-
-return "File path is required.";
-
-}
-
-if(path.includes("..")){
-
-return "Invalid file path.";
-
-}
-
-if(path.startsWith("/")){
-
-return "File path cannot start with /.";
-
-}
-
-if(path.endsWith("/")){
-
-return "Please enter a file name.";
-
-}
-
-if(path.length > 500){
-
-return "File path is too long.";
-
-}
-
-return null;
-
-}
-
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-async function init(){
-
-try{
-
-if(!repositoryId){
-
-loading.innerHTML =
-"❌ Repository ID is missing.";
-
-return;
-
-}
-
-
-/* AUTH */
-
-const {
-data,
-error
-} =
-await supabaseClient
-.auth
-.getUser();
-
-
-if(error){
-
-throw error;
-
-}
-
-
-if(!data.user){
-
-window.location.href =
-"login.html";
-
-return;
-
-}
-
-
-currentUser =
-data.user;
-
-
-/* REPOSITORY */
-
-const {
-data:repo,
-error:repoError
-} =
-await supabaseClient
-.from("repositories")
-.select("*")
-.eq("id",repositoryId)
-.single();
-
-
-if(repoError){
-
-throw repoError;
-
-}
-
-
-if(!repo){
-
-loading.innerHTML =
-"❌ Repository not found.";
-
-return;
-
-}
-
-
-repository =
-repo;
-
-
-/* OWNER CHECK */
-
-if(repository.owner_id !== currentUser.id){
-
-loading.innerHTML =
-"❌ You do not have permission to add files to this repository.";
-
-return;
-
-}
-
-
-/* REPOSITORY NAME */
-
-repoName.textContent =
-repository.name;
-
-
-/* PAGE TITLE */
-
-document.title =
-"Add file — " +
-repository.name +
-" — ASIM TECH";
-
-
-/* BACK */
-
-backBtn.href =
-"repository-details.html?repository_id=" +
-encodeURIComponent(
-repository.id
-);
-
-
-/* SHOW */
-
-loading.style.display =
-"none";
-
-mainContent.style.display =
-"block";
-
-}
-catch(error){
-
-console.error(error);
-
-loading.innerHTML =
-"❌ " +
-(
-error.message ||
-"Something went wrong."
-);
-
-}
-
-}
-
-
-/* START */
-
-init();
-
-
-/* =========================================================
-   TABS
-========================================================= */
-
-createTab.addEventListener(
-"click",
-function(){
-
-createTab.classList.add("active");
-
-uploadTab.classList.remove("active");
-
-createPanel.classList.add("active");
-
-uploadPanel.classList.remove("active");
-
-}
-);
-
-
-uploadTab.addEventListener(
-"click",
-function(){
-
-uploadTab.classList.add("active");
-
-createTab.classList.remove("active");
-
-uploadPanel.classList.add("active");
-
-createPanel.classList.remove("active");
-
-}
-);
-
-
-/* =========================================================
-   CHECK DUPLICATE FILE
-========================================================= */
-
-async function fileExists(path){
-
-const {
-data,
-error
-} =
-await supabaseClient
-.from("repository_files")
-.select("id")
-.eq("repository_id",repository.id)
-.eq("file_path",path)
-.limit(1);
-
-
-if(error){
-
-throw error;
-
-}
-
-
-return data &&
-data.length > 0;
-
-}
-
-
-/* =========================================================
-   CREATE TEXT FILE
-========================================================= */
+/* =====================================================
+   CREATE FILE
+===================================================== */
 
 createButton.addEventListener(
 "click",
-async function(){
+createFile
+);
+
+
+async function createFile(){
 
 message.className =
 "message";
 
 
-const path =
+if(!currentUser){
+
+showMessage(
+"Please login first.",
+"error"
+);
+
+return;
+
+}
+
+
+if(!currentBranch){
+
+showMessage(
+"Please select a branch.",
+"error"
+);
+
+return;
+
+}
+
+
+let path =
 cleanPath(
 filePath.value
 );
+
 
 const content =
 fileContent.value;
 
 
-const validation =
-validatePath(path);
+const pathError =
+validatePath(
+path
+);
 
 
-if(validation){
+if(pathError){
 
 showMessage(
-validation,
+pathError,
+"error"
+);
+
+return;
+
+}
+
+
+/*
+   CHECK DUPLICATE
+   ONLY INSIDE CURRENT BRANCH
+*/
+
+const {
+data:existing,
+error:checkError
+} =
+await supabaseClient
+.from("repository_files")
+.select("id")
+.eq(
+"repository_id",
+repositoryId
+)
+.eq(
+"branch_id",
+currentBranch.id
+)
+.eq(
+"file_path",
+path
+)
+.maybeSingle();
+
+
+if(checkError){
+
+showMessage(
+checkError.message,
+"error"
+);
+
+return;
+
+}
+
+
+if(existing){
+
+showMessage(
+"File already exists in branch '" +
+currentBranch.name +
+"'.",
 "error"
 );
 
@@ -1204,39 +1685,6 @@ createButton.textContent =
 
 try{
 
-
-/* DUPLICATE CHECK */
-
-if(
-await fileExists(path)
-){
-
-showMessage(
-"A file with this path already exists.",
-"error"
-);
-
-return;
-
-}
-
-
-/* LANGUAGE */
-
-const language =
-detectLanguage(path);
-
-
-/* SIZE */
-
-const fileSize =
-new Blob(
-[content]
-).size;
-
-
-/* INSERT */
-
 const {
 error
 } =
@@ -1245,7 +1693,10 @@ await supabaseClient
 .insert({
 
 repository_id:
-repository.id,
+repositoryId,
+
+branch_id:
+currentBranch.id,
 
 file_path:
 path,
@@ -1254,16 +1705,19 @@ content:
 content,
 
 language:
-language,
+detectLanguage(path),
 
-file_size:
-fileSize,
-
-is_binary:
-false,
+storage_path:
+null,
 
 mime_type:
-"text/plain"
+"text/plain",
+
+file_size:
+new Blob([content]).size,
+
+is_binary:
+false
 
 });
 
@@ -1275,15 +1729,15 @@ throw error;
 }
 
 
-/* SUCCESS */
-
 showMessage(
-"✓ File created successfully.",
+"File '" +
+path +
+"' created successfully in branch '" +
+currentBranch.name +
+"'.",
 "success"
 );
 
-
-/* CLEAR */
 
 filePath.value =
 "";
@@ -1292,35 +1746,17 @@ fileContent.value =
 "";
 
 
-/* RETURN */
-
-setTimeout(
-function(){
-
-window.location.href =
-"repository-details.html?repository_id=" +
-encodeURIComponent(
-repository.id
-);
-
-},
-900
-);
-
-
-}
-catch(error){
+}catch(error){
 
 console.error(error);
 
 showMessage(
 error.message ||
-"Failed to create file.",
+"Unable to create file.",
 "error"
 );
 
-}
-finally{
+}finally{
 
 createButton.disabled =
 false;
@@ -1331,12 +1767,11 @@ createButton.textContent =
 }
 
 }
-);
 
 
-/* =========================================================
-   FILE INPUT
-========================================================= */
+/* =====================================================
+   FILE SELECT
+===================================================== */
 
 dropZone.addEventListener(
 "click",
@@ -1344,8 +1779,7 @@ function(){
 
 fileInput.click();
 
-}
-);
+});
 
 
 fileInput.addEventListener(
@@ -1353,23 +1787,22 @@ fileInput.addEventListener(
 function(){
 
 if(
-this.files &&
-this.files.length
+fileInput.files &&
+fileInput.files[0]
 ){
 
-selectFile(
-this.files[0]
+handleSelectedFile(
+fileInput.files[0]
 );
 
 }
 
-}
-);
+});
 
 
-/* =========================================================
+/* =====================================================
    DRAG & DROP
-========================================================= */
+===================================================== */
 
 dropZone.addEventListener(
 "dragover",
@@ -1381,8 +1814,7 @@ dropZone.classList.add(
 "drag"
 );
 
-}
-);
+});
 
 
 dropZone.addEventListener(
@@ -1393,8 +1825,7 @@ dropZone.classList.remove(
 "drag"
 );
 
-}
-);
+});
 
 
 dropZone.addEventListener(
@@ -1408,50 +1839,35 @@ dropZone.classList.remove(
 );
 
 
-const files =
-event.dataTransfer.files;
+const file =
+event.dataTransfer.files[0];
 
+
+if(file){
+
+handleSelectedFile(
+file
+);
+
+}
+
+});
+
+
+/* =====================================================
+   HANDLE SELECTED FILE
+===================================================== */
+
+function handleSelectedFile(file){
 
 if(
-files &&
-files.length
+file.size >
+50 * 1024 * 1024
 ){
-
-selectFile(
-files[0]
-);
-
-}
-
-}
-);
-
-
-/* =========================================================
-   SELECT FILE
-========================================================= */
-
-function selectFile(file){
-
-const maxSize =
-50 * 1024 * 1024;
-
-
-if(file.size > maxSize){
 
 showMessage(
 "File size cannot exceed 50 MB.",
 "error"
-);
-
-selectedFile =
-null;
-
-uploadButton.disabled =
-true;
-
-fileInfo.classList.remove(
-"show"
 );
 
 return;
@@ -1478,28 +1894,59 @@ fileInfo.classList.add(
 );
 
 
+if(!uploadPath.value){
+
 uploadPath.value =
-"assets/" +
 file.name;
+
+}
 
 
 uploadButton.disabled =
 false;
 
+}
+
+
+/* =====================================================
+   UPLOAD
+===================================================== */
+
+uploadButton.addEventListener(
+"click",
+uploadFile
+);
+
+
+async function uploadFile(){
 
 message.className =
 "message";
 
+
+if(!currentUser){
+
+showMessage(
+"Please login first.",
+"error"
+);
+
+return;
+
 }
 
 
-/* =========================================================
-   UPLOAD FILE
-========================================================= */
+if(!currentBranch){
 
-uploadButton.addEventListener(
-"click",
-async function(){
+showMessage(
+"Please select a branch.",
+"error"
+);
+
+return;
+
+}
+
 
 if(!selectedFile){
 
@@ -1513,20 +1960,76 @@ return;
 }
 
 
-const path =
+let path =
 cleanPath(
-uploadPath.value
+uploadPath.value ||
+selectedFile.name
 );
 
 
-const validation =
-validatePath(path);
+const pathError =
+validatePath(
+path
+);
 
 
-if(validation){
+if(pathError){
 
 showMessage(
-validation,
+pathError,
+"error"
+);
+
+return;
+
+}
+
+
+/*
+   CHECK DUPLICATE
+   ONLY INSIDE CURRENT BRANCH
+*/
+
+const {
+data:existing,
+error:checkError
+} =
+await supabaseClient
+.from("repository_files")
+.select("id")
+.eq(
+"repository_id",
+repositoryId
+)
+.eq(
+"branch_id",
+currentBranch.id
+)
+.eq(
+"file_path",
+path
+)
+.maybeSingle();
+
+
+if(checkError){
+
+showMessage(
+checkError.message,
+"error"
+);
+
+return;
+
+}
+
+
+if(existing){
+
+showMessage(
+"File already exists in branch '" +
+currentBranch.name +
+"'.",
 "error"
 );
 
@@ -1542,44 +2045,35 @@ uploadButton.textContent =
 "Uploading...";
 
 
-let storagePath = null;
-
-
 try{
 
+/*
+   STORAGE PATH
 
-/* DUPLICATE */
+   Includes repository,
+   branch and file path.
+*/
 
-if(
-await fileExists(path)
-){
-
-showMessage(
-"A file with this path already exists.",
-"error"
-);
-
-return;
-
-}
-
-
-/* STORAGE PATH */
-
-storagePath =
-repository.id +
+const storagePath =
+repositoryId +
+"/" +
+currentBranch.id +
 "/" +
 path;
 
 
-/* UPLOAD */
+/*
+   UPLOAD TO STORAGE
+*/
 
 const {
 error:storageError
 } =
 await supabaseClient
 .storage
-.from("repository-files")
+.from(
+"repository-files"
+)
 .upload(
 storagePath,
 selectedFile,
@@ -1599,7 +2093,9 @@ throw storageError;
 }
 
 
-/* DATABASE RECORD */
+/*
+   INSERT DATABASE RECORD
+*/
 
 const {
 error:dbError
@@ -1609,7 +2105,10 @@ await supabaseClient
 .insert({
 
 repository_id:
-repository.id,
+repositoryId,
+
+branch_id:
+currentBranch.id,
 
 file_path:
 path,
@@ -1636,9 +2135,14 @@ true
 });
 
 
-/* ROLLBACK */
-
 if(dbError){
+
+/*
+   Try to remove uploaded
+   storage file if DB insert fails.
+*/
+
+try{
 
 await supabaseClient
 .storage
@@ -1647,15 +2151,26 @@ await supabaseClient
 storagePath
 ]);
 
+}catch(cleanError){
+
+console.warn(
+cleanError
+);
+
+}
+
+
 throw dbError;
 
 }
 
 
-/* SUCCESS */
-
 showMessage(
-"✓ File uploaded successfully.",
+"File '" +
+path +
+"' uploaded successfully to branch '" +
+currentBranch.name +
+"'.",
 "success"
 );
 
@@ -1674,48 +2189,20 @@ fileInfo.classList.remove(
 );
 
 
-/* RETURN */
-
-setTimeout(
-function(){
-
-window.location.href =
-"repository-details.html?repository_id=" +
-encodeURIComponent(
-repository.id
-);
-
-},
-900
-);
-
-
-}
-catch(error){
+}catch(error){
 
 console.error(error);
 
 showMessage(
 error.message ||
-"Failed to upload file.",
+"Unable to upload file.",
 "error"
 );
 
-}
-finally{
-
-if(selectedFile){
+}finally{
 
 uploadButton.disabled =
 false;
-
-}
-else{
-
-uploadButton.disabled =
-true;
-
-}
 
 uploadButton.textContent =
 "📤 Upload file";
@@ -1723,49 +2210,69 @@ uploadButton.textContent =
 }
 
 }
-);
 
 
-/* =========================================================
-   CANCEL CREATE
-========================================================= */
+/* =====================================================
+   FORMAT FILE SIZE
+===================================================== */
 
-document.getElementById(
-"cancelCreate"
-).addEventListener(
-"click",
-function(){
+function formatFileSize(bytes){
 
-window.location.href =
-"repository-details.html?repository_id=" +
-encodeURIComponent(
-repository.id
-);
+if(
+bytes < 1024
+){
+
+return bytes +
+" B";
 
 }
-);
 
 
-/* =========================================================
-   CANCEL UPLOAD
-========================================================= */
+if(
+bytes <
+1024 * 1024
+){
 
-document.getElementById(
-"cancelUpload"
-).addEventListener(
-"click",
-function(){
-
-window.location.href =
-"repository-details.html?repository_id=" +
-encodeURIComponent(
-repository.id
-);
+return (
+bytes / 1024
+).toFixed(1) +
+" KB";
 
 }
-);
+
+
+if(
+bytes <
+1024 * 1024 * 1024
+){
+
+return (
+bytes /
+(1024 * 1024)
+).toFixed(1) +
+" MB";
+
+}
+
+
+return (
+bytes /
+(1024 * 1024 * 1024)
+).toFixed(1) +
+" GB";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+init();
 
 </script>
 
 </body>
+
 </html>
+
