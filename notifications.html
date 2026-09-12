@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Notifications — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+background:#0d1117;
+color:#e6edf3;
+min-height:100vh;
+}
+
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
+.navbar{
+height:64px;
+background:#010409;
+border-bottom:1px solid #30363d;
+display:flex;
+align-items:center;
+padding:0 5%;
+gap:25px;
+}
+
+.logo{
+font-size:21px;
+font-weight:700;
+color:white;
+}
+
+.navbar a{
+color:#e6edf3;
+text-decoration:none;
+font-size:14px;
+}
+
+.navbar a:hover{
+color:#58a6ff;
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.container{
+width:92%;
+max-width:1000px;
+margin:30px auto;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.page-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+border-bottom:1px solid #30363d;
+padding-bottom:20px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.page-title{
+font-size:27px;
+font-weight:500;
+}
+
+.page-title span{
+font-size:24px;
+}
+
+.unread-badge{
+display:inline-block;
+background:#f85149;
+color:white;
+font-size:12px;
+font-weight:600;
+padding:3px 8px;
+border-radius:20px;
+margin-left:8px;
+vertical-align:middle;
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.btn{
+border:1px solid #30363d;
+background:#21262d;
+color:#e6edf3;
+padding:8px 14px;
+border-radius:6px;
+font-size:14px;
+cursor:pointer;
+text-decoration:none;
+display:inline-block;
+}
+
+.btn:hover{
+background:#30363d;
+}
+
+.btn-blue{
+background:#1f6feb;
+border-color:#1f6feb;
+color:white;
+}
+
+.btn-blue:hover{
+background:#388bfd;
+}
+
+.btn-danger{
+color:#ff7b72;
+}
+
+.btn-danger:hover{
+background:#3d1f25;
+border-color:#f85149;
+}
+
+
+/* =====================================================
+   TOOLBAR
+===================================================== */
+
+.toolbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:15px;
+flex-wrap:wrap;
+}
+
+.filter-buttons{
+display:flex;
+gap:7px;
+}
+
+.filter-btn{
+border:1px solid #30363d;
+background:#161b22;
+color:#8b949e;
+padding:7px 12px;
+border-radius:6px;
+cursor:pointer;
+font-size:13px;
+}
+
+.filter-btn:hover{
+background:#21262d;
+color:#e6edf3;
+}
+
+.filter-btn.active{
+background:#21262d;
+color:#e6edf3;
+border-color:#8b949e;
+}
+
+
+/* =====================================================
+   NOTIFICATION LIST
+===================================================== */
+
+.notification-list{
+border:1px solid #30363d;
+border-radius:6px;
+overflow:hidden;
+background:#161b22;
+}
+
+.notification{
+display:flex;
+align-items:flex-start;
+gap:15px;
+padding:17px;
+border-bottom:1px solid #30363d;
+transition:.15s;
+}
+
+.notification:last-child{
+border-bottom:0;
+}
+
+.notification:hover{
+background:#1c2128;
+}
+
+.notification.unread{
+background:#161b22;
+}
+
+.notification.read{
+opacity:.72;
+}
+
+
+/* =====================================================
+   ICON
+===================================================== */
+
+.notification-icon{
+width:42px;
+height:42px;
+border-radius:50%;
+background:#21262d;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+flex-shrink:0;
+}
+
+.notification.unread .notification-icon{
+background:#1f6feb;
+}
+
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.notification-content{
+flex:1;
+min-width:0;
+}
+
+.notification-title{
+font-size:15px;
+font-weight:600;
+margin-bottom:5px;
+color:#e6edf3;
+}
+
+.notification-message{
+font-size:14px;
+color:#8b949e;
+line-height:1.5;
+margin-bottom:7px;
+word-break:break-word;
+}
+
+.notification-date{
+font-size:12px;
+color:#6e7681;
+}
+
+.notification-title a{
+color:#58a6ff;
+text-decoration:none;
+}
+
+.notification-title a:hover{
+text-decoration:underline;
+}
+
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.notification-actions{
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+flex-shrink:0;
+}
+
+.small-btn{
+border:1px solid #30363d;
+background:#21262d;
+color:#8b949e;
+padding:6px 9px;
+border-radius:5px;
+cursor:pointer;
+font-size:12px;
+}
+
+.small-btn:hover{
+background:#30363d;
+color:#e6edf3;
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty{
+padding:60px 20px;
+text-align:center;
+color:#8b949e;
+}
+
+.empty-icon{
+font-size:42px;
+margin-bottom:12px;
+}
+
+.empty-title{
+font-size:18px;
+color:#e6edf3;
+margin-bottom:7px;
+}
+
+.empty-text{
+font-size:14px;
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading{
+padding:60px 20px;
+text-align:center;
+color:#8b949e;
+font-size:16px;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.error{
+display:none;
+background:#3d1f25;
+border:1px solid #f85149;
+color:#ff7b72;
+padding:14px;
+border-radius:6px;
+margin-bottom:20px;
+}
+
+
+/* =====================================================
+   SUCCESS
+===================================================== */
+
+.success{
+display:none;
+background:#132b1b;
+border:1px solid #238636;
+color:#3fb950;
+padding:14px;
+border-radius:6px;
+margin-bottom:20px;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer{
+text-align:center;
+padding:45px 10px;
+color:#8b949e;
+font-size:13px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:650px){
+
+.navbar{
+height:58px;
+padding:0 4%;
+gap:15px;
+}
+
+.navbar a{
+font-size:12px;
+}
+
+.container{
+width:94%;
+margin:20px auto;
+}
+
+.page-title{
+font-size:23px;
+}
+
+.notification{
+padding:14px;
+gap:10px;
+}
+
+.notification-icon{
+width:36px;
+height:36px;
+font-size:17px;
+}
+
+.notification-actions{
+width:100%;
+margin-top:8px;
+}
+
+.notification{
+flex-wrap:wrap;
+}
+
+.notification-content{
+width:calc(100% - 48px);
+}
+
+.notification-actions{
+margin-left:48px;
+}
+
+.toolbar{
+align-items:flex-start;
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="navbar">
+
+<div class="logo">
+⚡ ASIM TECH
+</div>
+
+<a href="index.html">
+Home
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+<a href="repositories.html">
+Repositories
+</a>
+
+</nav>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<div class="container">
+
+
+<div id="error"
+class="error">
+</div>
+
+
+<div id="success"
+class="success">
+</div>
+
+
+<!-- HEADER -->
+
+<div class="page-header">
+
+<div class="page-title">
+
+<span>🔔</span>
+
+Notifications
+
+<span
+id="unreadBadge"
+class="unread-badge"
+style="display:none;">
+
+0
+
+</span>
+
+</div>
+
+
+<button
+class="btn btn-blue"
+onclick="markAllRead()">
+
+✓ Mark all as read
+
+</button>
+
+</div>
+
+
+<!-- TOOLBAR -->
+
+<div class="toolbar">
+
+<div class="filter-buttons">
+
+<button
+id="allFilter"
+class="filter-btn active"
+onclick="setFilter('all')">
+
+All
+
+</button>
+
+
+<button
+id="unreadFilter"
+class="filter-btn"
+onclick="setFilter('unread')">
+
+Unread
+
+</button>
+
+
+<button
+id="readFilter"
+class="filter-btn"
+onclick="setFilter('read')">
+
+Read
+
+</button>
+
+</div>
+
+
+<button
+class="btn btn-danger"
+onclick="deleteAllRead()">
+
+Delete read
+
+</button>
+
+</div>
+
+
+<!-- LIST -->
+
+<div
+id="notificationList"
+class="notification-list">
+
+<div class="loading">
+
+Loading notifications...
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+© 2026 ASIM TECH — Code. Create. Innovate.
+
+</footer>
+
+
+<script>
+
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let currentUser = null;
+
+let allNotifications = [];
+
+let currentFilter = "all";
+
+
+/* =====================================================
+   SHOW ERROR
+===================================================== */
+
+function showError(message){
+
+const box =
+document.getElementById(
+"error"
+);
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+}
+
+
+/* =====================================================
+   SHOW SUCCESS
+===================================================== */
+
+function showSuccess(message){
+
+const box =
+document.getElementById(
+"success"
+);
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+
+setTimeout(
+function(){
+
+box.style.display =
+"none";
+
+},
+4000
+);
+
+}
+
+
+/* =====================================================
+   LOAD USER
+===================================================== */
+
+async function loadUser(){
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient
+.auth
+.getUser();
+
+
+if(
+error ||
+!data ||
+!data.user
+){
+
+window.location.href =
+"login.html";
+
+return false;
+
+}
+
+
+currentUser =
+data.user;
+
+return true;
+
+}catch(error){
+
+console.error(
+error
+);
+
+window.location.href =
+"login.html";
+
+return false;
+
+}
+
+}
+
+
+/* =====================================================
+   LOAD NOTIFICATIONS
+===================================================== */
+
+async function loadNotifications(){
+
+if(!currentUser){
+
+return;
+
+}
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("notifications")
+
+.select(`
+id,
+user_id,
+type,
+title,
+message,
+link,
+is_read,
+created_at
+`)
+
+.eq(
+"user_id",
+currentUser.id
+)
+
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+
+if(error){
+
+console.error(
+error
+);
+
+showError(
+"Unable to load notifications: " +
+(error.message || "Unknown error")
+);
+
+document.getElementById(
+"notificationList"
+).innerHTML =
+
+'<div class="empty">' +
+
+'<div class="empty-icon">⚠️</div>' +
+
+'<div class="empty-title">' +
+'Unable to load notifications' +
+'</div>' +
+
+'<div class="empty-text">' +
+'Please try again later.' +
+'</div>' +
+
+'</div>';
+
+return;
+
+}
+
+
+allNotifications =
+data || [];
+
+
+updateUnreadCount();
+
+renderNotifications();
+
+}
+
+
+/* =====================================================
+   UPDATE UNREAD COUNT
+===================================================== */
+
+function updateUnreadCount(){
+
+const unread =
+allNotifications.filter(
+function(notification){
+
+return notification.is_read === false;
+
+}
+);
+
+
+const badge =
+document.getElementById(
+"unreadBadge"
+);
+
+
+if(unread.length > 0){
+
+badge.textContent =
+unread.length;
+
+badge.style.display =
+"inline-block";
+
+}else{
+
+badge.style.display =
+"none";
+
+}
+
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function setFilter(filter){
+
+currentFilter =
+filter;
+
+
+document
+.getElementById("allFilter")
+.classList.remove("active");
+
+
+document
+.getElementById("unreadFilter")
+.classList.remove("active");
+
+
+document
+.getElementById("readFilter")
+.classList.remove("active");
+
+
+if(filter === "all"){
+
+document
+.getElementById("allFilter")
+.classList.add("active");
+
+}
+
+if(filter === "unread"){
+
+document
+.getElementById("unreadFilter")
+.classList.add("active");
+
+}
+
+if(filter === "read"){
+
+document
+.getElementById("readFilter")
+.classList.add("active");
+
+}
+
+
+renderNotifications();
+
+}
+
+
+/* =====================================================
+   RENDER NOTIFICATIONS
+===================================================== */
+
+function renderNotifications(){
+
+const list =
+document.getElementById(
+"notificationList"
+);
+
+
+let notifications =
+allNotifications;
+
+
+if(currentFilter === "unread"){
+
+notifications =
+allNotifications.filter(
+function(notification){
+
+return notification.is_read === false;
+
+}
+);
+
+}
+
+
+if(currentFilter === "read"){
+
+notifications =
+allNotifications.filter(
+function(notification){
+
+return notification.is_read === true;
+
+}
+);
+
+}
+
+
+if(!notifications.length){
+
+list.innerHTML =
+
+'<div class="empty">' +
+
+'<div class="empty-icon">🔔</div>' +
+
+'<div class="empty-title">' +
+
+(
+currentFilter === "unread"
+?
+"No unread notifications"
+:
+currentFilter === "read"
+?
+"No read notifications"
+:
+"No notifications yet"
+)
+
++
+
+'</div>' +
+
+'<div class="empty-text">' +
+
+(
+currentFilter === "all"
+?
+"Your notifications will appear here."
+:
+"Nothing to show in this section."
+)
+
++
+
+'</div>' +
+
+'</div>';
+
+return;
+
+}
+
+
+list.innerHTML =
+"";
+
+
+notifications.forEach(
+function(notification){
+
+const item =
+document.createElement(
+"div"
+);
+
+item.className =
+"notification " +
+(
+notification.is_read
+?
+"read"
+:
+"unread"
+);
+
+
+/* ICON */
+
+const icon =
+document.createElement(
+"div"
+);
+
+icon.className =
+"notification-icon";
+
+icon.textContent =
+getNotificationIcon(
+notification.type
+);
+
+
+/* CONTENT */
+
+const content =
+document.createElement(
+"div"
+);
+
+content.className =
+"notification-content";
+
+
+const title =
+document.createElement(
+"div"
+);
+
+title.className =
+"notification-title";
+
+
+if(notification.link){
+
+const link =
+document.createElement(
+"a"
+);
+
+link.href =
+notification.link;
+
+link.textContent =
+notification.title ||
+"Notification";
+
+title.appendChild(
+link
+);
+
+}else{
+
+title.textContent =
+notification.title ||
+"Notification";
+
+}
+
+
+const message =
+document.createElement(
+"div"
+);
+
+message.className =
+"notification-message";
+
+message.textContent =
+notification.message ||
+"";
+
+
+const date =
+document.createElement(
+"div"
+);
+
+date.className =
+"notification-date";
+
+date.textContent =
+formatDate(
+notification.created_at
+);
+
+
+content.appendChild(
+title
+);
+
+if(notification.message){
+
+content.appendChild(
+message
+);
+
+}
+
+content.appendChild(
+date
+);
+
+
+/* ACTIONS */
+
+const actions =
+document.createElement(
+"div"
+);
+
+actions.className =
+"notification-actions";
+
+
+if(!notification.is_read){
+
+const readButton =
+document.createElement(
+"button"
+);
+
+readButton.className =
+"small-btn";
+
+readButton.textContent =
+"✓ Read";
+
+readButton.onclick =
+function(){
+
+markAsRead(
+notification.id
+);
+
+};
+
+actions.appendChild(
+readButton
+);
+
+}
+
+
+if(notification.link){
+
+const openButton =
+document.createElement(
+"a"
+);
+
+openButton.className =
+"small-btn";
+
+openButton.textContent =
+"Open";
+
+openButton.href =
+notification.link;
+
+actions.appendChild(
+openButton
+);
+
+}
+
+
+const deleteButton =
+document.createElement(
+"button"
+);
+
+deleteButton.className =
+"small-btn";
+
+deleteButton.textContent =
+"Delete";
+
+deleteButton.onclick =
+function(){
+
+deleteNotification(
+notification.id
+);
+
+};
+
+actions.appendChild(
+deleteButton
+);
+
+
+item.appendChild(
+icon
+);
+
+item.appendChild(
+content
+);
+
+item.appendChild(
+actions
+);
+
+
+list.appendChild(
+item
+);
+
+});
+
+}
+
+
+/* =====================================================
+   NOTIFICATION ICON
+===================================================== */
+
+function getNotificationIcon(type){
+
+switch(type){
+
+case "issue":
+return "💬";
+
+case "star":
+return "⭐";
+
+case "fork":
+return "🍴";
+
+case "comment":
+return "🗨️";
+
+case "repository":
+return "📁";
+
+case "system":
+return "⚙️";
+
+case "success":
+return "✅";
+
+case "warning":
+return "⚠️";
+
+default:
+return "🔔";
+
+}
+
+}
+
+
+/* =====================================================
+   FORMAT DATE
+===================================================== */
+
+function formatDate(dateString){
+
+if(!dateString){
+
+return "";
+
+}
+
+
+const date =
+new Date(
+dateString
+);
+
+
+if(isNaN(date.getTime())){
+
+return "";
+
+}
+
+
+return date.toLocaleString(
+"en-IN",
+{
+year:"numeric",
+month:"short",
+day:"numeric",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
+}
+
+
+/* =====================================================
+   MARK ONE AS READ
+===================================================== */
+
+async function markAsRead(id){
+
+const {
+error
+} =
+await supabaseClient
+
+.from("notifications")
+
+.update({
+is_read:true
+})
+
+.eq(
+"id",
+id
+)
+
+.eq(
+"user_id",
+currentUser.id
+);
+
+
+if(error){
+
+console.error(
+error
+);
+
+showError(
+"Unable to mark notification as read."
+);
+
+return;
+
+}
+
+
+const notification =
+allNotifications.find(
+function(item){
+
+return item.id === id;
+
+}
+);
+
+
+if(notification){
+
+notification.is_read =
+true;
+
+}
+
+
+updateUnreadCount();
+
+renderNotifications();
+
+}
+
+
+/* =====================================================
+   MARK ALL AS READ
+===================================================== */
+
+async function markAllRead(){
+
+const unread =
+allNotifications.filter(
+function(notification){
+
+return notification.is_read === false;
+
+}
+);
+
+
+if(!unread.length){
+
+showSuccess(
+"No unread notifications."
+);
+
+return;
+
+}
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("notifications")
+
+.update({
+is_read:true
+})
+
+.eq(
+"user_id",
+currentUser.id
+)
+
+.eq(
+"is_read",
+false
+);
+
+
+if(error){
+
+console.error(
+error
+);
+
+showError(
+"Unable to mark all notifications as read."
+);
+
+return;
+
+}
+
+
+allNotifications.forEach(
+function(notification){
+
+notification.is_read =
+true;
+
+}
+);
+
+
+updateUnreadCount();
+
+renderNotifications();
+
+
+showSuccess(
+"All notifications marked as read."
+);
+
+}
+
+
+/* =====================================================
+   DELETE ONE
+===================================================== */
+
+async function deleteNotification(id){
+
+const confirmed =
+confirm(
+"Delete this notification?"
+);
+
+
+if(!confirmed){
+
+return;
+
+}
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("notifications")
+
+.delete()
+
+.eq(
+"id",
+id
+)
+
+.eq(
+"user_id",
+currentUser.id
+);
+
+
+if(error){
+
+console.error(
+error
+);
+
+showError(
+"Unable to delete notification."
+);
+
+return;
+
+}
+
+
+allNotifications =
+allNotifications.filter(
+function(notification){
+
+return notification.id !== id;
+
+}
+);
+
+
+updateUnreadCount();
+
+renderNotifications();
+
+
+showSuccess(
+"Notification deleted."
+);
+
+}
+
+
+/* =====================================================
+   DELETE ALL READ
+===================================================== */
+
+async function deleteAllRead(){
+
+const read =
+allNotifications.filter(
+function(notification){
+
+return notification.is_read === true;
+
+}
+);
+
+
+if(!read.length){
+
+showSuccess(
+"No read notifications to delete."
+);
+
+return;
+
+}
+
+
+const confirmed =
+confirm(
+"Delete all read notifications?"
+);
+
+
+if(!confirmed){
+
+return;
+
+}
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("notifications")
+
+.delete()
+
+.eq(
+"user_id",
+currentUser.id
+)
+
+.eq(
+"is_read",
+true
+);
+
+
+if(error){
+
+console.error(
+error
+);
+
+showError(
+"Unable to delete read notifications."
+);
+
+return;
+
+}
+
+
+allNotifications =
+allNotifications.filter(
+function(notification){
+
+return notification.is_read === false;
+
+}
+);
+
+
+updateUnreadCount();
+
+renderNotifications();
+
+
+showSuccess(
+"Read notifications deleted."
+);
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+async function start(){
+
+const loggedIn =
+await loadUser();
+
+
+if(!loggedIn){
+
+return;
+
+}
+
+
+await loadNotifications();
+
+}
+
+
+start();
+
+</script>
+
+
+</body>
+
+</html>
