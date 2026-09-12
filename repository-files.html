@@ -33,7 +33,6 @@ color:#e6edf3;
 min-height:100vh;
 }
 
-
 /* =========================
    NAVBAR
 ========================= */
@@ -66,7 +65,6 @@ font-size:14px;
 color:#58a6ff;
 }
 
-
 /* =========================
    CONTAINER
 ========================= */
@@ -76,7 +74,6 @@ width:94%;
 max-width:1250px;
 margin:28px auto;
 }
-
 
 /* =========================
    LOADING
@@ -88,7 +85,6 @@ text-align:center;
 color:#8b949e;
 font-size:16px;
 }
-
 
 /* =========================
    ERROR
@@ -108,7 +104,6 @@ border-radius:6px;
 
 margin-bottom:20px;
 }
-
 
 /* =========================
    REPOSITORY HEADER
@@ -162,7 +157,6 @@ margin-bottom:13px;
 line-height:1.5;
 }
 
-
 /* =========================
    REPO INFO
 ========================= */
@@ -182,7 +176,6 @@ color:#8b949e;
 .info-item strong{
 color:#e6edf3;
 }
-
 
 /* =========================
    STAR
@@ -213,7 +206,6 @@ background:#30363d;
 .star-button.starred{
 color:#f2cc60;
 }
-
 
 /* =========================
    TABS
@@ -253,7 +245,6 @@ font-weight:600;
 border-bottom-color:#f78166;
 }
 
-
 /* =========================
    TOOLBAR
 ========================= */
@@ -290,7 +281,6 @@ flex:1;
 
 justify-content:flex-end;
 }
-
 
 /* =========================
    BUTTON
@@ -349,7 +339,6 @@ color:#f85149;
 .btn-danger:hover{
 background:#3d1f25;
 }
-
 
 /* =========================
    BRANCH
@@ -472,7 +461,6 @@ text-align:left;
 background:#21262d;
 }
 
-
 /* =========================
    ADD FILE
 ========================= */
@@ -525,7 +513,6 @@ background:#21262d;
 color:#58a6ff;
 }
 
-
 /* =========================
    SEARCH
 ========================= */
@@ -553,7 +540,6 @@ font-size:13px;
 .search:focus{
 border-color:#58a6ff;
 }
-
 
 /* =========================
    COMMIT BAR
@@ -584,7 +570,6 @@ color:#8b949e;
 color:#58a6ff;
 font-weight:600;
 }
-
 
 /* =========================
    FILE LIST
@@ -696,7 +681,6 @@ display:flex;
 gap:5px;
 }
 
-
 /* =========================
    EMPTY
 ========================= */
@@ -713,7 +697,6 @@ color:#8b949e;
 font-size:35px;
 margin-bottom:12px;
 }
-
 
 /* =========================
    README
@@ -760,7 +743,6 @@ margin-bottom:12px;
 .readme-body p{
 margin-bottom:10px;
 }
-
 
 /* =========================
    MODAL
@@ -850,7 +832,6 @@ margin-bottom:16px;
 border-color:#58a6ff;
 }
 
-
 /* =========================
    MOBILE
 ========================= */
@@ -935,9 +916,7 @@ max-width:none;
 
 </head>
 
-
 <body>
-
 
 <!-- =========================
      NAVBAR
@@ -963,10 +942,7 @@ Dashboard
 
 </nav>
 
-
-
 <div class="container">
-
 
 <!-- LOADING -->
 
@@ -978,7 +954,6 @@ Loading repository...
 
 </div>
 
-
 <!-- ERROR -->
 
 <div
@@ -986,14 +961,11 @@ id="error"
 class="error">
 </div>
 
-
-
 <!-- MAIN -->
 
 <div
 id="mainContent"
 style="display:none">
-
 
 <!-- =========================
      REPOSITORY HEADER
@@ -1034,7 +1006,6 @@ Public
 
 </div>
 
-
 <div
 id="repoDescription"
 class="description">
@@ -1042,7 +1013,6 @@ class="description">
 No description provided.
 
 </div>
-
 
 <div class="repo-info">
 
@@ -1058,7 +1028,6 @@ stars
 
 </span>
 
-
 <span class="info-item">
 
 📄
@@ -1071,7 +1040,6 @@ files
 
 </span>
 
-
 <span class="info-item">
 
 🌿
@@ -1081,7 +1049,6 @@ main
 </strong>
 
 </span>
-
 
 <button
 id="starButton"
@@ -1095,8 +1062,6 @@ onclick="toggleStar()">
 </div>
 
 </div>
-
-
 
 <!-- =========================
      TABS
@@ -1177,17 +1142,13 @@ Insights
 
 </div>
 
-
-
 <!-- =========================
      TOOLBAR
 ========================= -->
 
 <div class="toolbar">
 
-
 <div class="toolbar-left">
-
 
 <!-- BRANCH -->
 
@@ -1202,11 +1163,9 @@ onclick="toggleBranchMenu()">
 
 </button>
 
-
 <div
 id="branchMenu"
 class="branch-menu">
-
 
 <div class="branch-menu-header">
 
@@ -1214,19 +1173,18 @@ class="branch-menu">
 
 </div>
 
-
 <div
 id="branchList"
 class="branch-list">
 
-<div style="padding:15px;color:#8b949e;font-size:13px;">
+<div
+style="padding:15px;color:#8b949e;font-size:13px;">
 
 Loading branches...
 
 </div>
 
 </div>
-
 
 <button
 class="branch-create"
@@ -1236,11 +1194,9 @@ onclick="openCreateBranchModal()">
 
 </button>
 
-
 </div>
 
 </div>
-
 
 <!-- FILE EXPLORER -->
 
@@ -1252,7 +1208,6 @@ href="#">
 📂 File Explorer
 
 </a>
-
 
 <!-- ADD FILE -->
 
@@ -1267,11 +1222,9 @@ onclick="toggleAddMenu()">
 
 </button>
 
-
 <div
 id="addMenu"
 class="add-menu">
-
 
 <a
 id="createFileLink"
@@ -1281,7 +1234,6 @@ href="#">
 
 </a>
 
-
 <a
 id="uploadFileLink"
 href="#">
@@ -1290,15 +1242,11 @@ href="#">
 
 </a>
 
-
 </div>
 
 </div>
 
-
 </div>
-
-
 
 <div class="toolbar-right">
 
@@ -1307,13 +1255,11 @@ id="searchInput"
 class="search"
 type="search"
 placeholder="🔎 Go to file..."
-oninput="filterFiles()">
+oninput="filterFiles">
 
 </div>
 
 </div>
-
-
 
 <!-- =========================
      COMMIT
@@ -1335,7 +1281,6 @@ Initial repository
 
 </div>
 
-
 <div>
 
 <span
@@ -1348,8 +1293,6 @@ id="fileCountTop">
 </div>
 
 </div>
-
-
 
 <!-- =========================
      FILE LIST
@@ -1371,8 +1314,6 @@ Loading files...
 
 </div>
 
-
-
 <!-- =========================
      README
 ========================= -->
@@ -1385,7 +1326,6 @@ Loading files...
 
 </div>
 
-
 <div class="readme-body">
 
 <h2
@@ -1395,14 +1335,12 @@ Repository
 
 </h2>
 
-
 <p
 id="readmeDescription">
 
 Welcome to this ASIM TECH repository.
 
 </p>
-
 
 <p>
 
@@ -1415,12 +1353,9 @@ ASIM TECH Platform.
 
 </div>
 
-
 </div>
 
 </div>
-
-
 
 <!-- =========================
      GENERAL MODAL
@@ -1462,8 +1397,6 @@ Close
 
 </div>
 
-
-
 <!-- =========================
      CREATE BRANCH MODAL
 ========================= -->
@@ -1492,14 +1425,12 @@ main
 
 </p>
 
-
 <input
 id="newBranchName"
 class="branch-modal-input"
 type="text"
 placeholder="e.g. feature-login"
 maxlength="100">
-
 
 <div class="modal-actions">
 
@@ -1511,8 +1442,8 @@ Cancel
 
 </button>
 
-
 <button
+id="createBranchButton"
 class="btn btn-green"
 onclick="createBranch()">
 
@@ -1526,10 +1457,7 @@ Create branch
 
 </div>
 
-
-
 <script>
-
 
 /* =========================================
    SUPABASE
@@ -1547,7 +1475,6 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 
-
 /* =========================================
    URL PARAMETERS
 ========================================= */
@@ -1557,11 +1484,9 @@ new URLSearchParams(
 window.location.search
 );
 
-
 const repoId =
 params.get("repository_id") ||
 params.get("id");
-
 
 /* =========================================
    VARIABLES
@@ -1579,7 +1504,6 @@ let currentBranch = null;
 
 let isStarred = false;
 
-
 /* =========================================
    INITIALIZE
 ========================================= */
@@ -1587,11 +1511,6 @@ let isStarred = false;
 async function init(){
 
 try{
-
-
-/* =========================
-   CHECK REPOSITORY ID
-========================= */
 
 if(!repoId){
 
@@ -1601,10 +1520,7 @@ throw new Error(
 
 }
 
-
-/* =========================
-   USER
-========================= */
+/* USER */
 
 const {
 data:{user},
@@ -1614,10 +1530,8 @@ await supabaseClient
 .auth
 .getUser();
 
-
 if(userError)
 throw userError;
-
 
 if(!user){
 
@@ -1628,32 +1542,22 @@ return;
 
 }
 
-
 currentUser = user;
 
-
-/* =========================
-   LOAD REPOSITORY
-========================= */
+/* REPOSITORY */
 
 const {
 data:repo,
 error:repoError
 } =
 await supabaseClient
-
 .from("repositories")
-
 .select("*")
-
 .eq("id",repoId)
-
 .single();
-
 
 if(repoError)
 throw repoError;
-
 
 if(!repo){
 
@@ -1663,19 +1567,14 @@ throw new Error(
 
 }
 
-
 repository = repo;
 
-
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 
 document.getElementById(
 "repoName"
 ).textContent =
 repo.name;
-
 
 document.getElementById(
 "repoDescription"
@@ -1683,48 +1582,32 @@ document.getElementById(
 repo.description ||
 "No description provided.";
 
-
-/* =========================
-   VISIBILITY
-========================= */
+/* VISIBILITY */
 
 const visibility =
 document.getElementById(
 "visibilityBadge"
 );
 
-
-if(repo.is_private){
-
 visibility.textContent =
-"Private";
-
-}else{
-
-visibility.textContent =
+repo.is_private
+?
+"Private"
+:
 "Public";
 
-}
-
-
-/* =========================
-   STAR COUNT
-========================= */
+/* STAR COUNT */
 
 document.getElementById(
 "starCount"
 ).textContent =
 repo.stars_count || 0;
 
-
-/* =========================
-   OWNER
-========================= */
+/* OWNER */
 
 const isOwner =
 repo.owner_id ===
 user.id;
-
 
 if(!isOwner){
 
@@ -1735,44 +1618,28 @@ document.getElementById(
 
 }
 
-
-/* =========================
-   LOAD BRANCHES
-========================= */
+/* BRANCHES */
 
 await loadBranches();
 
-
-/* =========================
-   LINKS
-========================= */
+/* LINKS */
 
 updatePageLinks();
 
-
-/* =========================
-   LOAD FILES
-========================= */
+/* FILES */
 
 await loadFiles();
 
-
-/* =========================
-   STAR STATUS
-========================= */
+/* STAR */
 
 await loadStarStatus();
 
-
-/* =========================
-   README
-========================= */
+/* README */
 
 document.getElementById(
 "readmeTitle"
 ).textContent =
 repo.name;
-
 
 document.getElementById(
 "readmeDescription"
@@ -1780,40 +1647,35 @@ document.getElementById(
 repo.description ||
 "Welcome to this ASIM TECH repository.";
 
-
-/* =========================
-   SHOW PAGE
-========================= */
+/* SHOW */
 
 document.getElementById(
 "loading"
 ).style.display =
 "none";
-
 
 document.getElementById(
 "mainContent"
 ).style.display =
 "block";
 
-
 }
 catch(error){
 
-console.error(error);
-
+console.error(
+"Initialization error:",
+error
+);
 
 document.getElementById(
 "loading"
 ).style.display =
 "none";
 
-
 const errorBox =
 document.getElementById(
 "error"
 );
-
 
 errorBox.textContent =
 "❌ " +
@@ -1822,14 +1684,12 @@ error.message ||
 "Unable to load repository."
 );
 
-
 errorBox.style.display =
 "block";
 
 }
 
 }
-
 
 /* =========================================
    LOAD BRANCHES
@@ -1859,14 +1719,11 @@ ascending:true
 }
 );
 
-
 if(error)
 throw error;
 
-
 allBranches =
 data || [];
-
 
 if(!allBranches.length){
 
@@ -1876,28 +1733,25 @@ throw new Error(
 
 }
 
-
-/* =========================
-   SELECT BRANCH
-========================= */
+/* URL BRANCH */
 
 const urlBranchId =
 params.get("branch_id");
 
-
 let selectedBranch = null;
-
 
 if(urlBranchId){
 
 selectedBranch =
 allBranches.find(
 branch =>
-branch.id === urlBranchId
+branch.id ===
+urlBranchId
 );
 
 }
 
+/* DEFAULT */
 
 if(!selectedBranch){
 
@@ -1913,6 +1767,7 @@ repository.default_branch ||
 
 }
 
+/* FIRST */
 
 if(!selectedBranch){
 
@@ -1921,17 +1776,14 @@ allBranches[0];
 
 }
 
-
 currentBranch =
 selectedBranch;
-
 
 updateBranchUI();
 
 renderBranchList();
 
 }
-
 
 /* =========================================
    UPDATE BRANCH UI
@@ -1942,7 +1794,6 @@ function updateBranchUI(){
 if(!currentBranch)
 return;
 
-
 document.getElementById(
 "branchButton"
 ).textContent =
@@ -1950,12 +1801,10 @@ document.getElementById(
 currentBranch.name +
 " ▾";
 
-
 document.getElementById(
 "currentBranchInfo"
 ).textContent =
 currentBranch.name;
-
 
 document.getElementById(
 "branchSourceText"
@@ -1963,7 +1812,6 @@ document.getElementById(
 currentBranch.name;
 
 }
-
 
 /* =========================================
    RENDER BRANCH LIST
@@ -1975,7 +1823,6 @@ const list =
 document.getElementById(
 "branchList"
 );
-
 
 if(!allBranches.length){
 
@@ -1990,7 +1837,6 @@ return;
 
 }
 
-
 list.innerHTML =
 allBranches.map(
 branch => {
@@ -2000,10 +1846,10 @@ currentBranch &&
 branch.id ===
 currentBranch.id;
 
-
 return `
 
 <button
+type="button"
 class="branch-item ${isCurrent ? "current" : ""}"
 data-branch-id="${escapeHtml(branch.id)}">
 
@@ -2023,7 +1869,6 @@ ${isCurrent ? "✓" : ""}
 }
 ).join("");
 
-
 document
 .querySelectorAll(".branch-item")
 .forEach(
@@ -2033,11 +1878,8 @@ button.addEventListener(
 "click",
 function(){
 
-const branchId =
-this.dataset.branchId;
-
 selectBranch(
-branchId
+this.dataset.branchId
 );
 
 }
@@ -2047,7 +1889,6 @@ branchId
 );
 
 }
-
 
 /* =========================================
    SELECT BRANCH
@@ -2061,14 +1902,11 @@ item =>
 item.id === branchId
 );
 
-
 if(!branch)
 return;
 
-
 currentBranch =
 branch;
-
 
 updateBranchUI();
 
@@ -2078,20 +1916,17 @@ closeBranchMenu();
 
 updatePageLinks();
 
-
 document.getElementById(
 "searchInput"
 ).value =
 "";
 
-
 await loadFiles();
 
 }
 
-
 /* =========================================
-   TOGGLE BRANCH MENU
+   BRANCH MENU
 ========================================= */
 
 function toggleBranchMenu(){
@@ -2101,17 +1936,11 @@ document.getElementById(
 "branchMenu"
 );
 
-
 menu.classList.toggle(
 "show"
 );
 
 }
-
-
-/* =========================================
-   CLOSE BRANCH MENU
-========================================= */
 
 function closeBranchMenu(){
 
@@ -2124,9 +1953,8 @@ document
 
 }
 
-
 /* =========================================
-   UPDATE PAGE LINKS
+   UPDATE LINKS
 ========================================= */
 
 function updatePageLinks(){
@@ -2135,15 +1963,13 @@ if(!repository ||
 !currentBranch)
 return;
 
-
 const branchParam =
 "&branch_id=" +
 encodeURIComponent(
 currentBranch.id
 );
 
-
-/* FILE EXPLORER */
+/* EXPLORER */
 
 document.getElementById(
 "explorerButton"
@@ -2152,21 +1978,18 @@ document.getElementById(
 encodeURIComponent(repoId) +
 branchParam;
 
-
-/* CREATE FILE */
+/* ADD FILE */
 
 const addFileUrl =
 "repository-add-file.html?repository_id=" +
 encodeURIComponent(repoId) +
 branchParam;
 
-
 document.getElementById(
 "createFileLink"
 ).href =
 addFileUrl +
 "&mode=create";
-
 
 document.getElementById(
 "uploadFileLink"
@@ -2176,7 +1999,6 @@ addFileUrl +
 
 }
 
-
 /* =========================================
    LOAD FILES
 ========================================= */
@@ -2185,7 +2007,6 @@ async function loadFiles(){
 
 if(!currentBranch)
 return;
-
 
 const {
 data,
@@ -2214,20 +2035,16 @@ ascending:true
 }
 );
 
-
 if(error)
 throw error;
 
-
 allFiles =
 data || [];
-
 
 document.getElementById(
 "fileCount"
 ).textContent =
 allFiles.length;
-
 
 document.getElementById(
 "fileCountTop"
@@ -2235,17 +2052,17 @@ document.getElementById(
 allFiles.length +
 (
 allFiles.length === 1
-? " file"
-: " files"
+?
+" file"
+:
+" files"
 );
-
 
 renderFiles(
 allFiles
 );
 
 }
-
 
 /* =========================================
    FILE ICON
@@ -2261,23 +2078,18 @@ file.mime_type ||
 ""
 ).toLowerCase();
 
-
 if(mime.startsWith("image/"))
 return "🖼️";
-
 
 if(mime === "application/pdf")
 return "📕";
 
-
 if(mime.includes("zip"))
 return "🗜️";
-
 
 return "📦";
 
 }
-
 
 const path =
 (
@@ -2285,17 +2097,14 @@ file.file_path ||
 ""
 ).toLowerCase();
 
-
 if(
 path.endsWith(".html") ||
 path.endsWith(".htm")
 )
 return "🌐";
 
-
 if(path.endsWith(".css"))
 return "🎨";
-
 
 if(
 path.endsWith(".js") ||
@@ -2303,10 +2112,8 @@ path.endsWith(".jsx")
 )
 return "⚡";
 
-
 if(path.endsWith(".json"))
 return "📋";
-
 
 if(
 path.endsWith(".md") ||
@@ -2314,14 +2121,11 @@ path.endsWith(".markdown")
 )
 return "📖";
 
-
 if(path.endsWith(".py"))
 return "🐍";
 
-
 if(path.endsWith(".php"))
 return "🐘";
-
 
 if(
 path.endsWith(".jpg") ||
@@ -2333,11 +2137,9 @@ path.endsWith(".svg")
 )
 return "🖼️";
 
-
 return "📄";
 
 }
-
 
 /* =========================================
    FILE TYPE
@@ -2357,7 +2159,6 @@ return file.language ||
 
 }
 
-
 /* =========================================
    FILE SIZE
 ========================================= */
@@ -2367,10 +2168,8 @@ function formatSize(bytes){
 if(!bytes)
 return "—";
 
-
 if(bytes < 1024)
 return bytes + " B";
-
 
 if(bytes < 1024*1024){
 
@@ -2381,7 +2180,6 @@ bytes/1024
 
 }
 
-
 if(bytes < 1024*1024*1024){
 
 return (
@@ -2391,14 +2189,12 @@ bytes/(1024*1024)
 
 }
 
-
 return (
 bytes/(1024*1024*1024)
 ).toFixed(1) +
 " GB";
 
 }
-
 
 /* =========================================
    RENDER FILES
@@ -2410,7 +2206,6 @@ const list =
 document.getElementById(
 "fileList"
 );
-
 
 if(!files.length){
 
@@ -2438,17 +2233,14 @@ return;
 
 }
 
-
 list.innerHTML =
 files.map(file => {
 
 const icon =
 getFileIcon(file);
 
-
 const type =
 getFileType(file);
-
 
 const size =
 file.file_size
@@ -2463,20 +2255,15 @@ file.is_binary
 "Text"
 );
 
-
 return `
 
-<div
-class="file-row">
-
+<div class="file-row">
 
 <div class="file-main">
-
 
 <div class="file-icon">
 ${icon}
 </div>
-
 
 <div class="file-details">
 
@@ -2489,7 +2276,6 @@ ${escapeHtml(file.file_path)}
 
 </a>
 
-
 <div class="file-sub">
 
 ${escapeHtml(type)}
@@ -2500,23 +2286,17 @@ ${escapeHtml(type)}
 
 </div>
 
-
-
 <div class="file-meta">
-
 
 <span class="type-badge">
 ${escapeHtml(type)}
 </span>
 
-
 <span>
 ${escapeHtml(size)}
 </span>
 
-
 <div class="file-actions">
-
 
 <button
 class="btn"
@@ -2525,7 +2305,6 @@ onclick="openFile('${escapeHtml(file.id)}')">
 Open
 
 </button>
-
 
 ${
 repository &&
@@ -2541,7 +2320,6 @@ onclick="editFile('${escapeHtml(file.id)}')">
 
 </button>
 
-
 <button
 class="btn btn-danger"
 onclick="deleteFile('${escapeHtml(file.id)}')">
@@ -2555,7 +2333,6 @@ onclick="deleteFile('${escapeHtml(file.id)}')">
 ""
 }
 
-
 </div>
 
 </div>
@@ -2567,7 +2344,6 @@ onclick="deleteFile('${escapeHtml(file.id)}')">
 }).join("");
 
 }
-
 
 /* =========================================
    OPEN FILE
@@ -2588,7 +2364,6 @@ currentBranch.id
 
 }
 
-
 /* =========================================
    EDIT FILE
 ========================================= */
@@ -2607,7 +2382,6 @@ currentBranch.id
 );
 
 }
-
 
 /* =========================================
    DELETE FILE
@@ -2629,17 +2403,14 @@ return;
 
 }
 
-
 const file =
 allFiles.find(
 item =>
 item.id === fileId
 );
 
-
 if(!file)
 return;
-
 
 const confirmed =
 confirm(
@@ -2650,13 +2421,10 @@ currentBranch.name +
 '"?'
 );
 
-
 if(!confirmed)
 return;
 
-
 try{
-
 
 /* STORAGE */
 
@@ -2678,12 +2446,10 @@ await supabaseClient
 file.storage_path
 ]);
 
-
 if(storageError)
 throw storageError;
 
 }
-
 
 /* DATABASE */
 
@@ -2711,18 +2477,14 @@ repoId
 currentBranch.id
 );
 
-
 if(error)
 throw error;
-
 
 alert(
 "File deleted successfully."
 );
 
-
 await loadFiles();
-
 
 }
 catch(error){
@@ -2738,7 +2500,6 @@ error.message
 
 }
 
-
 /* =========================================
    SEARCH
 ========================================= */
@@ -2752,7 +2513,6 @@ document.getElementById(
 .trim()
 .toLowerCase();
 
-
 const filtered =
 allFiles.filter(
 file =>
@@ -2764,13 +2524,11 @@ file.file_path ||
 .includes(query)
 );
 
-
 renderFiles(
 filtered
 );
 
 }
-
 
 /* =========================================
    STAR STATUS
@@ -2802,7 +2560,6 @@ currentUser.id
 
 .maybeSingle();
 
-
 if(error){
 
 console.warn(
@@ -2814,13 +2571,10 @@ return;
 
 }
 
-
 isStarred =
 !!data;
 
-
 updateStarButton();
-
 
 }
 catch(error){
@@ -2831,9 +2585,8 @@ console.warn(error);
 
 }
 
-
 /* =========================================
-   UPDATE STAR BUTTON
+   UPDATE STAR
 ========================================= */
 
 function updateStarButton(){
@@ -2842,7 +2595,6 @@ const button =
 document.getElementById(
 "starButton"
 );
-
 
 if(isStarred){
 
@@ -2853,7 +2605,8 @@ button.classList.add(
 "starred"
 );
 
-}else{
+}
+else{
 
 button.textContent =
 "☆ Star";
@@ -2865,7 +2618,6 @@ button.classList.remove(
 }
 
 }
-
 
 /* =========================================
    TOGGLE STAR
@@ -2883,9 +2635,7 @@ return;
 
 }
 
-
 try{
-
 
 if(isStarred){
 
@@ -2908,17 +2658,14 @@ repoId
 currentUser.id
 );
 
-
 if(error)
 throw error;
-
 
 isStarred =
 false;
 
-
-}else{
-
+}
+else{
 
 const {
 error
@@ -2937,21 +2684,17 @@ currentUser.id
 
 });
 
-
 if(error)
 throw error;
-
 
 isStarred =
 true;
 
 }
 
-
 await refreshStarCount();
 
 updateStarButton();
-
 
 }
 catch(error){
@@ -2965,7 +2708,6 @@ alert(
 }
 
 }
-
 
 /* =========================================
    REFRESH STAR COUNT
@@ -2990,10 +2732,8 @@ repoId
 
 .single();
 
-
 if(error)
 return;
-
 
 document.getElementById(
 "starCount"
@@ -3001,7 +2741,6 @@ document.getElementById(
 data.stars_count || 0;
 
 }
-
 
 /* =========================================
    ADD MENU
@@ -3014,16 +2753,14 @@ document.getElementById(
 "addMenu"
 );
 
-
 menu.classList.toggle(
 "show"
 );
 
 }
 
-
 /* =========================================
-   CLOSE ADD MENU
+   CLOSE MENUS
 ========================================= */
 
 document.addEventListener(
@@ -3039,7 +2776,6 @@ const branchWrapper =
 document.querySelector(
 ".branch-wrapper"
 );
-
 
 if(
 addWrapper &&
@@ -3057,7 +2793,6 @@ document
 
 }
 
-
 if(
 branchWrapper &&
 !branchWrapper.contains(
@@ -3072,7 +2807,6 @@ closeBranchMenu();
 }
 );
 
-
 /* =========================================
    CREATE BRANCH MODAL
 ========================================= */
@@ -3081,12 +2815,10 @@ function openCreateBranchModal(){
 
 closeBranchMenu();
 
-
 document.getElementById(
 "newBranchName"
 ).value =
 "";
-
 
 document.getElementById(
 "branchSourceText"
@@ -3097,13 +2829,11 @@ currentBranch.name
 :
 "main";
 
-
 document.getElementById(
 "createBranchModal"
 ).classList.add(
 "show"
 );
-
 
 setTimeout(
 function(){
@@ -3118,9 +2848,8 @@ document.getElementById(
 
 }
 
-
 /* =========================================
-   CLOSE CREATE BRANCH MODAL
+   CLOSE CREATE BRANCH
 ========================================= */
 
 function closeCreateBranchModal(){
@@ -3133,12 +2862,15 @@ document.getElementById(
 
 }
 
-
 /* =========================================
    CREATE BRANCH
 ========================================= */
 
 async function createBranch(){
+
+/* =========================
+   BASIC CHECK
+========================= */
 
 if(
 !currentUser ||
@@ -3155,7 +2887,9 @@ return;
 }
 
 
-/* OWNER CHECK */
+/* =========================
+   OWNER CHECK
+========================= */
 
 if(
 repository.owner_id !==
@@ -3163,7 +2897,7 @@ currentUser.id
 ){
 
 alert(
-"Only the repository owner can create a branch at this stage."
+"Only the repository owner can create a branch."
 );
 
 return;
@@ -3171,15 +2905,17 @@ return;
 }
 
 
+/* =========================
+   GET NAME
+========================= */
+
 const input =
 document.getElementById(
 "newBranchName"
 );
 
-
 const branchName =
-input.value
-.trim();
+input.value.trim();
 
 
 if(!branchName){
@@ -3196,21 +2932,11 @@ return;
 
 
 /* =========================
-   BASIC VALIDATION
+   VALIDATE NAME
 ========================= */
 
-if(branchName.length > 100){
-
-alert(
-"Branch name is too long."
-);
-
-return;
-
-}
-
-
 if(
+branchName.length > 100 ||
 branchName.includes(" ") ||
 branchName.includes("..") ||
 branchName.startsWith(".") ||
@@ -3225,7 +2951,7 @@ branchName.includes("\\")
 ){
 
 alert(
-"Invalid branch name. Please use a simple name such as feature-login."
+"Invalid branch name.\n\nExample: feature-login"
 );
 
 return;
@@ -3233,7 +2959,9 @@ return;
 }
 
 
-/* DUPLICATE CHECK */
+/* =========================
+   DUPLICATE
+========================= */
 
 const duplicate =
 allBranches.some(
@@ -3241,7 +2969,6 @@ branch =>
 branch.name.toLowerCase() ===
 branchName.toLowerCase()
 );
-
 
 if(duplicate){
 
@@ -3254,15 +2981,38 @@ return;
 }
 
 
-try{
+/* =========================
+   BUTTON
+========================= */
+
+const button =
+document.getElementById(
+"createBranchButton"
+);
+
+button.disabled =
+true;
+
+button.textContent =
+"Creating...";
 
 
 /* =========================
-   CREATE BRANCH
+   NEW BRANCH VARIABLE
+========================= */
+
+let newBranch =
+null;
+
+
+try{
+
+/* =========================
+   CREATE DATABASE BRANCH
 ========================= */
 
 const {
-data:newBranch,
+data,
 error:branchError
 } =
 await supabaseClient
@@ -3287,21 +3037,36 @@ currentUser.id
 .single();
 
 
-if(branchError)
-throw branchError;
+if(branchError){
 
-
-if(!newBranch){
+console.error(
+"Branch creation error:",
+branchError
+);
 
 throw new Error(
+branchError.message ||
 "Unable to create branch."
 );
 
 }
 
 
+newBranch =
+data;
+
+
+if(!newBranch){
+
+throw new Error(
+"Branch was not created."
+);
+
+}
+
+
 /* =========================
-   LOAD CURRENT FILES
+   LOAD SOURCE FILES
 ========================= */
 
 const {
@@ -3312,7 +3077,9 @@ await supabaseClient
 
 .from("repository_files")
 
-.select("*")
+.select(
+"file_path,content,language,storage_path,mime_type,file_size,is_binary"
+)
 
 .eq(
 "repository_id",
@@ -3325,8 +3092,19 @@ currentBranch.id
 );
 
 
-if(fileError)
-throw fileError;
+if(fileError){
+
+console.error(
+"Source file loading error:",
+fileError
+);
+
+throw new Error(
+fileError.message ||
+"Unable to load source files."
+);
+
+}
 
 
 /* =========================
@@ -3335,14 +3113,12 @@ throw fileError;
 
 if(
 sourceFiles &&
-sourceFiles.length
+sourceFiles.length > 0
 ){
 
 const copiedFiles =
 sourceFiles.map(
-file => {
-
-return {
+file => ({
 
 repository_id:
 repoId,
@@ -3371,9 +3147,7 @@ file.file_size,
 is_binary:
 file.is_binary
 
-};
-
-}
+})
 );
 
 
@@ -3389,24 +3163,38 @@ copiedFiles
 );
 
 
-if(copyError)
-throw copyError;
+if(copyError){
+
+console.error(
+"File copy error:",
+copyError
+);
+
+throw new Error(
+copyError.message ||
+"Unable to copy files."
+);
+
+}
 
 }
 
 
 /* =========================
-   ADD TO BRANCH LIST
+   UPDATE LOCAL STATE
 ========================= */
 
 allBranches.push(
 newBranch
 );
 
-
 currentBranch =
 newBranch;
 
+
+/* =========================
+   UPDATE UI
+========================= */
 
 updateBranchUI();
 
@@ -3416,9 +3204,12 @@ updatePageLinks();
 
 closeCreateBranchModal();
 
-
 await loadFiles();
 
+
+/* =========================
+   SUCCESS
+========================= */
 
 alert(
 'Branch "' +
@@ -3426,26 +3217,36 @@ branchName +
 '" created successfully.'
 );
 
-
 }
 catch(error){
 
 console.error(
-"Create branch error:",
+"Create branch failed:",
 error
 );
 
 
-/*
- If branch was created but file copying failed,
- remove the newly-created branch to avoid
- leaving an incomplete branch.
-*/
+/* =========================
+   CLEANUP
+========================= */
 
 if(
 newBranch &&
 newBranch.id
 ){
+
+try{
+
+await supabaseClient
+
+.from("repository_files")
+
+.delete()
+
+.eq(
+"branch_id",
+newBranch.id
+);
 
 await supabaseClient
 
@@ -3459,10 +3260,24 @@ newBranch.id
 );
 
 }
+catch(cleanupError){
 
+console.error(
+"Branch cleanup failed:",
+cleanupError
+);
+
+}
+
+}
+
+
+/* =========================
+   ERROR
+========================= */
 
 alert(
-"Unable to create branch: " +
+"Unable to create branch:\n\n" +
 (
 error.message ||
 "Unknown error"
@@ -3470,9 +3285,17 @@ error.message ||
 );
 
 }
+finally{
+
+button.disabled =
+false;
+
+button.textContent =
+"Create branch";
 
 }
 
+}
 
 /* =========================================
    GENERAL MODAL
@@ -3485,13 +3308,11 @@ document.getElementById(
 ).textContent =
 feature;
 
-
 document.getElementById(
 "modalText"
 ).textContent =
 feature +
 " is coming soon in ASIM TECH.";
-
 
 document.getElementById(
 "modal"
@@ -3500,7 +3321,6 @@ document.getElementById(
 );
 
 }
-
 
 function closeModal(){
 
@@ -3511,7 +3331,6 @@ document.getElementById(
 );
 
 }
-
 
 /* =========================================
    ESCAPE HTML
@@ -3549,7 +3368,6 @@ value || ""
 );
 
 }
-
 
 /* =========================================
    START
