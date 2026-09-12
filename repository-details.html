@@ -85,6 +85,7 @@ margin-bottom:15px;
 display:flex;
 gap:8px;
 flex-wrap:wrap;
+align-items:center;
 }
 
 .badge{
@@ -105,6 +106,53 @@ color:#f0883e;
 
 .badge.published{
 color:#3fb950;
+}
+
+.star-area{
+margin-top:16px;
+display:flex;
+align-items:center;
+gap:0;
+}
+
+.star-button{
+border:1px solid #30363d;
+background:#21262d;
+color:#e6edf3;
+padding:7px 14px;
+border-radius:6px 0 0 6px;
+font-size:14px;
+cursor:pointer;
+display:inline-flex;
+align-items:center;
+gap:7px;
+}
+
+.star-button:hover{
+background:#30363d;
+border-color:#8b949e;
+}
+
+.star-button.starred{
+background:#238636;
+border-color:#238636;
+color:white;
+}
+
+.star-button.starred:hover{
+background:#2ea043;
+}
+
+.star-count{
+border:1px solid #30363d;
+border-left:0;
+background:#161b22;
+color:#e6edf3;
+padding:7px 13px;
+border-radius:0 6px 6px 0;
+font-size:14px;
+min-width:50px;
+text-align:center;
 }
 
 .tabs{
@@ -549,6 +597,39 @@ Not published
 
 </div>
 
+
+<!-- ================= STAR ================= -->
+
+<div class="star-area">
+
+<button
+id="starButton"
+class="star-button"
+type="button"
+onclick="toggleStar()">
+
+<span id="starIcon">
+☆ 
+</span>
+
+<span id="starText">
+Star
+</span>
+
+</button>
+
+
+<div
+id="starCount"
+class="star-count">
+
+0
+
+</div>
+
+</div>
+
+
 </div>
 
 
@@ -890,6 +971,8 @@ let currentUser = null;
 
 let allFiles = [];
 
+let userHasStarred = false;
+
 
 /* =====================================================
    ERROR
@@ -1075,7 +1158,7 @@ repo;
 
 /* USER CHECK IN BACKGROUND */
 
-loadCurrentUser();
+await loadCurrentUser();
 
 
 /* -----------------------------------------------
@@ -1151,6 +1234,17 @@ visibilityBadge.className =
 updatePublishStatus(
 repo.is_published === true
 );
+
+
+/* -----------------------------------------------
+   STAR
+------------------------------------------------ */
+
+updateStarCount(
+repo.stars_count || 0
+);
+
+await checkUserStar();
 
 
 /* -----------------------------------------------
@@ -1270,6 +1364,365 @@ error
 
 showError(
 "Unable to load repository."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   CHECK USER STAR
+===================================================== */
+
+async function checkUserStar(){
+
+userHasStarred =
+false;
+
+
+if(!currentUser ||
+!repository){
+
+updateStarButton();
+
+return;
+
+}
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_stars")
+
+.select("repository_id")
+
+.eq(
+"repository_id",
+repository.id
+)
+
+.eq(
+"user_id",
+currentUser.id
+)
+
+.maybeSingle();
+
+
+if(error){
+
+console.error(
+"Star check error:",
+error
+);
+
+updateStarButton();
+
+return;
+
+}
+
+
+if(data){
+
+userHasStarred =
+true;
+
+}
+
+
+updateStarButton();
+
+}
+
+
+/* =====================================================
+   UPDATE STAR COUNT
+===================================================== */
+
+function updateStarCount(count){
+
+document.getElementById(
+"starCount"
+).textContent =
+Number(count) || 0;
+
+}
+
+
+/* =====================================================
+   UPDATE STAR BUTTON
+===================================================== */
+
+function updateStarButton(){
+
+const button =
+document.getElementById(
+"starButton"
+);
+
+const icon =
+document.getElementById(
+"starIcon"
+);
+
+const text =
+document.getElementById(
+"starText"
+);
+
+
+if(userHasStarred){
+
+button.classList.add(
+"starred"
+);
+
+icon.textContent =
+"★";
+
+text.textContent =
+"Unstar";
+
+}else{
+
+button.classList.remove(
+"starred"
+);
+
+icon.textContent =
+"☆";
+
+text.textContent =
+"Star";
+
+}
+
+}
+
+
+/* =====================================================
+   TOGGLE STAR
+===================================================== */
+
+async function toggleStar(){
+
+if(!repository){
+
+return;
+
+}
+
+
+if(!currentUser){
+
+alert(
+"Please login to star this repository."
+);
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+/* -----------------------------------------------
+   PRIVATE REPOSITORY
+------------------------------------------------ */
+
+if(repository.is_private){
+
+if(repository.owner_id !== currentUser.id){
+
+alert(
+"Only the repository owner can access this private repository."
+);
+
+return;
+
+}
+
+}
+
+
+/* -----------------------------------------------
+   UNSTAR
+------------------------------------------------ */
+
+if(userHasStarred){
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_stars")
+
+.delete()
+
+.eq(
+"repository_id",
+repository.id
+)
+
+.eq(
+"user_id",
+currentUser.id
+);
+
+
+if(error){
+
+console.error(
+error
+);
+
+alert(
+"Unable to remove star: " +
+(error.message || "Unknown error")
+);
+
+return;
+
+}
+
+
+userHasStarred =
+false;
+
+
+await refreshStarCount();
+
+updateStarButton();
+
+showSuccess(
+"Repository unstarred."
+);
+
+return;
+
+}
+
+
+/* -----------------------------------------------
+   STAR
+------------------------------------------------ */
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_stars")
+
+.insert({
+
+repository_id:
+repository.id,
+
+user_id:
+currentUser.id
+
+});
+
+
+if(error){
+
+console.error(
+error
+);
+
+if(
+error.code === "23505"
+){
+
+userHasStarred =
+true;
+
+await refreshStarCount();
+
+updateStarButton();
+
+return;
+
+}
+
+
+alert(
+"Unable to star repository: " +
+(error.message || "Unknown error")
+);
+
+return;
+
+}
+
+
+userHasStarred =
+true;
+
+
+await refreshStarCount();
+
+updateStarButton();
+
+showSuccess(
+"Repository starred."
+);
+
+}
+
+
+/* =====================================================
+   REFRESH STAR COUNT
+===================================================== */
+
+async function refreshStarCount(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repositories")
+
+.select("stars_count")
+
+.eq(
+"id",
+repository.id
+)
+
+.single();
+
+
+if(error){
+
+console.error(
+"Unable to refresh star count:",
+error
+);
+
+return;
+
+}
+
+
+if(data){
+
+repository.stars_count =
+data.stars_count || 0;
+
+updateStarCount(
+repository.stars_count
 );
 
 }
