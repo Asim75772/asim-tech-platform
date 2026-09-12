@@ -355,8 +355,121 @@ background:#3d1f25;
    BRANCH
 ========================= */
 
+.branch-wrapper{
+position:relative;
+}
+
 .branch{
 font-weight:600;
+}
+
+.branch-menu{
+display:none;
+
+position:absolute;
+
+top:43px;
+left:0;
+
+width:300px;
+
+max-width:90vw;
+
+background:#161b22;
+
+border:1px solid #30363d;
+
+border-radius:8px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.55);
+
+z-index:3000;
+
+overflow:hidden;
+}
+
+.branch-menu.show{
+display:block;
+}
+
+.branch-menu-header{
+padding:12px 14px;
+
+border-bottom:1px solid #30363d;
+
+font-size:13px;
+
+font-weight:600;
+
+color:#e6edf3;
+}
+
+.branch-list{
+max-height:280px;
+
+overflow-y:auto;
+}
+
+.branch-item{
+width:100%;
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:10px;
+
+padding:10px 14px;
+
+background:transparent;
+
+border:0;
+
+color:#e6edf3;
+
+cursor:pointer;
+
+font-size:13px;
+
+text-align:left;
+}
+
+.branch-item:hover{
+background:#21262d;
+}
+
+.branch-item.current{
+color:#58a6ff;
+}
+
+.branch-check{
+font-size:14px;
+}
+
+.branch-create{
+width:100%;
+
+border:0;
+
+border-top:1px solid #30363d;
+
+background:#161b22;
+
+color:#58a6ff;
+
+padding:12px 14px;
+
+cursor:pointer;
+
+font-size:13px;
+
+text-align:left;
+}
+
+.branch-create:hover{
+background:#21262d;
 }
 
 
@@ -713,6 +826,30 @@ justify-content:flex-end;
 gap:8px;
 }
 
+.branch-modal-input{
+width:100%;
+
+background:#0d1117;
+
+border:1px solid #30363d;
+
+border-radius:6px;
+
+padding:10px 12px;
+
+color:#e6edf3;
+
+outline:none;
+
+font-size:14px;
+
+margin-bottom:16px;
+}
+
+.branch-modal-input:focus{
+border-color:#58a6ff;
+}
+
 
 /* =========================
    MOBILE
@@ -777,6 +914,19 @@ left:20px;
 right:20px;
 
 width:auto;
+}
+
+.branch-menu{
+position:fixed;
+
+top:115px;
+
+left:20px;
+right:20px;
+
+width:auto;
+
+max-width:none;
 }
 
 }
@@ -926,7 +1076,7 @@ files
 
 🌿
 
-<strong>
+<strong id="currentBranchInfo">
 main
 </strong>
 
@@ -1039,16 +1189,60 @@ Insights
 <div class="toolbar-left">
 
 
-<a
+<!-- BRANCH -->
+
+<div class="branch-wrapper">
+
+<button
 id="branchButton"
 class="btn branch"
-href="#"
-onclick="comingSoon('Branches');return false;">
+onclick="toggleBranchMenu()">
 
 🌿 main ▾
 
-</a>
+</button>
 
+
+<div
+id="branchMenu"
+class="branch-menu">
+
+
+<div class="branch-menu-header">
+
+🌿 Select branch
+
+</div>
+
+
+<div
+id="branchList"
+class="branch-list">
+
+<div style="padding:15px;color:#8b949e;font-size:13px;">
+
+Loading branches...
+
+</div>
+
+</div>
+
+
+<button
+class="branch-create"
+onclick="openCreateBranchModal()">
+
+＋ Create new branch
+
+</button>
+
+
+</div>
+
+</div>
+
+
+<!-- FILE EXPLORER -->
 
 <a
 id="explorerButton"
@@ -1059,6 +1253,8 @@ href="#">
 
 </a>
 
+
+<!-- ADD FILE -->
 
 <div class="add-wrapper">
 
@@ -1227,7 +1423,7 @@ ASIM TECH Platform.
 
 
 <!-- =========================
-     MODAL
+     GENERAL MODAL
 ========================= -->
 
 <div
@@ -1257,6 +1453,70 @@ class="btn"
 onclick="closeModal()">
 
 Close
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- =========================
+     CREATE BRANCH MODAL
+========================= -->
+
+<div
+id="createBranchModal"
+class="modal">
+
+<div class="modal-card">
+
+<h2>
+Create new branch
+</h2>
+
+<p>
+
+Create a new branch from the currently selected branch:
+
+<strong
+id="branchSourceText"
+style="color:#e6edf3;">
+
+main
+
+</strong>
+
+</p>
+
+
+<input
+id="newBranchName"
+class="branch-modal-input"
+type="text"
+placeholder="e.g. feature-login"
+maxlength="100">
+
+
+<div class="modal-actions">
+
+<button
+class="btn"
+onclick="closeCreateBranchModal()">
+
+Cancel
+
+</button>
+
+
+<button
+class="btn btn-green"
+onclick="createBranch()">
+
+Create branch
 
 </button>
 
@@ -1298,11 +1558,6 @@ window.location.search
 );
 
 
-/*
- IMPORTANT:
- Support both URL formats
-*/
-
 const repoId =
 params.get("repository_id") ||
 params.get("id");
@@ -1317,6 +1572,10 @@ let currentUser = null;
 let repository = null;
 
 let allFiles = [];
+
+let allBranches = [];
+
+let currentBranch = null;
 
 let isStarred = false;
 
@@ -1459,43 +1718,6 @@ repo.stars_count || 0;
 
 
 /* =========================
-   LINKS
-========================= */
-
-const repositoryUrl =
-"repository-files.html?repository_id=" +
-encodeURIComponent(repo.id);
-
-
-document.getElementById(
-"explorerButton"
-).href =
-"repository-explorer.html?repository_id=" +
-encodeURIComponent(repo.id);
-
-
-/* CREATE FILE */
-
-const addFileUrl =
-"repository-add-file.html?repository_id=" +
-encodeURIComponent(repo.id);
-
-
-document.getElementById(
-"createFileLink"
-).href =
-addFileUrl +
-"&mode=create";
-
-
-document.getElementById(
-"uploadFileLink"
-).href =
-addFileUrl +
-"&mode=upload";
-
-
-/* =========================
    OWNER
 ========================= */
 
@@ -1512,6 +1734,20 @@ document.getElementById(
 "none";
 
 }
+
+
+/* =========================
+   LOAD BRANCHES
+========================= */
+
+await loadBranches();
+
+
+/* =========================
+   LINKS
+========================= */
+
+updatePageLinks();
 
 
 /* =========================
@@ -1596,10 +1832,360 @@ errorBox.style.display =
 
 
 /* =========================================
+   LOAD BRANCHES
+========================================= */
+
+async function loadBranches(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_branches")
+
+.select("*")
+
+.eq(
+"repository_id",
+repoId
+)
+
+.order(
+"created_at",
+{
+ascending:true
+}
+);
+
+
+if(error)
+throw error;
+
+
+allBranches =
+data || [];
+
+
+if(!allBranches.length){
+
+throw new Error(
+"No branches found for this repository."
+);
+
+}
+
+
+/* =========================
+   SELECT BRANCH
+========================= */
+
+const urlBranchId =
+params.get("branch_id");
+
+
+let selectedBranch = null;
+
+
+if(urlBranchId){
+
+selectedBranch =
+allBranches.find(
+branch =>
+branch.id === urlBranchId
+);
+
+}
+
+
+if(!selectedBranch){
+
+selectedBranch =
+allBranches.find(
+branch =>
+branch.name ===
+(
+repository.default_branch ||
+"main"
+)
+);
+
+}
+
+
+if(!selectedBranch){
+
+selectedBranch =
+allBranches[0];
+
+}
+
+
+currentBranch =
+selectedBranch;
+
+
+updateBranchUI();
+
+renderBranchList();
+
+}
+
+
+/* =========================================
+   UPDATE BRANCH UI
+========================================= */
+
+function updateBranchUI(){
+
+if(!currentBranch)
+return;
+
+
+document.getElementById(
+"branchButton"
+).textContent =
+"🌿 " +
+currentBranch.name +
+" ▾";
+
+
+document.getElementById(
+"currentBranchInfo"
+).textContent =
+currentBranch.name;
+
+
+document.getElementById(
+"branchSourceText"
+).textContent =
+currentBranch.name;
+
+}
+
+
+/* =========================================
+   RENDER BRANCH LIST
+========================================= */
+
+function renderBranchList(){
+
+const list =
+document.getElementById(
+"branchList"
+);
+
+
+if(!allBranches.length){
+
+list.innerHTML =
+`
+<div style="padding:15px;color:#8b949e;font-size:13px;">
+No branches found.
+</div>
+`;
+
+return;
+
+}
+
+
+list.innerHTML =
+allBranches.map(
+branch => {
+
+const isCurrent =
+currentBranch &&
+branch.id ===
+currentBranch.id;
+
+
+return `
+
+<button
+class="branch-item ${isCurrent ? "current" : ""}"
+data-branch-id="${escapeHtml(branch.id)}">
+
+<span>
+🌿
+${escapeHtml(branch.name)}
+</span>
+
+<span class="branch-check">
+${isCurrent ? "✓" : ""}
+</span>
+
+</button>
+
+`;
+
+}
+).join("");
+
+
+document
+.querySelectorAll(".branch-item")
+.forEach(
+button => {
+
+button.addEventListener(
+"click",
+function(){
+
+const branchId =
+this.dataset.branchId;
+
+selectBranch(
+branchId
+);
+
+}
+);
+
+}
+);
+
+}
+
+
+/* =========================================
+   SELECT BRANCH
+========================================= */
+
+async function selectBranch(branchId){
+
+const branch =
+allBranches.find(
+item =>
+item.id === branchId
+);
+
+
+if(!branch)
+return;
+
+
+currentBranch =
+branch;
+
+
+updateBranchUI();
+
+renderBranchList();
+
+closeBranchMenu();
+
+updatePageLinks();
+
+
+document.getElementById(
+"searchInput"
+).value =
+"";
+
+
+await loadFiles();
+
+}
+
+
+/* =========================================
+   TOGGLE BRANCH MENU
+========================================= */
+
+function toggleBranchMenu(){
+
+const menu =
+document.getElementById(
+"branchMenu"
+);
+
+
+menu.classList.toggle(
+"show"
+);
+
+}
+
+
+/* =========================================
+   CLOSE BRANCH MENU
+========================================= */
+
+function closeBranchMenu(){
+
+document
+.getElementById(
+"branchMenu"
+)
+.classList
+.remove("show");
+
+}
+
+
+/* =========================================
+   UPDATE PAGE LINKS
+========================================= */
+
+function updatePageLinks(){
+
+if(!repository ||
+!currentBranch)
+return;
+
+
+const branchParam =
+"&branch_id=" +
+encodeURIComponent(
+currentBranch.id
+);
+
+
+/* FILE EXPLORER */
+
+document.getElementById(
+"explorerButton"
+).href =
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(repoId) +
+branchParam;
+
+
+/* CREATE FILE */
+
+const addFileUrl =
+"repository-add-file.html?repository_id=" +
+encodeURIComponent(repoId) +
+branchParam;
+
+
+document.getElementById(
+"createFileLink"
+).href =
+addFileUrl +
+"&mode=create";
+
+
+document.getElementById(
+"uploadFileLink"
+).href =
+addFileUrl +
+"&mode=upload";
+
+}
+
+
+/* =========================================
    LOAD FILES
 ========================================= */
 
 async function loadFiles(){
+
+if(!currentBranch)
+return;
+
 
 const {
 data,
@@ -1614,6 +2200,11 @@ await supabaseClient
 .eq(
 "repository_id",
 repoId
+)
+
+.eq(
+"branch_id",
+currentBranch.id
 )
 
 .order(
@@ -1832,11 +2423,11 @@ list.innerHTML = `
 </div>
 
 <h3 style="margin-bottom:8px;color:#e6edf3;">
-This repository is empty
+This branch is empty
 </h3>
 
 <p>
-Use <strong>＋ Add file</strong> to create or upload your first file.
+Use <strong>＋ Add file</strong> to create or upload a file.
 </p>
 
 </div>
@@ -1892,7 +2483,7 @@ ${icon}
 <a
 href="#"
 class="file-name"
-onclick="openFile('${file.id}');return false;">
+onclick="openFile('${escapeHtml(file.id)}');return false;">
 
 ${escapeHtml(file.file_path)}
 
@@ -1929,7 +2520,7 @@ ${escapeHtml(size)}
 
 <button
 class="btn"
-onclick="openFile('${file.id}')">
+onclick="openFile('${escapeHtml(file.id)}')">
 
 Open
 
@@ -1944,7 +2535,7 @@ repository.owner_id === currentUser.id
 
 <button
 class="btn"
-onclick="editFile('${file.id}')">
+onclick="editFile('${escapeHtml(file.id)}')">
 
 ✏️ Edit
 
@@ -1953,7 +2544,7 @@ onclick="editFile('${file.id}')">
 
 <button
 class="btn btn-danger"
-onclick="deleteFile('${file.id}')">
+onclick="deleteFile('${escapeHtml(file.id)}')">
 
 🗑️
 
@@ -1984,17 +2575,16 @@ onclick="deleteFile('${file.id}')">
 
 function openFile(fileId){
 
-/*
- Send repository_id and file_id
- to File Editor / Viewer.
-*/
-
 window.location.href =
 "file-editor.html" +
 "?repository_id=" +
 encodeURIComponent(repoId) +
 "&file_id=" +
-encodeURIComponent(fileId);
+encodeURIComponent(fileId) +
+"&branch_id=" +
+encodeURIComponent(
+currentBranch.id
+);
 
 }
 
@@ -2010,7 +2600,11 @@ window.location.href =
 "?repository_id=" +
 encodeURIComponent(repoId) +
 "&file_id=" +
-encodeURIComponent(fileId);
+encodeURIComponent(fileId) +
+"&branch_id=" +
+encodeURIComponent(
+currentBranch.id
+);
 
 }
 
@@ -2051,7 +2645,9 @@ const confirmed =
 confirm(
 'Delete "' +
 file.file_path +
-'" permanently?'
+'" permanently from branch "' +
+currentBranch.name +
+'"?'
 );
 
 
@@ -2108,6 +2704,11 @@ fileId
 .eq(
 "repository_id",
 repoId
+)
+
+.eq(
+"branch_id",
+currentBranch.id
 );
 
 
@@ -2429,15 +3030,20 @@ document.addEventListener(
 "click",
 function(event){
 
-const wrapper =
+const addWrapper =
 document.querySelector(
 ".add-wrapper"
 );
 
+const branchWrapper =
+document.querySelector(
+".branch-wrapper"
+);
+
 
 if(
-wrapper &&
-!wrapper.contains(
+addWrapper &&
+!addWrapper.contains(
 event.target
 )
 ){
@@ -2451,12 +3057,425 @@ document
 
 }
 
+
+if(
+branchWrapper &&
+!branchWrapper.contains(
+event.target
+)
+){
+
+closeBranchMenu();
+
+}
+
 }
 );
 
 
 /* =========================================
-   MODAL
+   CREATE BRANCH MODAL
+========================================= */
+
+function openCreateBranchModal(){
+
+closeBranchMenu();
+
+
+document.getElementById(
+"newBranchName"
+).value =
+"";
+
+
+document.getElementById(
+"branchSourceText"
+).textContent =
+currentBranch
+?
+currentBranch.name
+:
+"main";
+
+
+document.getElementById(
+"createBranchModal"
+).classList.add(
+"show"
+);
+
+
+setTimeout(
+function(){
+
+document.getElementById(
+"newBranchName"
+).focus();
+
+},
+100
+);
+
+}
+
+
+/* =========================================
+   CLOSE CREATE BRANCH MODAL
+========================================= */
+
+function closeCreateBranchModal(){
+
+document.getElementById(
+"createBranchModal"
+).classList.remove(
+"show"
+);
+
+}
+
+
+/* =========================================
+   CREATE BRANCH
+========================================= */
+
+async function createBranch(){
+
+if(
+!currentUser ||
+!repository ||
+!currentBranch
+){
+
+alert(
+"Repository information is not ready."
+);
+
+return;
+
+}
+
+
+/* OWNER CHECK */
+
+if(
+repository.owner_id !==
+currentUser.id
+){
+
+alert(
+"Only the repository owner can create a branch at this stage."
+);
+
+return;
+
+}
+
+
+const input =
+document.getElementById(
+"newBranchName"
+);
+
+
+const branchName =
+input.value
+.trim();
+
+
+if(!branchName){
+
+alert(
+"Please enter a branch name."
+);
+
+input.focus();
+
+return;
+
+}
+
+
+/* =========================
+   BASIC VALIDATION
+========================= */
+
+if(branchName.length > 100){
+
+alert(
+"Branch name is too long."
+);
+
+return;
+
+}
+
+
+if(
+branchName.includes(" ") ||
+branchName.includes("..") ||
+branchName.startsWith(".") ||
+branchName.endsWith(".") ||
+branchName.includes("~") ||
+branchName.includes("^") ||
+branchName.includes(":") ||
+branchName.includes("?") ||
+branchName.includes("*") ||
+branchName.includes("[") ||
+branchName.includes("\\")
+){
+
+alert(
+"Invalid branch name. Please use a simple name such as feature-login."
+);
+
+return;
+
+}
+
+
+/* DUPLICATE CHECK */
+
+const duplicate =
+allBranches.some(
+branch =>
+branch.name.toLowerCase() ===
+branchName.toLowerCase()
+);
+
+
+if(duplicate){
+
+alert(
+"That branch already exists."
+);
+
+return;
+
+}
+
+
+try{
+
+
+/* =========================
+   CREATE BRANCH
+========================= */
+
+const {
+data:newBranch,
+error:branchError
+} =
+await supabaseClient
+
+.from("repository_branches")
+
+.insert({
+
+repository_id:
+repoId,
+
+name:
+branchName,
+
+created_by:
+currentUser.id
+
+})
+
+.select("*")
+
+.single();
+
+
+if(branchError)
+throw branchError;
+
+
+if(!newBranch){
+
+throw new Error(
+"Unable to create branch."
+);
+
+}
+
+
+/* =========================
+   LOAD CURRENT FILES
+========================= */
+
+const {
+data:sourceFiles,
+error:fileError
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.select("*")
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"branch_id",
+currentBranch.id
+);
+
+
+if(fileError)
+throw fileError;
+
+
+/* =========================
+   COPY FILES
+========================= */
+
+if(
+sourceFiles &&
+sourceFiles.length
+){
+
+const copiedFiles =
+sourceFiles.map(
+file => {
+
+return {
+
+repository_id:
+repoId,
+
+branch_id:
+newBranch.id,
+
+file_path:
+file.file_path,
+
+content:
+file.content,
+
+language:
+file.language,
+
+storage_path:
+file.storage_path,
+
+mime_type:
+file.mime_type,
+
+file_size:
+file.file_size,
+
+is_binary:
+file.is_binary
+
+};
+
+}
+);
+
+
+const {
+error:copyError
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.insert(
+copiedFiles
+);
+
+
+if(copyError)
+throw copyError;
+
+}
+
+
+/* =========================
+   ADD TO BRANCH LIST
+========================= */
+
+allBranches.push(
+newBranch
+);
+
+
+currentBranch =
+newBranch;
+
+
+updateBranchUI();
+
+renderBranchList();
+
+updatePageLinks();
+
+closeCreateBranchModal();
+
+
+await loadFiles();
+
+
+alert(
+'Branch "' +
+branchName +
+'" created successfully.'
+);
+
+
+}
+catch(error){
+
+console.error(
+"Create branch error:",
+error
+);
+
+
+/*
+ If branch was created but file copying failed,
+ remove the newly-created branch to avoid
+ leaving an incomplete branch.
+*/
+
+if(
+newBranch &&
+newBranch.id
+){
+
+await supabaseClient
+
+.from("repository_branches")
+
+.delete()
+
+.eq(
+"id",
+newBranch.id
+);
+
+}
+
+
+alert(
+"Unable to create branch: " +
+(
+error.message ||
+"Unknown error"
+)
+);
+
+}
+
+}
+
+
+/* =========================================
+   GENERAL MODAL
 ========================================= */
 
 function comingSoon(feature){
