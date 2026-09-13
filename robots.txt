@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://asim75772.github.io/asim-tech-platform/sitemap.xml
