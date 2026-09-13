@@ -233,6 +233,8 @@ font-size:14px;
 white-space:nowrap;
 
 border-bottom:2px solid transparent;
+
+cursor:pointer;
 }
 
 .tab:hover{
@@ -841,7 +843,6 @@ border-color:#58a6ff;
 
 .navbar{
 padding:0 4%;
-
 gap:15px;
 }
 
@@ -851,7 +852,6 @@ font-size:12px;
 
 .container{
 width:94%;
-
 margin:20px auto;
 }
 
@@ -866,7 +866,6 @@ align-items:stretch;
 .toolbar-left,
 .toolbar-right{
 width:100%;
-
 justify-content:flex-start;
 }
 
@@ -947,6 +946,7 @@ Dashboard
 </a>
 
 </nav>
+
 
 <div class="container">
 
@@ -1083,6 +1083,7 @@ Code
 
 </a>
 
+
 <a
 class="tab"
 href="#"
@@ -1092,25 +1093,30 @@ Issues
 
 </a>
 
-<!-- PULL REQUESTS -->
+
+<!-- PULL REQUESTS NOW ACTIVE -->
 
 <a
-id="pullRequestsTab"
 class="tab"
+id="pullRequestsLink"
 href="#">
 
 Pull requests
 
 </a>
 
+
+<!-- ACTIONS NOW ACTIVE -->
+
 <a
 class="tab"
-href="#"
-onclick="comingSoon('Actions');return false;">
+id="actionsLink"
+href="#">
 
 Actions
 
 </a>
+
 
 <a
 class="tab"
@@ -1121,6 +1127,7 @@ Projects
 
 </a>
 
+
 <a
 class="tab"
 href="#"
@@ -1130,6 +1137,7 @@ Wiki
 
 </a>
 
+
 <a
 class="tab"
 href="#"
@@ -1138,6 +1146,7 @@ onclick="comingSoon('Security');return false;">
 Security
 
 </a>
+
 
 <a
 class="tab"
@@ -1206,6 +1215,7 @@ onclick="openCreateBranchModal()">
 
 </div>
 
+
 <!-- FILE EXPLORER -->
 
 <a
@@ -1216,6 +1226,7 @@ href="#">
 📂 File Explorer
 
 </a>
+
 
 <!-- ADD FILE -->
 
@@ -1255,6 +1266,7 @@ href="#">
 </div>
 
 </div>
+
 
 <div class="toolbar-right">
 
@@ -1405,6 +1417,7 @@ Close
 
 </div>
 
+
 <!-- =========================
      CREATE BRANCH MODAL
 ========================= -->
@@ -1464,6 +1477,7 @@ Create branch
 </div>
 
 </div>
+
 
 <script>
 
@@ -1599,6 +1613,7 @@ document.getElementById(
 ).textContent =
 repo.name;
 
+
 document.getElementById(
 "repoDescription"
 ).textContent =
@@ -1635,6 +1650,7 @@ const isOwner =
 repo.owner_id ===
 user.id;
 
+
 if(!isOwner){
 
 document.getElementById(
@@ -1643,6 +1659,11 @@ document.getElementById(
 "none";
 
 }
+
+
+/* ACTIVE PAGE LINKS */
+
+updateFeatureLinks();
 
 
 /* BRANCHES */
@@ -1672,6 +1693,7 @@ document.getElementById(
 ).textContent =
 repo.name;
 
+
 document.getElementById(
 "readmeDescription"
 ).textContent =
@@ -1686,13 +1708,13 @@ document.getElementById(
 ).style.display =
 "none";
 
+
 document.getElementById(
 "mainContent"
 ).style.display =
 "block";
 
 }
-
 catch(error){
 
 console.error(
@@ -1704,6 +1726,7 @@ document.getElementById(
 "loading"
 ).style.display =
 "none";
+
 
 const errorBox =
 document.getElementById(
@@ -1721,6 +1744,36 @@ errorBox.style.display =
 "block";
 
 }
+
+}
+
+
+/* =========================================
+   ACTIVE FEATURE LINKS
+========================================= */
+
+function updateFeatureLinks(){
+
+if(!repoId)
+return;
+
+
+/* PULL REQUESTS */
+
+document.getElementById(
+"pullRequestsLink"
+).href =
+"pull-requests.html?repository_id=" +
+encodeURIComponent(repoId);
+
+
+/* ACTIONS */
+
+document.getElementById(
+"actionsLink"
+).href =
+"actions.html?repository_id=" +
+encodeURIComponent(repoId);
 
 }
 
@@ -1753,11 +1806,14 @@ ascending:true
 }
 );
 
+
 if(error)
 throw error;
 
+
 allBranches =
 data || [];
+
 
 if(!allBranches.length){
 
@@ -1773,8 +1829,10 @@ throw new Error(
 const urlBranchId =
 params.get("branch_id");
 
+
 let selectedBranch =
 null;
+
 
 if(urlBranchId){
 
@@ -1814,8 +1872,10 @@ allBranches[0];
 
 }
 
+
 currentBranch =
 selectedBranch;
+
 
 updateBranchUI();
 
@@ -1833,6 +1893,7 @@ function updateBranchUI(){
 if(!currentBranch)
 return;
 
+
 document.getElementById(
 "branchButton"
 ).textContent =
@@ -1840,10 +1901,12 @@ document.getElementById(
 currentBranch.name +
 " ▾";
 
+
 document.getElementById(
 "currentBranchInfo"
 ).textContent =
 currentBranch.name;
+
 
 document.getElementById(
 "branchSourceText"
@@ -1864,25 +1927,20 @@ document.getElementById(
 "branchList"
 );
 
+
 if(!allBranches.length){
 
 list.innerHTML =
 `
-<div
-style="
-padding:15px;
-color:#8b949e;
-font-size:13px;
-">
-
+<div style="padding:15px;color:#8b949e;font-size:13px;">
 No branches found.
-
 </div>
 `;
 
 return;
 
 }
+
 
 list.innerHTML =
 allBranches.map(
@@ -1893,41 +1951,25 @@ currentBranch &&
 branch.id ===
 currentBranch.id;
 
+
 return `
 
 <button
 type="button"
-class="branch-item ${
-isCurrent
-?
-"current"
-:
-""
-}"
-data-branch-id="${
-escapeHtml(branch.id)
-}">
+class="branch-item ${isCurrent ? "current" : ""}"
+data-branch-id="${escapeHtml(branch.id)}">
 
 <span>
 
 🌿
 
-${escapeHtml(
-branch.name
-)}
+${escapeHtml(branch.name)}
 
 </span>
 
-<span
-class="branch-check">
+<span class="branch-check">
 
-${
-isCurrent
-?
-"✓"
-:
-""
-}
+${isCurrent ? "✓" : ""}
 
 </span>
 
@@ -1967,9 +2009,7 @@ this.dataset.branchId
    SELECT BRANCH
 ========================================= */
 
-async function selectBranch(
-branchId
-){
+async function selectBranch(branchId){
 
 const branch =
 allBranches.find(
@@ -1978,11 +2018,14 @@ item.id ===
 branchId
 );
 
+
 if(!branch)
 return;
 
+
 currentBranch =
 branch;
+
 
 updateBranchUI();
 
@@ -1992,10 +2035,12 @@ closeBranchMenu();
 
 updatePageLinks();
 
+
 document.getElementById(
 "searchInput"
 ).value =
 "";
+
 
 await loadFiles();
 
@@ -2013,11 +2058,13 @@ document.getElementById(
 "branchMenu"
 );
 
+
 menu.classList.toggle(
 "show"
 );
 
 }
+
 
 function closeBranchMenu(){
 
@@ -2026,9 +2073,7 @@ document
 "branchMenu"
 )
 .classList
-.remove(
-"show"
-);
+.remove("show");
 
 }
 
@@ -2039,14 +2084,10 @@ document
 
 function updatePageLinks(){
 
-if(
-!repository ||
-!currentBranch
-)
+if(!repository ||
+!currentBranch)
 return;
 
-
-/* BRANCH PARAMETER */
 
 const branchParam =
 "&branch_id=" +
@@ -2055,31 +2096,21 @@ currentBranch.id
 );
 
 
-/* =========================
-   FILE EXPLORER
-========================= */
+/* EXPLORER */
 
 document.getElementById(
 "explorerButton"
 ).href =
-"repository-explorer.html" +
-"?repository_id=" +
-encodeURIComponent(
-repoId
-) +
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(repoId) +
 branchParam;
 
 
-/* =========================
-   ADD FILE
-========================= */
+/* ADD FILE */
 
 const addFileUrl =
-"repository-add-file.html" +
-"?repository_id=" +
-encodeURIComponent(
-repoId
-) +
+"repository-add-file.html?repository_id=" +
+encodeURIComponent(repoId) +
 branchParam;
 
 
@@ -2096,20 +2127,6 @@ document.getElementById(
 addFileUrl +
 "&mode=upload";
 
-
-/* =========================
-   PULL REQUESTS
-========================= */
-
-document.getElementById(
-"pullRequestsTab"
-).href =
-"pull-requests.html" +
-"?repository_id=" +
-encodeURIComponent(
-repoId
-);
-
 }
 
 
@@ -2121,6 +2138,7 @@ async function loadFiles(){
 
 if(!currentBranch)
 return;
+
 
 const {
 data,
@@ -2149,19 +2167,20 @@ ascending:true
 }
 );
 
+
 if(error)
 throw error;
+
 
 allFiles =
 data || [];
 
 
-/* FILE COUNT */
-
 document.getElementById(
 "fileCount"
 ).textContent =
 allFiles.length;
+
 
 document.getElementById(
 "fileCountTop"
@@ -2175,8 +2194,6 @@ allFiles.length === 1
 " files"
 );
 
-
-/* RENDER */
 
 renderFiles(
 allFiles
@@ -2199,23 +2216,18 @@ file.mime_type ||
 ""
 ).toLowerCase();
 
-if(
-mime.startsWith(
-"image/"
-)
-)
+
+if(mime.startsWith("image/"))
 return "🖼️";
 
-if(
-mime ===
-"application/pdf"
-)
+
+if(mime === "application/pdf")
 return "📕";
 
-if(
-mime.includes("zip")
-)
+
+if(mime.includes("zip"))
 return "🗜️";
+
 
 return "📦";
 
@@ -2236,9 +2248,7 @@ path.endsWith(".htm")
 return "🌐";
 
 
-if(
-path.endsWith(".css")
-)
+if(path.endsWith(".css"))
 return "🎨";
 
 
@@ -2249,9 +2259,7 @@ path.endsWith(".jsx")
 return "⚡";
 
 
-if(
-path.endsWith(".json")
-)
+if(path.endsWith(".json"))
 return "📋";
 
 
@@ -2262,15 +2270,11 @@ path.endsWith(".markdown")
 return "📖";
 
 
-if(
-path.endsWith(".py")
-)
+if(path.endsWith(".py"))
 return "🐍";
 
 
-if(
-path.endsWith(".php")
-)
+if(path.endsWith(".php"))
 return "🐘";
 
 
@@ -2303,6 +2307,7 @@ return file.mime_type ||
 
 }
 
+
 return file.language ||
 "Text";
 
@@ -2320,28 +2325,23 @@ return "—";
 
 
 if(bytes < 1024)
-return bytes +
-" B";
+return bytes + " B";
 
 
-if(bytes < 1024 * 1024){
+if(bytes < 1024*1024){
 
 return (
-bytes / 1024
+bytes/1024
 ).toFixed(1) +
 " KB";
 
 }
 
 
-if(
-bytes <
-1024 * 1024 * 1024
-){
+if(bytes < 1024*1024*1024){
 
 return (
-bytes /
-(1024 * 1024)
+bytes/(1024*1024)
 ).toFixed(1) +
 " MB";
 
@@ -2349,8 +2349,7 @@ bytes /
 
 
 return (
-bytes /
-(1024 * 1024 * 1024)
+bytes/(1024*1024*1024)
 ).toFixed(1) +
 " GB";
 
@@ -2361,9 +2360,7 @@ bytes /
    RENDER FILES
 ========================================= */
 
-function renderFiles(
-files
-){
+function renderFiles(files){
 
 const list =
 document.getElementById(
@@ -2394,9 +2391,7 @@ This branch is empty
 <p>
 
 Use
-<strong>
-＋ Add file
-</strong>
+<strong>＋ Add file</strong>
 to create or upload a file.
 
 </p>
@@ -2417,8 +2412,10 @@ file => {
 const icon =
 getFileIcon(file);
 
+
 const type =
 getFileType(file);
+
 
 const size =
 file.file_size
@@ -2454,65 +2451,57 @@ ${icon}
 href="#"
 class="file-name"
 onclick="
-openFile(
-'${escapeHtml(file.id)}'
-);
+openFile('${escapeHtml(file.id)}');
 return false;
 ">
 
-${escapeHtml(
-file.file_path
-)}
+${escapeHtml(file.file_path)}
 
 </a>
 
 <div class="file-sub">
 
-${escapeHtml(
-type
-)}
+${escapeHtml(type)}
 
 </div>
 
 </div>
 
 </div>
+
 
 <div class="file-meta">
 
 <span class="type-badge">
 
-${escapeHtml(
-type
-)}
+${escapeHtml(type)}
 
 </span>
+
 
 <span>
 
-${escapeHtml(
-size
-)}
+${escapeHtml(size)}
 
 </span>
+
 
 <div class="file-actions">
 
 <button
 class="btn"
 onclick="
-openFile(
-'${escapeHtml(file.id)}'
-)">
+openFile('${escapeHtml(file.id)}')
+">
 
 Open
 
 </button>
 
+
 ${
 repository &&
-repository.owner_id ===
-currentUser.id
+repository.owner_id === currentUser.id
 ?
 
 `
@@ -2520,20 +2509,19 @@ currentUser.id
 <button
 class="btn"
 onclick="
-editFile(
-'${escapeHtml(file.id)}'
-)">
+editFile('${escapeHtml(file.id)}')
+">
 
 ✏️ Edit
 
 </button>
 
+
 <button
 class="btn btn-danger"
 onclick="
-deleteFile(
-'${escapeHtml(file.id)}'
-)">
+deleteFile('${escapeHtml(file.id)}')
+">
 
 🗑️
 
@@ -2565,20 +2553,14 @@ deleteFile(
    OPEN FILE
 ========================================= */
 
-function openFile(
-fileId
-){
+function openFile(fileId){
 
 window.location.href =
 "file-editor.html" +
 "?repository_id=" +
-encodeURIComponent(
-repoId
-) +
+encodeURIComponent(repoId) +
 "&file_id=" +
-encodeURIComponent(
-fileId
-) +
+encodeURIComponent(fileId) +
 "&branch_id=" +
 encodeURIComponent(
 currentBranch.id
@@ -2591,20 +2573,14 @@ currentBranch.id
    EDIT FILE
 ========================================= */
 
-function editFile(
-fileId
-){
+function editFile(fileId){
 
 window.location.href =
 "file-editor.html" +
 "?repository_id=" +
-encodeURIComponent(
-repoId
-) +
+encodeURIComponent(repoId) +
 "&file_id=" +
-encodeURIComponent(
-fileId
-) +
+encodeURIComponent(fileId) +
 "&branch_id=" +
 encodeURIComponent(
 currentBranch.id
@@ -2617,9 +2593,7 @@ currentBranch.id
    DELETE FILE
 ========================================= */
 
-async function deleteFile(
-fileId
-){
+async function deleteFile(fileId){
 
 if(
 !repository ||
@@ -2639,9 +2613,9 @@ return;
 const file =
 allFiles.find(
 item =>
-item.id ===
-fileId
+item.id === fileId
 );
+
 
 if(!file)
 return;
@@ -2699,9 +2673,7 @@ error
 } =
 await supabaseClient
 
-.from(
-"repository_files"
-)
+.from("repository_files")
 
 .delete()
 
@@ -2733,13 +2705,12 @@ alert(
 await loadFiles();
 
 }
-
 catch(error){
 
 console.error(
-"Delete failed:",
 error
 );
+
 
 alert(
 "Delete failed: " +
@@ -2773,9 +2744,7 @@ file.file_path ||
 ""
 )
 .toLowerCase()
-.includes(
-query
-)
+.includes(query)
 );
 
 
@@ -2800,9 +2769,7 @@ error
 } =
 await supabaseClient
 
-.from(
-"repository_stars"
-)
+.from("repository_stars")
 
 .select(
 "repository_id"
@@ -2836,10 +2803,10 @@ return;
 isStarred =
 !!data;
 
+
 updateStarButton();
 
 }
-
 catch(error){
 
 console.warn(
@@ -2852,7 +2819,7 @@ error
 
 
 /* =========================================
-   UPDATE STAR BUTTON
+   UPDATE STAR
 ========================================= */
 
 function updateStarButton(){
@@ -2873,7 +2840,6 @@ button.classList.add(
 );
 
 }
-
 else{
 
 button.textContent =
@@ -2914,9 +2880,7 @@ error
 } =
 await supabaseClient
 
-.from(
-"repository_stars"
-)
+.from("repository_stars")
 
 .delete()
 
@@ -2939,7 +2903,6 @@ isStarred =
 false;
 
 }
-
 else{
 
 const {
@@ -2947,9 +2910,7 @@ error
 } =
 await supabaseClient
 
-.from(
-"repository_stars"
-)
+.from("repository_stars")
 
 .insert({
 
@@ -2977,12 +2938,12 @@ await refreshStarCount();
 updateStarButton();
 
 }
-
 catch(error){
 
 console.error(
 error
 );
+
 
 alert(
 "Unable to update star."
@@ -3005,9 +2966,7 @@ error
 } =
 await supabaseClient
 
-.from(
-"repositories"
-)
+.from("repositories")
 
 .select(
 "stars_count"
@@ -3044,6 +3003,7 @@ document.getElementById(
 "addMenu"
 );
 
+
 menu.classList.toggle(
 "show"
 );
@@ -3064,6 +3024,7 @@ document.querySelector(
 ".add-wrapper"
 );
 
+
 const branchWrapper =
 document.querySelector(
 ".branch-wrapper"
@@ -3082,9 +3043,7 @@ document
 "addMenu"
 )
 .classList
-.remove(
-"show"
-);
+.remove("show");
 
 }
 
@@ -3100,8 +3059,7 @@ closeBranchMenu();
 
 }
 
-}
-);
+});
 
 
 /* =========================================
@@ -3204,12 +3162,13 @@ return;
 }
 
 
-/* GET NAME */
+/* NAME */
 
 const input =
 document.getElementById(
 "newBranchName"
 );
+
 
 const branchName =
 input.value.trim();
@@ -3228,7 +3187,7 @@ return;
 }
 
 
-/* VALIDATE NAME */
+/* VALIDATION */
 
 if(
 branchName.length > 100 ||
@@ -3282,8 +3241,10 @@ document.getElementById(
 "createBranchButton"
 );
 
+
 button.disabled =
 true;
+
 
 button.textContent =
 "Creating...";
@@ -3295,9 +3256,7 @@ null;
 
 try{
 
-/* =========================
-   CREATE DATABASE BRANCH
-========================= */
+/* CREATE BRANCH */
 
 const {
 data,
@@ -3305,9 +3264,7 @@ error:branchError
 } =
 await supabaseClient
 
-.from(
-"repository_branches"
-)
+.from("repository_branches")
 
 .insert({
 
@@ -3323,6 +3280,7 @@ currentUser.id
 })
 
 .select("*")
+
 .single();
 
 
@@ -3354,9 +3312,7 @@ throw new Error(
 }
 
 
-/* =========================
-   LOAD SOURCE FILES
-========================= */
+/* SOURCE FILES */
 
 const {
 data:sourceFiles,
@@ -3364,9 +3320,7 @@ error:fileError
 } =
 await supabaseClient
 
-.from(
-"repository_files"
-)
+.from("repository_files")
 
 .select(
 "file_path,content,language,storage_path,mime_type,file_size,is_binary"
@@ -3398,9 +3352,7 @@ fileError.message ||
 }
 
 
-/* =========================
-   COPY FILES
-========================= */
+/* COPY FILES */
 
 if(
 sourceFiles &&
@@ -3447,9 +3399,7 @@ error:copyError
 } =
 await supabaseClient
 
-.from(
-"repository_files"
-)
+.from("repository_files")
 
 .insert(
 copiedFiles
@@ -3473,21 +3423,18 @@ copyError.message ||
 }
 
 
-/* =========================
-   UPDATE LOCAL STATE
-========================= */
+/* LOCAL STATE */
 
 allBranches.push(
 newBranch
 );
 
+
 currentBranch =
 newBranch;
 
 
-/* =========================
-   UPDATE UI
-========================= */
+/* UI */
 
 updateBranchUI();
 
@@ -3500,10 +3447,6 @@ closeCreateBranchModal();
 await loadFiles();
 
 
-/* =========================
-   SUCCESS
-========================= */
-
 alert(
 'Branch "' +
 branchName +
@@ -3511,7 +3454,6 @@ branchName +
 );
 
 }
-
 catch(error){
 
 console.error(
@@ -3520,9 +3462,7 @@ error
 );
 
 
-/* =========================
-   CLEANUP
-========================= */
+/* CLEANUP */
 
 if(
 newBranch &&
@@ -3533,9 +3473,7 @@ try{
 
 await supabaseClient
 
-.from(
-"repository_files"
-)
+.from("repository_files")
 
 .delete()
 
@@ -3547,9 +3485,7 @@ newBranch.id
 
 await supabaseClient
 
-.from(
-"repository_branches"
-)
+.from("repository_branches")
 
 .delete()
 
@@ -3559,7 +3495,6 @@ newBranch.id
 );
 
 }
-
 catch(cleanupError){
 
 console.error(
@@ -3572,9 +3507,7 @@ cleanupError
 }
 
 
-/* =========================
-   ERROR
-========================= */
+/* ERROR */
 
 alert(
 "Unable to create branch:\n\n" +
@@ -3585,11 +3518,11 @@ error.message ||
 );
 
 }
-
 finally{
 
 button.disabled =
 false;
+
 
 button.textContent =
 "Create branch";
@@ -3600,12 +3533,10 @@ button.textContent =
 
 
 /* =========================================
-   GENERAL MODAL
+   COMING SOON
 ========================================= */
 
-function comingSoon(
-feature
-){
+function comingSoon(feature){
 
 document.getElementById(
 "modalTitle"
@@ -3644,9 +3575,7 @@ document.getElementById(
    ESCAPE HTML
 ========================================= */
 
-function escapeHtml(
-value
-){
+function escapeHtml(value){
 
 return String(
 value || ""
