@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Actions — ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+background:#0d1117;
+color:#e6edf3;
+min-height:100vh;
+}
+
+.navbar{
+height:64px;
+background:#010409;
+border-bottom:1px solid #30363d;
+display:flex;
+align-items:center;
+padding:0 5%;
+gap:24px;
+}
+
+.logo{
+font-size:20px;
+font-weight:700;
+color:#fff;
+}
+
+.navbar a{
+color:#e6edf3;
+text-decoration:none;
+font-size:14px;
+}
+
+.navbar a:hover{
+color:#58a6ff;
+}
+
+.container{
+width:94%;
+max-width:1150px;
+margin:30px auto;
+}
+
+.loading{
+padding:70px 20px;
+text-align:center;
+color:#8b949e;
+}
+
+.error,
+.success{
+display:none;
+padding:14px 16px;
+border-radius:6px;
+margin-bottom:20px;
+}
+
+.error{
+background:#3d1f25;
+border:1px solid #f85149;
+color:#ff7b72;
+}
+
+.success{
+background:#173b25;
+border:1px solid #3fb950;
+color:#7ee787;
+}
+
+.repo-header{
+margin-bottom:25px;
+}
+
+.repo-title{
+font-size:26px;
+margin-bottom:8px;
+}
+
+.description{
+color:#8b949e;
+font-size:14px;
+line-height:1.5;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin-bottom:18px;
+flex-wrap:wrap;
+}
+
+.tabs{
+display:flex;
+gap:18px;
+}
+
+.tab{
+color:#8b949e;
+cursor:pointer;
+font-size:14px;
+padding:8px 0;
+}
+
+.tab.active{
+color:#e6edf3;
+font-weight:600;
+}
+
+.btn{
+border:1px solid #30363d;
+background:#21262d;
+color:#e6edf3;
+padding:8px 14px;
+border-radius:6px;
+font-size:13px;
+cursor:pointer;
+text-decoration:none;
+display:inline-block;
+}
+
+.btn:hover{
+background:#30363d;
+}
+
+.btn-green{
+background:#238636;
+border-color:#238636;
+color:#fff;
+}
+
+.btn-green:hover{
+background:#2ea043;
+}
+
+.btn-blue{
+background:#1f6feb;
+border-color:#1f6feb;
+color:#fff;
+}
+
+.btn-danger{
+color:#f85149;
+}
+
+.btn-danger:hover{
+background:#3d1f25;
+}
+
+.actions-list{
+border:1px solid #30363d;
+border-radius:6px;
+overflow:hidden;
+}
+
+.action-row{
+padding:18px;
+border-bottom:1px solid #21262d;
+display:flex;
+gap:15px;
+align-items:flex-start;
+}
+
+.action-row:last-child{
+border-bottom:0;
+}
+
+.action-icon{
+font-size:28px;
+width:38px;
+}
+
+.action-main{
+flex:1;
+min-width:0;
+}
+
+.action-name{
+font-size:16px;
+font-weight:600;
+color:#58a6ff;
+margin-bottom:6px;
+}
+
+.action-description{
+font-size:13px;
+color:#8b949e;
+margin-bottom:8px;
+}
+
+.action-meta{
+font-size:12px;
+color:#8b949e;
+line-height:1.7;
+}
+
+.action-actions{
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+}
+
+.badge{
+display:inline-block;
+padding:3px 8px;
+border-radius:20px;
+font-size:11px;
+font-weight:600;
+}
+
+.badge-enabled{
+background:#1a7f37;
+color:#fff;
+}
+
+.badge-disabled{
+background:#6e7681;
+color:#fff;
+}
+
+.empty{
+padding:60px 20px;
+text-align:center;
+color:#8b949e;
+}
+
+.empty-icon{
+font-size:42px;
+margin-bottom:12px;
+}
+
+.runs{
+margin-top:28px;
+}
+
+.runs-header{
+font-size:18px;
+font-weight:600;
+margin-bottom:12px;
+}
+
+.run-row{
+border:1px solid #30363d;
+background:#161b22;
+border-radius:6px;
+padding:14px;
+margin-bottom:8px;
+}
+
+.run-top{
+display:flex;
+justify-content:space-between;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.run-name{
+font-size:14px;
+font-weight:600;
+}
+
+.run-meta{
+font-size:12px;
+color:#8b949e;
+margin-top:5px;
+}
+
+.status{
+display:inline-block;
+padding:3px 9px;
+border-radius:20px;
+font-size:11px;
+font-weight:600;
+}
+
+.status-queued{
+background:#6e7681;
+color:#fff;
+}
+
+.status-running{
+background:#1f6feb;
+color:#fff;
+}
+
+.status-success{
+background:#1a7f37;
+color:#fff;
+}
+
+.status-failed{
+background:#da3633;
+color:#fff;
+}
+
+.status-cancelled{
+background:#6e7681;
+color:#fff;
+}
+
+.logs{
+margin-top:10px;
+background:#0d1117;
+border:1px solid #30363d;
+border-radius:5px;
+padding:10px;
+font-family:monospace;
+font-size:11px;
+color:#8b949e;
+white-space:pre-wrap;
+}
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.75);
+z-index:5000;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.modal.show{
+display:flex;
+}
+
+.modal-box{
+width:100%;
+max-width:550px;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:8px;
+padding:22px;
+}
+
+.modal-box h2{
+margin-bottom:18px;
+}
+
+label{
+display:block;
+font-size:13px;
+color:#8b949e;
+margin-bottom:7px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+background:#0d1117;
+border:1px solid #30363d;
+border-radius:6px;
+padding:10px;
+color:#e6edf3;
+outline:none;
+margin-bottom:18px;
+font-family:inherit;
+}
+
+textarea{
+min-height:100px;
+resize:vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+border-color:#58a6ff;
+}
+
+.modal-actions{
+display:flex;
+justify-content:flex-end;
+gap:8px;
+}
+
+.modal-error{
+display:none;
+background:#3d1f25;
+border:1px solid #f85149;
+color:#ff7b72;
+padding:10px;
+border-radius:6px;
+margin-bottom:15px;
+font-size:13px;
+}
+
+footer{
+text-align:center;
+padding:45px 10px;
+color:#8b949e;
+font-size:13px;
+}
+
+@media(max-width:700px){
+
+.navbar{
+height:58px;
+padding:0 4%;
+gap:15px;
+}
+
+.navbar a{
+font-size:12px;
+}
+
+.container{
+width:94%;
+margin:20px auto;
+}
+
+.action-row{
+flex-direction:column;
+}
+
+.action-actions{
+width:100%;
+}
+
+.topbar{
+align-items:flex-start;
+}
+
+.tabs{
+flex-wrap:wrap;
+gap:12px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<div class="logo">
+⚡ ASIM TECH
+</div>
+
+<a href="index.html">
+Home
+</a>
+
+<a href="repositories.html">
+Repositories
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+</nav>
+
+
+<div class="container">
+
+<div id="loading"
+class="loading">
+
+Loading Actions...
+
+</div>
+
+
+<div id="error"
+class="error">
+</div>
+
+
+<div id="success"
+class="success">
+</div>
+
+
+<div id="mainContent"
+style="display:none;">
+
+<div class="repo-header">
+
+<div class="repo-title">
+
+⚡ ASIM TECH /
+<strong id="repoName">
+Repository
+</strong>
+
+</div>
+
+<div id="repoDescription"
+class="description">
+Repository Actions
+</div>
+
+</div>
+
+
+<div class="topbar">
+
+<div class="tabs">
+
+<div id="actionsTab"
+class="tab active"
+onclick="setTab('actions')">
+
+⚡ Actions
+
+</div>
+
+<div id="runsTab"
+class="tab"
+onclick="setTab('runs')">
+
+▶ Run history
+
+</div>
+
+</div>
+
+
+<button
+id="newActionButton"
+class="btn btn-green"
+onclick="openNewAction()">
+
+＋ New action
+
+</button>
+
+</div>
+
+
+<div id="actionsView">
+
+<div id="actionsList"
+class="actions-list">
+
+<div class="empty">
+Loading actions...
+</div>
+
+</div>
+
+</div>
+
+
+<div id="runsView"
+style="display:none;">
+
+<div class="runs">
+
+<div class="runs-header">
+Recent workflow runs
+</div>
+
+<div id="runsList">
+
+<div class="empty">
+No workflow runs yet.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- NEW ACTION MODAL -->
+
+<div id="actionModal"
+class="modal">
+
+<div class="modal-box">
+
+<h2>
+Create new action
+</h2>
+
+
+<label>
+Action name
+</label>
+
+<input
+id="actionName"
+type="text"
+placeholder="e.g. Build Website">
+
+
+<label>
+Description
+</label>
+
+<textarea
+id="actionDescription"
+placeholder="Describe what this action does..."></textarea>
+
+
+<label>
+Trigger
+</label>
+
+<select id="actionEvent">
+
+<option value="manual">
+Manual
+</option>
+
+<option value="push">
+Push
+</option>
+
+<option value="pull_request">
+Pull Request
+</option>
+
+</select>
+
+
+<label>
+Branch
+</label>
+
+<input
+id="actionBranch"
+type="text"
+placeholder="main">
+
+
+<label>
+Workflow file
+</label>
+
+<input
+id="workflowFile"
+type="text"
+placeholder=".github/workflows/build.yml">
+
+
+<div id="modalError"
+class="modal-error">
+</div>
+
+
+<div class="modal-actions">
+
+<button
+class="btn"
+onclick="closeNewAction()">
+
+Cancel
+
+</button>
+
+<button
+id="createActionButton"
+class="btn btn-green"
+onclick="createAction()">
+
+Create action
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+
+© 2026 ASIM TECH — Code. Create. Innovate.
+
+</footer>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* =========================================
+   URL
+========================================= */
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const repositoryId =
+params.get("repository_id") ||
+params.get("id");
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let currentUser = null;
+
+let repository = null;
+
+let actions = [];
+
+let runs = [];
+
+let currentTab = "actions";
+
+
+/* =========================================
+   INIT
+========================================= */
+
+async function init(){
+
+try{
+
+if(!repositoryId){
+
+throw new Error(
+"Repository ID is missing."
+);
+
+}
+
+
+/* USER */
+
+const {
+data:userData,
+error:userError
+} =
+await supabaseClient
+.auth
+.getUser();
+
+if(userError)
+throw userError;
+
+if(!userData.user){
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+currentUser =
+userData.user;
+
+
+/* REPOSITORY */
+
+const {
+data:repo,
+error:repoError
+} =
+await supabaseClient
+
+.from("repositories")
+
+.select(`
+id,
+owner_id,
+name,
+description,
+is_private
+`)
+
+.eq(
+"id",
+repositoryId
+)
+
+.single();
+
+if(repoError)
+throw repoError;
+
+if(!repo){
+
+throw new Error(
+"Repository not found."
+);
+
+}
+
+repository =
+repo;
+
+
+document.getElementById(
+"repoName"
+).textContent =
+repo.name;
+
+
+document.getElementById(
+"repoDescription"
+).textContent =
+repo.description ||
+"Repository Actions";
+
+
+document.title =
+"Actions — " +
+repo.name +
+" — ASIM TECH";
+
+
+if(repo.owner_id !== currentUser.id){
+
+document.getElementById(
+"newActionButton"
+).style.display =
+"none";
+
+}
+
+
+/* LOAD */
+
+await loadActions();
+
+await loadRuns();
+
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
+
+document.getElementById(
+"mainContent"
+).style.display =
+"block";
+
+
+}
+catch(error){
+
+console.error(error);
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
+showError(
+error.message ||
+"Unable to load Actions."
+);
+
+}
+
+}
+
+
+/* =========================================
+   LOAD ACTIONS
+========================================= */
+
+async function loadActions(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_actions")
+
+.select("*")
+
+.eq(
+"repository_id",
+repositoryId
+)
+
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+if(error)
+throw error;
+
+actions =
+data || [];
+
+renderActions();
+
+}
+
+
+/* =========================================
+   LOAD RUNS
+========================================= */
+
+async function loadRuns(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_action_runs")
+
+.select(`
+*,
+repository_actions(name)
+`)
+
+.eq(
+"repository_id",
+repositoryId
+)
+
+.order(
+"created_at",
+{
+ascending:false
+}
+)
+
+.limit(30);
+
+if(error)
+throw error;
+
+runs =
+data || [];
+
+renderRuns();
+
+}
+
+
+/* =========================================
+   RENDER ACTIONS
+========================================= */
+
+function renderActions(){
+
+const list =
+document.getElementById(
+"actionsList"
+);
+
+
+if(!actions.length){
+
+list.innerHTML = `
+
+<div class="empty">
+
+<div class="empty-icon">
+⚡
+</div>
+
+<h3 style="margin-bottom:8px;color:#e6edf3;">
+No actions yet
+</h3>
+
+<p>
+Create your first workflow action.
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+list.innerHTML =
+"";
+
+
+actions.forEach(
+function(action){
+
+const row =
+document.createElement(
+"div"
+);
+
+row.className =
+"action-row";
+
+
+const icon =
+document.createElement(
+"div"
+);
+
+icon.className =
+"action-icon";
+
+icon.textContent =
+"⚡";
+
+
+const main =
+document.createElement(
+"div"
+);
+
+main.className =
+"action-main";
+
+
+const name =
+document.createElement(
+"div"
+);
+
+name.className =
+"action-name";
+
+name.textContent =
+action.name;
+
+
+const description =
+document.createElement(
+"div"
+);
+
+description.className =
+"action-description";
+
+description.textContent =
+action.description ||
+"No description";
+
+
+const meta =
+document.createElement(
+"div"
+);
+
+meta.className =
+"action-meta";
+
+
+meta.innerHTML =
+
+(
+action.is_enabled
+?
+'<span class="badge badge-enabled">Enabled</span>'
+:
+'<span class="badge badge-disabled">Disabled</span>'
+)
+
++
+
+" · Trigger: " +
+escapeHtml(
+action.event
+)
+
++
+
+" · Branch: " +
+escapeHtml(
+action.branch_name ||
+"main"
+);
+
+
+main.appendChild(name);
+
+main.appendChild(description);
+
+main.appendChild(meta);
+
+
+const buttons =
+document.createElement(
+"div"
+);
+
+buttons.className =
+"action-actions";
+
+
+const runButton =
+document.createElement(
+"button"
+);
+
+runButton.className =
+"btn btn-blue";
+
+runButton.textContent =
+"▶ Run";
+
+runButton.disabled =
+!action.is_enabled;
+
+runButton.onclick =
+function(){
+
+runAction(
+action.id
+);
+
+};
+
+buttons.appendChild(
+runButton
+);
+
+
+if(
+repository.owner_id ===
+currentUser.id
+){
+
+const toggleButton =
+document.createElement(
+"button"
+);
+
+toggleButton.className =
+"btn";
+
+toggleButton.textContent =
+action.is_enabled
+?
+"Disable"
+:
+"Enable";
+
+toggleButton.onclick =
+function(){
+
+toggleAction(
+action
+);
+
+};
+
+buttons.appendChild(
+toggleButton
+);
+
+
+const deleteButton =
+document.createElement(
+"button"
+);
+
+deleteButton.className =
+"btn btn-danger";
+
+deleteButton.textContent =
+"Delete";
+
+deleteButton.onclick =
+function(){
+
+deleteAction(
+action.id
+);
+
+};
+
+buttons.appendChild(
+deleteButton
+);
+
+}
+
+
+row.appendChild(icon);
+
+row.appendChild(main);
+
+row.appendChild(buttons);
+
+list.appendChild(row);
+
+});
+
+}
+
+
+/* =========================================
+   RENDER RUNS
+========================================= */
+
+function renderRuns(){
+
+const list =
+document.getElementById(
+"runsList"
+);
+
+
+if(!runs.length){
+
+list.innerHTML = `
+
+<div class="empty">
+
+<div class="empty-icon">
+▶
+</div>
+
+No workflow runs yet.
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+list.innerHTML =
+"";
+
+
+runs.forEach(
+function(run){
+
+const row =
+document.createElement(
+"div"
+);
+
+row.className =
+"run-row";
+
+
+const top =
+document.createElement(
+"div"
+);
+
+top.className =
+"run-top";
+
+
+const name =
+document.createElement(
+"div"
+);
+
+name.className =
+"run-name";
+
+name.textContent =
+(
+run.repository_actions &&
+run.repository_actions.name
+)
+||
+"Action";
+
+
+const status =
+document.createElement(
+"span"
+);
+
+status.className =
+"status status-" +
+run.status;
+
+status.textContent =
+run.status;
+
+
+top.appendChild(name);
+
+top.appendChild(status);
+
+
+const meta =
+document.createElement(
+"div"
+);
+
+meta.className =
+"run-meta";
+
+meta.textContent =
+"Branch: " +
+(
+run.branch_name ||
+"main"
+) +
+" · " +
+formatDate(
+run.created_at
+);
+
+
+row.appendChild(top);
+
+row.appendChild(meta);
+
+
+if(run.logs){
+
+const logs =
+document.createElement(
+"div"
+);
+
+logs.className =
+"logs";
+
+logs.textContent =
+run.logs;
+
+row.appendChild(logs);
+
+}
+
+
+list.appendChild(row);
+
+});
+
+}
+
+
+/* =========================================
+   TAB
+========================================= */
+
+function setTab(tab){
+
+currentTab =
+tab;
+
+
+document.getElementById(
+"actionsTab"
+).classList.toggle(
+"active",
+tab === "actions"
+);
+
+
+document.getElementById(
+"runsTab"
+).classList.toggle(
+"active",
+tab === "runs"
+);
+
+
+document.getElementById(
+"actionsView"
+).style.display =
+tab === "actions"
+?
+"block"
+:
+"none";
+
+
+document.getElementById(
+"runsView"
+).style.display =
+tab === "runs"
+?
+"block"
+:
+"none";
+
+}
+
+
+/* =========================================
+   NEW ACTION
+========================================= */
+
+function openNewAction(){
+
+document.getElementById(
+"actionModal"
+).classList.add(
+"show"
+);
+
+document.getElementById(
+"actionName"
+).focus();
+
+}
+
+
+function closeNewAction(){
+
+document.getElementById(
+"actionModal"
+).classList.remove(
+"show"
+);
+
+document.getElementById(
+"modalError"
+).style.display =
+"none";
+
+}
+
+
+/* =========================================
+   CREATE ACTION
+========================================= */
+
+async function createAction(){
+
+const name =
+document.getElementById(
+"actionName"
+).value.trim();
+
+
+const description =
+document.getElementById(
+"actionDescription"
+).value.trim();
+
+
+const event =
+document.getElementById(
+"actionEvent"
+).value;
+
+
+const branch =
+document.getElementById(
+"actionBranch"
+).value.trim()
+||
+"main";
+
+
+const workflowFile =
+document.getElementById(
+"workflowFile"
+).value.trim();
+
+
+if(!name){
+
+showModalError(
+"Action name is required."
+);
+
+return;
+
+}
+
+
+const button =
+document.getElementById(
+"createActionButton"
+);
+
+button.disabled =
+true;
+
+button.textContent =
+"Creating...";
+
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_actions")
+
+.insert({
+
+repository_id:
+repositoryId,
+
+name:
+name,
+
+description:
+description,
+
+event:
+event,
+
+branch_name:
+branch,
+
+workflow_file:
+workflowFile,
+
+is_enabled:
+true,
+
+created_by:
+currentUser.id
+
+})
+
+.select("*")
+
+.single();
+
+
+if(error)
+throw error;
+
+
+actions.unshift(
+data
+);
+
+
+renderActions();
+
+closeNewAction();
+
+clearActionForm();
+
+showSuccess(
+"Action created successfully."
+);
+
+}
+catch(error){
+
+console.error(error);
+
+showModalError(
+error.message ||
+"Unable to create action."
+);
+
+}
+finally{
+
+button.disabled =
+false;
+
+button.textContent =
+"Create action";
+
+}
+
+}
+
+
+/* =========================================
+   RUN ACTION
+========================================= */
+
+async function runAction(actionId){
+
+const action =
+actions.find(
+item =>
+item.id === actionId
+);
+
+
+if(!action)
+return;
+
+
+if(!action.is_enabled){
+
+showError(
+"This action is disabled."
+);
+
+return;
+
+}
+
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_action_runs")
+
+.insert({
+
+action_id:
+action.id,
+
+repository_id:
+repositoryId,
+
+branch_name:
+action.branch_name ||
+"main",
+
+status:
+"queued",
+
+trigger_type:
+"manual",
+
+commit_message:
+"Manual action run",
+
+created_by:
+currentUser.id
+
+})
+
+.select(`
+*,
+repository_actions(name)
+`)
+
+.single();
+
+
+if(error)
+throw error;
+
+
+runs.unshift(
+data
+);
+
+renderRuns();
+
+setTab("runs");
+
+
+/*
+Simulated runner.
+
+Real server-side execution
+will be added later.
+*/
+
+setTimeout(
+async function(){
+
+await supabaseClient
+
+.from("repository_action_runs")
+
+.update({
+
+status:
+"running",
+
+started_at:
+new Date().toISOString(),
+
+logs:
+"Starting action...\n" +
+"Preparing workflow...\n" +
+"Checking branch: " +
+(
+action.branch_name ||
+"main"
+) +
+"\n"
+
+})
+
+.eq(
+"id",
+data.id
+);
+
+
+await loadRuns();
+
+},
+500
+);
+
+
+setTimeout(
+async function(){
+
+await supabaseClient
+
+.from("repository_action_runs")
+
+.update({
+
+status:
+"success",
+
+completed_at:
+new Date().toISOString(),
+
+logs:
+"Starting action...\n" +
+"Preparing workflow...\n" +
+"Checking branch: " +
+(
+action.branch_name ||
+"main"
+) +
+"\n" +
+"Workflow prepared successfully.\n" +
+"Action completed successfully."
+
+})
+
+.eq(
+"id",
+data.id
+);
+
+
+await loadRuns();
+
+showSuccess(
+"Action completed successfully."
+);
+
+},
+1800
+);
+
+
+}
+catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to run action."
+);
+
+}
+
+}
+
+
+/* =========================================
+   TOGGLE ACTION
+========================================= */
+
+async function toggleAction(action){
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_actions")
+
+.update({
+
+is_enabled:
+!action.is_enabled,
+
+updated_at:
+new Date().toISOString()
+
+})
+
+.eq(
+"id",
+action.id
+);
+
+
+if(error)
+throw error;
+
+
+action.is_enabled =
+!action.is_enabled;
+
+
+renderActions();
+
+
+showSuccess(
+action.is_enabled
+?
+"Action enabled."
+:
+"Action disabled."
+);
+
+}
+catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to update action."
+);
+
+}
+
+}
+
+
+/* =========================================
+   DELETE ACTION
+========================================= */
+
+async function deleteAction(id){
+
+if(
+!confirm(
+"Delete this action and its run history?"
+)
+){
+
+return;
+
+}
+
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_actions")
+
+.delete()
+
+.eq(
+"id",
+id
+);
+
+
+if(error)
+throw error;
+
+
+actions =
+actions.filter(
+action =>
+action.id !== id
+);
+
+
+runs =
+runs.filter(
+run =>
+run.action_id !== id
+);
+
+
+renderActions();
+
+renderRuns();
+
+
+showSuccess(
+"Action deleted."
+);
+
+}
+catch(error){
+
+console.error(error);
+
+showError(
+error.message ||
+"Unable to delete action."
+);
+
+}
+
+}
+
+
+/* =========================================
+   CLEAR FORM
+========================================= */
+
+function clearActionForm(){
+
+document.getElementById(
+"actionName"
+).value =
+"";
+
+
+document.getElementById(
+"actionDescription"
+).value =
+"";
+
+
+document.getElementById(
+"actionEvent"
+).value =
+"manual";
+
+
+document.getElementById(
+"actionBranch"
+).value =
+"main";
+
+
+document.getElementById(
+"workflowFile"
+).value =
+"";
+
+}
+
+
+/* =========================================
+   MESSAGES
+========================================= */
+
+function showError(message){
+
+const box =
+document.getElementById(
+"error"
+);
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+}
+
+
+function showSuccess(message){
+
+const box =
+document.getElementById(
+"success"
+);
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+
+setTimeout(
+function(){
+
+box.style.display =
+"none";
+
+},
+4000
+);
+
+}
+
+
+function showModalError(message){
+
+const box =
+document.getElementById(
+"modalError"
+);
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+}
+
+
+/* =========================================
+   DATE
+========================================= */
+
+function formatDate(date){
+
+if(!date)
+return "";
+
+return new Date(date)
+.toLocaleString(
+"en-IN",
+{
+day:"2-digit",
+month:"short",
+year:"numeric",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
+}
+
+
+/* =========================================
+   ESCAPE
+========================================= */
+
+function escapeHtml(value){
+
+return String(
+value || ""
+)
+
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================
+   MODAL CLICK
+========================================= */
+
+document
+.getElementById("actionModal")
+.addEventListener(
+"click",
+function(event){
+
+if(
+event.target === this
+){
+
+closeNewAction();
+
+}
+
+}
+);
+
+
+/* =========================================
+   START
+========================================= */
+
+init();
+
+</script>
+
+</body>
+
+</html>
