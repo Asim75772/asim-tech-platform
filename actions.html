@@ -91,13 +91,13 @@ margin-bottom:25px;
 }
 
 .repo-title{
-font-size:28px;
+font-size:26px;
 margin-bottom:8px;
 }
 
 .description{
 color:#8b949e;
-font-size:15px;
+font-size:14px;
 line-height:1.5;
 }
 
@@ -106,19 +106,19 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 gap:12px;
-margin-bottom:20px;
+margin-bottom:18px;
 flex-wrap:wrap;
 }
 
 .tabs{
 display:flex;
-gap:20px;
+gap:18px;
 }
 
 .tab{
 color:#8b949e;
 cursor:pointer;
-font-size:15px;
+font-size:14px;
 padding:8px 0;
 }
 
@@ -131,7 +131,7 @@ font-weight:600;
 border:1px solid #30363d;
 background:#21262d;
 color:#e6edf3;
-padding:9px 15px;
+padding:8px 14px;
 border-radius:6px;
 font-size:13px;
 cursor:pointer;
@@ -159,10 +159,6 @@ border-color:#1f6feb;
 color:#fff;
 }
 
-.btn-blue:hover{
-background:#388bfd;
-}
-
 .btn-danger{
 color:#f85149;
 }
@@ -173,15 +169,15 @@ background:#3d1f25;
 
 .actions-list{
 border:1px solid #30363d;
-border-radius:7px;
+border-radius:6px;
 overflow:hidden;
 }
 
 .action-row{
-padding:20px;
+padding:18px;
 border-bottom:1px solid #21262d;
 display:flex;
-gap:16px;
+gap:15px;
 align-items:flex-start;
 }
 
@@ -190,8 +186,8 @@ border-bottom:0;
 }
 
 .action-icon{
-font-size:30px;
-width:42px;
+font-size:28px;
+width:38px;
 }
 
 .action-main{
@@ -200,33 +196,33 @@ min-width:0;
 }
 
 .action-name{
-font-size:17px;
+font-size:16px;
 font-weight:600;
 color:#58a6ff;
 margin-bottom:6px;
 }
 
 .action-description{
-font-size:14px;
+font-size:13px;
 color:#8b949e;
-margin-bottom:10px;
+margin-bottom:8px;
 }
 
 .action-meta{
 font-size:12px;
 color:#8b949e;
-line-height:1.8;
+line-height:1.7;
 }
 
 .action-actions{
 display:flex;
-gap:7px;
+gap:6px;
 flex-wrap:wrap;
 }
 
 .badge{
 display:inline-block;
-padding:4px 9px;
+padding:3px 8px;
 border-radius:20px;
 font-size:11px;
 font-weight:600;
@@ -254,46 +250,45 @@ margin-bottom:12px;
 }
 
 .runs{
-margin-top:25px;
+margin-top:28px;
 }
 
 .runs-header{
-font-size:20px;
+font-size:18px;
 font-weight:600;
-margin-bottom:15px;
+margin-bottom:12px;
 }
 
 .run-row{
 border:1px solid #30363d;
 background:#161b22;
-border-radius:7px;
-padding:16px;
-margin-bottom:10px;
+border-radius:6px;
+padding:14px;
+margin-bottom:8px;
 }
 
 .run-top{
 display:flex;
 justify-content:space-between;
-align-items:center;
 gap:10px;
 flex-wrap:wrap;
 }
 
 .run-name{
-font-size:15px;
+font-size:14px;
 font-weight:600;
 }
 
 .run-meta{
 font-size:12px;
 color:#8b949e;
-margin-top:6px;
-line-height:1.6;
+margin-top:5px;
+line-height:1.7;
 }
 
 .status{
 display:inline-block;
-padding:4px 10px;
+padding:3px 9px;
 border-radius:20px;
 font-size:11px;
 font-weight:600;
@@ -325,13 +320,13 @@ color:#fff;
 }
 
 .logs{
-margin-top:12px;
+margin-top:10px;
 background:#0d1117;
 border:1px solid #30363d;
 border-radius:5px;
-padding:12px;
+padding:10px;
 font-family:monospace;
-font-size:12px;
+font-size:11px;
 color:#8b949e;
 white-space:pre-wrap;
 line-height:1.6;
@@ -354,17 +349,15 @@ display:flex;
 
 .modal-box{
 width:100%;
-max-width:560px;
-max-height:90vh;
-overflow-y:auto;
+max-width:550px;
 background:#161b22;
 border:1px solid #30363d;
 border-radius:8px;
-padding:24px;
+padding:22px;
 }
 
 .modal-box h2{
-margin-bottom:20px;
+margin-bottom:18px;
 }
 
 label{
@@ -381,7 +374,7 @@ width:100%;
 background:#0d1117;
 border:1px solid #30363d;
 border-radius:6px;
-padding:11px;
+padding:10px;
 color:#e6edf3;
 outline:none;
 margin-bottom:18px;
@@ -410,7 +403,7 @@ display:none;
 background:#3d1f25;
 border:1px solid #f85149;
 color:#ff7b72;
-padding:11px;
+padding:10px;
 border-radius:6px;
 margin-bottom:15px;
 font-size:13px;
@@ -418,7 +411,7 @@ font-size:13px;
 
 footer{
 text-align:center;
-padding:55px 10px;
+padding:45px 10px;
 color:#8b949e;
 font-size:13px;
 }
@@ -1009,21 +1002,7 @@ await supabaseClient
 "repository_action_runs"
 )
 
-.select(`
-id,
-action_id,
-repository_id,
-branch_name,
-status,
-trigger_type,
-commit_message,
-logs,
-started_at,
-completed_at,
-created_by,
-triggered_by,
-created_at
-`)
+.select("*")
 
 .eq(
 "repository_id",
@@ -1061,6 +1040,7 @@ document.getElementById(
 "actionsList"
 );
 
+
 if(!actions.length){
 
 list.innerHTML = `
@@ -1089,8 +1069,7 @@ return;
 
 
 list.innerHTML =
-actions.map(
-action => {
+actions.map(action => {
 
 const enabled =
 action.enabled !== false;
@@ -1142,9 +1121,7 @@ ${escapeHtml(action.branch || "main")}
 ·
 
 Workflow:
-<strong>
 ${escapeHtml(action.workflow_file || "Not specified")}
-</strong>
 
 </div>
 
@@ -1153,39 +1130,19 @@ ${escapeHtml(action.workflow_file || "Not specified")}
 
 <div class="action-actions">
 
-${
-enabled
-?
-`
-<button
-class="btn btn-blue"
-onclick="runAction('${action.id}')">
-
-▶ Run
-
-</button>
-`
-:
-`
 <button
 class="btn btn-blue"
 onclick="runAction('${action.id}')"
-disabled
-style="opacity:.5;cursor:not-allowed;">
+${enabled ? "" : "disabled"}>
 
 ▶ Run
 
 </button>
-`
-}
 
 
 <button
 class="btn"
-onclick="toggleAction(
-'${action.id}',
-${enabled}
-)">
+onclick="toggleAction('${action.id}')">
 
 ${enabled ? "Disable" : "Enable"}
 
@@ -1206,8 +1163,7 @@ Delete
 
 `;
 
-}
-).join("");
+}).join("");
 
 }
 
@@ -1222,6 +1178,7 @@ const list =
 document.getElementById(
 "runsList"
 );
+
 
 if(!runs.length){
 
@@ -1245,27 +1202,37 @@ return;
 
 
 list.innerHTML =
-runs.map(
-run => {
+runs.map(run => {
+
+const status =
+String(
+run.status ||
+"queued"
+).toLowerCase();
+
 
 const action =
 actions.find(
-a =>
-a.id ===
-run.action_id
+a => a.id === run.action_id
 );
+
 
 const actionName =
 action
-?
-action.name
-:
-"Workflow";
+? action.name
+: "Workflow";
 
 
-const status =
-(run.status || "queued")
-.toLowerCase();
+const started =
+run.started_at
+? formatDate(run.started_at)
+: "Not started";
+
+
+const completed =
+run.completed_at
+? formatDate(run.completed_at)
+: "Not completed";
 
 
 return `
@@ -1274,68 +1241,43 @@ return `
 
 <div class="run-top">
 
+<div>
+
 <div class="run-name">
 
-⚡
-${escapeHtml(actionName)}
+⚡ ${escapeHtml(actionName)}
 
 </div>
+
+<div class="run-meta">
+
+Started:
+${escapeHtml(started)}
+
+<br>
+
+Trigger:
+${escapeHtml(run.trigger_type || "manual")}
+
+<br>
+
+Completed:
+${escapeHtml(completed)}
+
+</div>
+
+</div>
+
 
 <div>
 
 <span class="status status-${escapeHtml(status)}">
 
-${escapeHtml(
-status.toUpperCase()
-)}
+${escapeHtml(status.toUpperCase())}
 
 </span>
 
 </div>
-
-</div>
-
-
-<div class="run-meta">
-
-Started:
-${formatDate(run.started_at || run.created_at)}
-
-${
-run.completed_at
-?
-`
-<br>
-Completed:
-${formatDate(run.completed_at)}
-`
-:
-""
-}
-
-${
-run.branch_name
-?
-`
-<br>
-Branch:
-${escapeHtml(run.branch_name)}
-`
-:
-""
-}
-
-${
-run.trigger_type
-?
-`
-<br>
-Trigger:
-${escapeHtml(run.trigger_type)}
-`
-:
-""
-}
 
 </div>
 
@@ -1353,635 +1295,7 @@ run.logs ||
 
 `;
 
-}
-).join("");
-
-}
-
-
-/* =========================================
-   CREATE ACTION
-========================================= */
-
-async function createAction(){
-
-clearMessages();
-
-const button =
-document.getElementById(
-"createActionButton"
-);
-
-const name =
-document.getElementById(
-"actionName"
-).value.trim();
-
-const description =
-document.getElementById(
-"actionDescription"
-).value.trim();
-
-const event =
-document.getElementById(
-"actionEvent"
-).value;
-
-const branch =
-document.getElementById(
-"actionBranch"
-).value.trim() ||
-"main";
-
-const workflowFile =
-document.getElementById(
-"workflowFile"
-).value.trim();
-
-
-if(!name){
-
-showModalError(
-"Action name is required."
-);
-
-return;
-
-}
-
-
-button.disabled =
-true;
-
-button.textContent =
-"Creating...";
-
-
-try{
-
-const {
-error
-} =
-await supabaseClient
-
-.from(
-"repository_actions"
-)
-
-.insert({
-
-repository_id:
-repositoryId,
-
-created_by:
-currentUser.id,
-
-name:
-name,
-
-description:
-description,
-
-event:
-event,
-
-branch:
-branch,
-
-workflow_file:
-workflowFile,
-
-enabled:
-true
-
-});
-
-
-if(error)
-throw error;
-
-
-closeNewAction();
-
-showSuccess(
-"Action created successfully."
-);
-
-await loadActions();
-
-
-}
-
-catch(error){
-
-console.error(
-"Create action error:",
-error
-);
-
-showModalError(
-error.message ||
-"Unable to create action."
-);
-
-}
-
-finally{
-
-button.disabled =
-false;
-
-button.textContent =
-"Create action";
-
-}
-
-}
-
-
-/* =========================================
-   RUN ACTION
-========================================= */
-
-async function runAction(actionId){
-
-clearMessages();
-
-const action =
-actions.find(
-a =>
-a.id === actionId
-);
-
-if(!action){
-
-showError(
-"Action not found."
-);
-
-return;
-
-}
-
-
-if(action.enabled === false){
-
-showError(
-"This action is disabled."
-);
-
-return;
-
-}
-
-
-/* CREATE RUN */
-
-try{
-
-const {
-data:run,
-error
-} =
-await supabaseClient
-
-.from(
-"repository_action_runs"
-)
-
-.insert({
-
-action_id:
-action.id,
-
-repository_id:
-repositoryId,
-
-branch_name:
-action.branch ||
-"main",
-
-status:
-"queued",
-
-trigger_type:
-action.event ||
-"manual",
-
-commit_message:
-null,
-
-logs:
-"Workflow queued...",
-
-started_at:
-null,
-
-completed_at:
-null,
-
-created_by:
-currentUser.id,
-
-triggered_by:
-currentUser.id
-
-})
-
-.select(`
-id,
-action_id,
-repository_id,
-branch_name,
-status,
-trigger_type,
-commit_message,
-logs,
-started_at,
-completed_at,
-created_by,
-triggered_by,
-created_at
-`)
-
-.single();
-
-
-if(error)
-throw error;
-
-
-showSuccess(
-"Workflow queued successfully."
-);
-
-
-await loadRuns();
-
-setTab("runs");
-
-
-/*
-   SIMULATED WORKFLOW
-
-   queued
-      ↓
-   running
-      ↓
-   success
-*/
-
-
-setTimeout(
-async function(){
-
-await updateRunToRunning(
-run.id,
-action
-);
-
-},
-1200
-);
-
-
-setTimeout(
-async function(){
-
-await updateRunToSuccess(
-run.id,
-action
-);
-
-},
-3500
-);
-
-
-}
-
-catch(error){
-
-console.error(
-"Run action error:",
-error
-);
-
-showError(
-error.message ||
-"Unable to run action."
-);
-
-}
-
-}
-
-
-/* =========================================
-   UPDATE RUN → RUNNING
-========================================= */
-
-async function updateRunToRunning(
-runId,
-action
-){
-
-try{
-
-const now =
-new Date().toISOString();
-
-const {
-error
-} =
-await supabaseClient
-
-.from(
-"repository_action_runs"
-)
-
-.update({
-
-status:
-"running",
-
-logs:
-[
-"Workflow started...",
-"",
-"Preparing workflow:",
-action.workflow_file ||
-"Not specified",
-
-"Branch:",
-action.branch ||
-"main",
-
-"Running workflow steps..."
-].join("\n"),
-
-started_at:
-now
-
-})
-
-.eq(
-"id",
-runId
-);
-
-
-if(error)
-throw error;
-
-
-await loadRuns();
-
-}
-
-catch(error){
-
-console.error(
-"Run update error:",
-error
-);
-
-}
-
-}
-
-
-/* =========================================
-   UPDATE RUN → SUCCESS
-========================================= */
-
-async function updateRunToSuccess(
-runId,
-action
-){
-
-try{
-
-const now =
-new Date().toISOString();
-
-const {
-error
-} =
-await supabaseClient
-
-.from(
-"repository_action_runs"
-)
-
-.update({
-
-status:
-"success",
-
-logs:
-[
-"Workflow started...",
-"",
-"Preparing workflow:",
-action.workflow_file ||
-"Not specified",
-
-"Branch:",
-action.branch ||
-"main",
-
-"Running workflow steps...",
-"",
-"Checking workflow configuration...",
-"✓ Configuration valid",
-
-"Executing action...",
-"✓ Action completed successfully",
-
-"",
-"Workflow finished successfully."
-].join("\n"),
-
-completed_at:
-now
-
-})
-
-.eq(
-"id",
-runId
-);
-
-
-if(error)
-throw error;
-
-
-showSuccess(
-"Workflow completed successfully."
-);
-
-
-await loadRuns();
-
-}
-
-catch(error){
-
-console.error(
-"Run completion error:",
-error
-);
-
-showError(
-"Workflow started but could not update completion status: " +
-(error.message || "Unknown error")
-);
-
-}
-
-}
-
-
-/* =========================================
-   TOGGLE ACTION
-========================================= */
-
-async function toggleAction(
-actionId,
-currentlyEnabled
-){
-
-clearMessages();
-
-try{
-
-const {
-error
-} =
-await supabaseClient
-
-.from(
-"repository_actions"
-)
-
-.update({
-
-enabled:
-!currentlyEnabled,
-
-updated_at:
-new Date().toISOString()
-
-})
-
-.eq(
-"id",
-actionId
-);
-
-
-if(error)
-throw error;
-
-
-showSuccess(
-currentlyEnabled
-?
-"Action disabled."
-:
-"Action enabled."
-);
-
-
-await loadActions();
-
-}
-
-catch(error){
-
-console.error(
-"Toggle action error:",
-error
-);
-
-showError(
-error.message ||
-"Unable to update action."
-);
-
-}
-
-}
-
-
-/* =========================================
-   DELETE ACTION
-========================================= */
-
-async function deleteAction(
-actionId
-){
-
-clearMessages();
-
-if(
-!confirm(
-"Are you sure you want to delete this action?"
-)
-){
-
-return;
-
-}
-
-
-try{
-
-const {
-error
-} =
-await supabaseClient
-
-.from(
-"repository_actions"
-)
-
-.delete()
-
-.eq(
-"id",
-actionId
-);
-
-
-if(error)
-throw error;
-
-
-showSuccess(
-"Action deleted successfully."
-);
-
-
-await loadActions();
-
-}
-
-catch(error){
-
-console.error(
-"Delete action error:",
-error
-);
-
-showError(
-error.message ||
-"Unable to delete action."
-);
-
-}
+}).join("");
 
 }
 
@@ -1996,16 +1310,6 @@ currentTab =
 tab;
 
 
-const actionsTab =
-document.getElementById(
-"actionsTab"
-);
-
-const runsTab =
-document.getElementById(
-"runsTab"
-);
-
 const actionsView =
 document.getElementById(
 "actionsView"
@@ -2016,8 +1320,24 @@ document.getElementById(
 "runsView"
 );
 
+const actionsTab =
+document.getElementById(
+"actionsTab"
+);
+
+const runsTab =
+document.getElementById(
+"runsTab"
+);
+
 
 if(tab === "actions"){
+
+actionsView.style.display =
+"block";
+
+runsView.style.display =
+"none";
 
 actionsTab.classList.add(
 "active"
@@ -2027,15 +1347,14 @@ runsTab.classList.remove(
 "active"
 );
 
-actionsView.style.display =
-"block";
+}
+else{
 
-runsView.style.display =
+actionsView.style.display =
 "none";
 
-}
-
-else{
+runsView.style.display =
+"block";
 
 actionsTab.classList.remove(
 "active"
@@ -2045,11 +1364,7 @@ runsTab.classList.add(
 "active"
 );
 
-actionsView.style.display =
-"none";
-
-runsView.style.display =
-"block";
+loadRuns();
 
 }
 
@@ -2057,17 +1372,16 @@ runsView.style.display =
 
 
 /* =========================================
-   MODAL
+   NEW ACTION
 ========================================= */
 
 function openNewAction(){
-
-clearMessages();
 
 document.getElementById(
 "modalError"
 ).style.display =
 "none";
+
 
 document.getElementById(
 "actionName"
@@ -2116,53 +1430,646 @@ document.getElementById(
 
 
 /* =========================================
-   MESSAGES
+   CREATE ACTION
 ========================================= */
 
-function showError(message){
+async function createAction(){
 
-const box =
+const button =
+document.getElementById(
+"createActionButton"
+);
+
+
+const name =
+document.getElementById(
+"actionName"
+).value.trim();
+
+
+const description =
+document.getElementById(
+"actionDescription"
+).value.trim();
+
+
+const event =
+document.getElementById(
+"actionEvent"
+).value;
+
+
+const branch =
+document.getElementById(
+"actionBranch"
+).value.trim() ||
+"main";
+
+
+const workflowFile =
+document.getElementById(
+"workflowFile"
+).value.trim();
+
+
+if(!name){
+
+showModalError(
+"Action name is required."
+);
+
+return;
+
+}
+
+
+button.disabled =
+true;
+
+button.textContent =
+"Creating...";
+
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from(
+"repository_actions"
+)
+
+.insert({
+
+repository_id:
+repositoryId,
+
+created_by:
+currentUser.id,
+
+name:
+name,
+
+description:
+description,
+
+event:
+event,
+
+branch:
+branch,
+
+workflow_file:
+workflowFile,
+
+enabled:
+true
+
+})
+
+.select()
+.single();
+
+
+if(error)
+throw error;
+
+
+actions.unshift(
+data
+);
+
+
+renderActions();
+
+closeNewAction();
+
+showSuccess(
+"Action created successfully."
+);
+
+
+}
+catch(error){
+
+showModalError(
+error.message ||
+"Unable to create action."
+);
+
+}
+finally{
+
+button.disabled =
+false;
+
+button.textContent =
+"Create action";
+
+}
+
+}
+
+
+/* =========================================
+   RUN ACTION
+========================================= */
+
+async function runAction(actionId){
+
+const action =
+actions.find(
+a => a.id === actionId
+);
+
+
+if(!action){
+
+showError(
+"Action not found."
+);
+
+return;
+
+}
+
+
+if(action.enabled === false){
+
+showError(
+"This action is disabled."
+);
+
+return;
+
+}
+
+
+try{
+
+clearMessages();
+
+
+/* CREATE RUN */
+
+const {
+data:run,
+error:insertError
+} =
+await supabaseClient
+
+.from(
+"repository_action_runs"
+)
+
+.insert({
+
+action_id:
+action.id,
+
+repository_id:
+repositoryId,
+
+triggered_by:
+currentUser.id,
+
+status:
+"running",
+
+trigger_type:
+"manual",
+
+branch_name:
+action.branch || "main",
+
+logs:
+"Workflow started...",
+
+started_at:
+new Date().toISOString()
+
+})
+
+.select()
+.single();
+
+
+if(insertError)
+throw insertError;
+
+
+/* ADD TO LOCAL LIST */
+
+runs.unshift(
+run
+);
+
+renderRuns();
+
+setTab("runs");
+
+
+/* SIMULATED WORKFLOW */
+
+setTimeout(
+async () => {
+
+await completeRun(
+run.id,
+"success"
+);
+
+},
+3000
+);
+
+
+}
+catch(error){
+
+showError(
+error.message ||
+"Unable to start workflow."
+);
+
+}
+
+}
+
+
+/* =========================================
+   COMPLETE RUN
+========================================= */
+
+async function completeRun(
+runId,
+result
+){
+
+try{
+
+const now =
+new Date().toISOString();
+
+
+let updateData;
+
+
+if(result === "success"){
+
+updateData = {
+
+status:
+"success",
+
+logs:
+"Workflow started...\n" +
+"Running workflow...\n" +
+"Workflow completed successfully.",
+
+completed_at:
+now
+
+};
+
+}
+else{
+
+updateData = {
+
+status:
+"failed",
+
+logs:
+"Workflow started...\n" +
+"Workflow failed.",
+
+completed_at:
+now
+
+};
+
+}
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from(
+"repository_action_runs"
+)
+
+.update(
+updateData
+)
+
+.eq(
+"id",
+runId
+)
+
+.select()
+.single();
+
+
+if(error)
+throw error;
+
+
+/* UPDATE LOCAL */
+
+runs =
+runs.map(
+run =>
+run.id === runId
+? data
+: run
+);
+
+
+renderRuns();
+
+
+showSuccess(
+result === "success"
+? "Workflow completed successfully."
+: "Workflow failed."
+);
+
+
+}
+catch(error){
+
+console.error(
+"Complete run error:",
+error
+);
+
+showError(
+"Workflow started, but completion update failed: " +
+(error.message || "")
+);
+
+}
+
+}
+
+
+/* =========================================
+   TOGGLE ACTION
+========================================= */
+
+async function toggleAction(
+actionId
+){
+
+const action =
+actions.find(
+a => a.id === actionId
+);
+
+
+if(!action)
+return;
+
+
+try{
+
+const newValue =
+action.enabled === false;
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from(
+"repository_actions"
+)
+
+.update({
+
+enabled:
+newValue,
+
+updated_at:
+new Date().toISOString()
+
+})
+
+.eq(
+"id",
+actionId
+)
+
+.select()
+.single();
+
+
+if(error)
+throw error;
+
+
+actions =
+actions.map(
+a =>
+a.id === actionId
+? data
+: a
+);
+
+
+renderActions();
+
+
+showSuccess(
+newValue
+? "Action enabled."
+: "Action disabled."
+);
+
+
+}
+catch(error){
+
+showError(
+error.message ||
+"Unable to update action."
+);
+
+}
+
+}
+
+
+/* =========================================
+   DELETE ACTION
+========================================= */
+
+async function deleteAction(
+actionId
+){
+
+const action =
+actions.find(
+a => a.id === actionId
+);
+
+
+if(!action)
+return;
+
+
+const confirmed =
+confirm(
+"Delete action \"" +
+action.name +
+"\"?"
+);
+
+
+if(!confirmed)
+return;
+
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+
+.from(
+"repository_actions"
+)
+
+.delete()
+
+.eq(
+"id",
+actionId
+);
+
+
+if(error)
+throw error;
+
+
+actions =
+actions.filter(
+a =>
+a.id !== actionId
+);
+
+
+runs =
+runs.filter(
+r =>
+r.action_id !== actionId
+);
+
+
+renderActions();
+
+renderRuns();
+
+
+showSuccess(
+"Action deleted successfully."
+);
+
+
+}
+catch(error){
+
+showError(
+error.message ||
+"Unable to delete action."
+);
+
+}
+
+}
+
+
+/* =========================================
+   HELPERS
+========================================= */
+
+function showError(
+message
+){
+
+const error =
 document.getElementById(
 "error"
 );
 
-box.textContent =
-message;
-
-box.style.display =
-"block";
-
-}
-
-
-function showSuccess(message){
-
-const box =
+const success =
 document.getElementById(
 "success"
 );
 
-box.textContent =
+
+success.style.display =
+"none";
+
+
+error.textContent =
 message;
 
-box.style.display =
+
+error.style.display =
 "block";
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
 }
 
 
-function showModalError(message){
+function showSuccess(
+message
+){
 
-const box =
+const error =
 document.getElementById(
-"modalError"
+"error"
 );
 
-box.textContent =
+const success =
+document.getElementById(
+"success"
+);
+
+
+error.style.display =
+"none";
+
+
+success.textContent =
 message;
 
-box.style.display =
+
+success.style.display =
 "block";
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
 }
 
@@ -2174,6 +2081,7 @@ document.getElementById(
 ).style.display =
 "none";
 
+
 document.getElementById(
 "success"
 ).style.display =
@@ -2182,34 +2090,40 @@ document.getElementById(
 }
 
 
-/* =========================================
-   DATE FORMAT
-========================================= */
-
-function formatDate(value){
-
-if(!value)
-return "—";
-
-const date =
-new Date(value);
-
-if(
-Number.isNaN(
-date.getTime()
-)
+function showModalError(
+message
 ){
 
-return value;
+const box =
+document.getElementById(
+"modalError"
+);
+
+
+box.textContent =
+message;
+
+
+box.style.display =
+"block";
 
 }
 
-return date.toLocaleString(
+
+function formatDate(
+value
+){
+
+try{
+
+return new Date(
+value
+).toLocaleString(
 "en-IN",
 {
 year:"numeric",
 month:"short",
-day:"2-digit",
+day:"numeric",
 hour:"2-digit",
 minute:"2-digit",
 second:"2-digit"
@@ -2217,13 +2131,18 @@ second:"2-digit"
 );
 
 }
+catch{
+
+return value || "";
+
+}
+
+}
 
 
-/* =========================================
-   ESCAPE HTML
-========================================= */
-
-function escapeHtml(value){
+function escapeHtml(
+value
+){
 
 return String(
 value ?? ""
@@ -2258,29 +2177,6 @@ value ?? ""
 
 
 /* =========================================
-   MODAL OUTSIDE CLICK
-========================================= */
-
-document.getElementById(
-"actionModal"
-).addEventListener(
-"click",
-function(event){
-
-if(
-event.target ===
-this
-){
-
-closeNewAction();
-
-}
-
-}
-);
-
-
-/* =========================================
    START
 ========================================= */
 
@@ -2291,3 +2187,4 @@ init();
 </body>
 
 </html>
+
