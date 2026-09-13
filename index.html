@@ -1,331 +1,1835 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>  <html lang="en">  
+<head>  <meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>ASIM TECH — Build. Create. Innovate.</title>  <!-- =====================================================  
+     GOOGLE ANALYTICS  
+===================================================== -->  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FE8PQDLLEB"></script>  <script>  
+window.dataLayer = window.dataLayer || [];  
+  
+function gtag(){  
+    dataLayer.push(arguments);  
+}  
+  
+gtag('js', new Date());  
+  
+gtag('config', 'G-FE8PQDLLEB');  
+</script>  <meta name="description"  
+content="ASIM TECH — Build. Create. Innovate. A modern digital platform for creating, managing and publishing digital projects.">
 
-<title>ASIM TECH — Build. Create. Innovate.</title>
+<style>  
+  
+/* =====================================================  
+   RESET  
+===================================================== */  
+  
+*{  
+    margin:0;  
+    padding:0;  
+    box-sizing:border-box;  
+}  
+  
+html{  
+    scroll-behavior:smooth;  
+}  
+  
+body{  
+    font-family:  
+        Inter,  
+        -apple-system,  
+        BlinkMacSystemFont,  
+        "Segoe UI",  
+        Arial,  
+        sans-serif;  
+  
+    color:#f7fbff;  
+  
+    min-height:100vh;  
+  
+    background:  
+        radial-gradient(  
+            circle at 82% 12%,  
+            rgba(86,45,255,.28),  
+            transparent 27%  
+        ),  
+        radial-gradient(  
+            circle at 12% 65%,  
+            rgba(0,170,255,.15),  
+            transparent 30%  
+        ),  
+        linear-gradient(  
+            135deg,  
+            #010611 0%,  
+            #031326 55%,  
+            #020817 100%  
+        );  
+  
+    overflow-x:hidden;  
+}  
+  
+  
+/* =====================================================  
+   BACKGROUND GRID  
+===================================================== */  
+  
+body::before{  
+    content:"";  
+  
+    position:fixed;  
+  
+    inset:0;  
+  
+    pointer-events:none;  
+  
+    background:  
+        linear-gradient(  
+            rgba(255,255,255,.018) 1px,  
+            transparent 1px  
+        ),  
+        linear-gradient(  
+            90deg,  
+            rgba(255,255,255,.018) 1px,  
+            transparent 1px  
+        );  
+  
+    background-size:70px 70px;  
+  
+    mask-image:  
+        linear-gradient(  
+            to bottom,  
+            black,  
+            transparent 92%  
+        );  
+  
+    z-index:-2;  
+}  
+  
+  
+/* =====================================================  
+   HEADER  
+===================================================== */  
+  
+.header{  
+    height:82px;  
+  
+    position:sticky;  
+    top:0;  
+  
+    z-index:1000;  
+  
+    border-bottom:  
+        1px solid rgba(110,170,255,.13);  
+  
+    background:  
+        rgba(2,10,25,.78);  
+  
+    backdrop-filter:blur(18px);  
+}  
+  
+.header-inner{  
+    max-width:1450px;  
+  
+    height:100%;  
+  
+    margin:auto;  
+  
+    padding:0 55px;  
+  
+    display:flex;  
+  
+    align-items:center;  
+  
+    justify-content:space-between;  
+}  
+  
+  
+/* =====================================================  
+   BRAND  
+===================================================== */  
+  
+.brand{  
+    display:flex;  
+  
+    align-items:center;  
+  
+    gap:13px;  
+  
+    text-decoration:none;  
+  
+    color:white;  
+}  
+  
+.brand-logo{  
+    width:58px;  
+    height:58px;  
+  
+    display:flex;  
+  
+    align-items:center;  
+    justify-content:center;  
+  
+    font-size:45px;  
+  
+    font-weight:900;  
+  
+    color:#21c8ff;  
+  
+    text-shadow:  
+        0 0 16px rgba(33,200,255,.65);  
+}  
+  
+.brand-info{  
+    line-height:1;  
+}  
+  
+.brand-name{  
+    font-size:29px;  
+  
+    font-weight:850;  
+  
+    letter-spacing:1px;  
+  
+    background:  
+        linear-gradient(  
+            90deg,  
+            #ffffff,  
+            #27c8ff,  
+            #8b7cff  
+        );  
+  
+    -webkit-background-clip:text;  
+    -webkit-text-fill-color:transparent;  
+}  
+  
+.brand-tagline{  
+    margin-top:6px;  
+  
+    font-size:13px;  
+  
+    color:#b7c9e5;  
+  
+    letter-spacing:.4px;  
+}  
+  
+  
+/* =====================================================  
+   HEADER RIGHT  
+===================================================== */  
+  
+.header-right{  
+    display:flex;  
+  
+    align-items:center;  
+  
+    gap:18px;  
+}  
+  
+.header-icon{  
+    width:40px;  
+    height:40px;  
+  
+    display:flex;  
+  
+    align-items:center;  
+    justify-content:center;  
+  
+    border-radius:50%;  
+  
+    color:#d1e2f7;  
+  
+    font-size:23px;  
+  
+    cursor:pointer;  
+  
+    transition:.25s;  
+}  
+  
+.header-icon:hover{  
+    background:rgba(255,255,255,.07);  
+  
+    transform:translateY(-2px);  
+}  
+  
+.avatar{  
+    width:46px;  
+    height:46px;  
+  
+    border-radius:50%;  
+  
+    display:flex;  
+  
+    align-items:center;  
+    justify-content:center;  
+  
+    font-weight:800;  
+  
+    background:  
+        linear-gradient(  
+            135deg,  
+            #168dff,  
+            #3155e9  
+        );  
+  
+    box-shadow:  
+        0 0 28px rgba(30,130,255,.32);  
+}  
+  
+  
+/* =====================================================  
+   MAIN HERO  
+===================================================== */  
+  
+.hero{  
+    max-width:1450px;  
+  
+    margin:auto;  
+  
+    padding:  
+        60px 55px 35px;  
+  
+    display:grid;  
+  
+    grid-template-columns:  
+        1.02fr .98fr;  
+  
+    gap:55px;  
+  
+    align-items:center;  
+}  
+  
+  
+/* =====================================================  
+   HERO LEFT  
+===================================================== */  
+  
+.hero-left{  
+    padding-top:4px;  
+}  
+  
+.hero-breadcrumb{  
+    display:inline-flex;  
+  
+    align-items:center;  
+  
+    gap:10px;  
+  
+    padding:  
+        11px 19px;  
+  
+    border-radius:30px;  
+  
+    border:  
+        1px solid rgba(55,157,255,.28);  
+  
+    background:  
+        rgba(6,30,60,.48);  
+  
+    color:#c6d9f4;  
+  
+    font-size:16px;  
+  
+    margin-bottom:27px;  
+}  
+  
+.hero-breadcrumb span{  
+    color:#53caff;  
+}  
+  
+.hero-title{  
+    font-size:65px;  
+  
+    line-height:1.06;  
+  
+    letter-spacing:-2.5px;  
+  
+    font-weight:850;  
+  
+    max-width:780px;  
+}  
+  
+.gradient-title{  
+    background:  
+        linear-gradient(  
+            90deg,  
+            #14c8ff,  
+            #3a83ff,  
+            #965bff,  
+            #d946ef  
+        );  
+  
+    -webkit-background-clip:text;  
+  
+    -webkit-text-fill-color:transparent;  
+}  
+  
+.hero-description{  
+    margin-top:26px;  
+  
+    max-width:690px;  
+  
+    color:#b9cce8;  
+  
+    font-size:20px;  
+  
+    line-height:1.65;  
+}  
+  
+  
+/* =====================================================  
+   BUTTONS  
+===================================================== */  
+  
+.hero-buttons{  
+    display:flex;  
+  
+    gap:20px;  
+  
+    margin-top:31px;  
+}  
+  
+.hero-button{  
+    min-width:230px;  
+  
+    padding:  
+        16px 25px;  
+  
+    border-radius:12px;  
+  
+    text-decoration:none;  
+  
+    text-align:center;  
+  
+    font-size:17px;  
+  
+    font-weight:750;  
+  
+    transition:.3s;  
+}  
+  
+.primary-button{  
+    color:white;  
+  
+    background:  
+        linear-gradient(  
+            100deg,  
+            #7b36ff,  
+            #287dff,  
+            #16c8ff  
+        );  
+  
+    box-shadow:  
+        0 12px 35px rgba(61,90,255,.28);  
+}  
+  
+.primary-button:hover{  
+    transform:translateY(-4px);  
+  
+    box-shadow:  
+        0 17px 45px rgba(50,120,255,.40);  
+}  
+  
+.secondary-button{  
+    color:white;  
+  
+    border:  
+        1px solid rgba(105,170,255,.68);  
+  
+    background:  
+        rgba(4,18,39,.52);  
+}  
+  
+.secondary-button:hover{  
+    transform:translateY(-4px);  
+  
+    background:  
+        rgba(35,72,125,.30);  
+}  
+  
+  
+/* =====================================================  
+   BENEFITS  
+===================================================== */  
+  
+.benefits{  
+    display:flex;  
+  
+    align-items:center;  
+  
+    flex-wrap:wrap;  
+  
+    gap:45px;  
+  
+    margin-top:34px;  
+}  
+  
+.benefit{  
+    display:flex;  
+  
+    align-items:center;  
+  
+    gap:9px;  
+  
+    color:#c7d8ef;  
+  
+    font-size:16px;  
+}  
+  
+.benefit-icon{  
+    font-size:21px;  
+}  
+  
+  
+/* =====================================================  
+   AI CARD  
+===================================================== */  
+  
+.ai-card{  
+    min-height:455px;  
+  
+    position:relative;  
+  
+    overflow:hidden;  
+  
+    border-radius:29px;  
+  
+    padding:38px;  
+  
+    border:  
+        1px solid rgba(34,205,255,.78);  
+  
+    background:  
+        radial-gradient(  
+            circle at 70% 42%,  
+            rgba(63,72,255,.28),  
+            transparent 37%  
+        ),  
+        linear-gradient(  
+            145deg,  
+            rgba(7,29,62,.97),  
+            rgba(10,14,55,.96)  
+        );  
+  
+    box-shadow:  
+        0 0 38px rgba(25,165,255,.18),  
+        inset 0 0 50px rgba(68,74,255,.07);  
+}  
+  
+.ai-card::after{  
+    content:"";  
+  
+    position:absolute;  
+  
+    inset:0;  
+  
+    border-radius:29px;  
+  
+    pointer-events:none;  
+  
+    box-shadow:  
+        inset 0 0 35px rgba(30,200,255,.06);  
+  
+    animation:  
+        aiGlow 4s ease-in-out infinite;  
+}  
+  
+@keyframes aiGlow{  
+  
+    0%,100%{  
+        box-shadow:  
+            inset 0 0 30px rgba(30,200,255,.05);  
+    }  
+  
+    50%{  
+        box-shadow:  
+            inset 0 0 55px rgba(132,65,255,.12);  
+    }  
+  
+}  
+  
+  
+/* =====================================================  
+   COMING SOON BADGE  
+===================================================== */  
+  
+.coming-badge{  
+    display:inline-flex;  
+  
+    align-items:center;  
+  
+    gap:9px;  
+  
+    padding:  
+        11px 20px;  
+  
+    border-radius:28px;  
+  
+    color:white;  
+  
+    font-size:17px;  
+  
+    font-weight:750;  
+  
+    background:  
+        linear-gradient(  
+            100deg,  
+            #8b31ff,  
+            #6c40ed  
+        );  
+  
+    box-shadow:  
+        0 8px 27px rgba(125,48,255,.35);  
+  
+    animation:  
+        badgeGlow 3s ease-in-out infinite;  
+}  
+  
+@keyframes badgeGlow{  
+  
+    0%,100%{  
+        box-shadow:  
+            0 8px 27px rgba(125,48,255,.30);  
+    }  
+  
+    50%{  
+        box-shadow:  
+            0 8px 38px rgba(165,65,255,.52);  
+    }  
+  
+}  
+  
+  
+/* =====================================================  
+   AI TITLE  
+===================================================== */  
+  
+.ai-title{  
+    margin-top:25px;  
+  
+    font-size:40px;  
+  
+    line-height:1.08;  
+  
+    max-width:420px;  
+}  
+  
+.ai-title-gradient{  
+    background:  
+        linear-gradient(  
+            90deg,  
+            #bf61ff,  
+            #668fff  
+        );  
+  
+    -webkit-background-clip:text;  
+  
+    -webkit-text-fill-color:transparent;  
+}  
+  
+.ai-description{  
+    margin-top:17px;  
+  
+    color:#c2d4ed;  
+  
+    font-size:17px;  
+  
+    line-height:1.55;  
+  
+    max-width:410px;  
+}  
+  
+  
+/* =====================================================  
+   AI ROBOT  
+===================================================== */  
+  
+.ai-robot{  
+    position:absolute;  
+  
+    right:45px;  
+  
+    top:103px;  
+  
+    width:190px;  
+  
+    height:190px;  
+  
+    border-radius:50%;  
+  
+    display:flex;  
+  
+    align-items:center;  
+    justify-content:center;  
+  
+    font-size:102px;  
+  
+    background:  
+        radial-gradient(  
+            circle,  
+            rgba(35,204,255,.27),  
+            rgba(56,65,255,.13) 50%,  
+            transparent 72%  
+        );  
+  
+    filter:  
+        drop-shadow(  
+            0 0 22px rgba(30,190,255,.55)  
+        );  
+  
+    animation:  
+        robotFloat 4s ease-in-out infinite;  
+}  
+  
+@keyframes robotFloat{  
+  
+    0%,100%{  
+        transform:translateY(0);  
+    }  
+  
+    50%{  
+        transform:translateY(-11px);  
+    }  
+  
+}  
+  
+  
+/* =====================================================  
+   AI POINTS  
+===================================================== */  
+  
+.ai-points{  
+    position:absolute;  
+  
+    left:38px;  
+  
+    bottom:42px;  
+  
+    display:flex;  
+  
+    flex-direction:column;  
+  
+    gap:12px;  
+  
+    color:#c9daf3;  
+  
+    font-size:16px;  
+}  
+  
+.ai-point{  
+    display:flex;  
+  
+    align-items:center;  
+  
+    gap:10px;  
+}  
+  
+.ai-point-icon{  
+    color:#26aaff;  
+  
+    font-size:18px;  
+}  
+  
+  
+/* =====================================================  
+   AI BOTTOM BADGE  
+===================================================== */  
+  
+.ai-bottom-badge{  
+    position:absolute;  
+  
+    right:27px;  
+  
+    bottom:25px;  
+  
+    padding:  
+        12px 22px;  
+  
+    border-radius:27px;  
+  
+    color:white;  
+  
+    font-weight:750;  
+  
+    border:  
+        1px solid rgba(159,82,255,.72);  
+  
+    background:  
+        rgba(70,31,130,.48);  
+}  
+  
+  
+/* =====================================================  
+   PLATFORM SECTION  
+===================================================== */  
+  
+.platform{  
+    max-width:1450px;  
+  
+    margin:auto;  
+  
+    padding:  
+        15px 55px 48px;  
+}  
+  
+.platform-grid{  
+    display:grid;  
+  
+    grid-template-columns:  
+        repeat(5,1fr);  
+  
+    gap:18px;  
+}  
+  
+  
+/* =====================================================  
+   PLATFORM CARD  
+===================================================== */  
+  
+.platform-card{  
+    min-height:220px;  
+  
+    position:relative;  
+  
+    padding:23px;  
+  
+    border-radius:18px;  
+  
+    border:  
+        1px solid rgba(65,140,240,.27);  
+  
+    background:  
+        linear-gradient(  
+            145deg,  
+            rgba(6,28,56,.84),  
+            rgba(3,18,39,.70)  
+        );  
+  
+    transition:.3s;  
+  
+    text-decoration:none;  
+  
+    color:white;  
+  
+    overflow:hidden;  
+}  
+  
+.platform-card:hover{  
+    transform:translateY(-7px);  
+  
+    border-color:  
+        rgba(47,160,255,.65);  
+  
+    box-shadow:  
+        0 16px 40px rgba(0,95,190,.18);  
+}  
+  
+.platform-card::after{  
+    content:"";  
+  
+    position:absolute;  
+  
+    width:120px;  
+    height:120px;  
+  
+    right:-55px;  
+    top:-55px;  
+  
+    border-radius:50%;  
+  
+    background:  
+        rgba(30,150,255,.09);  
+  
+    filter:blur(15px);  
+}  
+  
+  
+/* =====================================================  
+   CARD ICON  
+===================================================== */  
+  
+.card-icon{  
+    width:52px;  
+    height:52px;  
+  
+    border-radius:13px;  
+  
+    display:flex;  
+  
+    align-items:center;  
+    justify-content:center;  
+  
+    font-size:27px;  
+  
+    margin-bottom:17px;  
+}  
+  
+.actions-icon{  
+    background:  
+        linear-gradient(  
+            135deg,  
+            #12b995,  
+            #078d89  
+        );  
+}  
+  
+.projects-icon{  
+    background:  
+        linear-gradient(  
+            135deg,  
+            #168fff,  
+            #2455e8  
+        );  
+}  
+  
+.wiki-icon{  
+    background:  
+        linear-gradient(  
+            135deg,  
+            #9139e9,  
+            #6031bc  
+        );  
+}  
+  
+.security-icon{  
+    background:  
+        linear-gradient(  
+            135deg,  
+            #e8325b,  
+            #b51c3e  
+        );  
+}  
+  
+.insights-icon{  
+    background:  
+        linear-gradient(  
+            135deg,  
+            #e4a31e,  
+            #b96d0b  
+        );  
+}  
+  
+  
+/* =====================================================  
+   CARD CONTENT  
+===================================================== */  
+  
+.platform-card h3{  
+    font-size:22px;  
+  
+    margin-bottom:12px;  
+}  
+  
+.platform-card p{  
+    color:#afc4df;  
+  
+    font-size:15px;  
+  
+    line-height:1.55;  
+  
+    max-width:220px;  
+}  
+  
+  
+/* =====================================================  
+   CARD ACTION  
+===================================================== */  
+  
+.card-action{  
+    position:absolute;  
+  
+    left:23px;  
+  
+    right:23px;  
+  
+    bottom:19px;  
+  
+    padding:  
+        10px 14px;  
+  
+    border-radius:11px;  
+  
+    text-align:center;  
+  
+    font-size:14px;  
+  
+    font-weight:700;  
+  
+    border:  
+        1px solid rgba(90,160,255,.40);  
+  
+    background:  
+        rgba(20,70,130,.18);  
+  
+    transition:.25s;  
+}  
+  
+.platform-card:hover .card-action{  
+    background:  
+        rgba(30,100,180,.30);  
+}  
+  
+  
+/* =====================================================  
+   FOOTER  
+===================================================== */  
+  
+.footer{  
+    max-width:1450px;  
+  
+    margin:auto;  
+  
+    padding:  
+        12px 55px 27px;  
+  
+    display:grid;  
+  
+    grid-template-columns:  
+        1fr 1fr 1fr;  
+  
+    align-items:end;  
+  
+    color:#849ab9;  
+  
+    font-size:14px;  
+}  
+  
+.footer-center{  
+    text-align:center;  
+}  
+  
+.footer-brand{  
+    color:#25bfff;  
+  
+    font-size:18px;  
+  
+    font-weight:700;  
+  
+    letter-spacing:4px;  
+  
+    margin-bottom:11px;  
+}  
+  
+.footer-slogan{  
+    color:#a8bdd9;  
+  
+    letter-spacing:4px;  
+}  
+  
+.footer-right{  
+    text-align:right;  
+}  
+  
+  
+/* =====================================================  
+   SMALL POPUP  
+===================================================== */  
+  
+.popup{  
+    position:fixed;  
+  
+    left:50%;  
+    bottom:30px;  
+  
+    transform:  
+        translate(-50%,120px);  
+  
+    opacity:0;  
+  
+    pointer-events:none;  
+  
+    z-index:5000;  
+  
+    min-width:280px;  
+  
+    max-width:90%;  
+  
+    padding:  
+        15px 22px;  
+  
+    border-radius:13px;  
+  
+    background:  
+        rgba(8,24,48,.96);  
+  
+    border:  
+        1px solid rgba(65,160,255,.40);  
+  
+    box-shadow:  
+        0 15px 45px rgba(0,0,0,.35);  
+  
+    text-align:center;  
+  
+    color:#d8e8fb;  
+  
+    transition:.35s;  
+}  
+  
+.popup.show{  
+    transform:  
+        translate(-50%,0);  
+  
+    opacity:1;  
+}  
+  
+  
+/* =====================================================  
+   RESPONSIVE  
+===================================================== */  
+  
+@media(max-width:1150px){  
+  
+    .header-inner{  
+        padding:0 30px;  
+    }  
+  
+    .hero{  
+        grid-template-columns:1fr;  
+  
+        padding-left:30px;  
+        padding-right:30px;  
+    }  
+  
+    .platform{  
+        padding-left:30px;  
+        padding-right:30px;  
+    }  
+  
+    .platform-grid{  
+        grid-template-columns:  
+            repeat(3,1fr);  
+    }  
+  
+    .footer{  
+        padding-left:30px;  
+        padding-right:30px;  
+    }  
+  
+}  
+  
+  
+@media(max-width:800px){  
+  
+    .header{  
+        height:70px;  
+    }  
+  
+    .header-inner{  
+        padding:0 17px;  
+    }  
+  
+    .brand-logo{  
+        width:43px;  
+        font-size:34px;  
+    }  
+  
+    .brand-name{  
+        font-size:21px;  
+    }  
+  
+    .brand-tagline{  
+        font-size:10px;  
+    }  
+  
+    .header-icon{  
+        display:none;  
+    }  
+  
+    .avatar{  
+        width:40px;  
+        height:40px;  
+    }  
+  
+    .hero{  
+        padding:  
+            40px 20px 25px;  
+  
+        gap:35px;  
+    }  
+  
+    .hero-title{  
+        font-size:43px;  
+  
+        letter-spacing:-1.5px;  
+    }  
+  
+    .hero-description{  
+        font-size:17px;  
+    }  
+  
+    .hero-buttons{  
+        flex-direction:column;  
+  
+        gap:14px;  
+    }  
+  
+    .hero-button{  
+        width:100%;  
+    }  
+  
+    .benefits{  
+        gap:18px;  
+    }  
+  
+    .ai-card{  
+        min-height:555px;  
+  
+        padding:27px;  
+    }  
+  
+    .ai-title{  
+        font-size:32px;  
+  
+        max-width:260px;  
+    }  
+  
+    .ai-description{  
+        max-width:260px;  
+    }  
+  
+    .ai-robot{  
+        right:18px;  
+  
+        top:190px;  
+  
+        width:150px;  
+        height:150px;  
+  
+        font-size:80px;  
+  
+        opacity:.88;  
+    }  
+  
+    .ai-points{  
+        left:27px;  
+  
+        bottom:86px;  
+    }  
+  
+    .ai-bottom-badge{  
+        right:20px;  
+  
+        bottom:22px;  
+    }  
+  
+    .platform{  
+        padding:  
+            0 20px 35px;  
+    }  
+  
+    .platform-grid{  
+        grid-template-columns:1fr;  
+    }  
+  
+    .platform-card{  
+        min-height:190px;  
+    }  
+  
+    .footer{  
+        padding:  
+            15px 20px 25px;  
+  
+        grid-template-columns:1fr;  
+  
+        gap:18px;  
+  
+        text-align:center;  
+    }  
+  
+    .footer-right{  
+        text-align:center;  
+    }  
+  
+    .footer-center{  
+        order:-1;  
+    }  
+  
+}  
+  
+  
+@media(max-width:430px){  
+  
+    .hero-title{  
+        font-size:37px;  
+    }  
+  
+    .hero-breadcrumb{  
+        font-size:13px;  
+    }  
+  
+    .ai-robot{  
+        right:3px;  
+  
+        opacity:.70;  
+    }  
+  
+    .ai-title{  
+        max-width:235px;  
+    }  
+  
+}  
+  
+</style>  </head>  <body>  <!-- =====================================================  
+     HEADER  
+===================================================== -->  <header class="header">  <div class="header-inner">  
 
-<meta name="description" content="ASIM TECH is a modern digital platform for building, managing and publishing web experiences, projects and ideas.">
-<meta name="keywords" content="ASIM TECH, ASIM TECH Platform, web development, digital platform, projects, web projects, software development">
-<meta name="author" content="ASIM TECH">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://asim75772.github.io/asim-tech-platform/">
+    <a  
+        href="index.html"  
+        class="brand"  
+    >  
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="ASIM TECH — Build. Create. Innovate.">
-<meta property="og:description" content="ASIM TECH is a modern digital platform for building, managing and publishing web experiences, projects and ideas.">
-<meta property="og:url" content="https://asim75772.github.io/asim-tech-platform/">
-<meta property="og:site_name" content="ASIM TECH">
+        <div class="brand-logo">  
+            △  
+        </div>  
 
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ASIM TECH — Build. Create. Innovate.">
-<meta name="twitter:description" content="Build. Create. Innovate. Create powerful web experiences and manage your digital projects with ASIM TECH.">
+        <div class="brand-info">  
 
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FE8PQDLLEB"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){ dataLayer.push(arguments); }
-gtag('js', new Date());
-gtag('config', 'G-FE8PQDLLEB');
-</script>
+            <div class="brand-name">  
+                ASIM TECH  
+            </div>  
 
-<!-- Structured data -->
-<script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"Organization",
-  "name":"ASIM TECH",
-  "url":"https://asim75772.github.io/asim-tech-platform/",
-  "description":"ASIM TECH is a modern digital platform for building, managing and publishing web experiences, projects and ideas."
-}
-</script>
+            <div class="brand-tagline">  
+                Build. Create. Innovate.  
+            </div>  
 
-<script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"WebSite",
-  "name":"ASIM TECH",
-  "alternateName":"ASIM TECH Platform",
-  "url":"https://asim75772.github.io/asim-tech-platform/"
-}
-</script>
+        </div>  
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  min-height:100vh;
-  color:#f7fbff;
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-  background:
-    radial-gradient(circle at 82% 12%,rgba(86,45,255,.28),transparent 27%),
-    radial-gradient(circle at 12% 65%,rgba(0,170,255,.15),transparent 30%),
-    linear-gradient(135deg,#010611 0%,#031326 55%,#020817 100%);
-  overflow-x:hidden;
-}
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
-  background-size:70px 70px;
-  mask-image:linear-gradient(to bottom,black,transparent 92%);
-  z-index:-1;
-}
-.header{
-  height:82px;
-  position:sticky;
-  top:0;
-  z-index:1000;
-  border-bottom:1px solid rgba(110,170,255,.13);
-  background:rgba(2,10,25,.78);
-  backdrop-filter:blur(18px);
-}
-.header-inner{
-  max-width:1450px;
-  height:100%;
-  margin:auto;
-  padding:0 55px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.brand{
-  display:flex;
-  align-items:center;
-  gap:13px;
-  color:#fff;
-  text-decoration:none;
-}
-.brand-logo{
-  width:58px;height:58px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:42px;font-weight:900;color:#21c8ff;
-  text-shadow:0 0 16px rgba(33,200,255,.65);
-}
-.brand-name{
-  font-size:29px;font-weight:850;letter-spacing:1px;
-  background:linear-gradient(90deg,#fff,#27c8ff,#8b7cff);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.brand-tagline{margin-top:5px;font-size:13px;color:#b7c9e5;letter-spacing:.4px}
-.header-right{display:flex;gap:12px;align-items:center}
-.icon-btn{
-  width:42px;height:42px;border:1px solid rgba(140,190,255,.16);
-  border-radius:50%;background:rgba(255,255,255,.035);
-  color:#d8e7fb;font-size:19px;cursor:pointer;transition:.2s;
-}
-.icon-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.08)}
+    </a>  
 
-.hero{
-  max-width:1200px;margin:0 auto;padding:105px 25px 75px;text-align:center;
-}
-.hero-badge{
-  display:inline-block;padding:8px 15px;border:1px solid rgba(76,190,255,.24);
-  border-radius:999px;background:rgba(22,120,190,.08);
-  color:#8edcff;font-size:13px;letter-spacing:.8px;
-}
-.hero h1{
-  margin:25px auto 20px;max-width:900px;
-  font-size:clamp(45px,7vw,82px);line-height:1.03;letter-spacing:-2px;
-  background:linear-gradient(100deg,#fff 15%,#7fe2ff 52%,#a99bff 92%);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.hero p{
-  max-width:800px;margin:0 auto;color:#b8c8df;
-  font-size:18px;line-height:1.75;
-}
-.hero-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:34px}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-width:175px;padding:14px 22px;border-radius:12px;
-  text-decoration:none;font-weight:750;cursor:pointer;transition:.2s;
-}
-.btn-primary{color:#00121e;background:linear-gradient(135deg,#35d5ff,#72a7ff)}
-.btn-secondary{color:#eaf5ff;border:1px solid rgba(150,200,255,.25);background:rgba(255,255,255,.045)}
-.btn:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(0,0,0,.25)}
 
-.section{
-  max-width:1200px;margin:0 auto;padding:35px 25px 90px;
-}
-.section-title{text-align:center;font-size:31px;margin-bottom:12px}
-.section-subtitle{text-align:center;color:#91a7c5;margin-bottom:35px}
+    <div class="header-right">  
 
-.grid{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
-}
-.card{
-  min-height:210px;padding:25px;border-radius:20px;
-  border:1px solid rgba(130,180,255,.14);
-  background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025));
-  box-shadow:0 18px 55px rgba(0,0,0,.18);
-  cursor:pointer;transition:.25s;
-}
-.card:hover{transform:translateY(-7px);border-color:rgba(90,200,255,.35)}
-.card-icon{font-size:30px;margin-bottom:18px}
-.card h3{font-size:20px;margin-bottom:10px}
-.card p{font-size:14px;line-height:1.65;color:#a9bad3}
-.ai-card{position:relative;overflow:hidden}
-.ai-card:after{
-  content:"";
-  position:absolute;top:0;left:-100%;width:55%;height:1px;
-  background:linear-gradient(90deg,transparent,#65dfff,transparent);
-  animation:aiGlow 3.5s infinite;
-}
-@keyframes aiGlow{0%{left:-60%}60%,100%{left:120%}}
-.coming{display:inline-block;margin-top:16px;padding:6px 10px;border-radius:999px;
-  font-size:11px;color:#8fe8ff;background:rgba(40,190,240,.09);
-  border:1px solid rgba(80,210,255,.2);letter-spacing:.7px}
-.card-link{display:block;color:inherit;text-decoration:none;height:100%}
+        <div  
+            class="header-icon"  
+            title="Search"  
+            onclick="showMessage('Search will be available soon.')"  
+        >  
+            ⌕  
+        </div>  
 
-.footer{
-  border-top:1px solid rgba(130,180,255,.1);
-  padding:28px 20px;text-align:center;color:#758aa7;font-size:13px;
-}
-.modal-backdrop{
-  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
-  background:rgba(0,5,15,.72);backdrop-filter:blur(8px);z-index:3000;padding:20px;
-}
-.modal{
-  width:min(480px,100%);padding:30px;border-radius:20px;
-  border:1px solid rgba(130,200,255,.2);
-  background:#071326;box-shadow:0 25px 90px rgba(0,0,0,.5);
-}
-.modal h3{font-size:22px;margin-bottom:10px}
-.modal p{color:#9fb3cf;line-height:1.65}
-.modal button{
-  margin-top:22px;padding:10px 18px;border:0;border-radius:10px;
-  background:#35cfff;color:#00121e;font-weight:750;cursor:pointer;
-}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.header-inner{padding:0 22px}}
-@media(max-width:600px){
-  .header{height:72px}.brand-logo{width:45px;height:45px;font-size:32px}
-  .brand-name{font-size:21px}.brand-tagline{font-size:10px}
-  .header-right{gap:6px}.icon-btn{width:37px;height:37px}
-  .hero{padding-top:75px}.hero h1{letter-spacing:-1px}
-  .grid{grid-template-columns:1fr}.section{padding-bottom:55px}
-}
-</style>
-</head>
+        <div  
+            class="header-icon"  
+            title="Theme"  
+            onclick="toggleTheme()"  
+        >  
+            ☼  
+        </div>  
 
-<body>
+        <div class="avatar">  
+            AT  
+        </div>  
 
-<header class="header">
-  <div class="header-inner">
-    <a class="brand" href="index.html">
-      <div class="brand-logo">⚡</div>
-      <div>
-        <div class="brand-name">ASIM TECH</div>
-        <div class="brand-tagline">Build. Create. Innovate.</div>
-      </div>
-    </a>
+    </div>  
 
-    <div class="header-right">
-      <button class="icon-btn" onclick="showMessage('Search','Search is ready for the next platform update.')" aria-label="Search">⌕</button>
-      <button class="icon-btn" onclick="showMessage('Theme','Theme controls are available in the platform settings.')" aria-label="Theme">◐</button>
-    </div>
-  </div>
-</header>
-
-<main>
-
-<section class="hero">
-  <span class="hero-badge">⚡ A MODERN DIGITAL PLATFORM</span>
-
-  <h1>Turn Your Ideas Into Digital Reality.</h1>
-
-  <p>
-    Create powerful web experiences, manage projects, collaborate seamlessly,
-    and publish your work — all from one intelligent platform.
-  </p>
-
-  <div class="hero-actions">
-    <a class="btn btn-primary" href="dashboard.html">🚀 Get Started</a>
-    <a class="btn btn-secondary" href="repositories.html">Explore Platform</a>
-  </div>
-</section>
-
-<section class="section">
-  <h2 class="section-title">Everything You Need to Build</h2>
-  <p class="section-subtitle">A growing platform for modern digital creation.</p>
-
-  <div class="grid">
-
-    <a class="card card-link" href="repositories.html">
-      <div class="card-icon">⚙️</div>
-      <h3>Actions</h3>
-      <p>Manage repositories, automate workflows and run development actions.</p>
-      <p style="margin-top:16px;color:#65dfff;font-weight:700">Go to Actions →</p>
-    </a>
-
-    <div class="card" onclick="showMessage('Projects','Projects module is being prepared.')">
-      <div class="card-icon">📁</div>
-      <h3>Projects</h3>
-      <p>Organize your ideas, work and digital projects in one place.</p>
-    </div>
-
-    <div class="card" onclick="showMessage('Wiki','Wiki module is available for future platform expansion.')">
-      <div class="card-icon">📚</div>
-      <h3>Wiki</h3>
-      <p>Create and organize useful documentation and knowledge.</p>
-    </div>
-
-    <div class="card" onclick="showMessage('Security','Security tools are part of the ASIM TECH platform roadmap.')">
-      <div class="card-icon">🛡️</div>
-      <h3>Security</h3>
-      <p>Build with secure workflows and platform-focused access controls.</p>
-    </div>
-
-    <div class="card" onclick="showMessage('Insights','Insights help you understand your platform and project activity.')">
-      <div class="card-icon">📊</div>
-      <h3>Insights</h3>
-      <p>Explore activity, usage and important project information.</p>
-    </div>
-
-    <div class="card ai-card" onclick="showMessage('AI-Powered Development','AI-powered development features are coming soon.')">
-      <div class="card-icon">🤖</div>
-      <h3>AI-Powered Development</h3>
-      <p>Build smarter. Automate faster. Create with AI.</p>
-      <span class="coming">COMING SOON</span>
-    </div>
-
-  </div>
-</section>
-
-</main>
-
-<footer class="footer">
-  © 2026 ASIM TECH — Code. Create. Innovate.
-</footer>
-
-<div class="modal-backdrop" id="modal" onclick="closeMessage(event)">
-  <div class="modal">
-    <h3 id="modalTitle"></h3>
-    <p id="modalText"></p>
-    <button onclick="hideModal()">Close</button>
-  </div>
 </div>
 
-<script>
-function showMessage(title,text){
-  document.getElementById('modalTitle').textContent=title;
-  document.getElementById('modalText').textContent=text;
-  document.getElementById('modal').style.display='flex';
-}
-function hideModal(){
-  document.getElementById('modal').style.display='none';
-}
-function closeMessage(e){
-  if(e.target.id==='modal') hideModal();
-}
-</script>
+</header>  <!-- =====================================================  
+     HERO  
+===================================================== -->  <section class="hero">  <!-- LEFT -->  
 
-</body>
+<div class="hero-left">  
+
+    <div class="hero-breadcrumb">  
+
+        <span>Ideas</span>  
+
+        →  
+
+        <span>Collaboration</span>  
+
+        →  
+
+        <span>Real Impact</span>  
+
+    </div>  
+
+
+    <h1 class="hero-title">  
+
+        Turn Your Ideas  
+
+        <br>  
+
+        Into  
+
+        <span class="gradient-title">  
+            Digital Reality.  
+        </span>  
+
+    </h1>  
+
+
+    <p class="hero-description">  
+
+        Create powerful web experiences, manage projects,  
+        collaborate seamlessly, and publish your work —  
+        all from one intelligent platform.  
+
+    </p>  
+
+
+    <div class="hero-buttons">  
+
+        <a  
+            href="dashboard.html"  
+            class="hero-button primary-button"  
+        >  
+            🚀 &nbsp; Get Started &nbsp; →  
+        </a>  
+
+
+        <a  
+            href="repositories.html"  
+            class="hero-button secondary-button"  
+        >  
+            ▦ &nbsp; Explore Platform &nbsp; →  
+        </a>  
+
+    </div>  
+
+
+    <div class="benefits">  
+
+        <div class="benefit">  
+
+            <span class="benefit-icon">  
+                ⚡  
+            </span>  
+
+            Fast  
+
+        </div>  
+
+
+        <div class="benefit">  
+
+            <span class="benefit-icon">  
+                🛡️  
+            </span>  
+
+            Secure  
+
+        </div>  
+
+
+        <div class="benefit">  
+
+            <span class="benefit-icon">  
+                👥  
+            </span>  
+
+            Collaborative  
+
+        </div>  
+
+
+        <div class="benefit">  
+
+            <span class="benefit-icon">  
+                📊  
+            </span>  
+
+            Future Ready  
+
+        </div>  
+
+    </div>  
+
+</div>  
+
+
+
+<!-- =================================================  
+     AI CARD  
+================================================= -->  
+
+<div class="ai-card">  
+
+    <div class="coming-badge">  
+        ✨ &nbsp; Coming Soon  
+    </div>  
+
+
+    <h2 class="ai-title">  
+
+        <span class="ai-title-gradient">  
+            AI-Powered  
+        </span>  
+
+        <br>  
+
+        Development  
+
+    </h2>  
+
+
+    <p class="ai-description">  
+
+        Build smarter. Automate faster.  
+        Create with AI.  
+
+    </p>  
+
+
+    <div class="ai-robot">  
+        🤖  
+    </div>  
+
+
+    <div class="ai-points">  
+
+        <div class="ai-point">  
+
+            <span class="ai-point-icon">  
+                ◉  
+            </span>  
+
+            Generate ideas  
+
+        </div>  
+
+
+        <div class="ai-point">  
+
+            <span class="ai-point-icon">  
+                ◉  
+            </span>  
+
+            Automate workflows  
+
+        </div>  
+
+
+        <div class="ai-point">  
+
+            <span class="ai-point-icon">  
+                ◉  
+            </span>  
+
+            Boost productivity  
+
+        </div>  
+
+    </div>  
+
+
+    <div class="ai-bottom-badge">  
+        ◷ &nbsp; Coming Soon  
+    </div>  
+
+</div>
+
+</section>  <!-- =====================================================  
+     PLATFORM CARDS  
+===================================================== -->  <section class="platform">  <div class="platform-grid">  
+
+
+    <!-- ACTIONS -->  
+
+    <a  
+        href="repositories.html"  
+        class="platform-card"  
+    >  
+
+        <div class="card-icon actions-icon">  
+            ⚙️  
+        </div>  
+
+        <h3>  
+            Actions  
+        </h3>  
+
+        <p>  
+            Automate your workflow  
+            with powerful actions.  
+        </p>  
+
+        <div class="card-action">  
+            Go to Actions &nbsp; →  
+        </div>  
+
+    </a>  
+
+
+
+    <!-- PROJECTS -->  
+
+    <div  
+        class="platform-card"  
+        onclick="showMessage('Projects module is being prepared.')"  
+        style="cursor:pointer;"  
+    >  
+
+        <div class="card-icon projects-icon">  
+            📁  
+        </div>  
+
+        <h3>  
+            Projects  
+        </h3>  
+
+        <p>  
+            Plan, track and manage  
+            your work efficiently.  
+        </p>  
+
+        <div class="card-action">  
+            Open Projects &nbsp; →  
+        </div>  
+
+    </div>  
+
+
+
+    <!-- WIKI -->  
+
+    <div  
+        class="platform-card"  
+        onclick="showMessage('Wiki module is being prepared.')"  
+        style="cursor:pointer;"  
+    >  
+
+        <div class="card-icon wiki-icon">  
+            📖  
+        </div>  
+
+        <h3>  
+            Wiki  
+        </h3>  
+
+        <p>  
+            Build and share knowledge  
+            with your team.  
+        </p>  
+
+        <div class="card-action">  
+            Open Wiki &nbsp; →  
+        </div>  
+
+    </div>  
+
+
+
+    <!-- SECURITY -->  
+
+    <div  
+        class="platform-card"  
+        onclick="showMessage('Security module is being prepared.')"  
+        style="cursor:pointer;"  
+    >  
+
+        <div class="card-icon security-icon">  
+            🛡️  
+        </div>  
+
+        <h3>  
+            Security  
+        </h3>  
+
+        <p>  
+            Keep your projects  
+            and data safe.  
+        </p>  
+
+        <div class="card-action">  
+            Open Security &nbsp; →  
+        </div>  
+
+    </div>  
+
+
+
+    <!-- INSIGHTS -->  
+
+    <div  
+        class="platform-card"  
+        onclick="showMessage('Insights module is being prepared.')"  
+        style="cursor:pointer;"  
+    >  
+
+        <div class="card-icon insights-icon">  
+            📊  
+        </div>  
+
+        <h3>  
+            Insights  
+        </h3>  
+
+        <p>  
+            Get valuable insights  
+            from your activity.  
+        </p>  
+
+        <div class="card-action">  
+            Open Insights &nbsp; →  
+        </div>  
+
+    </div>  
+
+</div>
+
+</section>  <!-- =====================================================  
+     FOOTER  
+===================================================== -->  <footer class="footer">  <div>  
+    © 2026 ASIM TECH.  
+    All rights reserved.  
+</div>  
+
+
+<div class="footer-center">  
+
+    <div class="footer-brand">  
+        ASIM TECH  
+    </div>  
+
+    <div class="footer-slogan">  
+        Technology for a Brighter Tomorrow  
+    </div>  
+
+</div>  
+
+
+<div class="footer-right">  
+
+    Code  
+    &nbsp; • &nbsp;  
+    Create  
+    &nbsp; • &nbsp;  
+    Innovate  
+
+</div>
+
+</footer>  <!-- =====================================================  
+     POPUP  
+===================================================== -->  <div  
+    id="popup"  
+    class="popup"  
+>  
+</div>  <script>  
+  
+/* =====================================================  
+   POPUP MESSAGE  
+===================================================== */  
+  
+let popupTimer = null;  
+  
+function showMessage(message){  
+  
+    const popup =  
+        document.getElementById("popup");  
+  
+    popup.textContent = message;  
+  
+    popup.classList.add("show");  
+  
+    clearTimeout(popupTimer);  
+  
+    popupTimer = setTimeout(() => {  
+  
+        popup.classList.remove("show");  
+  
+    }, 2600);  
+  
+}  
+  
+  
+/* =====================================================  
+   THEME BUTTON  
+===================================================== */  
+  
+function toggleTheme(){  
+  
+    showMessage(  
+        "ASIM TECH is currently optimized for Dark Mode."  
+    );  
+  
+}  
+  
+  
+/* =====================================================  
+   AI CARD MOUSE GLOW  
+===================================================== */  
+  
+const aiCard =  
+    document.querySelector(".ai-card");  
+  
+if(aiCard){  
+  
+    aiCard.addEventListener(  
+        "mousemove",  
+        function(event){  
+  
+            const rect =  
+                aiCard.getBoundingClientRect();  
+  
+            const x =  
+                event.clientX - rect.left;  
+  
+            const y =  
+                event.clientY - rect.top;  
+  
+            aiCard.style.background =  
+                `  
+                radial-gradient(  
+                    circle at ${x}px ${y}px,  
+                    rgba(45,110,255,.20),  
+                    transparent 36%  
+                ),  
+                linear-gradient(  
+                    145deg,  
+                    rgba(7,29,62,.97),  
+                    rgba(10,14,55,.96)  
+                )  
+                `;  
+  
+        }  
+    );  
+  
+  
+    aiCard.addEventListener(  
+        "mouseleave",  
+        function(){  
+  
+            aiCard.style.background =  
+                `  
+                radial-gradient(  
+                    circle at 70% 42%,  
+                    rgba(63,72,255,.28),  
+                    transparent 37%  
+                ),  
+                linear-gradient(  
+                    145deg,  
+                    rgba(7,29,62,.97),  
+                    rgba(10,14,55,.96)  
+                )  
+                `;  
+  
+        }  
+    );  
+  
+}  
+  
+  
+/* =====================================================  
+   PREVENT DOUBLE CLICK ISSUES  
+===================================================== */  
+  
+document  
+    .querySelectorAll("a")  
+    .forEach(link => {  
+  
+        link.addEventListener(  
+            "click",  
+            function(){  
+  
+                this.style.opacity = ".88";  
+  
+                setTimeout(() => {  
+  
+                    this.style.opacity = "";  
+  
+                }, 180);  
+  
+            }  
+        );  
+  
+    });  
+  
+</script>  </body>  
 </html>
