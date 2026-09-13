@@ -299,7 +299,10 @@ is_published,
 default_branch
 `)
 
-.eq("id",repositoryId)
+.eq(
+"id",
+repositoryId
+)
 
 .single();
 
@@ -350,8 +353,70 @@ return;
 }
 
 
+/* =================================================
+   LOAD DEFAULT BRANCH
+================================================= */
+
+const defaultBranchName =
+repository.default_branch ||
+"main";
+
+
+const {
+data:branch,
+error:branchError
+} =
+await supabaseClient
+
+.from("repository_branches")
+
+.select(`
+id,
+name
+`)
+
+.eq(
+"repository_id",
+repositoryId
+)
+
+.eq(
+"name",
+defaultBranchName
+)
+
+.maybeSingle();
+
+
+if(branchError){
+
+console.error(
+"Branch error:",
+branchError
+);
+
+showError(
+"Unable to load the published branch."
+);
+
+return;
+
+}
+
+
+if(!branch){
+
+showError(
+"Published branch was not found."
+);
+
+return;
+
+}
+
+
 /* -----------------------------------------------
-   LOAD INDEX.HTML
+   LOAD INDEX.HTML FROM DEFAULT BRANCH
 ------------------------------------------------ */
 
 const {
@@ -367,12 +432,18 @@ file_path,
 content,
 language,
 is_binary,
-mime_type
+mime_type,
+branch_id
 `)
 
 .eq(
 "repository_id",
 repositoryId
+)
+
+.eq(
+"branch_id",
+branch.id
 )
 
 .eq(
@@ -411,7 +482,7 @@ return;
 if(!file){
 
 showError(
-"This published repository does not contain an index.html file."
+"This published repository does not contain an index.html file on the default branch."
 );
 
 return;
@@ -467,7 +538,8 @@ if(
 /<!DOCTYPE/i.test(html)
 ){
 
-completeHtml = html;
+completeHtml =
+html;
 
 }else{
 
@@ -534,7 +606,9 @@ document.getElementById("website")
 
 console.log(
 "Published website loaded successfully:",
-repository.name
+repository.name,
+"Branch:",
+branch.name
 );
 
 
