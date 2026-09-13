@@ -21,26 +21,38 @@ padding:0;
 }
 
 body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+font-family:
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+Arial,
+sans-serif;
+
 background:#0d1117;
 color:#e6edf3;
 min-height:100vh;
 }
 
+/* =========================
+   NAVBAR
+========================= */
+
 .navbar{
 height:64px;
 background:#010409;
 border-bottom:1px solid #30363d;
+
 display:flex;
 align-items:center;
+
 padding:0 5%;
-gap:25px;
+gap:24px;
 }
 
 .logo{
-font-size:21px;
+font-size:20px;
 font-weight:700;
-color:white;
+color:#fff;
 }
 
 .navbar a{
@@ -53,107 +65,138 @@ font-size:14px;
 color:#58a6ff;
 }
 
+/* =========================
+   CONTAINER
+========================= */
+
 .container{
-width:92%;
-max-width:1200px;
-margin:30px auto;
+width:94%;
+max-width:1250px;
+margin:28px auto;
 }
+
+/* =========================
+   LOADING
+========================= */
 
 .loading{
-padding:60px;
+padding:70px 20px;
 text-align:center;
 color:#8b949e;
-font-size:18px;
+font-size:16px;
 }
+
+/* =========================
+   ERROR
+========================= */
 
 .error{
+display:none;
+
 background:#3d1f25;
 border:1px solid #f85149;
+
 color:#ff7b72;
-padding:15px;
+
+padding:14px 16px;
+
 border-radius:6px;
-display:none;
+
 margin-bottom:20px;
 }
 
-.success{
-background:#132b1b;
-border:1px solid #238636;
-color:#3fb950;
-padding:15px;
-border-radius:6px;
-display:none;
-margin-bottom:20px;
-}
+/* =========================
+   REPOSITORY HEADER
+========================= */
 
 .repo-header{
-border-bottom:1px solid #30363d;
-padding-bottom:22px;
-margin-bottom:20px;
+margin-bottom:18px;
 }
 
-.repo-name{
-font-size:27px;
+.repo-title{
+display:flex;
+align-items:center;
+gap:8px;
+
+font-size:26px;
 font-weight:500;
+
 margin-bottom:10px;
+
+word-break:break-word;
 }
 
-.repo-name span{
+.repo-title strong{
+font-weight:600;
+}
+
+.owner{
+color:#58a6ff;
+}
+
+.repo-slash{
+color:#8b949e;
+}
+
+.visibility{
+border:1px solid #30363d;
+border-radius:20px;
+
+font-size:12px;
+padding:3px 9px;
+
 color:#8b949e;
 }
 
 .description{
 color:#8b949e;
 font-size:14px;
-margin-bottom:15px;
+
+margin-bottom:13px;
+
+line-height:1.5;
 }
 
-.badges{
+/* =========================
+   REPO INFO
+========================= */
+
+.repo-info{
 display:flex;
-gap:8px;
-flex-wrap:wrap;
 align-items:center;
+gap:10px;
+flex-wrap:wrap;
 }
 
-.badge{
-border:1px solid #30363d;
-border-radius:20px;
-padding:5px 10px;
-font-size:12px;
+.info-item{
+font-size:13px;
 color:#8b949e;
 }
 
-.badge.public{
-color:#3fb950;
+.info-item strong{
+color:#e6edf3;
 }
 
-.badge.private{
-color:#f0883e;
-}
-
-.badge.published{
-color:#3fb950;
-}
-
-/* STAR */
-
-.star-area{
-margin-top:16px;
-display:flex;
-align-items:center;
-}
+/* =========================
+   STAR
+========================= */
 
 .star-button{
 border:1px solid #30363d;
 background:#21262d;
 color:#e6edf3;
-padding:8px 16px;
-border-radius:6px 0 0 6px;
-font-size:14px;
+
+border-radius:6px;
+
+padding:6px 12px;
+
 cursor:pointer;
+
+font-size:13px;
+
 display:inline-flex;
 align-items:center;
-gap:7px;
+gap:6px;
 }
 
 .star-button:hover{
@@ -161,40 +204,35 @@ background:#30363d;
 }
 
 .star-button.starred{
-background:#238636;
-border-color:#238636;
-color:white;
+color:#f2cc60;
 }
 
-.star-count{
-border:1px solid #30363d;
-border-left:0;
-background:#161b22;
-color:#e6edf3;
-padding:8px 14px;
-border-radius:0 6px 6px 0;
-font-size:14px;
-min-width:48px;
-text-align:center;
-}
-
-/* TABS */
+/* =========================
+   TABS
+========================= */
 
 .tabs{
 display:flex;
-gap:5px;
+
 border-bottom:1px solid #30363d;
+
 overflow-x:auto;
+
+margin-bottom:18px;
 }
 
 .tab{
 padding:12px 16px;
+
 color:#8b949e;
+
 text-decoration:none;
+
 font-size:14px;
+
 white-space:nowrap;
+
 border-bottom:2px solid transparent;
-cursor:pointer;
 }
 
 .tab:hover{
@@ -207,47 +245,71 @@ font-weight:600;
 border-bottom-color:#f78166;
 }
 
-/* COMING SOON ANIMATION */
-
-.coming-soon{
-transition:
-transform .25s ease,
-color .25s ease,
-background .25s ease;
-}
-
-.coming-soon:hover{
-transform:translateY(-2px);
-color:#a371f7;
-}
-
-/* TOOLBAR */
+/* =========================
+   TOOLBAR
+========================= */
 
 .toolbar{
 display:flex;
+
 justify-content:space-between;
 align-items:center;
-gap:15px;
-margin:20px 0;
+
+gap:12px;
+
+margin-bottom:14px;
+
 flex-wrap:wrap;
 }
 
-.branch-box{
+.toolbar-left{
 display:flex;
+align-items:center;
+
 gap:8px;
+
 flex-wrap:wrap;
 }
+
+.toolbar-right{
+display:flex;
+align-items:center;
+
+gap:8px;
+
+flex:1;
+
+justify-content:flex-end;
+}
+
+/* =========================
+   BUTTON
+========================= */
 
 .btn{
 border:1px solid #30363d;
+
 background:#21262d;
+
 color:#e6edf3;
-padding:8px 14px;
+
+padding:8px 13px;
+
 border-radius:6px;
-font-size:14px;
+
+font-size:13px;
+
 cursor:pointer;
+
 text-decoration:none;
-display:inline-block;
+
+display:inline-flex;
+
+align-items:center;
+
+gap:6px;
+
+white-space:nowrap;
 }
 
 .btn:hover{
@@ -270,89 +332,272 @@ border-color:#1f6feb;
 color:white;
 }
 
-.btn-blue:hover{
-background:#388bfd;
+.btn-danger{
+color:#f85149;
 }
 
-.btn-purple{
-background:#8957e5;
-border-color:#8957e5;
-color:white;
+.btn-danger:hover{
+background:#3d1f25;
 }
 
-.btn-purple:hover{
-background:#a371f7;
+/* =========================
+   BRANCH
+========================= */
+
+.branch-wrapper{
+position:relative;
 }
 
-.btn-visit{
-background:#238636;
-border-color:#238636;
-color:white;
+.branch{
 font-weight:600;
 }
 
-.btn-visit:hover{
-background:#2ea043;
+.branch-menu{
+display:none;
+
+position:absolute;
+
+top:43px;
+left:0;
+
+width:300px;
+
+max-width:90vw;
+
+background:#161b22;
+
+border:1px solid #30363d;
+
+border-radius:8px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.55);
+
+z-index:3000;
+
+overflow:hidden;
 }
 
-.search{
-width:100%;
-max-width:420px;
-background:#0d1117;
-border:1px solid #30363d;
-border-radius:6px;
-padding:9px 12px;
+.branch-menu.show{
+display:block;
+}
+
+.branch-menu-header{
+padding:12px 14px;
+
+border-bottom:1px solid #30363d;
+
+font-size:13px;
+
+font-weight:600;
+
 color:#e6edf3;
+}
+
+.branch-list{
+max-height:280px;
+
+overflow-y:auto;
+}
+
+.branch-item{
+width:100%;
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:10px;
+
+padding:10px 14px;
+
+background:transparent;
+
+border:0;
+
+color:#e6edf3;
+
+cursor:pointer;
+
+font-size:13px;
+
+text-align:left;
+}
+
+.branch-item:hover{
+background:#21262d;
+}
+
+.branch-item.current{
+color:#58a6ff;
+}
+
+.branch-check{
+font-size:14px;
+}
+
+.branch-create{
+width:100%;
+
+border:0;
+
+border-top:1px solid #30363d;
+
+background:#161b22;
+
+color:#58a6ff;
+
+padding:12px 14px;
+
+cursor:pointer;
+
+font-size:13px;
+
+text-align:left;
+}
+
+.branch-create:hover{
+background:#21262d;
+}
+
+/* =========================
+   ADD FILE
+========================= */
+
+.add-wrapper{
+position:relative;
+}
+
+.add-menu{
+display:none;
+
+position:absolute;
+
+top:42px;
+right:0;
+
+width:220px;
+
+background:#161b22;
+
+border:1px solid #30363d;
+
+border-radius:6px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+
+z-index:1000;
+
+overflow:hidden;
+}
+
+.add-menu.show{
+display:block;
+}
+
+.add-menu a{
+display:block;
+
+padding:12px 15px;
+
+color:#e6edf3;
+
+text-decoration:none;
+
+font-size:13px;
+}
+
+.add-menu a:hover{
+background:#21262d;
+color:#58a6ff;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.search{
+width:300px;
+
+max-width:100%;
+
+background:#0d1117;
+
+border:1px solid #30363d;
+
+border-radius:6px;
+
+padding:9px 12px;
+
+color:#e6edf3;
+
 outline:none;
+
+font-size:13px;
 }
 
 .search:focus{
 border-color:#58a6ff;
 }
 
-/* COMMIT */
+/* =========================
+   COMMIT BAR
+========================= */
 
 .commit-bar{
-border:1px solid #30363d;
-background:#161b22;
-border-radius:6px 6px 0 0;
-padding:13px 15px;
 display:flex;
+
 justify-content:space-between;
 align-items:center;
+
 gap:10px;
-flex-wrap:wrap;
+
+background:#161b22;
+
+border:1px solid #30363d;
+
+border-radius:6px 6px 0 0;
+
+padding:12px 15px;
+
 font-size:13px;
-}
 
-.commit-left{
 color:#8b949e;
 }
 
-.commit-left strong{
+.commit{
 color:#58a6ff;
+font-weight:600;
 }
 
-.commit-right{
-color:#8b949e;
-}
-
-/* FILES */
+/* =========================
+   FILE LIST
+========================= */
 
 .file-list{
 border:1px solid #30363d;
+
 border-top:0;
+
 border-radius:0 0 6px 6px;
+
 overflow:hidden;
+
+background:#0d1117;
 }
 
 .file-row{
 display:flex;
-align-items:center;
+
 justify-content:space-between;
-padding:13px 16px;
-border-bottom:1px solid #21262d;
+align-items:center;
+
 gap:15px;
+
+padding:12px 15px;
+
+border-bottom:1px solid #21262d;
 }
 
 .file-row:last-child{
@@ -363,23 +608,34 @@ border-bottom:0;
 background:#161b22;
 }
 
-.file-info{
+.file-main{
 display:flex;
 align-items:center;
+
 gap:12px;
+
 min-width:0;
 }
 
 .file-icon{
 font-size:20px;
 width:25px;
+
 text-align:center;
+flex-shrink:0;
+}
+
+.file-details{
+min-width:0;
 }
 
 .file-name{
 color:#58a6ff;
+
 font-size:14px;
-text-decoration:none;
+
+font-weight:500;
+
 word-break:break-word;
 }
 
@@ -387,107 +643,202 @@ word-break:break-word;
 text-decoration:underline;
 }
 
-.file-meta{
+.file-sub{
 color:#8b949e;
-font-size:13px;
-text-align:right;
+
+font-size:11px;
+
+margin-top:3px;
 }
+
+.file-meta{
+display:flex;
+align-items:center;
+
+gap:10px;
+
+color:#8b949e;
+
+font-size:12px;
+
+white-space:nowrap;
+}
+
+.type-badge{
+border:1px solid #30363d;
+
+border-radius:12px;
+
+padding:2px 7px;
+
+font-size:10px;
+
+color:#8b949e;
+}
+
+.file-actions{
+display:flex;
+gap:5px;
+}
+
+/* =========================
+   EMPTY
+========================= */
 
 .empty{
-padding:18px;
+padding:55px 20px;
+
 text-align:center;
+
 color:#8b949e;
 }
 
-/* README */
+.empty-icon{
+font-size:35px;
+margin-bottom:12px;
+}
+
+/* =========================
+   README
+========================= */
 
 .readme{
-margin-top:25px;
+margin-top:24px;
+
 border:1px solid #30363d;
+
 border-radius:6px;
+
 overflow:hidden;
 }
 
 .readme-header{
 background:#161b22;
-padding:12px 16px;
-font-weight:600;
+
 border-bottom:1px solid #30363d;
+
+padding:13px 16px;
+
+font-weight:600;
+
+font-size:14px;
 }
 
 .readme-body{
-padding:25px;
+padding:24px;
+
 line-height:1.7;
+
 color:#c9d1d9;
 }
 
 .readme-body h2{
-margin-bottom:10px;
+font-size:22px;
+
 color:#e6edf3;
+
+margin-bottom:12px;
 }
 
 .readme-body p{
 margin-bottom:10px;
 }
 
-/* ACTIONS */
-
-.actions{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-margin-top:20px;
-}
-
-/* MODAL */
+/* =========================
+   MODAL
+========================= */
 
 .modal{
 display:none;
+
 position:fixed;
-z-index:1000;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.7);
+
+inset:0;
+
+background:rgba(0,0,0,.75);
+
 align-items:center;
+
 justify-content:center;
+
+z-index:5000;
+
 padding:20px;
 }
 
-.modal-box{
-width:100%;
-max-width:500px;
-background:#161b22;
-border:1px solid #30363d;
-border-radius:8px;
-padding:25px;
+.modal.show{
+display:flex;
 }
 
-.modal-box h2{
+.modal-card{
+width:100%;
+
+max-width:500px;
+
+background:#161b22;
+
+border:1px solid #30363d;
+
+border-radius:8px;
+
+padding:22px;
+}
+
+.modal-card h2{
+font-size:18px;
+
 margin-bottom:10px;
 }
 
-.modal-box p{
+.modal-card p{
 color:#8b949e;
-margin-bottom:20px;
-}
 
-/* FOOTER */
-
-footer{
-text-align:center;
-padding:45px 10px;
-color:#8b949e;
 font-size:13px;
+
+line-height:1.6;
+
+margin-bottom:18px;
 }
 
-/* MOBILE */
+.modal-actions{
+display:flex;
 
-@media(max-width:600px){
+justify-content:flex-end;
+
+gap:8px;
+}
+
+.branch-modal-input{
+width:100%;
+
+background:#0d1117;
+
+border:1px solid #30363d;
+
+border-radius:6px;
+
+padding:10px 12px;
+
+color:#e6edf3;
+
+outline:none;
+
+font-size:14px;
+
+margin-bottom:16px;
+}
+
+.branch-modal-input:focus{
+border-color:#58a6ff;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
 
 .navbar{
-height:58px;
 padding:0 4%;
 gap:15px;
 }
@@ -501,16 +852,22 @@ width:94%;
 margin:20px auto;
 }
 
-.repo-name{
-font-size:23px;
+.repo-title{
+font-size:22px;
 }
 
 .toolbar{
 align-items:stretch;
 }
 
+.toolbar-left,
+.toolbar-right{
+width:100%;
+justify-content:flex-start;
+}
+
 .search{
-max-width:none;
+width:100%;
 }
 
 .file-row{
@@ -521,17 +878,36 @@ align-items:flex-start;
 display:none;
 }
 
+.file-actions{
+display:flex;
+}
+
 .tabs{
-margin-left:-5px;
-margin-right:-5px;
+overflow-x:auto;
 }
 
-.star-button{
-padding:9px 14px;
+.add-menu{
+position:fixed;
+
+top:115px;
+
+left:20px;
+right:20px;
+
+width:auto;
 }
 
-.star-count{
-padding:9px 13px;
+.branch-menu{
+position:fixed;
+
+top:115px;
+
+left:20px;
+right:20px;
+
+width:auto;
+
+max-width:none;
 }
 
 }
@@ -542,8 +918,9 @@ padding:9px 13px;
 
 <body>
 
-
-<!-- NAVBAR -->
+<!-- =========================
+     NAVBAR
+========================= -->
 
 <nav class="navbar">
 
@@ -565,307 +942,361 @@ Dashboard
 
 </nav>
 
-
 <div class="container">
-
 
 <!-- LOADING -->
 
-<div id="loading"
+<div
+id="loading"
 class="loading">
 
 Loading repository...
 
 </div>
 
-
 <!-- ERROR -->
 
-<div id="error"
+<div
+id="error"
 class="error">
-
 </div>
-
-
-<!-- SUCCESS -->
-
-<div id="success"
-class="success">
-
-</div>
-
 
 <!-- MAIN -->
 
-<div id="mainContent"
-style="display:none;">
+<div
+id="mainContent"
+style="display:none">
 
-
-<!-- REPOSITORY HEADER -->
+<!-- =========================
+     REPOSITORY HEADER
+========================= -->
 
 <div class="repo-header">
 
-
-<div class="repo-name">
+<div class="repo-title">
 
 📁
 
-<span>
+<span
+id="repoOwner"
+class="owner">
+
 ASIM TECH
+
 </span>
 
+<span class="repo-slash">
 /
+</span>
 
-<strong id="repoName">
+<strong
+id="repoName">
+
 Repository
+
 </strong>
+
+<span
+id="visibilityBadge"
+class="visibility">
+
+Public
+
+</span>
 
 </div>
 
-
-<div id="repoDescription"
+<div
+id="repoDescription"
 class="description">
 
 No description provided.
 
 </div>
 
+<div class="repo-info">
 
-<div class="badges">
+<span class="info-item">
 
+⭐
 
-<span id="visibilityBadge"
-class="badge public">
+<strong id="starCount">
+0
+</strong>
 
-🌎 Public
-
-</span>
-
-
-<span id="publishBadge"
-class="badge">
-
-Not published
+stars
 
 </span>
 
+<span class="info-item">
 
-</div>
+📄
 
+<strong id="fileCount">
+0
+</strong>
 
-<!-- STAR -->
+files
 
-<div class="star-area">
+</span>
+
+<span class="info-item">
+
+🌿
+
+<strong id="currentBranchInfo">
+main
+</strong>
+
+</span>
 
 <button
 id="starButton"
 class="star-button"
-type="button"
 onclick="toggleStar()">
 
-<span id="starIcon">
-☆
-</span>
-
-<span id="starText">
-Star
-</span>
+☆ Star
 
 </button>
 
-
-<div id="starCount"
-class="star-count">
-
-0
-
 </div>
 
 </div>
 
-
-</div>
-
-
-<!-- TABS -->
+<!-- =========================
+     TABS
+========================= -->
 
 <div class="tabs">
-
 
 <a
 class="tab active"
 href="#">
 
-◉ Code
+Code
 
 </a>
 
-
 <a
-id="issuesButton"
 class="tab"
-href="#">
+href="#"
+onclick="comingSoon('Issues');return false;">
 
 Issues
 
 </a>
 
-
 <a
-id="pullRequestsButton"
 class="tab"
-href="#">
+href="#"
+onclick="comingSoon('Pull requests');return false;">
 
 Pull requests
 
 </a>
 
-
 <a
-class="tab coming-soon"
+class="tab"
 href="#"
-onclick="showComingSoon('Actions');return false;">
+onclick="comingSoon('Actions');return false;">
 
 Actions
 
 </a>
 
-
 <a
-class="tab coming-soon"
+class="tab"
 href="#"
-onclick="showComingSoon('Projects');return false;">
+onclick="comingSoon('Projects');return false;">
 
 Projects
 
 </a>
 
-
 <a
-class="tab coming-soon"
+class="tab"
 href="#"
-onclick="showComingSoon('Wiki');return false;">
+onclick="comingSoon('Wiki');return false;">
 
 Wiki
 
 </a>
 
-
 <a
-class="tab coming-soon"
+class="tab"
 href="#"
-onclick="showComingSoon('Security');return false;">
+onclick="comingSoon('Security');return false;">
 
 Security
 
 </a>
 
-
 <a
-class="tab coming-soon"
+class="tab"
 href="#"
-onclick="showComingSoon('Insights');return false;">
+onclick="comingSoon('Insights');return false;">
 
 Insights
 
 </a>
 
-
 </div>
 
-
-<!-- TOOLBAR -->
+<!-- =========================
+     TOOLBAR
+========================= -->
 
 <div class="toolbar">
 
+<div class="toolbar-left">
 
-<div class="branch-box">
+<!-- BRANCH -->
 
-
-<!-- Branch button: NO ANIMATION -->
+<div class="branch-wrapper">
 
 <button
-class="btn"
-type="button">
+id="branchButton"
+class="btn branch"
+onclick="toggleBranchMenu()">
 
 🌿 main ▾
 
 </button>
 
+<div
+id="branchMenu"
+class="branch-menu">
 
-<a
-id="filesButton"
-class="btn"
-href="#">
+<div class="branch-menu-header">
 
-📁 Files
+🌿 Select branch
 
-</a>
+</div>
 
+<div
+id="branchList"
+class="branch-list">
+
+<div
+style="padding:15px;color:#8b949e;font-size:13px;">
+
+Loading branches...
+
+</div>
+
+</div>
+
+<button
+class="branch-create"
+onclick="openCreateBranchModal()">
+
+＋ Create new branch
+
+</button>
+
+</div>
+
+</div>
+
+<!-- FILE EXPLORER -->
 
 <a
 id="explorerButton"
-class="btn btn-purple"
+class="btn"
 href="#">
 
 📂 File Explorer
 
 </a>
 
+<!-- ADD FILE -->
+
+<div class="add-wrapper">
+
+<button
+id="addButton"
+class="btn btn-green"
+onclick="toggleAddMenu()">
+
+＋ Add file ▾
+
+</button>
+
+<div
+id="addMenu"
+class="add-menu">
 
 <a
-id="newFileButton"
-class="btn btn-green"
+id="createFileLink"
 href="#">
 
-＋ Add file
+📄 Create new file
 
 </a>
 
+<a
+id="uploadFileLink"
+href="#">
+
+📤 Upload file
+
+</a>
 
 </div>
 
+</div>
+
+</div>
+
+<div class="toolbar-right">
 
 <input
 id="searchInput"
 class="search"
 type="search"
 placeholder="🔎 Go to file..."
-oninput="filterFiles()">
-
+oninput="filterFiles">
 
 </div>
 
+</div>
 
-<!-- COMMIT BAR -->
+<!-- =========================
+     COMMIT
+========================= -->
 
 <div class="commit-bar">
 
-
-<div class="commit-left">
+<div>
 
 Latest commit:
 
-<strong id="latestCommit">
-Repository
-</strong>
+<span
+id="latestCommit"
+class="commit">
 
-</div>
+Initial repository
 
-
-<div class="commit-right">
-
-<span id="fileCount">
-0 files
 </span>
 
 </div>
 
+<div>
+
+<span
+id="fileCountTop">
+
+0 files
+
+</span>
 
 </div>
 
+</div>
 
-<!-- FILE LIST -->
+<!-- =========================
+     FILE LIST
+========================= -->
 
 <div
 id="fileList"
@@ -873,17 +1304,21 @@ class="file-list">
 
 <div class="empty">
 
+<div class="empty-icon">
+📂
+</div>
+
 Loading files...
 
 </div>
 
 </div>
 
-
-<!-- README -->
+<!-- =========================
+     README
+========================= -->
 
 <div class="readme">
-
 
 <div class="readme-header">
 
@@ -891,104 +1326,62 @@ Loading files...
 
 </div>
 
-
 <div class="readme-body">
 
+<h2
+id="readmeTitle">
 
-<h2 id="readmeTitle">
 Repository
+
 </h2>
 
-
-<p id="readmeDescription">
+<p
+id="readmeDescription">
 
 Welcome to this ASIM TECH repository.
 
 </p>
 
-
 <p>
 
-This repository was created using ASIM TECH Platform.
+This repository was created using
+ASIM TECH Platform.
 
 </p>
 
+</div>
+
+</div>
 
 </div>
 
 </div>
 
-
-<!-- ACTIONS -->
-
-<div class="actions">
-
-
-<a
-id="openFilesAction"
-class="btn"
-href="#">
-
-📂 Open Repository Files
-
-</a>
-
-
-<a
-id="editAction"
-class="btn"
-href="#">
-
-✏️ Edit Repository
-
-</a>
-
-
-<button
-id="publishAction"
-class="btn btn-blue"
-onclick="publishWebsite()">
-
-🚀 Publish Website
-
-</button>
-
-
-<a
-id="visitWebsiteButton"
-class="btn btn-visit"
-href="#"
-target="_blank"
-style="display:none;">
-
-🌐 Visit Published Website
-
-</a>
-
-
-</div>
-
-
-</div>
-
-</div>
-
-
-<!-- COMING SOON MODAL -->
+<!-- =========================
+     GENERAL MODAL
+========================= -->
 
 <div
 id="modal"
 class="modal">
 
-<div class="modal-box">
+<div class="modal-card">
 
-<h2 id="modalTitle">
+<h2
+id="modalTitle">
+
 Coming Soon
+
 </h2>
 
-<p id="modalMessage">
-This feature is coming soon to ASIM TECH.
+<p
+id="modalText">
+
+This feature is currently under development.
+
 </p>
+
+<div class="modal-actions">
 
 <button
 class="btn"
@@ -1002,19 +1395,73 @@ Close
 
 </div>
 
+</div>
 
-<footer>
+<!-- =========================
+     CREATE BRANCH MODAL
+========================= -->
 
-ASIM TECH Platform
+<div
+id="createBranchModal"
+class="modal">
 
-</footer>
+<div class="modal-card">
 
+<h2>
+Create new branch
+</h2>
+
+<p>
+
+Create a new branch from the currently selected branch:
+
+<strong
+id="branchSourceText"
+style="color:#e6edf3;">
+
+main
+
+</strong>
+
+</p>
+
+<input
+id="newBranchName"
+class="branch-modal-input"
+type="text"
+placeholder="e.g. feature-login"
+maxlength="100">
+
+<div class="modal-actions">
+
+<button
+class="btn"
+onclick="closeCreateBranchModal()">
+
+Cancel
+
+</button>
+
+<button
+id="createBranchButton"
+class="btn btn-green"
+onclick="createBranch()">
+
+Create branch
+
+</button>
+
+</div>
+
+</div>
+
+</div>
 
 <script>
 
-/* =====================================================
+/* =========================================
    SUPABASE
-===================================================== */
+========================================= */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -1028,1280 +1475,1903 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 
+/* =========================================
+   URL PARAMETERS
+========================================= */
 
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
+const params =
+new URLSearchParams(
+window.location.search
+);
 
-let repositoryId = null;
+const repoId =
+params.get("repository_id") ||
+params.get("id");
 
-let repository = null;
+/* =========================================
+   VARIABLES
+========================================= */
 
 let currentUser = null;
 
+let repository = null;
+
 let allFiles = [];
 
-let mainBranch = null;
+let allBranches = [];
 
+let currentBranch = null;
 
-/* =====================================================
-   GET REPOSITORY ID
-===================================================== */
+let isStarred = false;
 
-function getRepositoryId(){
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    /*
-       IMPORTANT:
-
-       Supports both:
-
-       repository-details.html?id=XXXX
-
-       AND
-
-       repository-details.html?repository_id=XXXX
-    */
-
-    return (
-        params.get("repository_id") ||
-        params.get("id")
-    );
-
-}
-
-
-/* =====================================================
-   ERROR
-===================================================== */
-
-function showError(message){
-
-    document.getElementById(
-        "loading"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "error"
-    ).textContent =
-        "❌ " + message;
-
-
-    document.getElementById(
-        "error"
-    ).style.display =
-        "block";
-
-}
-
-
-/* =====================================================
-   SUCCESS
-===================================================== */
-
-function showSuccess(message){
-
-    const box =
-        document.getElementById(
-            "success"
-        );
-
-
-    box.textContent =
-        "✓ " + message;
-
-
-    box.style.display =
-        "block";
-
-
-    setTimeout(
-        function(){
-
-            box.style.display =
-                "none";
-
-        },
-        4000
-    );
-
-}
-
-
-/* =====================================================
-   INIT
-===================================================== */
+/* =========================================
+   INITIALIZE
+========================================= */
 
 async function init(){
 
-    repositoryId =
-        getRepositoryId();
+try{
 
+if(!repoId){
 
-    /*
-       THIS FIXES YOUR CURRENT ERROR.
-
-       Your current URL uses:
-
-       ?id=XXXXXXXX
-
-       so repositoryId will now be detected.
-    */
-
-    if(!repositoryId){
-
-        showError(
-            "Repository ID is missing."
-        );
-
-        return;
-
-    }
-
-
-    try{
-
-        const {
-            data:userData
-        } =
-        await supabaseClient
-            .auth
-            .getUser();
-
-
-        currentUser =
-            userData?.user || null;
-
-
-        await loadRepository();
-
-
-        await loadMainBranch();
-
-
-        await loadFiles();
-
-
-        await loadStar();
-
-
-        setupRepositoryLinks(
-            repository
-        );
-
-
-        document.getElementById(
-            "loading"
-        ).style.display =
-            "none";
-
-
-        document.getElementById(
-            "mainContent"
-        ).style.display =
-            "block";
-
-
-    }catch(error){
-
-        console.error(error);
-
-
-        showError(
-            error.message ||
-            "Unable to load repository."
-        );
-
-    }
+throw new Error(
+"Repository ID is missing."
+);
 
 }
 
+/* USER */
 
-/* =====================================================
-   LOAD REPOSITORY
-===================================================== */
+const {
+data:{user},
+error:userError
+} =
+await supabaseClient
+.auth
+.getUser();
 
-async function loadRepository(){
+if(userError)
+throw userError;
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .from("repositories")
-        .select("*")
-        .eq(
-            "id",
-            repositoryId
-        )
-        .single();
+if(!user){
 
+window.location.href =
+"login.html";
 
-    if(error){
-
-        throw error;
-
-    }
-
-
-    if(!data){
-
-        throw new Error(
-            "Repository not found."
-        );
-
-    }
-
-
-    repository =
-        data;
-
-
-    document.getElementById(
-        "repoName"
-    ).textContent =
-        repository.name ||
-        "Repository";
-
-
-    document.getElementById(
-        "repoDescription"
-    ).textContent =
-        repository.description ||
-        "No description provided.";
-
-
-    document.getElementById(
-        "readmeTitle"
-    ).textContent =
-        repository.name ||
-        "Repository";
-
-
-    document.getElementById(
-        "readmeDescription"
-    ).textContent =
-        repository.description ||
-        "Welcome to this ASIM TECH repository.";
-
-
-    const visibility =
-        document.getElementById(
-            "visibilityBadge"
-        );
-
-
-    if(repository.is_private){
-
-        visibility.textContent =
-            "🔒 Private";
-
-        visibility.className =
-            "badge private";
-
-    }else{
-
-        visibility.textContent =
-            "🌎 Public";
-
-        visibility.className =
-            "badge public";
-
-    }
-
-
-    updatePublishStatus();
+return;
 
 }
 
+currentUser = user;
 
-/* =====================================================
-   LOAD MAIN BRANCH
-===================================================== */
+/* REPOSITORY */
 
-async function loadMainBranch(){
+const {
+data:repo,
+error:repoError
+} =
+await supabaseClient
+.from("repositories")
+.select("*")
+.eq("id",repoId)
+.single();
 
-    const branchName =
-        repository.default_branch ||
-        "main";
+if(repoError)
+throw repoError;
 
+if(!repo){
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .from("repository_branches")
-        .select("*")
-        .eq(
-            "repository_id",
-            repositoryId
-        )
-        .eq(
-            "name",
-            branchName
-        )
-        .maybeSingle();
-
-
-    if(error){
-
-        console.warn(
-            "Main branch could not be loaded:",
-            error.message
-        );
-
-        mainBranch =
-            null;
-
-        return;
-
-    }
-
-
-    mainBranch =
-        data || null;
+throw new Error(
+"Repository not found."
+);
 
 }
 
+repository = repo;
 
-/* =====================================================
+/* HEADER */
+
+document.getElementById(
+"repoName"
+).textContent =
+repo.name;
+
+document.getElementById(
+"repoDescription"
+).textContent =
+repo.description ||
+"No description provided.";
+
+/* VISIBILITY */
+
+const visibility =
+document.getElementById(
+"visibilityBadge"
+);
+
+visibility.textContent =
+repo.is_private
+?
+"Private"
+:
+"Public";
+
+/* STAR COUNT */
+
+document.getElementById(
+"starCount"
+).textContent =
+repo.stars_count || 0;
+
+/* OWNER */
+
+const isOwner =
+repo.owner_id ===
+user.id;
+
+if(!isOwner){
+
+document.getElementById(
+"addButton"
+).style.display =
+"none";
+
+}
+
+/* BRANCHES */
+
+await loadBranches();
+
+/* LINKS */
+
+updatePageLinks();
+
+/* FILES */
+
+await loadFiles();
+
+/* STAR */
+
+await loadStarStatus();
+
+/* README */
+
+document.getElementById(
+"readmeTitle"
+).textContent =
+repo.name;
+
+document.getElementById(
+"readmeDescription"
+).textContent =
+repo.description ||
+"Welcome to this ASIM TECH repository.";
+
+/* SHOW */
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
+document.getElementById(
+"mainContent"
+).style.display =
+"block";
+
+}
+catch(error){
+
+console.error(
+"Initialization error:",
+error
+);
+
+document.getElementById(
+"loading"
+).style.display =
+"none";
+
+const errorBox =
+document.getElementById(
+"error"
+);
+
+errorBox.textContent =
+"❌ " +
+(
+error.message ||
+"Unable to load repository."
+);
+
+errorBox.style.display =
+"block";
+
+}
+
+}
+
+/* =========================================
+   LOAD BRANCHES
+========================================= */
+
+async function loadBranches(){
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_branches")
+
+.select("*")
+
+.eq(
+"repository_id",
+repoId
+)
+
+.order(
+"created_at",
+{
+ascending:true
+}
+);
+
+if(error)
+throw error;
+
+allBranches =
+data || [];
+
+if(!allBranches.length){
+
+throw new Error(
+"No branches found for this repository."
+);
+
+}
+
+/* URL BRANCH */
+
+const urlBranchId =
+params.get("branch_id");
+
+let selectedBranch = null;
+
+if(urlBranchId){
+
+selectedBranch =
+allBranches.find(
+branch =>
+branch.id ===
+urlBranchId
+);
+
+}
+
+/* DEFAULT */
+
+if(!selectedBranch){
+
+selectedBranch =
+allBranches.find(
+branch =>
+branch.name ===
+(
+repository.default_branch ||
+"main"
+)
+);
+
+}
+
+/* FIRST */
+
+if(!selectedBranch){
+
+selectedBranch =
+allBranches[0];
+
+}
+
+currentBranch =
+selectedBranch;
+
+updateBranchUI();
+
+renderBranchList();
+
+}
+
+/* =========================================
+   UPDATE BRANCH UI
+========================================= */
+
+function updateBranchUI(){
+
+if(!currentBranch)
+return;
+
+document.getElementById(
+"branchButton"
+).textContent =
+"🌿 " +
+currentBranch.name +
+" ▾";
+
+document.getElementById(
+"currentBranchInfo"
+).textContent =
+currentBranch.name;
+
+document.getElementById(
+"branchSourceText"
+).textContent =
+currentBranch.name;
+
+}
+
+/* =========================================
+   RENDER BRANCH LIST
+========================================= */
+
+function renderBranchList(){
+
+const list =
+document.getElementById(
+"branchList"
+);
+
+if(!allBranches.length){
+
+list.innerHTML =
+`
+<div style="padding:15px;color:#8b949e;font-size:13px;">
+No branches found.
+</div>
+`;
+
+return;
+
+}
+
+list.innerHTML =
+allBranches.map(
+branch => {
+
+const isCurrent =
+currentBranch &&
+branch.id ===
+currentBranch.id;
+
+return `
+
+<button
+type="button"
+class="branch-item ${isCurrent ? "current" : ""}"
+data-branch-id="${escapeHtml(branch.id)}">
+
+<span>
+🌿
+${escapeHtml(branch.name)}
+</span>
+
+<span class="branch-check">
+${isCurrent ? "✓" : ""}
+</span>
+
+</button>
+
+`;
+
+}
+).join("");
+
+document
+.querySelectorAll(".branch-item")
+.forEach(
+button => {
+
+button.addEventListener(
+"click",
+function(){
+
+selectBranch(
+this.dataset.branchId
+);
+
+}
+);
+
+}
+);
+
+}
+
+/* =========================================
+   SELECT BRANCH
+========================================= */
+
+async function selectBranch(branchId){
+
+const branch =
+allBranches.find(
+item =>
+item.id === branchId
+);
+
+if(!branch)
+return;
+
+currentBranch =
+branch;
+
+updateBranchUI();
+
+renderBranchList();
+
+closeBranchMenu();
+
+updatePageLinks();
+
+document.getElementById(
+"searchInput"
+).value =
+"";
+
+await loadFiles();
+
+}
+
+/* =========================================
+   BRANCH MENU
+========================================= */
+
+function toggleBranchMenu(){
+
+const menu =
+document.getElementById(
+"branchMenu"
+);
+
+menu.classList.toggle(
+"show"
+);
+
+}
+
+function closeBranchMenu(){
+
+document
+.getElementById(
+"branchMenu"
+)
+.classList
+.remove("show");
+
+}
+
+/* =========================================
+   UPDATE LINKS
+========================================= */
+
+function updatePageLinks(){
+
+if(!repository ||
+!currentBranch)
+return;
+
+const branchParam =
+"&branch_id=" +
+encodeURIComponent(
+currentBranch.id
+);
+
+/* EXPLORER */
+
+document.getElementById(
+"explorerButton"
+).href =
+"repository-explorer.html?repository_id=" +
+encodeURIComponent(repoId) +
+branchParam;
+
+/* ADD FILE */
+
+const addFileUrl =
+"repository-add-file.html?repository_id=" +
+encodeURIComponent(repoId) +
+branchParam;
+
+document.getElementById(
+"createFileLink"
+).href =
+addFileUrl +
+"&mode=create";
+
+document.getElementById(
+"uploadFileLink"
+).href =
+addFileUrl +
+"&mode=upload";
+
+}
+
+/* =========================================
    LOAD FILES
-===================================================== */
+========================================= */
 
 async function loadFiles(){
 
-    let query =
-        supabaseClient
-            .from("repository_files")
-            .select("*")
-            .eq(
-                "repository_id",
-                repositoryId
-            );
+if(!currentBranch)
+return;
 
+const {
+data,
+error
+} =
+await supabaseClient
 
-    /*
-       Only show files from main branch
-       when branch information exists.
-    */
+.from("repository_files")
 
-    if(mainBranch){
+.select("*")
 
-        query =
-            query.eq(
-                "branch_id",
-                mainBranch.id
-            );
+.eq(
+"repository_id",
+repoId
+)
 
-    }
+.eq(
+"branch_id",
+currentBranch.id
+)
 
+.order(
+"file_path",
+{
+ascending:true
+}
+);
 
-    const {
-        data,
-        error
-    } =
-    await query
-        .order(
-            "file_path",
-            {
-                ascending:true
-            }
-        );
+if(error)
+throw error;
 
+allFiles =
+data || [];
 
-    if(error){
+document.getElementById(
+"fileCount"
+).textContent =
+allFiles.length;
 
-        console.error(
-            "File loading error:",
-            error
-        );
+document.getElementById(
+"fileCountTop"
+).textContent =
+allFiles.length +
+(
+allFiles.length === 1
+?
+" file"
+:
+" files"
+);
 
-        return;
-
-    }
-
-
-    allFiles =
-        data || [];
-
-
-    renderFiles(
-        allFiles
-    );
-
-
-    document.getElementById(
-        "fileCount"
-    ).textContent =
-        allFiles.length +
-        (
-            allFiles.length === 1
-            ? " file"
-            : " files"
-        );
+renderFiles(
+allFiles
+);
 
 }
 
+/* =========================================
+   FILE ICON
+========================================= */
 
-/* =====================================================
+function getFileIcon(file){
+
+if(file.is_binary){
+
+const mime =
+(
+file.mime_type ||
+""
+).toLowerCase();
+
+if(mime.startsWith("image/"))
+return "🖼️";
+
+if(mime === "application/pdf")
+return "📕";
+
+if(mime.includes("zip"))
+return "🗜️";
+
+return "📦";
+
+}
+
+const path =
+(
+file.file_path ||
+""
+).toLowerCase();
+
+if(
+path.endsWith(".html") ||
+path.endsWith(".htm")
+)
+return "🌐";
+
+if(path.endsWith(".css"))
+return "🎨";
+
+if(
+path.endsWith(".js") ||
+path.endsWith(".jsx")
+)
+return "⚡";
+
+if(path.endsWith(".json"))
+return "📋";
+
+if(
+path.endsWith(".md") ||
+path.endsWith(".markdown")
+)
+return "📖";
+
+if(path.endsWith(".py"))
+return "🐍";
+
+if(path.endsWith(".php"))
+return "🐘";
+
+if(
+path.endsWith(".jpg") ||
+path.endsWith(".jpeg") ||
+path.endsWith(".png") ||
+path.endsWith(".gif") ||
+path.endsWith(".webp") ||
+path.endsWith(".svg")
+)
+return "🖼️";
+
+return "📄";
+
+}
+
+/* =========================================
+   FILE TYPE
+========================================= */
+
+function getFileType(file){
+
+if(file.is_binary){
+
+return file.mime_type ||
+"Binary";
+
+}
+
+return file.language ||
+"Text";
+
+}
+
+/* =========================================
+   FILE SIZE
+========================================= */
+
+function formatSize(bytes){
+
+if(!bytes)
+return "—";
+
+if(bytes < 1024)
+return bytes + " B";
+
+if(bytes < 1024*1024){
+
+return (
+bytes/1024
+).toFixed(1) +
+" KB";
+
+}
+
+if(bytes < 1024*1024*1024){
+
+return (
+bytes/(1024*1024)
+).toFixed(1) +
+" MB";
+
+}
+
+return (
+bytes/(1024*1024*1024)
+).toFixed(1) +
+" GB";
+
+}
+
+/* =========================================
    RENDER FILES
-===================================================== */
+========================================= */
 
 function renderFiles(files){
 
-    const list =
-        document.getElementById(
-            "fileList"
-        );
+const list =
+document.getElementById(
+"fileList"
+);
 
+if(!files.length){
 
-    if(!files.length){
+list.innerHTML = `
 
-        list.innerHTML =
-            `
-            <div class="empty">
-                No files found.
-            </div>
-            `;
+<div class="empty">
 
-        return;
+<div class="empty-icon">
+📂
+</div>
 
-    }
+<h3 style="margin-bottom:8px;color:#e6edf3;">
+This branch is empty
+</h3>
 
+<p>
+Use <strong>＋ Add file</strong> to create or upload a file.
+</p>
 
-    list.innerHTML =
-        files.map(
-            function(file){
+</div>
 
-                const icon =
-                    file.is_binary
-                    ? "📦"
-                    : "📄";
+`;
 
-
-                return `
-                <div
-                    class="file-row"
-                    data-file-name="${escapeHtml(file.file_path || "")}"
-                >
-
-                    <div class="file-info">
-
-                        <div class="file-icon">
-                            ${icon}
-                        </div>
-
-                        <a
-                            class="file-name"
-                            href="repository-explorer.html?repository_id=${encodeURIComponent(repositoryId)}${file.branch_id ? "&branch_id=" + encodeURIComponent(file.branch_id) : ""}"
-                        >
-                            ${escapeHtml(file.file_path || "")}
-                        </a>
-
-                    </div>
-
-                    <div class="file-meta">
-                        ${escapeHtml(file.language || "File")}
-                    </div>
-
-                </div>
-                `;
-
-            }
-        ).join("");
+return;
 
 }
 
+list.innerHTML =
+files.map(file => {
 
-/* =====================================================
-   FILTER
-===================================================== */
+const icon =
+getFileIcon(file);
+
+const type =
+getFileType(file);
+
+const size =
+file.file_size
+?
+formatSize(file.file_size)
+:
+(
+file.is_binary
+?
+"Binary"
+:
+"Text"
+);
+
+return `
+
+<div class="file-row">
+
+<div class="file-main">
+
+<div class="file-icon">
+${icon}
+</div>
+
+<div class="file-details">
+
+<a
+href="#"
+class="file-name"
+onclick="openFile('${escapeHtml(file.id)}');return false;">
+
+${escapeHtml(file.file_path)}
+
+</a>
+
+<div class="file-sub">
+
+${escapeHtml(type)}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="file-meta">
+
+<span class="type-badge">
+${escapeHtml(type)}
+</span>
+
+<span>
+${escapeHtml(size)}
+</span>
+
+<div class="file-actions">
+
+<button
+class="btn"
+onclick="openFile('${escapeHtml(file.id)}')">
+
+Open
+
+</button>
+
+${
+repository &&
+repository.owner_id === currentUser.id
+?
+`
+
+<button
+class="btn"
+onclick="editFile('${escapeHtml(file.id)}')">
+
+✏️ Edit
+
+</button>
+
+<button
+class="btn btn-danger"
+onclick="deleteFile('${escapeHtml(file.id)}')">
+
+🗑️
+
+</button>
+
+`
+:
+""
+}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}).join("");
+
+}
+
+/* =========================================
+   OPEN FILE
+========================================= */
+
+function openFile(fileId){
+
+window.location.href =
+"file-editor.html" +
+"?repository_id=" +
+encodeURIComponent(repoId) +
+"&file_id=" +
+encodeURIComponent(fileId) +
+"&branch_id=" +
+encodeURIComponent(
+currentBranch.id
+);
+
+}
+
+/* =========================================
+   EDIT FILE
+========================================= */
+
+function editFile(fileId){
+
+window.location.href =
+"file-editor.html" +
+"?repository_id=" +
+encodeURIComponent(repoId) +
+"&file_id=" +
+encodeURIComponent(fileId) +
+"&branch_id=" +
+encodeURIComponent(
+currentBranch.id
+);
+
+}
+
+/* =========================================
+   DELETE FILE
+========================================= */
+
+async function deleteFile(fileId){
+
+if(
+!repository ||
+repository.owner_id !==
+currentUser.id
+){
+
+alert(
+"You are not authorized."
+);
+
+return;
+
+}
+
+const file =
+allFiles.find(
+item =>
+item.id === fileId
+);
+
+if(!file)
+return;
+
+const confirmed =
+confirm(
+'Delete "' +
+file.file_path +
+'" permanently from branch "' +
+currentBranch.name +
+'"?'
+);
+
+if(!confirmed)
+return;
+
+try{
+
+/* STORAGE */
+
+if(
+file.is_binary &&
+file.storage_path
+){
+
+const {
+error:storageError
+} =
+await supabaseClient
+
+.storage
+
+.from("repository-files")
+
+.remove([
+file.storage_path
+]);
+
+if(storageError)
+throw storageError;
+
+}
+
+/* DATABASE */
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.delete()
+
+.eq(
+"id",
+fileId
+)
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"branch_id",
+currentBranch.id
+);
+
+if(error)
+throw error;
+
+alert(
+"File deleted successfully."
+);
+
+await loadFiles();
+
+}
+catch(error){
+
+console.error(error);
+
+alert(
+"Delete failed: " +
+error.message
+);
+
+}
+
+}
+
+/* =========================================
+   SEARCH
+========================================= */
 
 function filterFiles(){
 
-    const search =
-        document.getElementById(
-            "searchInput"
-        ).value
-        .toLowerCase()
-        .trim();
+const query =
+document.getElementById(
+"searchInput"
+).value
+.trim()
+.toLowerCase();
 
+const filtered =
+allFiles.filter(
+file =>
+(
+file.file_path ||
+""
+)
+.toLowerCase()
+.includes(query)
+);
 
-    const rows =
-        document.querySelectorAll(
-            ".file-row"
-        );
-
-
-    rows.forEach(
-        function(row){
-
-            const name =
-                (
-                    row.dataset.fileName ||
-                    ""
-                ).toLowerCase();
-
-
-            if(
-                !search ||
-                name.includes(search)
-            ){
-
-                row.style.display =
-                    "flex";
-
-            }else{
-
-                row.style.display =
-                    "none";
-
-            }
-
-        }
-    );
+renderFiles(
+filtered
+);
 
 }
 
+/* =========================================
+   STAR STATUS
+========================================= */
 
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
+async function loadStarStatus(){
 
-function escapeHtml(value){
+try{
 
-    return String(value || "")
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+const {
+data,
+error
+} =
+await supabaseClient
 
-}
+.from("repository_stars")
 
+.select("repository_id")
 
-/* =====================================================
-   SETUP ALL LINKS
-===================================================== */
+.eq(
+"repository_id",
+repoId
+)
 
-function setupRepositoryLinks(repo){
+.eq(
+"user_id",
+currentUser.id
+)
 
-    if(
-        !repo ||
-        !repo.id
-    ){
+.maybeSingle();
 
-        return;
+if(error){
 
-    }
+console.warn(
+"Star status unavailable:",
+error
+);
 
-
-    const id =
-        encodeURIComponent(
-            repo.id
-        );
-
-
-    /* ISSUES */
-
-    const issuesButton =
-        document.getElementById(
-            "issuesButton"
-        );
-
-
-    if(issuesButton){
-
-        issuesButton.href =
-            "issues.html?repository_id=" +
-            id;
-
-    }
-
-
-    /* PULL REQUESTS */
-
-    const pullRequestsButton =
-        document.getElementById(
-            "pullRequestsButton"
-        );
-
-
-    if(pullRequestsButton){
-
-        pullRequestsButton.href =
-            "pull-requests.html?repository_id=" +
-            id;
-
-    }
-
-
-    /* FILES */
-
-    const filesButton =
-        document.getElementById(
-            "filesButton"
-        );
-
-
-    if(filesButton){
-
-        filesButton.href =
-            "repository-files.html?repository_id=" +
-            id;
-
-    }
-
-
-    /* EXPLORER */
-
-    const explorerButton =
-        document.getElementById(
-            "explorerButton"
-        );
-
-
-    if(explorerButton){
-
-        explorerButton.href =
-            "repository-explorer.html?repository_id=" +
-            id;
-
-    }
-
-
-    /* ADD FILE */
-
-    const newFileButton =
-        document.getElementById(
-            "newFileButton"
-        );
-
-
-    if(newFileButton){
-
-        newFileButton.href =
-            "repository-add-file.html?repository_id=" +
-            id;
-
-    }
-
-
-    /* OPEN FILES */
-
-    const openFilesAction =
-        document.getElementById(
-            "openFilesAction"
-        );
-
-
-    if(openFilesAction){
-
-        openFilesAction.href =
-            "repository-files.html?repository_id=" +
-            id;
-
-    }
-
-
-    /* EDIT */
-
-    const editAction =
-        document.getElementById(
-            "editAction"
-        );
-
-
-    if(editAction){
-
-        editAction.href =
-            "repository-edit.html?repository_id=" +
-            id;
-
-    }
+return;
 
 }
 
+isStarred =
+!!data;
 
-/* =====================================================
-   STAR
-===================================================== */
+updateStarButton();
 
-async function loadStar(){
+}
+catch(error){
 
-    if(!repository){
-
-        return;
-
-    }
-
-
-    document.getElementById(
-        "starCount"
-    ).textContent =
-        repository.stars_count || 0;
-
-
-    if(!currentUser){
-
-        return;
-
-    }
-
-
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .from("repository_stars")
-        .select("repository_id")
-        .eq(
-            "repository_id",
-            repository.id
-        )
-        .eq(
-            "user_id",
-            currentUser.id
-        )
-        .maybeSingle();
-
-
-    if(error){
-
-        console.error(error);
-
-        return;
-
-    }
-
-
-    setStarred(
-        !!data
-    );
+console.warn(error);
 
 }
 
+}
 
-/* =====================================================
-   STAR UI
-===================================================== */
+/* =========================================
+   UPDATE STAR
+========================================= */
 
-function setStarred(value){
+function updateStarButton(){
 
-    const button =
-        document.getElementById(
-            "starButton"
-        );
+const button =
+document.getElementById(
+"starButton"
+);
 
-    const icon =
-        document.getElementById(
-            "starIcon"
-        );
+if(isStarred){
 
-    const text =
-        document.getElementById(
-            "starText"
-        );
+button.textContent =
+"★ Starred";
 
+button.classList.add(
+"starred"
+);
 
-    if(value){
+}
+else{
 
-        button.classList.add(
-            "starred"
-        );
+button.textContent =
+"☆ Star";
 
-        icon.textContent =
-            "★";
-
-        text.textContent =
-            "Starred";
-
-    }else{
-
-        button.classList.remove(
-            "starred"
-        );
-
-        icon.textContent =
-            "☆";
-
-        text.textContent =
-            "Star";
-
-    }
+button.classList.remove(
+"starred"
+);
 
 }
 
+}
 
-/* =====================================================
+/* =========================================
    TOGGLE STAR
-===================================================== */
+========================================= */
 
 async function toggleStar(){
 
-    if(!currentUser){
+if(!currentUser){
 
-        alert(
-            "Please login first to star this repository."
-        );
+alert(
+"Please login first."
+);
 
-        return;
-
-    }
-
-
-    if(repository.is_private){
-
-        alert(
-            "Private repositories cannot be starred."
-        );
-
-        return;
-
-    }
-
-
-    const {
-        data:existing,
-        error:checkError
-    } =
-    await supabaseClient
-        .from("repository_stars")
-        .select("repository_id")
-        .eq(
-            "repository_id",
-            repository.id
-        )
-        .eq(
-            "user_id",
-            currentUser.id
-        )
-        .maybeSingle();
-
-
-    if(checkError){
-
-        alert(
-            checkError.message
-        );
-
-        return;
-
-    }
-
-
-    if(existing){
-
-        const {
-            error
-        } =
-        await supabaseClient
-            .from("repository_stars")
-            .delete()
-            .eq(
-                "repository_id",
-                repository.id
-            )
-            .eq(
-                "user_id",
-                currentUser.id
-            );
-
-
-        if(error){
-
-            alert(
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        setStarred(false);
-
-
-    }else{
-
-        const {
-            error
-        } =
-        await supabaseClient
-            .from("repository_stars")
-            .insert({
-
-                repository_id:
-                    repository.id,
-
-                user_id:
-                    currentUser.id
-
-            });
-
-
-        if(error){
-
-            alert(
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        setStarred(true);
-
-    }
-
-
-    await refreshStarCount();
+return;
 
 }
 
+try{
 
-/* =====================================================
+if(isStarred){
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_stars")
+
+.delete()
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"user_id",
+currentUser.id
+);
+
+if(error)
+throw error;
+
+isStarred =
+false;
+
+}
+else{
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_stars")
+
+.insert({
+
+repository_id:
+repoId,
+
+user_id:
+currentUser.id
+
+});
+
+if(error)
+throw error;
+
+isStarred =
+true;
+
+}
+
+await refreshStarCount();
+
+updateStarButton();
+
+}
+catch(error){
+
+console.error(error);
+
+alert(
+"Unable to update star."
+);
+
+}
+
+}
+
+/* =========================================
    REFRESH STAR COUNT
-===================================================== */
+========================================= */
 
 async function refreshStarCount(){
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .from("repositories")
-        .select(
-            "stars_count"
-        )
-        .eq(
-            "id",
-            repository.id
-        )
-        .single();
+const {
+data,
+error
+} =
+await supabaseClient
 
+.from("repositories")
 
-    if(
-        !error &&
-        data
-    ){
+.select("stars_count")
 
-        repository.stars_count =
-            data.stars_count || 0;
+.eq(
+"id",
+repoId
+)
 
+.single();
 
-        document.getElementById(
-            "starCount"
-        ).textContent =
-            repository.stars_count;
+if(error)
+return;
 
-    }
+document.getElementById(
+"starCount"
+).textContent =
+data.stars_count || 0;
+
+}
+
+/* =========================================
+   ADD MENU
+========================================= */
+
+function toggleAddMenu(){
+
+const menu =
+document.getElementById(
+"addMenu"
+);
+
+menu.classList.toggle(
+"show"
+);
+
+}
+
+/* =========================================
+   CLOSE MENUS
+========================================= */
+
+document.addEventListener(
+"click",
+function(event){
+
+const addWrapper =
+document.querySelector(
+".add-wrapper"
+);
+
+const branchWrapper =
+document.querySelector(
+".branch-wrapper"
+);
+
+if(
+addWrapper &&
+!addWrapper.contains(
+event.target
+)
+){
+
+document
+.getElementById(
+"addMenu"
+)
+.classList
+.remove("show");
+
+}
+
+if(
+branchWrapper &&
+!branchWrapper.contains(
+event.target
+)
+){
+
+closeBranchMenu();
+
+}
+
+}
+);
+
+/* =========================================
+   CREATE BRANCH MODAL
+========================================= */
+
+function openCreateBranchModal(){
+
+closeBranchMenu();
+
+document.getElementById(
+"newBranchName"
+).value =
+"";
+
+document.getElementById(
+"branchSourceText"
+).textContent =
+currentBranch
+?
+currentBranch.name
+:
+"main";
+
+document.getElementById(
+"createBranchModal"
+).classList.add(
+"show"
+);
+
+setTimeout(
+function(){
+
+document.getElementById(
+"newBranchName"
+).focus();
+
+},
+100
+);
+
+}
+
+/* =========================================
+   CLOSE CREATE BRANCH
+========================================= */
+
+function closeCreateBranchModal(){
+
+document.getElementById(
+"createBranchModal"
+).classList.remove(
+"show"
+);
+
+}
+
+/* =========================================
+   CREATE BRANCH
+========================================= */
+
+async function createBranch(){
+
+/* =========================
+   BASIC CHECK
+========================= */
+
+if(
+!currentUser ||
+!repository ||
+!currentBranch
+){
+
+alert(
+"Repository information is not ready."
+);
+
+return;
 
 }
 
 
-/* =====================================================
-   PUBLISH STATUS
-===================================================== */
+/* =========================
+   OWNER CHECK
+========================= */
 
-function updatePublishStatus(){
+if(
+repository.owner_id !==
+currentUser.id
+){
 
-    const badge =
-        document.getElementById(
-            "publishBadge"
-        );
+alert(
+"Only the repository owner can create a branch."
+);
 
-    const visit =
-        document.getElementById(
-            "visitWebsiteButton"
-        );
-
-
-    if(repository.is_published){
-
-        badge.textContent =
-            "✓ Published";
-
-        badge.className =
-            "badge published";
-
-
-        visit.style.display =
-            "inline-block";
-
-
-        visit.href =
-            "published-website.html?repository_id=" +
-            encodeURIComponent(
-                repository.id
-            );
-
-    }else{
-
-        badge.textContent =
-            "Not published";
-
-        badge.className =
-            "badge";
-
-
-        visit.style.display =
-            "none";
-
-    }
+return;
 
 }
 
 
-/* =====================================================
-   PUBLISH WEBSITE
-===================================================== */
+/* =========================
+   GET NAME
+========================= */
 
-async function publishWebsite(){
+const input =
+document.getElementById(
+"newBranchName"
+);
 
-    if(!repository){
-
-        return;
-
-    }
-
-
-    if(!currentUser){
-
-        alert(
-            "Please login first."
-        );
-
-        return;
-
-    }
+const branchName =
+input.value.trim();
 
 
-    const button =
-        document.getElementById(
-            "publishAction"
-        );
+if(!branchName){
 
+alert(
+"Please enter a branch name."
+);
 
-    button.disabled =
-        true;
+input.focus();
 
-
-    button.textContent =
-        "Publishing...";
-
-
-    try{
-
-        let query =
-            supabaseClient
-                .from("repository_files")
-                .select("id")
-                .eq(
-                    "repository_id",
-                    repository.id
-                )
-                .eq(
-                    "file_path",
-                    "index.html"
-                );
-
-
-        if(mainBranch){
-
-            query =
-                query.eq(
-                    "branch_id",
-                    mainBranch.id
-                );
-
-        }
-
-
-        const {
-            data:indexFile,
-            error:fileError
-        } =
-        await query
-            .maybeSingle();
-
-
-        if(fileError){
-
-            throw fileError;
-
-        }
-
-
-        if(!indexFile){
-
-            alert(
-                "index.html was not found in the main branch."
-            );
-
-            return;
-
-        }
-
-
-        const {
-            error
-        } =
-        await supabaseClient
-            .from("repositories")
-            .update({
-
-                is_published:true,
-
-                published_at:
-                    new Date().toISOString()
-
-            })
-            .eq(
-                "id",
-                repository.id
-            );
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-        repository.is_published =
-            true;
-
-
-        updatePublishStatus();
-
-
-        showSuccess(
-            "Website published successfully."
-        );
-
-
-    }catch(error){
-
-        console.error(error);
-
-
-        alert(
-            error.message ||
-            "Publishing failed."
-        );
-
-
-    }finally{
-
-        button.disabled =
-            false;
-
-
-        button.textContent =
-            "🚀 Publish Website";
-
-    }
+return;
 
 }
 
 
-/* =====================================================
-   COMING SOON
-===================================================== */
+/* =========================
+   VALIDATE NAME
+========================= */
 
-function showComingSoon(feature){
+if(
+branchName.length > 100 ||
+branchName.includes(" ") ||
+branchName.includes("..") ||
+branchName.startsWith(".") ||
+branchName.endsWith(".") ||
+branchName.includes("~") ||
+branchName.includes("^") ||
+branchName.includes(":") ||
+branchName.includes("?") ||
+branchName.includes("*") ||
+branchName.includes("[") ||
+branchName.includes("\\")
+){
 
-    document.getElementById(
-        "modalTitle"
-    ).textContent =
-        feature +
-        " — Coming Soon";
+alert(
+"Invalid branch name.\n\nExample: feature-login"
+);
 
-
-    document.getElementById(
-        "modalMessage"
-    ).textContent =
-        feature +
-        " feature is coming soon to ASIM TECH.";
-
-
-    document.getElementById(
-        "modal"
-    ).style.display =
-        "flex";
-
-}
-
-
-/* =====================================================
-   CLOSE MODAL
-===================================================== */
-
-function closeModal(){
-
-    document.getElementById(
-        "modal"
-    ).style.display =
-        "none";
+return;
 
 }
 
 
-/* =====================================================
-   CLOSE MODAL OUTSIDE
-===================================================== */
+/* =========================
+   DUPLICATE
+========================= */
 
-window.addEventListener(
-    "click",
-    function(event){
+const duplicate =
+allBranches.some(
+branch =>
+branch.name.toLowerCase() ===
+branchName.toLowerCase()
+);
 
-        const modal =
-            document.getElementById(
-                "modal"
-            );
+if(duplicate){
+
+alert(
+"That branch already exists."
+);
+
+return;
+
+}
 
 
-        if(
-            event.target === modal
-        ){
+/* =========================
+   BUTTON
+========================= */
 
-            closeModal();
+const button =
+document.getElementById(
+"createBranchButton"
+);
 
-        }
+button.disabled =
+true;
 
-    }
+button.textContent =
+"Creating...";
+
+
+/* =========================
+   NEW BRANCH VARIABLE
+========================= */
+
+let newBranch =
+null;
+
+
+try{
+
+/* =========================
+   CREATE DATABASE BRANCH
+========================= */
+
+const {
+data,
+error:branchError
+} =
+await supabaseClient
+
+.from("repository_branches")
+
+.insert({
+
+repository_id:
+repoId,
+
+name:
+branchName,
+
+created_by:
+currentUser.id
+
+})
+
+.select("*")
+
+.single();
+
+
+if(branchError){
+
+console.error(
+"Branch creation error:",
+branchError
+);
+
+throw new Error(
+branchError.message ||
+"Unable to create branch."
+);
+
+}
+
+
+newBranch =
+data;
+
+
+if(!newBranch){
+
+throw new Error(
+"Branch was not created."
+);
+
+}
+
+
+/* =========================
+   LOAD SOURCE FILES
+========================= */
+
+const {
+data:sourceFiles,
+error:fileError
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.select(
+"file_path,content,language,storage_path,mime_type,file_size,is_binary"
+)
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"branch_id",
+currentBranch.id
 );
 
 
-/* =====================================================
+if(fileError){
+
+console.error(
+"Source file loading error:",
+fileError
+);
+
+throw new Error(
+fileError.message ||
+"Unable to load source files."
+);
+
+}
+
+
+/* =========================
+   COPY FILES
+========================= */
+
+if(
+sourceFiles &&
+sourceFiles.length > 0
+){
+
+const copiedFiles =
+sourceFiles.map(
+file => ({
+
+repository_id:
+repoId,
+
+branch_id:
+newBranch.id,
+
+file_path:
+file.file_path,
+
+content:
+file.content,
+
+language:
+file.language,
+
+storage_path:
+file.storage_path,
+
+mime_type:
+file.mime_type,
+
+file_size:
+file.file_size,
+
+is_binary:
+file.is_binary
+
+})
+);
+
+
+const {
+error:copyError
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.insert(
+copiedFiles
+);
+
+
+if(copyError){
+
+console.error(
+"File copy error:",
+copyError
+);
+
+throw new Error(
+copyError.message ||
+"Unable to copy files."
+);
+
+}
+
+}
+
+
+/* =========================
+   UPDATE LOCAL STATE
+========================= */
+
+allBranches.push(
+newBranch
+);
+
+currentBranch =
+newBranch;
+
+
+/* =========================
+   UPDATE UI
+========================= */
+
+updateBranchUI();
+
+renderBranchList();
+
+updatePageLinks();
+
+closeCreateBranchModal();
+
+await loadFiles();
+
+
+/* =========================
+   SUCCESS
+========================= */
+
+alert(
+'Branch "' +
+branchName +
+'" created successfully.'
+);
+
+}
+catch(error){
+
+console.error(
+"Create branch failed:",
+error
+);
+
+
+/* =========================
+   CLEANUP
+========================= */
+
+if(
+newBranch &&
+newBranch.id
+){
+
+try{
+
+await supabaseClient
+
+.from("repository_files")
+
+.delete()
+
+.eq(
+"branch_id",
+newBranch.id
+);
+
+await supabaseClient
+
+.from("repository_branches")
+
+.delete()
+
+.eq(
+"id",
+newBranch.id
+);
+
+}
+catch(cleanupError){
+
+console.error(
+"Branch cleanup failed:",
+cleanupError
+);
+
+}
+
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+alert(
+"Unable to create branch:\n\n" +
+(
+error.message ||
+"Unknown error"
+)
+);
+
+}
+finally{
+
+button.disabled =
+false;
+
+button.textContent =
+"Create branch";
+
+}
+
+}
+
+/* =========================================
+   GENERAL MODAL
+========================================= */
+
+function comingSoon(feature){
+
+document.getElementById(
+"modalTitle"
+).textContent =
+feature;
+
+document.getElementById(
+"modalText"
+).textContent =
+feature +
+" is coming soon in ASIM TECH.";
+
+document.getElementById(
+"modal"
+).classList.add(
+"show"
+);
+
+}
+
+function closeModal(){
+
+document.getElementById(
+"modal"
+).classList.remove(
+"show"
+);
+
+}
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(value){
+
+return String(
+value || ""
+)
+
+.replace(
+/&/g,
+"&amp;"
+)
+
+.replace(
+/</g,
+"&lt;"
+)
+
+.replace(
+/>/g,
+"&gt;"
+)
+
+.replace(
+/"/g,
+"&quot;"
+)
+
+.replace(
+/'/g,
+"&#039;"
+);
+
+}
+
+/* =========================================
    START
-===================================================== */
+========================================= */
 
 init();
 
