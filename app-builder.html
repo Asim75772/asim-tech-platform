@@ -5,10 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>App Builder — ASIM TECH</title>
 
@@ -101,7 +98,7 @@ body{
 .btn{
     border:1px solid #30363d;
     border-radius:7px;
-    padding:10px 15px;
+    padding:10px 14px;
     font-size:14px;
     font-weight:bold;
     cursor:pointer;
@@ -124,13 +121,13 @@ body{
     color:#fff;
 }
 
-.publish{
-    background:#8957e5;
+.download{
+    background:#0969da;
     color:#fff;
 }
 
-.download{
-    background:#0969da;
+.publish{
+    background:#8957e5;
     color:#fff;
 }
 
@@ -215,9 +212,6 @@ body{
 }
 
 .editor-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
     padding:13px 15px;
     border-bottom:1px solid #30363d;
 }
@@ -242,11 +236,7 @@ textarea{
     background:#0d1117;
     color:#e6edf3;
     padding:18px;
-    font-family:
-        Consolas,
-        Monaco,
-        "Courier New",
-        monospace;
+    font-family:Consolas,Monaco,"Courier New",monospace;
     font-size:14px;
     line-height:1.6;
 }
@@ -390,7 +380,7 @@ textarea{
     .header-actions .btn{
         flex:1;
         text-align:center;
-        min-width:80px;
+        min-width:75px;
     }
 
     .builder{
@@ -407,31 +397,21 @@ textarea{
 
 </head>
 
-
 <body>
-
 
 <nav class="navbar">
 
     <div class="logo">
-
         <span class="green">ASIM</span> TECH
-
     </div>
 
     <div class="nav-right">
 
-        <a
-            href="apps.html"
-            class="nav-link"
-        >
+        <a href="apps.html" class="nav-link">
             📱 Apps
         </a>
 
-        <a
-            href="dashboard.html"
-            class="nav-link"
-        >
+        <a href="dashboard.html" class="nav-link">
             Dashboard
         </a>
 
@@ -447,9 +427,7 @@ textarea{
 
         <div>
 
-            <h1>
-                🛠️ App Builder
-            </h1>
+            <h1>🛠️ App Builder</h1>
 
             <p>
                 Build your own application with ASIM TECH.
@@ -460,10 +438,7 @@ textarea{
 
         <div class="header-actions">
 
-            <a
-                href="apps.html"
-                class="btn back"
-            >
+            <a href="apps.html" class="btn back">
                 ← Apps
             </a>
 
@@ -504,16 +479,10 @@ textarea{
     </div>
 
 
-    <div
-        id="message"
-        class="message"
-    ></div>
+    <div id="message" class="message"></div>
 
 
-    <div
-        id="appInfo"
-        class="app-info"
-    >
+    <div id="appInfo" class="app-info">
         Loading app...
     </div>
 
@@ -521,25 +490,19 @@ textarea{
     <div class="builder">
 
 
-        <!-- APP FILES -->
-
         <div class="panel">
 
             <div class="panel-title">
                 📁 App Files
             </div>
 
-            <div
-                id="fileList"
-                class="file-list"
-            >
+            <div id="fileList" class="file-list">
 
                 <div class="loading">
                     Loading files...
                 </div>
 
             </div>
-
 
             <button
                 type="button"
@@ -552,28 +515,22 @@ textarea{
         </div>
 
 
-        <!-- CODE EDITOR -->
-
         <div class="panel editor-panel">
 
             <div class="editor-header">
 
-                <div>
+                <div
+                    id="currentFileName"
+                    class="file-name"
+                >
+                    No file selected
+                </div>
 
-                    <div
-                        id="currentFileName"
-                        class="file-name"
-                    >
-                        No file selected
-                    </div>
-
-                    <div
-                        id="currentLanguage"
-                        class="language"
-                    >
-                        -
-                    </div>
-
+                <div
+                    id="currentLanguage"
+                    class="language"
+                >
+                    -
                 </div>
 
             </div>
@@ -603,19 +560,12 @@ textarea{
 
         </div>
 
-
     </div>
-
 
 </main>
 
 
-<!-- CREATE FILE MODAL -->
-
-<div
-    id="fileModal"
-    class="modal"
->
+<div id="fileModal" class="modal">
 
     <div class="modal-box">
 
@@ -678,7 +628,7 @@ const supabaseClient =
 
 
 /* =====================================================
-   APP ID
+   APP
 ===================================================== */
 
 const params =
@@ -689,10 +639,6 @@ const params =
 const appId =
     params.get("id");
 
-
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
 
 let currentUser = null;
 let currentApp = null;
@@ -755,7 +701,7 @@ function showMessage(
 
 
 /* =====================================================
-   ESCAPE HTML
+   ESCAPE
 ===================================================== */
 
 function escapeHtml(value){
@@ -814,11 +760,8 @@ async function checkLogin(){
     } =
         await supabaseClient.auth.getSession();
 
-    if(error){
-
+    if(error)
         throw error;
-
-    }
 
     if(!session){
 
@@ -867,29 +810,15 @@ async function loadApp(){
             error
         } =
             await supabaseClient
-
                 .from("apps")
-
                 .select("*")
-
-                .eq(
-                    "id",
-                    appId
-                )
-
-                .eq(
-                    "owner_id",
-                    currentUser.id
-                )
-
+                .eq("id",appId)
+                .eq("owner_id",currentUser.id)
                 .single();
 
 
-        if(error){
-
+        if(error)
             throw error;
-
-        }
 
 
         currentApp =
@@ -905,7 +834,10 @@ async function loadApp(){
     }
     catch(error){
 
-        console.error(error);
+        console.error(
+            "Load app error:",
+            error
+        );
 
         appInfo.innerHTML =
             "<strong>Unable to load app.</strong>";
@@ -921,7 +853,7 @@ async function loadApp(){
 
 
 /* =====================================================
-   UPDATE APP INFO
+   APP INFO
 ===================================================== */
 
 function updateAppInfo(){
@@ -962,25 +894,14 @@ function updateAppInfo(){
 
 async function loadFiles(){
 
-    fileList.innerHTML =
-        "<div class='loading'>Loading files...</div>";
-
-
     const {
         data,
         error
     } =
         await supabaseClient
-
             .from("app_files")
-
             .select("*")
-
-            .eq(
-                "app_id",
-                appId
-            )
-
+            .eq("app_id",appId)
             .order(
                 "file_path",
                 {
@@ -1060,40 +981,38 @@ function renderFiles(){
 
 
     fileList.innerHTML =
-        appFiles
-            .map(
-                function(file){
+        appFiles.map(
+            function(file){
 
-                    const active =
-                        currentFile &&
-                        currentFile.id === file.id
-                        ? "active"
-                        : "";
+                const active =
+                    currentFile &&
+                    currentFile.id === file.id
+                    ? "active"
+                    : "";
 
-                    return `
+                return `
 
-                        <button
-                            type="button"
-                            class="file ${active}"
-                            onclick="selectFileById('${file.id}')"
-                        >
+                    <button
+                        type="button"
+                        class="file ${active}"
+                        onclick="selectFileById('${file.id}')"
+                    >
+                        📄
+                        ${escapeHtml(
+                            file.file_path
+                        )}
+                    </button>
 
-                            📄
-                            ${escapeHtml(file.file_path)}
+                `;
 
-                        </button>
-
-                    `;
-
-                }
-            )
-            .join("");
+            }
+        ).join("");
 
 }
 
 
 /* =====================================================
-   SELECT FILE BY ID
+   SELECT FILE
 ===================================================== */
 
 function selectFileById(id){
@@ -1114,10 +1033,6 @@ function selectFileById(id){
 }
 
 
-/* =====================================================
-   SELECT FILE
-===================================================== */
-
 function selectFile(file){
 
     currentFile =
@@ -1130,7 +1045,9 @@ function selectFile(file){
 
     currentLanguage.textContent =
         file.language ||
-        detectLanguage(file.file_path);
+        detectLanguage(
+            file.file_path
+        );
 
 
     codeEditor.value =
@@ -1147,7 +1064,7 @@ function selectFile(file){
 
 
 /* =====================================================
-   SAVE FILE
+   SAVE
 ===================================================== */
 
 async function saveFile(){
@@ -1170,21 +1087,16 @@ async function saveFile(){
 
     try{
 
-        const newContent =
-            codeEditor.value;
-
-
         const {
             data,
             error
         } =
             await supabaseClient
-
                 .from("app_files")
-
                 .update({
 
-                    content:newContent,
+                    content:
+                        codeEditor.value,
 
                     language:
                         detectLanguage(
@@ -1195,17 +1107,8 @@ async function saveFile(){
                         new Date().toISOString()
 
                 })
-
-                .eq(
-                    "id",
-                    currentFile.id
-                )
-
-                .eq(
-                    "app_id",
-                    appId
-                )
-
+                .eq("id",currentFile.id)
+                .eq("app_id",appId)
                 .select()
                 .single();
 
@@ -1326,7 +1229,7 @@ async function createFile(){
     }
 
 
-    if(
+    const duplicate =
         appFiles.some(
             function(file){
 
@@ -1335,8 +1238,10 @@ async function createFile(){
                     === fileName.toLowerCase();
 
             }
-        )
-    ){
+        );
+
+
+    if(duplicate){
 
         showMessage(
             "This file already exists.",
@@ -1355,16 +1260,19 @@ async function createFile(){
             error
         } =
             await supabaseClient
-
                 .from("app_files")
-
                 .insert({
 
-                    app_id:appId,
+                    app_id:
+                        appId,
 
-                    file_path:fileName,
+                    file_path:
+                        fileName,
 
-                    content:"",
+                    content:
+                        getStarterContent(
+                            fileName
+                        ),
 
                     language:
                         detectLanguage(
@@ -1372,7 +1280,6 @@ async function createFile(){
                         )
 
                 })
-
                 .select()
                 .single();
 
@@ -1384,10 +1291,10 @@ async function createFile(){
         appFiles.push(data);
 
 
-        renderFiles();
-
-
         closeFileModal();
+
+
+        renderFiles();
 
 
         selectFile(data);
@@ -1414,12 +1321,75 @@ async function createFile(){
 
 
 /* =====================================================
-   BUILD PREVIEW HTML
+   STARTER CONTENT
+===================================================== */
+
+function getStarterContent(fileName){
+
+    const language =
+        detectLanguage(fileName);
+
+
+    if(language === "HTML"){
+
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My ASIM TECH App</title>
+</head>
+<body>
+
+<h1>Hello from ASIM TECH!</h1>
+
+<p>Start building your app here.</p>
+
+</body>
+</html>`;
+
+    }
+
+
+    if(language === "CSS"){
+
+        return `body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 30px;
+}`;
+
+    }
+
+
+    if(language === "JavaScript"){
+
+        return `console.log("Hello from ASIM TECH App!");`;
+
+    }
+
+
+    if(language === "JSON"){
+
+        return `{
+    "name": "My ASIM TECH App"
+}`;
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =====================================================
+   BUILD PREVIEW
 ===================================================== */
 
 function buildPreview(){
 
-    let htmlFile =
+    const htmlFile =
         appFiles.find(
             function(file){
 
@@ -1433,43 +1403,15 @@ function buildPreview(){
 
     if(!htmlFile){
 
-        htmlFile =
-            appFiles.find(
-                function(file){
-
-                    return file.file_path
-                        .toLowerCase()
-                        .endsWith(".html");
-
-                }
-            );
-
-    }
-
-
-    if(!htmlFile){
-
         return `
-
-            <!DOCTYPE html>
-
-            <html>
-
-            <body>
-
-                <h2>
-                    No HTML file found
-                </h2>
-
-                <p>
-                    Create index.html first.
-                </p>
-
-            </body>
-
-            </html>
-
-        `;
+<!DOCTYPE html>
+<html>
+<body>
+<h2>No index.html found</h2>
+<p>Create index.html first.</p>
+</body>
+</html>
+`;
 
     }
 
@@ -1479,11 +1421,11 @@ function buildPreview(){
 
 
     /*
-       INLINE CSS FILES
+       CSS FILES
     */
 
-    appFiles
-        .filter(
+    const cssFiles =
+        appFiles.filter(
             function(file){
 
                 return file.file_path
@@ -1491,46 +1433,58 @@ function buildPreview(){
                     .endsWith(".css");
 
             }
-        )
-        .forEach(
-            function(cssFile){
-
-                const css =
-                    cssFile.content || "";
-
-
-                const style =
-                    document.createElement("style");
-
-
-                style.textContent =
-                    css;
-
-
-                html =
-                    html.includes("</head>")
-                    ? html.replace(
-                        "</head>",
-                        "<style>"
-                        + css
-                        + "</style>"
-                        + "</head>"
-                    )
-                    : html
-                      + "<style>"
-                      + css
-                      + "</style>";
-
-            }
         );
 
 
+    cssFiles.forEach(
+        function(file){
+
+            const css =
+                file.content || "";
+
+
+            const cssBlock =
+                "<style>"
+                + css
+                + "</style>";
+
+
+            if(
+                html.toLowerCase()
+                    .includes("</head>")
+            ){
+
+                html =
+                    html.replace(
+                        /<\/head>/i,
+                        cssBlock +
+                        "</head>"
+                    );
+
+            }else{
+
+                html =
+                    cssBlock +
+                    html;
+
+            }
+
+        }
+    );
+
+
     /*
-       INLINE JAVASCRIPT FILES
+       JAVASCRIPT FILES
+
+       IMPORTANT:
+       The closing script tag is built
+       from separate strings so that
+       this page's own script cannot
+       be terminated accidentally.
     */
 
-    appFiles
-        .filter(
+    const jsFiles =
+        appFiles.filter(
             function(file){
 
                 return file.file_path
@@ -1538,30 +1492,48 @@ function buildPreview(){
                     .endsWith(".js");
 
             }
-        )
-        .forEach(
-            function(jsFile){
+        );
 
-                const js =
-                    jsFile.content || "";
 
+    jsFiles.forEach(
+        function(file){
+
+            const js =
+                file.content || "";
+
+
+            const closingTag =
+                "<"
+                + "/script>";
+
+
+            const jsBlock =
+                "<script>"
+                + js
+                + closingTag;
+
+
+            if(
+                html.toLowerCase()
+                    .includes("</body>")
+            ){
 
                 html =
-                    html.includes("</body>")
-                    ? html.replace(
-                        "</body>",
-                        "<script>"
-                        + js
-                        + "</script>"
-                        + "</body>"
-                    )
-                    : html
-                      + "<script>"
-                      + js
-                      + "</script>";
+                    html.replace(
+                        /<\/body>/i,
+                        jsBlock +
+                        "</body>"
+                    );
+
+            }else{
+
+                html +=
+                    jsBlock;
 
             }
-        );
+
+        }
+    );
 
 
     return html;
@@ -1609,21 +1581,11 @@ function previewApp(){
         "_blank"
     );
 
-
-    setTimeout(
-        function(){
-
-            URL.revokeObjectURL(url);
-
-        },
-        10000
-    );
-
 }
 
 
 /* =====================================================
-   DOWNLOAD APP
+   DOWNLOAD
 ===================================================== */
 
 function downloadApp(){
@@ -1682,7 +1644,9 @@ function downloadApp(){
         + ".html";
 
 
-    document.body.appendChild(link);
+    document.body.appendChild(
+        link
+    );
 
 
     link.click();
@@ -1709,7 +1673,7 @@ function downloadApp(){
 
 
 /* =====================================================
-   PUBLISH APP
+   PUBLISH
 ===================================================== */
 
 async function publishApp(){
@@ -1753,10 +1717,10 @@ async function publishApp(){
     const confirmed =
         confirm(
             "Publish this app?\n\n"
-            + "App: "
-            + currentApp.name
-            + "\n\n"
-            + "The app will become public."
+            +
+            "App: "
+            +
+            currentApp.name
         );
 
 
@@ -1771,9 +1735,7 @@ async function publishApp(){
             error
         } =
             await supabaseClient
-
                 .from("apps")
-
                 .update({
 
                     is_published:true,
@@ -1785,17 +1747,14 @@ async function publishApp(){
                         new Date().toISOString()
 
                 })
-
                 .eq(
                     "id",
                     currentApp.id
                 )
-
                 .eq(
                     "owner_id",
                     currentUser.id
                 )
-
                 .select()
                 .single();
 
@@ -1816,37 +1775,6 @@ async function publishApp(){
         );
 
 
-        setTimeout(
-            function(){
-
-                const html =
-                    buildPreview();
-
-
-                const blob =
-                    new Blob(
-                        [html],
-                        {
-                            type:"text/html"
-                        }
-                    );
-
-
-                const url =
-                    URL.createObjectURL(blob);
-
-
-                window.open(
-                    url,
-                    "_blank"
-                );
-
-
-            },
-            700
-        );
-
-
     }
     catch(error){
 
@@ -1863,7 +1791,7 @@ async function publishApp(){
 
 
 /* =====================================================
-   KEYBOARD SHORTCUT
+   KEYBOARD SAVE
 ===================================================== */
 
 document.addEventListener(
@@ -1889,7 +1817,7 @@ document.addEventListener(
 
 
 /* =====================================================
-   MODAL CLICK OUTSIDE
+   CLOSE MODAL
 ===================================================== */
 
 document
