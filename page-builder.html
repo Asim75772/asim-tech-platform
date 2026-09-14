@@ -1,322 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web Page Builder - ASIM TECH</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Web Page Builder — ASIM TECH</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#07111f,#0b2233,#063b35);color:#fff;min-height:100vh}
-nav{background:#050c16;padding:16px 6%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.1)}
-.logo{font-size:22px;font-weight:bold;color:#36e0b5}nav a{color:#fff;text-decoration:none}
-.container{width:92%;max-width:1100px;margin:30px auto}
-h1{font-size:30px;margin-bottom:8px}.subtitle{color:#aab7c4;margin-bottom:25px;font-size:17px}
-.card{background:rgba(13,29,43,.95);border:1px solid rgba(255,255,255,.1);border-radius:15px;padding:20px;margin-bottom:20px}
-label{display:block;font-weight:bold;margin-bottom:8px}
-input,select,textarea{width:100%;padding:13px;border-radius:9px;border:1px solid #3a4a57;background:#081521;color:#fff;font-size:16px;outline:none}
-input:focus,select:focus,textarea:focus{border-color:#36e0b5}
-.field{margin-bottom:20px}textarea{min-height:260px;font-family:monospace;line-height:1.5;resize:vertical}
-.editors{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.editor-title{font-size:19px;font-weight:bold;margin-bottom:10px}.html-title{color:#ff7b72}.css-title{color:#58a6ff}.js-title{color:#e3b341}
-.preview{width:100%;height:550px;border:0;background:#fff;border-radius:9px;display:block}
-.buttons{display:flex;gap:12px;flex-wrap:wrap}
-button{border:0;border-radius:9px;padding:13px 20px;font-size:15px;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.55;cursor:not-allowed}
-.save{background:#16a34a;color:#fff}.preview-btn{background:#2563eb;color:#fff}.publish{background:#f59e0b;color:#111}.back{background:#64748b;color:#fff}
-.status{margin-top:15px;color:#aab7c4;word-break:break-word}.success{color:#36e0b5}.error{color:#ff7b72}
-.mode{display:inline-block;background:#17384a;color:#8edfc9;padding:7px 13px;border-radius:20px;font-size:13px;margin-bottom:20px}
-.help{margin-top:10px;color:#9fb0bd;font-size:13px;line-height:1.5}
-@media(max-width:800px){
-nav{flex-direction:column;align-items:flex-start;gap:12px}h1{font-size:25px}.editors{grid-template-columns:1fr}
-.buttons{flex-direction:column}.buttons button{width:100%}.container{width:94%;margin:20px auto}
-textarea{min-height:220px}.preview{height:600px}
-}
-</style>
-</head>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#07111f;color:#fff}nav{background:#050c16;padding:14px 5%;display:flex;justify-content:space-between;border-bottom:1px solid #263b4b}.logo{font-size:21px;font-weight:bold;color:#36e0b5}nav a{color:#fff;text-decoration:none}.container{width:94%;max-width:1250px;margin:22px auto}h1{font-size:29px;margin:0 0 6px}.sub,.hint,.status{color:#9fb0bd}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.mode{background:#17384a;color:#8edfc9;padding:7px 12px;border-radius:18px;font-size:12px}.tabs,.toolbar,.buttons,.actions{display:flex;gap:8px;flex-wrap:wrap}.tabs{margin:20px 0}.tab,.tool,button{border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer}.tab,.tool{background:#10202e;color:#fff;border:1px solid #355064}.tab.active{background:#1687d9}.card{background:#0d1d2b;border:1px solid #263b4b;border-radius:13px;padding:18px;margin-bottom:18px}.grid,.codegrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field{margin-bottom:15px}label{display:block;font-weight:bold;margin-bottom:7px}input,select,textarea{width:100%;padding:11px;border-radius:8px;border:1px solid #3a4d5c;background:#071521;color:#fff;font-size:15px}textarea{font-family:monospace;min-height:190px;resize:vertical}.title{font-size:18px;font-weight:bold;margin-bottom:12px}.canvaswrap{background:#081521;padding:12px;border-radius:10px}.canvas{background:#fff;color:#111;min-height:600px;padding:12px;border-radius:7px}.block{border:2px dashed transparent;padding:8px;margin:5px 0;cursor:pointer;position:relative}.block:hover,.block.selected{border-color:#36e0b5;background:#f0fffa}.handle{display:none;position:absolute;right:4px;top:3px;background:#36e0b5;color:#052019;padding:2px 6px;border-radius:4px;font-size:11px}.block:hover .handle,.block.selected .handle{display:block}.preview{width:100%;height:600px;border:0;background:#fff;border-radius:8px}.primary{background:#16a34a;color:#fff}.blue{background:#2563eb;color:#fff}.orange{background:#f59e0b;color:#111}.gray{background:#475569;color:#fff}.red{background:#dc2626;color:#fff}.hidden{display:none!important}.empty{text-align:center;padding:30px;color:#9fb0bd}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.success{color:#36e0b5}.error{color:#ff7b72}@media(max-width:850px){.grid,.codegrid{grid-template-columns:1fr}.container{width:95%}h1{font-size:24px}.canvas{min-height:500px}.preview{height:560px}}
+</style></head>
 <body>
-<nav>
-<div class="logo">⚡ ASIM TECH</div>
-<a href="dashboard.html">Dashboard</a>
-</nav>
-
+<nav><div class="logo">⚡ ASIM TECH</div><a href="websites.html">← My Websites</a></nav>
 <div class="container">
-<h1 id="pageTitle">🌐 Web Page Builder</h1>
-<p class="subtitle">Create your webpage using HTML, CSS and JavaScript.</p>
-<div id="modeLabel" class="mode">New Web Page</div>
-
-<div class="card">
-<div class="field">
-<label>📁 Repository</label>
-<select id="repository"><option value="">Loading repository...</option></select>
+<div class="head"><div><h1 id="pageTitle">🧩 Visual Web Page Builder</h1><div class="sub">Build a website visually — no coding required.</div></div><span id="mode" class="mode">New Website</span></div>
+<div class="tabs"><button class="tab active" id="visualTab" onclick="showMode('visual')">🧩 Visual Builder</button><button class="tab" id="codeTab" onclick="showMode('code')">💻 Advanced Code</button></div>
+<div class="card"><div class="grid"><div class="field"><label>📁 Repository</label><select id="repository"><option>Loading...</option></select></div><div class="field"><label>📝 Page Name</label><input id="pageName" placeholder="Example: index.html"></div></div></div>
+<div id="visualMode">
+<div class="card"><div class="title">➕ Add Elements</div><div class="toolbar"><button class="tool" onclick="addBlock('heading')">H Heading</button><button class="tool" onclick="addBlock('text')">📝 Text</button><button class="tool" onclick="addBlock('button')">🔘 Button</button><button class="tool" onclick="addBlock('image')">🖼️ Image</button><button class="tool" onclick="addBlock('card')">📦 Card</button><button class="tool" onclick="addBlock('navbar')">📋 Navbar</button><button class="tool" onclick="addBlock('contact')">📞 Contact</button><button class="tool" onclick="addBlock('footer')">🦶 Footer</button></div><div class="hint" style="margin-top:10px">Click an element in the canvas to edit it.</div></div>
+<div class="grid"><div class="card"><div class="title">👁️ Website Canvas</div><div class="canvaswrap"><div id="canvas" class="canvas"></div></div></div>
+<div class="card"><div class="title">⚙️ Element Properties</div><div id="noSelection" class="empty">Select an element to edit it.</div><div id="propertyEditor" class="hidden"><div class="field"><label>Text / Content</label><textarea id="propText" style="min-height:120px"></textarea></div><div class="two"><div><label>Font Size</label><input id="propSize" placeholder="24px"></div><div><label>Text Align</label><select id="propAlign"><option>left</option><option>center</option><option>right</option></select></div></div><div class="two"><div><label>Text Color</label><input id="propColor" placeholder="#111111"></div><div><label>Background</label><input id="propBg" placeholder="#ffffff"></div></div><div class="actions" style="margin-top:12px"><button class="blue" onclick="applyProperties()">✓ Apply</button><button class="gray" onclick="moveSelected(-1)">↑ Up</button><button class="gray" onclick="moveSelected(1)">↓ Down</button><button class="red" onclick="deleteSelected()">🗑 Delete</button></div></div></div></div>
 </div>
-<div class="field">
-<label>📝 Page Name</label>
-<input type="text" id="pageName" placeholder="Example: index.html">
+<div id="codeMode" class="hidden"><div class="card"><div class="title">💻 Advanced HTML / CSS / JavaScript</div><div class="codegrid"><div><label>HTML</label><textarea id="htmlCode"></textarea></div><div><label>CSS</label><textarea id="cssCode"></textarea></div><div><label>JavaScript</label><textarea id="jsCode"></textarea></div></div></div></div>
+<div class="card"><div class="title">🔎 Live Preview</div><iframe id="preview" class="preview" sandbox="allow-scripts allow-forms allow-modals"></iframe></div>
+<div class="card"><div class="buttons"><button class="blue" onclick="updatePreview()">👁️ Preview</button><button id="saveButton" class="primary" onclick="savePage()">💾 Save</button><button id="publishButton" class="orange" onclick="openPublish()" disabled>🚀 Publish</button><button class="gray" onclick="location.href='websites.html'">← Back</button></div><div id="status" class="status"></div></div>
 </div>
-</div>
-
-<div class="editors">
-<div class="card">
-<div class="editor-title html-title">HTML</div>
-<textarea id="htmlCode" placeholder="Write your HTML here..."><h1>Welcome to ASIM TECH!</h1>
-<p>This is my published website.</p></textarea>
-</div>
-
-<div class="card">
-<div class="editor-title css-title">CSS</div>
-<textarea id="cssCode" placeholder="Write your CSS here...">body {
-font-family: Arial, sans-serif;
-padding: 30px;
-background: #f5f7fb;
-}
-h1 { color: #0b8f55; }
-p { font-size: 18px; }</textarea>
-</div>
-
-<div class="card">
-<div class="editor-title js-title">JavaScript</div>
-<textarea id="jsCode" placeholder="Write your JavaScript here...">console.log("Hello from ASIM TECH!");</textarea>
-</div>
-</div>
-
-<div class="card">
-<div class="editor-title">👁️ Live Preview</div>
-<iframe id="preview" class="preview" sandbox="allow-scripts allow-forms allow-modals"></iframe>
-</div>
-
-<div class="card">
-<div class="buttons">
-<button type="button" class="preview-btn" onclick="updatePreview()">👁️ Preview</button>
-<button type="button" id="saveButton" class="save" onclick="savePage()">💾 Save Page</button>
-<button type="button" id="publishButton" class="publish" onclick="openPublishPage()" disabled>🚀 Publish</button>
-<button type="button" class="back" onclick="goBack()">← Back</button>
-</div>
-<div class="help">Save your page first. Then use <b>🚀 Publish</b> to make the latest saved draft publicly available.</div>
-<div id="status" class="status"></div>
-</div>
-</div>
-
 <script>
-const SUPABASE_URL="https://lgwaeqgiqrsjprsecwxx.supabase.co";
-const SUPABASE_KEY="sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-const repository=document.getElementById("repository");
-const pageName=document.getElementById("pageName");
-const htmlCode=document.getElementById("htmlCode");
-const cssCode=document.getElementById("cssCode");
-const jsCode=document.getElementById("jsCode");
-const preview=document.getElementById("preview");
-const statusBox=document.getElementById("status");
-const saveButton=document.getElementById("saveButton");
-const publishButton=document.getElementById("publishButton");
-const modeLabel=document.getElementById("modeLabel");
-const pageTitle=document.getElementById("pageTitle");
-
-const params=new URLSearchParams(window.location.search);
-const repositoryId=params.get("repository_id");
-const pageId=params.get("page_id");
-
-let currentUser=null;
-let editingPage=null;
-let previewURL=null;
-const isEditMode=!!pageId;
-
-function setStatus(message,type=""){
-    statusBox.textContent=message;
-    statusBox.className="status "+type;
-}
-
-async function initialize(){
-    try{
-        setStatus("Checking login...");
-        const {data:{user},error:userError}=await supabaseClient.auth.getUser();
-        if(userError) throw userError;
-        if(!user){window.location.href="login.html";return;}
-        currentUser=user;
-
-        if(repositoryId) await loadSelectedRepository();
-        else await loadRepositories();
-
-        if(isEditMode) await loadExistingPage();
-        else setStatus("Ready to create your webpage.","success");
-    }catch(error){
-        console.error("Initialization error:",error);
-        setStatus(error.message||"Unable to load page builder.","error");
-    }
-}
-
-async function loadSelectedRepository(){
-    setStatus("Loading repository...");
-    const {data:repo,error}=await supabaseClient.from("repositories")
-        .select("id,name,owner_id").eq("id",repositoryId).single();
-    if(error) throw new Error("Unable to load repository.");
-    if(!repo) throw new Error("Repository not found.");
-    if(repo.owner_id!==currentUser.id) throw new Error("You are not the owner of this repository.");
-
-    repository.innerHTML="";
-    const option=document.createElement("option");
-    option.value=repo.id; option.textContent=repo.name; option.selected=true;
-    repository.appendChild(option);
-    setStatus("Repository loaded successfully.","success");
-}
-
-async function loadRepositories(){
-    setStatus("Loading repositories...");
-    const {data:repos,error}=await supabaseClient.from("repositories")
-        .select("id,name,owner_id").eq("owner_id",currentUser.id).order("name",{ascending:true});
-    if(error) throw new Error("Unable to load repositories.");
-    if(!repos||repos.length===0){
-        repository.innerHTML='<option value="">No repositories found</option>';
-        throw new Error("Please create a repository first.");
-    }
-    repository.innerHTML='<option value="">Select Repository</option>';
-    repos.forEach(repo=>{
-        const option=document.createElement("option");
-        option.value=repo.id; option.textContent=repo.name;
-        repository.appendChild(option);
-    });
-    setStatus("Repositories loaded.","success");
-}
-
-async function loadExistingPage(){
-    setStatus("Loading web page...");
-    const {data:page,error}=await supabaseClient.from("web_pages")
-        .select("*").eq("id",pageId).single();
-    if(error) throw new Error("Unable to load web page: "+error.message);
-    if(!page) throw new Error("Web page not found.");
-    if(page.owner_id!==currentUser.id) throw new Error("You are not the owner of this web page.");
-
-    editingPage=page;
-    pageTitle.textContent="✏️ Edit Web Page";
-    modeLabel.textContent="✏️ Edit Web Page";
-    saveButton.textContent="💾 Save Draft";
-    publishButton.disabled=false;
-
-    repository.value=page.repository_id;
-    pageName.value=page.page_name||"";
-    htmlCode.value=page.draft_html_content!==null&&page.draft_html_content!==undefined
-        ? page.draft_html_content : (page.html_content||"");
-    cssCode.value=page.draft_css_content!==null&&page.draft_css_content!==undefined
-        ? page.draft_css_content : (page.css_content||"");
-    jsCode.value=page.draft_js_content!==null&&page.draft_js_content!==undefined
-        ? page.draft_js_content : (page.js_content||"");
-
-    updatePreview();
-    setStatus(page.is_published
-        ? "Published page loaded. Changes will be saved as Draft."
-        : "Draft page loaded successfully.","success");
-}
-
-function updatePreview(){
-    try{
-        const fullPage=`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>${cssCode.value}</style></head><body>${htmlCode.value}<script>${jsCode.value.replace(/<\/script>/gi,"<\\/script>")}<\/script></body></html>`;
-        if(previewURL){URL.revokeObjectURL(previewURL);previewURL=null;}
-        const blob=new Blob([fullPage],{type:"text/html"});
-        previewURL=URL.createObjectURL(blob);
-        preview.src=previewURL;
-        setStatus("Preview updated successfully.","success");
-    }catch(error){
-        console.error("Preview error:",error);
-        setStatus("Preview error: "+error.message,"error");
-    }
-}
-
-async function savePage(){
-    try{
-        if(!currentUser){alert("Please login first.");return;}
-
-        const selectedRepository=repository.value;
-        if(!selectedRepository){alert("Please select a repository.");return;}
-
-        let name=pageName.value.trim();
-        if(!name){alert("Please enter a page name.");return;}
-        if(!name.toLowerCase().endsWith(".html")) name+=".html";
-
-        const html=htmlCode.value;
-        const css=cssCode.value;
-        const js=jsCode.value;
-
-        saveButton.disabled=true;
-        setStatus("Saving draft...");
-
-        if(isEditMode){
-            const {data:currentPage,error:currentPageError}=await supabaseClient.from("web_pages")
-                .select("id,page_name,repository_id,owner_id").eq("id",pageId).single();
-            if(currentPageError) throw new Error("Unable to find the page you are editing: "+currentPageError.message);
-            if(!currentPage) throw new Error("Web page not found.");
-            if(currentPage.owner_id!==currentUser.id) throw new Error("You are not allowed to edit this page.");
-            if(currentPage.repository_id!==selectedRepository) throw new Error("Repository mismatch. Please go back and open Edit again.");
-
-            const {data:duplicatePages,error:duplicateError}=await supabaseClient.from("web_pages")
-                .select("id,page_name").eq("repository_id",selectedRepository)
-                .eq("page_name",name).neq("id",pageId);
-            if(duplicateError) throw duplicateError;
-            if(duplicatePages&&duplicatePages.length>0){
-                alert("A different web page with this name already exists in this repository.");
-                setStatus("Duplicate page name found.","error");
-                saveButton.disabled=false;
-                return;
-            }
-
-            const {data:updateData,error:updateError}=await supabaseClient.from("web_pages")
-                .update({page_name:name,draft_html_content:html,draft_css_content:css,draft_js_content:js})
-                .eq("id",pageId).eq("owner_id",currentUser.id).select("id,page_name");
-            if(updateError) throw updateError;
-            if(!updateData||updateData.length===0) throw new Error("Draft was not saved. Please check your permissions.");
-
-            editingPage={...editingPage,page_name:name,draft_html_content:html,draft_css_content:css,draft_js_content:js};
-            alert("Draft saved successfully!");
-            setStatus("Draft saved. You can now publish it.","success");
-            publishButton.disabled=false;
-            saveButton.disabled=false;
-            return;
-        }
-
-        const {data:existing,error:checkError}=await supabaseClient.from("web_pages")
-            .select("id,page_name").eq("repository_id",selectedRepository).eq("page_name",name);
-        if(checkError) throw checkError;
-        if(existing&&existing.length>0){
-            alert("A web page with this name already exists in this repository.");
-            setStatus("Duplicate page name found.","error");
-            saveButton.disabled=false;
-            return;
-        }
-
-        const {data:newPage,error:insertError}=await supabaseClient.from("web_pages").insert({
-            repository_id:selectedRepository,page_name:name,
-            html_content:html,css_content:css,js_content:js,
-            draft_html_content:html,draft_css_content:css,draft_js_content:js,
-            owner_id:currentUser.id,is_published:false,published_at:null
-        }).select("id,page_name");
-        if(insertError) throw insertError;
-        if(!newPage||newPage.length===0) throw new Error("New web page was not created.");
-
-        alert("Draft saved successfully! Opening the editor so you can publish it.");
-        window.location.href="page-builder.html?page_id="+encodeURIComponent(newPage[0].id)+"&repository_id="+encodeURIComponent(selectedRepository);
-    }catch(error){
-        console.error("Save error:",error);
-        setStatus(error.message||"Unable to save draft.","error");
-        alert(error.message||"Unable to save draft.");
-        saveButton.disabled=false;
-    }
-}
-
-function openPublishPage(){
-    if(!pageId){
-        alert("Please save the page first. The Publish button will become available after the page is created.");
-        return;
-    }
-    window.location.href="web-page-publish.html?id="+encodeURIComponent(pageId);
-}
-
-function goBack(){
-    if(repositoryId) window.location.href="repository-files.html?repository_id="+encodeURIComponent(repositoryId);
-    else window.location.href="repository-files.html";
-}
-
-initialize();
-</script>
-</body>
-</html>
+const SUPABASE_URL='https://lgwaeqgiqrsjprsecwxx.supabase.co',SUPABASE_KEY='sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY),p=new URLSearchParams(location.search),pageId=p.get('page_id'),repoId=p.get('repository_id');let user=null,selected=null,previewURL=null;
+const repo=document.getElementById('repository'),name=document.getElementById('pageName'),canvas=document.getElementById('canvas'),html=document.getElementById('htmlCode'),css=document.getElementById('cssCode'),js=document.getElementById('jsCode'),preview=document.getElementById('preview'),statusBox=document.getElementById('status');
+function status(t,c=''){statusBox.textContent=t;statusBox.className='status '+c}function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function showMode(m){visualMode.classList.toggle('hidden',m!=='visual');codeMode.classList.toggle('hidden',m!=='code');visualTab.classList.toggle('active',m==='visual');codeTab.classList.toggle('active',m==='code');if(m==='code')sync()}
+function addBlock(type){let d=document.createElement('div');d.className='block';let x='';if(type==='heading')x='<h1>New Heading</h1>';if(type==='text')x='<p>Write your text here...</p>';if(type==='button')x='<button style="padding:10px 16px;border:0;border-radius:7px;background:#2563eb;color:#fff">Click Me</button>';if(type==='image')x='<img src="https://via.placeholder.com/800x300?text=Your+Image" style="max-width:100%;display:block;margin:auto">';if(type==='card')x='<div style="padding:22px;border-radius:12px;background:#f1f5f9"><h3>Card Title</h3><p>Card description goes here.</p></div>';if(type==='navbar')x='<nav style="padding:15px;background:#0f172a;color:white;display:flex;justify-content:space-between"><b>ASIM TECH</b><span>Home &nbsp; Services &nbsp; Contact</span></nav>';if(type==='contact')x='<section style="padding:25px;background:#e2e8f0"><h2>Contact Us</h2><p>Email: hello@example.com</p><p>Phone: +91 00000 00000</p></section>';if(type==='footer')x='<footer style="padding:18px;text-align:center;background:#0f172a;color:white">© 2026 ASIM TECH. All Rights Reserved.</footer>';d.innerHTML=x+'<span class="handle">'+type+'</span>';d.onclick=e=>{e.stopPropagation();selectBlock(d)};canvas.appendChild(d);selectBlock(d);sync();updatePreview()}
+function selectBlock(d){if(selected)selected.classList.remove('selected');selected=d;d.classList.add('selected');noSelection.classList.add('hidden');propertyEditor.classList.remove('hidden');let m=d.querySelector(':scope > *');propText.value=m?.innerText||'';propSize.value=m?.style.fontSize||'';propAlign.value=m?.style.textAlign||'left';propColor.value=m?.style.color||'';propBg.value=m?.style.backgroundColor||''}
+function applyProperties(){if(!selected)return;let m=selected.querySelector(':scope > *');if(!m)return;if(m.tagName!=='IMG')m.innerText=propText.value;m.style.fontSize=propSize.value;m.style.textAlign=propAlign.value;m.style.color=propColor.value;m.style.background=propBg.value;sync();updatePreview();status('Element updated.','success')}
+function deleteSelected(){if(selected){selected.remove();selected=null;propertyEditor.classList.add('hidden');noSelection.classList.remove('hidden');sync();updatePreview()}}
+function moveSelected(dir){if(!selected)return;let a=[...canvas.children],i=a.indexOf(selected);if(dir<0&&i>0)canvas.insertBefore(selected,a[i-1]);if(dir>0&&i<a.length-1)canvas.insertBefore(a[i+1],selected);sync();updatePreview()}
+function sync(){html.value=[...canvas.children].map(x=>{let y=x.cloneNode(true);y.querySelector('.handle')?.remove();y.classList.remove('selected');return y.innerHTML}).join('\n');css.value='body{font-family:Arial,sans-serif;margin:0;padding:20px;background:#f5f7fb;color:#111}h1,h2,h3{margin-top:0}button{cursor:pointer}';js.value='console.log("ASIM TECH website ready");'}
+function loadCode(){canvas.innerHTML='';let t=document.createElement('div');t.innerHTML=html.value;[...t.children].forEach(x=>{let d=document.createElement('div');d.className='block';d.innerHTML=x.outerHTML+'<span class="handle">custom</span>';d.onclick=e=>{e.stopPropagation();selectBlock(d)};canvas.appendChild(d)})}
+function updatePreview(){if(codeMode.classList.contains('hidden'))sync();let full='<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css.value+'</style></head><body>'+html.value+'<script>'+js.value.replace(/<\/script>/gi,'<\\/script>')+'<\/script></body></html>';if(previewURL)URL.revokeObjectURL(previewURL);previewURL=URL.createObjectURL(new Blob([full],{type:'text/html'}));preview.src=previewURL;status('Preview updated.','success')}
+async function init(){try{let r=await sb.auth.getUser();if(r.error)throw r.error;if(!r.data.user){location.href='login.html';return}user=r.data.user;await loadRepos();if(pageId)await loadPage();else{['heading','text','button'].forEach(addBlock);name.value='index.html';updatePreview();status('Ready. Add elements and save your website.','success')}}catch(e){status(e.message,'error')}}
+async function loadRepos(){let r=await sb.from('repositories').select('id,name,owner_id').eq('owner_id',user.id).order('name');if(r.error)throw r.error;if(!r.data?.length)throw new Error('Please create a repository first.');repo.innerHTML='<option value="">Select Repository</option>';r.data.forEach(x=>{let o=document.createElement('option');o.value=x.id;o.textContent=x.name;repo.appendChild(o)});if(repoId)repo.value=repoId}
+async function loadPage(){let r=await sb.from('web_pages').select('*').eq('id',pageId).single();if(r.error)throw r.error;if(!r.data||r.data.owner_id!==user.id)throw new Error('Web page not found or access denied.');let x=r.data;repo.value=x.repository_id;name.value=x.page_name||'';html.value=x.draft_html_content??x.html_content??'';css.value=x.draft_css_content??x.css_content??'';js.value=x.draft_js_content??x.js_content??'';loadCode();document.getElementById('pageTitle').textContent='✏️ Edit Website';document.getElementById('mode').textContent=x.is_published?'Published — editing draft':'Draft — editing';publishButton.disabled=false;updatePreview();status('Existing website loaded.','success')}
+async function savePage(){try{if(!repo.value)throw new Error('Please select a repository.');let n=name.value.trim();if(!n)throw new Error('Please enter a page name.');if(!n.toLowerCase().endsWith('.html'))n+='.html';sync();saveButton.disabled=true;let payload={page_name:n,repository_id:repo.value,draft_html_content:html.value,draft_css_content:css.value,draft_js_content:js.value};if(pageId){let r=await sb.from('web_pages').update(payload).eq('id',pageId).eq('owner_id',user.id).select('id');if(r.error)throw r.error;if(!r.data?.length)throw new Error('Draft was not saved.');publishButton.disabled=false;status('Draft saved. You can publish it now.','success');alert('Draft saved successfully!')}else{let d=await sb.from('web_pages').select('id').eq('repository_id',repo.value).eq('page_name',n);if(d.error)throw d.error;if(d.data?.length)throw new Error('A page with this name already exists in this repository.');let r=await sb.from('web_pages').insert({repository_id:repo.value,owner_id:user.id,page_name:n,html_content:html.value,css_content:css.value,js_content:js.value,draft_html_content:html.value,draft_css_content:css.value,draft_js_content:js.value,is_published:false}).select('id').single();if(r.error)throw r.error;location.href='page-builder.html?page_id='+encodeURIComponent(r.data.id)+'&repository_id='+encodeURIComponent(repo.value)}}catch(e){status(e.message,'error');alert(e.message)}finally{saveButton.disabled=false}}
+function openPublish(){if(!pageId){alert('Save the website first.');return}location.href='web-page-publish.html?id='+encodeURIComponent(pageId)}
+init();
+</script></body></html>
