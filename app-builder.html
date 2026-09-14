@@ -4,7 +4,11 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>App Builder — ASIM TECH</title>
 
@@ -90,7 +94,7 @@ body{
 
 .header-actions{
     display:flex;
-    gap:9px;
+    gap:8px;
     flex-wrap:wrap;
 }
 
@@ -122,6 +126,11 @@ body{
 
 .publish{
     background:#8957e5;
+    color:#fff;
+}
+
+.download{
+    background:#0969da;
     color:#fff;
 }
 
@@ -381,6 +390,7 @@ textarea{
     .header-actions .btn{
         flex:1;
         text-align:center;
+        min-width:80px;
     }
 
     .builder{
@@ -396,6 +406,7 @@ textarea{
 </style>
 
 </head>
+
 
 <body>
 
@@ -474,6 +485,14 @@ textarea{
 
             <button
                 type="button"
+                class="btn download"
+                onclick="downloadApp()"
+            >
+                ⬇️ Download
+            </button>
+
+            <button
+                type="button"
                 class="btn publish"
                 onclick="publishApp()"
             >
@@ -510,13 +529,17 @@ textarea{
                 📁 App Files
             </div>
 
-            <div id="fileList">
+            <div
+                id="fileList"
+                class="file-list"
+            >
 
                 <div class="loading">
                     Loading files...
                 </div>
 
             </div>
+
 
             <button
                 type="button"
@@ -667,6 +690,10 @@ const appId =
     params.get("id");
 
 
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
+
 let currentUser = null;
 let currentApp = null;
 let currentFile = null;
@@ -723,6 +750,55 @@ function showMessage(
         },
         3500
     );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   LANGUAGE
+===================================================== */
+
+function detectLanguage(fileName){
+
+    const name =
+        fileName.toLowerCase();
+
+    if(name.endsWith(".html"))
+        return "HTML";
+
+    if(name.endsWith(".css"))
+        return "CSS";
+
+    if(name.endsWith(".js"))
+        return "JavaScript";
+
+    if(name.endsWith(".json"))
+        return "JSON";
+
+    if(name.endsWith(".md"))
+        return "Markdown";
+
+    if(name.endsWith(".txt"))
+        return "Text";
+
+    return "Code";
+
 }
 
 
@@ -820,51 +896,24 @@ async function loadApp(){
             app;
 
 
-        appInfo.innerHTML = `
-
-            <strong>
-                📱 ${escapeHtml(app.name)}
-            </strong>
-
-            &nbsp; — &nbsp;
-
-            ${escapeHtml(
-                app.description ||
-                "No description"
-            )}
-
-            &nbsp;&nbsp;
-
-            ${
-                app.is_published
-                ? "✓ Published"
-                : "Draft"
-            }
-
-        `;
+        updateAppInfo();
 
 
         await loadFiles();
 
 
-    }catch(error){
+    }
+    catch(error){
 
-        console.error(
-            "Load app error:",
-            error
-        );
+        console.error(error);
 
-        appInfo.innerHTML = `
-            <strong>
-                Unable to load app.
-            </strong>
-        `;
+        appInfo.innerHTML =
+            "<strong>Unable to load app.</strong>";
 
-        fileList.innerHTML = `
-            <div class="empty">
-                ${escapeHtml(error.message)}
-            </div>
-        `;
+        fileList.innerHTML =
+            "<div class='empty'>"
+            + escapeHtml(error.message)
+            + "</div>";
 
     }
 
@@ -872,10 +921,50 @@ async function loadApp(){
 
 
 /* =====================================================
-   LOAD APP FILES
+   UPDATE APP INFO
+===================================================== */
+
+function updateAppInfo(){
+
+    if(!currentApp)
+        return;
+
+
+    appInfo.innerHTML = `
+
+        <strong>
+            📱 ${escapeHtml(currentApp.name)}
+        </strong>
+
+        &nbsp; — &nbsp;
+
+        ${escapeHtml(
+            currentApp.description ||
+            "No description"
+        )}
+
+        &nbsp;&nbsp;
+
+        ${
+            currentApp.is_published
+            ? "✓ Published"
+            : "Draft"
+        }
+
+    `;
+
+}
+
+
+/* =====================================================
+   LOAD FILES
 ===================================================== */
 
 async function loadFiles(){
+
+    fileList.innerHTML =
+        "<div class='loading'>Loading files...</div>";
+
 
     const {
         data,
@@ -885,9 +974,7 @@ async function loadFiles(){
 
             .from("app_files")
 
-            .select(
-                "id,app_id,file_path,content,language,created_at,updated_at"
-            )
+            .select("*")
 
             .eq(
                 "app_id",
@@ -902,57 +989,52 @@ async function loadFiles(){
             );
 
 
-    if(error){
-
-        console.error(
-            "App files error:",
-            error
-        );
-
-        appFiles = [];
-
-        fileList.innerHTML = `
-            <div class="empty">
-
-                No app files yet.
-
-                <br><br>
-
-                Click <strong>+ Create File</strong>
-                to create your first file.
-
-            </div>
-        `;
-
-        return;
-
-    }
+    if(error)
+        throw error;
 
 
     appFiles =
         data || [];
 
 
+    renderFiles();
+
+
     if(appFiles.length === 0){
 
-        fileList.innerHTML = `
-            <div class="empty">
+        currentFile = null;
 
-                No files yet.
+        currentFileName.textContent =
+            "No file selected";
 
-            </div>
-        `;
+        currentLanguage.textContent =
+            "-";
+
+        codeEditor.value =
+            "";
+
+        saveStatus.textContent =
+            "Create your first file";
 
         return;
 
     }
 
 
-    renderFiles();
+    const indexFile =
+        appFiles.find(
+            function(file){
+
+                return file.file_path
+                    .toLowerCase()
+                    === "index.html";
+
+            }
+        );
 
 
     selectFile(
-        appFiles[0]
+        indexFile || appFiles[0]
     );
 
 }
@@ -978,41 +1060,40 @@ function renderFiles(){
 
 
     fileList.innerHTML =
+        appFiles
+            .map(
+                function(file){
 
-        appFiles.map(
-            function(file){
+                    const active =
+                        currentFile &&
+                        currentFile.id === file.id
+                        ? "active"
+                        : "";
 
-                const active =
-                    currentFile &&
-                    currentFile.id === file.id
-                    ? "active"
-                    : "";
+                    return `
 
-                return `
+                        <button
+                            type="button"
+                            class="file ${active}"
+                            onclick="selectFileById('${file.id}')"
+                        >
 
-                    <button
-                        type="button"
-                        class="file ${active}"
-                        onclick="selectFileById('${file.id}')"
-                    >
+                            📄
+                            ${escapeHtml(file.file_path)}
 
-                        📄
-                        ${escapeHtml(
-                            file.file_path
-                        )}
+                        </button>
 
-                    </button>
+                    `;
 
-                `;
-
-            }
-        ).join("");
+                }
+            )
+            .join("");
 
 }
 
 
 /* =====================================================
-   SELECT FILE
+   SELECT FILE BY ID
 ===================================================== */
 
 function selectFileById(id){
@@ -1027,14 +1108,15 @@ function selectFileById(id){
         );
 
 
-    if(file){
-
+    if(file)
         selectFile(file);
-
-    }
 
 }
 
+
+/* =====================================================
+   SELECT FILE
+===================================================== */
 
 function selectFile(file){
 
@@ -1048,9 +1130,7 @@ function selectFile(file){
 
     currentLanguage.textContent =
         file.language ||
-        detectLanguage(
-            file.file_path
-        );
+        detectLanguage(file.file_path);
 
 
     codeEditor.value =
@@ -1088,30 +1168,83 @@ async function saveFile(){
         "Saving...";
 
 
-    const {
-        error
-    } =
-        await supabaseClient
+    try{
 
-            .from("app_files")
+        const newContent =
+            codeEditor.value;
 
-            .update({
 
-                content:
-                    codeEditor.value,
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
 
-                updated_at:
-                    new Date().toISOString()
+                .from("app_files")
 
-            })
+                .update({
 
-            .eq(
-                "id",
-                currentFile.id
+                    content:newContent,
+
+                    language:
+                        detectLanguage(
+                            currentFile.file_path
+                        ),
+
+                    updated_at:
+                        new Date().toISOString()
+
+                })
+
+                .eq(
+                    "id",
+                    currentFile.id
+                )
+
+                .eq(
+                    "app_id",
+                    appId
+                )
+
+                .select()
+                .single();
+
+
+        if(error)
+            throw error;
+
+
+        currentFile =
+            data;
+
+
+        const index =
+            appFiles.findIndex(
+                function(file){
+
+                    return file.id === data.id;
+
+                }
             );
 
 
-    if(error){
+        if(index !== -1)
+            appFiles[index] = data;
+
+
+        saveStatus.textContent =
+            "Saved ✓";
+
+
+        showMessage(
+            "File saved successfully."
+        );
+
+
+    }
+    catch(error){
+
+        console.error(error);
 
         saveStatus.textContent =
             "Save failed";
@@ -1121,22 +1254,7 @@ async function saveFile(){
             "error"
         );
 
-        return;
-
     }
-
-
-    currentFile.content =
-        codeEditor.value;
-
-
-    saveStatus.textContent =
-        "Saved ✓";
-
-
-    showMessage(
-        "File saved successfully."
-    );
 
 }
 
@@ -1151,9 +1269,22 @@ function openFileModal(){
         .getElementById("fileModal")
         .classList.add("show");
 
+
     document
         .getElementById("newFileName")
-        .focus();
+        .value = "";
+
+
+    setTimeout(
+        function(){
+
+            document
+                .getElementById("newFileName")
+                .focus();
+
+        },
+        100
+    );
 
 }
 
@@ -1163,10 +1294,6 @@ function closeFileModal(){
     document
         .getElementById("fileModal")
         .classList.remove("show");
-
-    document
-        .getElementById("newFileName")
-        .value = "";
 
 }
 
@@ -1190,7 +1317,7 @@ async function createFile(){
     if(!fileName){
 
         showMessage(
-            "Please enter a file name.",
+            "Enter a file name.",
             "error"
         );
 
@@ -1199,17 +1326,17 @@ async function createFile(){
     }
 
 
-    const existing =
-        appFiles.find(
+    if(
+        appFiles.some(
             function(file){
 
-                return file.file_path === fileName;
+                return file.file_path
+                    .toLowerCase()
+                    === fileName.toLowerCase();
 
             }
-        );
-
-
-    if(existing){
+        )
+    ){
 
         showMessage(
             "This file already exists.",
@@ -1221,219 +1348,84 @@ async function createFile(){
     }
 
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
+    try{
 
-            .from("app_files")
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
 
-            .insert({
+                .from("app_files")
 
-                app_id:
-                    appId,
+                .insert({
 
-                file_path:
-                    fileName,
+                    app_id:appId,
 
-                content:
-                    getStarterContent(
-                        fileName
-                    ),
+                    file_path:fileName,
 
-                language:
-                    detectLanguage(
-                        fileName
-                    )
+                    content:"",
 
-            })
+                    language:
+                        detectLanguage(
+                            fileName
+                        )
 
-            .select()
+                })
 
-            .single();
+                .select()
+                .single();
 
 
-    if(error){
+        if(error)
+            throw error;
+
+
+        appFiles.push(data);
+
+
+        renderFiles();
+
+
+        closeFileModal();
+
+
+        selectFile(data);
+
+
+        showMessage(
+            "File created successfully."
+        );
+
+
+    }
+    catch(error){
+
+        console.error(error);
 
         showMessage(
             error.message,
             "error"
         );
 
-        return;
-
     }
-
-
-    appFiles.push(data);
-
-
-    closeFileModal();
-
-
-    renderFiles();
-
-
-    selectFile(data);
-
-
-    showMessage(
-        "File created successfully."
-    );
 
 }
 
 
 /* =====================================================
-   STARTER CONTENT
+   BUILD PREVIEW HTML
 ===================================================== */
 
-function getStarterContent(fileName){
+function buildPreview(){
 
-    const language =
-        detectLanguage(fileName);
-
-
-    if(language === "HTML"){
-
-        return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My ASIM TECH App</title>
-</head>
-<body>
-
-<h1>Hello from ASIM TECH!</h1>
-
-<p>Start building your app here.</p>
-
-</body>
-</html>`;
-
-    }
-
-
-    if(language === "CSS"){
-
-        return `body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 30px;
-}`;
-
-    }
-
-
-    if(language === "JavaScript"){
-
-        return `console.log("Hello from ASIM TECH App!");`;
-
-    }
-
-
-    if(language === "JSON"){
-
-        return `{
-    "name": "My ASIM TECH App"
-}`;
-
-    }
-
-
-    return "";
-
-}
-
-
-/* =====================================================
-   DETECT LANGUAGE
-===================================================== */
-
-function detectLanguage(fileName){
-
-    const name =
-        fileName.toLowerCase();
-
-
-    if(
-        name.endsWith(".html") ||
-        name.endsWith(".htm")
-    ){
-
-        return "HTML";
-
-    }
-
-
-    if(
-        name.endsWith(".css")
-    ){
-
-        return "CSS";
-
-    }
-
-
-    if(
-        name.endsWith(".js")
-    ){
-
-        return "JavaScript";
-
-    }
-
-
-    if(
-        name.endsWith(".json")
-    ){
-
-        return "JSON";
-
-    }
-
-
-    if(
-        name.endsWith(".txt")
-    ){
-
-        return "Text";
-
-    }
-
-
-    return "Code";
-
-}
-
-
-/* =====================================================
-   PREVIEW APP
-===================================================== */
-
-function previewApp(){
-
-    if(!appFiles.length){
-
-        showMessage(
-            "Create an index.html file first.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const htmlFile =
+    let htmlFile =
         appFiles.find(
             function(file){
 
                 return file.file_path
-                    .toLowerCase() ===
-                    "index.html";
+                    .toLowerCase()
+                    === "index.html";
 
             }
         );
@@ -1441,12 +1433,43 @@ function previewApp(){
 
     if(!htmlFile){
 
-        showMessage(
-            "Preview needs an index.html file.",
-            "error"
-        );
+        htmlFile =
+            appFiles.find(
+                function(file){
 
-        return;
+                    return file.file_path
+                        .toLowerCase()
+                        .endsWith(".html");
+
+                }
+            );
+
+    }
+
+
+    if(!htmlFile){
+
+        return `
+
+            <!DOCTYPE html>
+
+            <html>
+
+            <body>
+
+                <h2>
+                    No HTML file found
+                </h2>
+
+                <p>
+                    Create index.html first.
+                </p>
+
+            </body>
+
+            </html>
+
+        `;
 
     }
 
@@ -1455,8 +1478,12 @@ function previewApp(){
         htmlFile.content || "";
 
 
-    const cssFiles =
-        appFiles.filter(
+    /*
+       INLINE CSS FILES
+    */
+
+    appFiles
+        .filter(
             function(file){
 
                 return file.file_path
@@ -1464,11 +1491,46 @@ function previewApp(){
                     .endsWith(".css");
 
             }
+        )
+        .forEach(
+            function(cssFile){
+
+                const css =
+                    cssFile.content || "";
+
+
+                const style =
+                    document.createElement("style");
+
+
+                style.textContent =
+                    css;
+
+
+                html =
+                    html.includes("</head>")
+                    ? html.replace(
+                        "</head>",
+                        "<style>"
+                        + css
+                        + "</style>"
+                        + "</head>"
+                    )
+                    : html
+                      + "<style>"
+                      + css
+                      + "</style>";
+
+            }
         );
 
 
-    const jsFiles =
-        appFiles.filter(
+    /*
+       INLINE JAVASCRIPT FILES
+    */
+
+    appFiles
+        .filter(
             function(file){
 
                 return file.file_path
@@ -1476,77 +1538,57 @@ function previewApp(){
                     .endsWith(".js");
 
             }
+        )
+        .forEach(
+            function(jsFile){
+
+                const js =
+                    jsFile.content || "";
+
+
+                html =
+                    html.includes("</body>")
+                    ? html.replace(
+                        "</body>",
+                        "<script>"
+                        + js
+                        + "</script>"
+                        + "</body>"
+                    )
+                    : html
+                      + "<script>"
+                      + js
+                      + "</script>";
+
+            }
         );
 
 
-    const css =
-        cssFiles
-            .map(
-                function(file){
+    return html;
 
-                    return (
-                        "\n<style>\n" +
-                        file.content +
-                        "\n<\\/style>\n"
-                    );
-
-                }
-            )
-            .join("");
+}
 
 
-    const js =
-        jsFiles
-            .map(
-                function(file){
+/* =====================================================
+   PREVIEW
+===================================================== */
 
-                    return (
-                        "\n<script>\n" +
-                        file.content +
-                        "\n<\\/script>\n"
-                    );
+function previewApp(){
 
-                }
-            )
-            .join("");
+    if(appFiles.length === 0){
 
+        showMessage(
+            "No app files available.",
+            "error"
+        );
 
-    if(
-        html.toLowerCase().includes("</head>")
-    ){
-
-        html =
-            html.replace(
-                /<\/head>/i,
-                css +
-                "</head>"
-            );
-
-    }else{
-
-        html =
-            css +
-            html;
+        return;
 
     }
 
 
-    if(
-        html.toLowerCase().includes("</body>")
-    ){
-
-        html =
-            html.replace(
-                /<\/body>/i,
-                js +
-                "</body>"
-            );
-
-    }else{
-
-        html += js;
-
-    }
+    const html =
+        buildPreview();
 
 
     const blob =
@@ -1559,9 +1601,7 @@ function previewApp(){
 
 
     const url =
-        URL.createObjectURL(
-            blob
-        );
+        URL.createObjectURL(blob);
 
 
     window.open(
@@ -1569,49 +1609,305 @@ function previewApp(){
         "_blank"
     );
 
-}
 
+    setTimeout(
+        function(){
 
-/* =====================================================
-   PUBLISH
-===================================================== */
+            URL.revokeObjectURL(url);
 
-function publishApp(){
-
-    showMessage(
-        "App publishing will be enabled after the Builder is completed.",
-        "error"
+        },
+        10000
     );
 
 }
 
 
 /* =====================================================
-   ESCAPE HTML
+   DOWNLOAD APP
 ===================================================== */
 
-function escapeHtml(value){
+function downloadApp(){
 
-    return String(
-        value ?? ""
-    ).replace(
-        /[&<>"']/g,
-        function(character){
+    if(appFiles.length === 0){
 
-            return {
+        showMessage(
+            "No app files available.",
+            "error"
+        );
 
-                "&":"&amp;",
-                "<":"&lt;",
-                ">":"&gt;",
-                '"':"&quot;",
-                "'":"&#039;"
+        return;
 
-            }[character];
+    }
+
+
+    const html =
+        buildPreview();
+
+
+    const blob =
+        new Blob(
+            [html],
+            {
+                type:"text/html"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href =
+        url;
+
+
+    const appName =
+        currentApp &&
+        currentApp.name
+        ? currentApp.name
+        : "asim-tech-app";
+
+
+    link.download =
+        appName
+            .replace(
+                /[^a-z0-9-_]/gi,
+                "-"
+            )
+            .toLowerCase()
+        + ".html";
+
+
+    document.body.appendChild(link);
+
+
+    link.click();
+
+
+    link.remove();
+
+
+    setTimeout(
+        function(){
+
+            URL.revokeObjectURL(url);
+
+        },
+        1000
+    );
+
+
+    showMessage(
+        "App downloaded successfully."
+    );
+
+}
+
+
+/* =====================================================
+   PUBLISH APP
+===================================================== */
+
+async function publishApp(){
+
+    if(!currentApp){
+
+        showMessage(
+            "App is not loaded.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const indexFile =
+        appFiles.find(
+            function(file){
+
+                return file.file_path
+                    .toLowerCase()
+                    === "index.html";
+
+            }
+        );
+
+
+    if(!indexFile){
+
+        showMessage(
+            "Create index.html before publishing.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            "Publish this app?\n\n"
+            + "App: "
+            + currentApp.name
+            + "\n\n"
+            + "The app will become public."
+        );
+
+
+    if(!confirmed)
+        return;
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+
+                .from("apps")
+
+                .update({
+
+                    is_published:true,
+
+                    published_at:
+                        new Date().toISOString(),
+
+                    updated_at:
+                        new Date().toISOString()
+
+                })
+
+                .eq(
+                    "id",
+                    currentApp.id
+                )
+
+                .eq(
+                    "owner_id",
+                    currentUser.id
+                )
+
+                .select()
+                .single();
+
+
+        if(error)
+            throw error;
+
+
+        currentApp =
+            data;
+
+
+        updateAppInfo();
+
+
+        showMessage(
+            "App published successfully."
+        );
+
+
+        setTimeout(
+            function(){
+
+                const html =
+                    buildPreview();
+
+
+                const blob =
+                    new Blob(
+                        [html],
+                        {
+                            type:"text/html"
+                        }
+                    );
+
+
+                const url =
+                    URL.createObjectURL(blob);
+
+
+                window.open(
+                    url,
+                    "_blank"
+                );
+
+
+            },
+            700
+        );
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   KEYBOARD SHORTCUT
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            (event.ctrlKey ||
+             event.metaKey)
+            &&
+            event.key.toLowerCase()
+            === "s"
+        ){
+
+            event.preventDefault();
+
+            saveFile();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   MODAL CLICK OUTSIDE
+===================================================== */
+
+document
+    .getElementById("fileModal")
+    .addEventListener(
+        "click",
+        function(event){
+
+            if(
+                event.target === this
+            ){
+
+                closeFileModal();
+
+            }
 
         }
     );
-
-}
 
 
 /* =====================================================
