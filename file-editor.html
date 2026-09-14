@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>File Editor — ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
 box-sizing:border-box;
 margin:0;
@@ -88,7 +93,9 @@ font-weight:bold;
 margin-bottom:8px;
 }
 
-input,select,textarea{
+input,
+select,
+textarea{
 width:100%;
 border:1px solid #294252;
 border-radius:10px;
@@ -208,7 +215,9 @@ flex-direction:column;
 }
 
 }
+
 </style>
+
 </head>
 
 <body>
@@ -220,34 +229,60 @@ flex-direction:column;
 </div>
 
 <div class="nav-links">
-<a href="index.html">Home</a>
-<a href="repositories.html">Repositories</a>
-<a href="dashboard.html">Dashboard</a>
+
+<a href="index.html">
+Home
+</a>
+
+<a href="repositories.html">
+Repositories
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
 </div>
 
 </nav>
 
+
 <div class="container">
 
-<a id="backLink" class="back" href="repositories.html">
+<a id="backLink"
+class="back"
+href="repositories.html">
+
 ← Back
+
 </a>
+
 
 <div id="loading">
 Loading editor...
 </div>
 
+
 <div id="message"></div>
 
-<div id="editor" class="card" style="display:none">
+
+<div id="editor"
+class="card"
+style="display:none">
+
 
 <h1 id="pageTitle">
-📄 Create New File
+📄 File Editor
 </h1>
 
-<p id="repoTitle" class="subtitle">
+
+<p id="repoTitle"
+class="subtitle">
+
 Repository
+
 </p>
+
 
 <div class="field">
 
@@ -259,10 +294,10 @@ File name / path
 id="filePath"
 type="text"
 placeholder="example.html"
-maxlength="200"
->
+maxlength="200">
 
 </div>
+
 
 <div class="field">
 
@@ -272,20 +307,50 @@ Language
 
 <select id="language">
 
-<option value="text">Plain Text</option>
-<option value="html">HTML</option>
-<option value="css">CSS</option>
-<option value="javascript">JavaScript</option>
-<option value="json">JSON</option>
-<option value="markdown">Markdown</option>
-<option value="python">Python</option>
-<option value="php">PHP</option>
-<option value="java">Java</option>
-<option value="sql">SQL</option>
+<option value="text">
+Plain Text
+</option>
+
+<option value="html">
+HTML
+</option>
+
+<option value="css">
+CSS
+</option>
+
+<option value="javascript">
+JavaScript
+</option>
+
+<option value="json">
+JSON
+</option>
+
+<option value="markdown">
+Markdown
+</option>
+
+<option value="python">
+Python
+</option>
+
+<option value="php">
+PHP
+</option>
+
+<option value="java">
+Java
+</option>
+
+<option value="sql">
+SQL
+</option>
 
 </select>
 
 </div>
+
 
 <div class="field">
 
@@ -296,23 +361,28 @@ Code / File Content
 <textarea
 id="content"
 placeholder="Write your code here..."
-spellcheck="false"
-></textarea>
+spellcheck="false"></textarea>
 
 </div>
+
 
 <div class="buttons">
 
 <button
 class="cancel"
 onclick="goBack()">
+
 Cancel
+
 </button>
+
 
 <button
 class="save"
 onclick="saveFile()">
+
 💾 Save File
+
 </button>
 
 </div>
@@ -321,11 +391,20 @@ onclick="saveFile()">
 
 </div>
 
+
 <footer>
+
 © 2026 ASIM TECH — Code. Create. Innovate.
+
 </footer>
 
+
 <script>
+
+
+/* =====================================================
+   SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -340,6 +419,10 @@ SUPABASE_PUBLISHABLE_KEY
 );
 
 
+/* =====================================================
+   URL PARAMETERS
+===================================================== */
+
 const params =
 new URLSearchParams(
 window.location.search
@@ -348,22 +431,48 @@ window.location.search
 
 /*
 IMPORTANT FIX
+
+File Editor now accepts:
+
+?id=FILE_ID
+
+?file_id=FILE_ID
+
+?file=FILE_ID
 */
+
 
 const repositoryId =
 params.get("repository_id") ||
-params.get("id");
+params.get("repo_id") ||
+params.get("repository");
 
 
 const fileId =
 params.get("file_id") ||
-params.get("file");
+params.get("file") ||
+params.get("id");
 
+
+const branchId =
+params.get("branch_id") ||
+params.get("branch");
+
+
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
 
 let currentUser = null;
+
 let repository = null;
+
 let editing = false;
 
+
+/* =====================================================
+   MESSAGE
+===================================================== */
 
 function showMessage(text,type){
 
@@ -379,15 +488,30 @@ type;
 }
 
 
+/* =====================================================
+   LOAD EDITOR
+===================================================== */
+
 async function loadEditor(){
 
 try{
 
+
+/* -----------------------------------------
+   AUTH
+----------------------------------------- */
+
 const {
-data:{user},
+
+data:{
+user
+},
+
 error:userError
+
 } =
 await supabaseClient.auth.getUser();
+
 
 if(userError)
 throw userError;
@@ -407,10 +531,14 @@ currentUser =
 user;
 
 
+/* -----------------------------------------
+   CHECK PARAMETERS
+----------------------------------------- */
+
 if(!repositoryId){
 
 throw new Error(
-"Repository ID missing"
+"Repository ID missing."
 );
 
 }
@@ -419,15 +547,22 @@ throw new Error(
 if(!fileId){
 
 throw new Error(
-"File ID missing"
+"File ID missing. Please open the editor from the file Edit button."
 );
 
 }
 
 
+/* -----------------------------------------
+   LOAD REPOSITORY
+----------------------------------------- */
+
 const {
+
 data:repo,
+
 error:repoError
+
 } =
 await supabaseClient
 
@@ -450,7 +585,7 @@ throw repoError;
 if(!repo){
 
 throw new Error(
-"Repository not found"
+"Repository not found."
 );
 
 }
@@ -459,7 +594,7 @@ throw new Error(
 if(repo.owner_id !== user.id){
 
 throw new Error(
-"You are not the repository owner"
+"You are not the repository owner."
 );
 
 }
@@ -476,24 +611,41 @@ document.getElementById(
 repo.name;
 
 
-document.getElementById(
-"backLink"
-).href =
-"repository-explorer.html?repository_id=" +
+/* -----------------------------------------
+   BACK LINK
+----------------------------------------- */
+
+let explorerUrl =
+"repository-explorer.html" +
+"?repository_id=" +
 encodeURIComponent(
 repositoryId
 );
 
 
-/*
-LOAD EXISTING FILE
-*/
+if(branchId){
 
-const {
-data:file,
-error:fileError
-} =
-await supabaseClient
+explorerUrl +=
+"&branch_id=" +
+encodeURIComponent(
+branchId
+);
+
+}
+
+
+document.getElementById(
+"backLink"
+).href =
+explorerUrl;
+
+
+/* -----------------------------------------
+   LOAD FILE
+----------------------------------------- */
+
+let fileQuery =
+supabaseClient
 
 .from("repository_files")
 
@@ -507,9 +659,39 @@ fileId
 .eq(
 "repository_id",
 repositoryId
-)
+);
 
-.single();
+
+/*
+IMPORTANT:
+
+If branch_id exists in URL,
+also check the same branch.
+
+This prevents opening
+a same-named file from
+another branch.
+*/
+
+if(branchId){
+
+fileQuery =
+fileQuery.eq(
+"branch_id",
+branchId
+);
+
+}
+
+
+const {
+
+data:file,
+
+error:fileError
+
+} =
+await fileQuery.single();
 
 
 if(fileError)
@@ -519,11 +701,15 @@ throw fileError;
 if(!file){
 
 throw new Error(
-"File not found"
+"File not found."
 );
 
 }
 
+
+/* -----------------------------------------
+   EDIT MODE
+----------------------------------------- */
 
 editing =
 true;
@@ -538,23 +724,45 @@ document.getElementById(
 document.getElementById(
 "filePath"
 ).value =
-file.file_path ||
-"";
+file.file_path || "";
 
 
 document.getElementById(
 "language"
 ).value =
-file.language ||
-"text";
+file.language || "text";
 
 
 document.getElementById(
 "content"
 ).value =
-file.content ||
-"";
+file.content || "";
 
+
+/* -----------------------------------------
+   STORE ACTUAL BRANCH
+----------------------------------------- */
+
+if(file.branch_id){
+
+/*
+If URL did not contain branch_id,
+use the file's actual branch.
+*/
+
+if(!branchId){
+
+window.currentBranchId =
+file.branch_id;
+
+}
+
+}
+
+
+/* -----------------------------------------
+   SHOW EDITOR
+----------------------------------------- */
 
 document.getElementById(
 "loading"
@@ -570,7 +778,10 @@ document.getElementById(
 
 }catch(error){
 
-console.error(error);
+console.error(
+"FILE EDITOR ERROR:",
+error
+);
 
 
 document.getElementById(
@@ -581,7 +792,7 @@ document.getElementById(
 
 showMessage(
 error.message ||
-"Unable to load repository or file.",
+"Unable to load file.",
 "error"
 );
 
@@ -590,7 +801,12 @@ error.message ||
 }
 
 
+/* =====================================================
+   SAVE FILE
+===================================================== */
+
 async function saveFile(){
+
 
 const filePath =
 document.getElementById(
@@ -622,11 +838,20 @@ return;
 }
 
 
+/* -----------------------------------------
+   PATH VALIDATION
+----------------------------------------- */
+
 if(
+
 filePath.startsWith("/") ||
+
 filePath.endsWith("/") ||
+
 filePath.includes("..") ||
+
 filePath.includes("\\")
+
 ){
 
 showMessage(
@@ -642,10 +867,17 @@ return;
 try{
 
 
+/* -----------------------------------------
+   EDIT EXISTING FILE
+----------------------------------------- */
+
 if(editing){
 
+
 const {
+
 error
+
 } =
 await supabaseClient
 
@@ -678,9 +910,17 @@ repositoryId
 );
 
 
+/* -----------------------------------------
+   ERROR
+----------------------------------------- */
+
 if(error)
 throw error;
 
+
+/* -----------------------------------------
+   SUCCESS
+----------------------------------------- */
 
 showMessage(
 "File updated successfully!",
@@ -688,28 +928,68 @@ showMessage(
 );
 
 
+/* -----------------------------------------
+   REDIRECT
+----------------------------------------- */
+
 setTimeout(
+
 function(){
 
-window.location.href =
-"repository-explorer.html?repository_id=" +
+let url =
+"repository-explorer.html" +
+"?repository_id=" +
 encodeURIComponent(
 repositoryId
 );
 
+
+/*
+Preserve branch
+*/
+
+const actualBranch =
+branchId ||
+window.currentBranchId;
+
+
+if(actualBranch){
+
+url +=
+"&branch_id=" +
+encodeURIComponent(
+actualBranch
+);
+
+}
+
+
+window.location.href =
+url;
+
 },
+
 900
+
 );
 
 
-}else{
+return;
+
+}
 
 
-const {
-data:existing,
-error:checkError
-} =
-await supabaseClient
+/* =================================================
+   CREATE NEW FILE
+================================================= */
+
+
+/* -----------------------------------------
+   CHECK EXISTING FILE
+----------------------------------------- */
+
+let checkQuery =
+supabaseClient
 
 .from("repository_files")
 
@@ -724,6 +1004,27 @@ repositoryId
 "file_path",
 filePath
 );
+
+
+if(branchId){
+
+checkQuery =
+checkQuery.eq(
+"branch_id",
+branchId
+);
+
+}
+
+
+const {
+
+data:existing,
+
+error:checkError
+
+} =
+await checkQuery;
 
 
 if(checkError)
@@ -745,14 +1046,11 @@ return;
 }
 
 
-const {
-error
-} =
-await supabaseClient
+/* -----------------------------------------
+   CREATE FILE
+----------------------------------------- */
 
-.from("repository_files")
-
-.insert({
+const insertData = {
 
 repository_id:
 repositoryId,
@@ -766,12 +1064,43 @@ content,
 language:
 language
 
-});
+};
+
+
+/*
+If branch_id is supplied,
+save the file to that branch.
+*/
+
+if(branchId){
+
+insertData.branch_id =
+branchId;
+
+}
+
+
+const {
+
+error
+
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.insert(
+insertData
+);
 
 
 if(error)
 throw error;
 
+
+/* -----------------------------------------
+   SUCCESS
+----------------------------------------- */
 
 showMessage(
 "File created successfully!",
@@ -779,25 +1108,49 @@ showMessage(
 );
 
 
+/* -----------------------------------------
+   REDIRECT
+----------------------------------------- */
+
 setTimeout(
+
 function(){
 
-window.location.href =
-"repository-explorer.html?repository_id=" +
+let url =
+"repository-explorer.html" +
+"?repository_id=" +
 encodeURIComponent(
 repositoryId
 );
 
-},
-900
+
+if(branchId){
+
+url +=
+"&branch_id=" +
+encodeURIComponent(
+branchId
 );
 
 }
 
 
+window.location.href =
+url;
+
+},
+
+900
+
+);
+
+
 }catch(error){
 
-console.error(error);
+console.error(
+"SAVE FILE ERROR:",
+error
+);
 
 
 showMessage(
@@ -811,20 +1164,50 @@ error.message ||
 }
 
 
+/* =====================================================
+   BACK
+===================================================== */
+
 function goBack(){
 
-window.location.href =
-"repository-explorer.html?repository_id=" +
+let url =
+"repository-explorer.html" +
+"?repository_id=" +
 encodeURIComponent(
 repositoryId
 );
 
+
+const actualBranch =
+branchId ||
+window.currentBranchId;
+
+
+if(actualBranch){
+
+url +=
+"&branch_id=" +
+encodeURIComponent(
+actualBranch
+);
+
 }
 
+
+window.location.href =
+url;
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
 
 loadEditor();
 
 </script>
 
 </body>
+
 </html>
