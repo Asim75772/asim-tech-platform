@@ -129,6 +129,11 @@ body{
     color:#fff;
 }
 
+.zip-download{
+    background:#6e40c9;
+    color:#fff;
+}
+
 .publish{
     background:#8957e5;
     color:#fff;
@@ -154,6 +159,19 @@ body{
 
 .app-info strong{
     color:#58a6ff;
+}
+
+.apk-info{
+    background:#0f2d1b;
+    border:1px solid #238636;
+    border-radius:10px;
+    padding:15px 18px;
+    margin-bottom:18px;
+    color:#7ee787;
+}
+
+.apk-info strong{
+    color:#ffffff;
 }
 
 .builder{
@@ -388,7 +406,7 @@ textarea{
     .header-actions .btn{
         flex:1;
         text-align:center;
-        min-width:75px;
+        min-width:90px;
     }
 
     .builder{
@@ -488,12 +506,26 @@ textarea{
             </button>
 
 
+            <!-- APK DOWNLOAD -->
+
             <button
                 type="button"
                 class="btn download"
+                id="apkDownloadButton"
+                onclick="downloadAPK()"
+            >
+                📱 Download APK
+            </button>
+
+
+            <!-- ZIP DOWNLOAD -->
+
+            <button
+                type="button"
+                class="btn zip-download"
                 onclick="downloadApp()"
             >
-                ⬇️ Download
+                📦 Download ZIP
             </button>
 
 
@@ -521,6 +553,29 @@ textarea{
         class="app-info"
     >
         Loading app...
+    </div>
+
+
+    <!-- APK INFORMATION -->
+
+    <div class="apk-info">
+
+        📱 <strong>Android APK</strong>
+
+        <br><br>
+
+        Your latest successful Android build can be downloaded directly from ASIM TECH.
+
+        <br><br>
+
+        <strong>File:</strong>
+        app-release.apk
+
+        <br>
+
+        <strong>Format:</strong>
+        Android APK
+
     </div>
 
 
@@ -695,6 +750,22 @@ const supabaseClient =
 
 
 /* =====================================================
+   REAL APK URL
+===================================================== */
+
+const APK_DOWNLOAD_URL =
+    "https://lgwaeqgiqrsjprsec9?";
+
+/*
+   IMPORTANT:
+   The actual APK URL is set below.
+*/
+
+const REAL_APK_URL =
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co/storage/v1/object/public/apk-files/apps/329f1bdf-2ea6-44f2-a8cb-0e5699972b56/1.0.0/app-release.apk";
+
+
+/* =====================================================
    URL
 ===================================================== */
 
@@ -757,6 +828,11 @@ const saveStatus =
 const messageBox =
     document.getElementById(
         "message"
+    );
+
+const apkDownloadButton =
+    document.getElementById(
+        "apkDownloadButton"
     );
 
 
@@ -1701,12 +1777,6 @@ function buildPreview(){
                 file.content || "";
 
 
-            /*
-               IMPORTANT:
-               Build closing script tag
-               in pieces.
-            */
-
             const closingTag =
                 "<"
                 + "/script>";
@@ -1809,6 +1879,218 @@ function previewApp(){
 
 
 /* =====================================================
+   DOWNLOAD REAL ANDROID APK
+===================================================== */
+
+async function downloadAPK(){
+
+    if(
+        apkDownloadButton
+    ){
+
+        apkDownloadButton.disabled =
+            true;
+
+        apkDownloadButton.textContent =
+            "⏳ Preparing APK...";
+
+    }
+
+
+    try{
+
+        showMessage(
+            "Preparing Android APK download..."
+        );
+
+
+        /*
+           Fetch the real APK from
+           Supabase Storage.
+        */
+
+        const response =
+            await fetch(
+                REAL_APK_URL,
+                {
+                    method:"GET",
+                    cache:"no-store"
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "APK download failed. HTTP "
+                + response.status
+            );
+
+        }
+
+
+        const blob =
+            await response.blob();
+
+
+        if(
+            !blob ||
+            blob.size === 0
+        ){
+
+            throw new Error(
+                "APK file is empty."
+            );
+
+        }
+
+
+        /*
+           Convert response to
+           downloadable local object.
+        */
+
+        const blobUrl =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+
+        link.href =
+            blobUrl;
+
+
+        link.download =
+            "app-release.apk";
+
+
+        link.setAttribute(
+            "download",
+            "app-release.apk"
+        );
+
+
+        link.style.display =
+            "none";
+
+
+        document.body.appendChild(
+            link
+        );
+
+
+        link.click();
+
+
+        document.body.removeChild(
+            link
+        );
+
+
+        /*
+           Release temporary object URL.
+        */
+
+        setTimeout(
+            function(){
+
+                URL.revokeObjectURL(
+                    blobUrl
+                );
+
+            },
+            10000
+        );
+
+
+        showMessage(
+            "APK download started: app-release.apk"
+        );
+
+
+    }
+    catch(error){
+
+        console.error(
+            "APK download error:",
+            error
+        );
+
+
+        /*
+           Fallback:
+           If the mobile browser blocks
+           blob download, open the real
+           APK URL directly.
+        */
+
+        const fallback =
+            document.createElement(
+                "a"
+            );
+
+
+        fallback.href =
+            REAL_APK_URL;
+
+
+        fallback.download =
+            "app-release.apk";
+
+
+        fallback.target =
+            "_blank";
+
+
+        fallback.rel =
+            "noopener";
+
+
+        document.body.appendChild(
+            fallback
+        );
+
+
+        fallback.click();
+
+
+        document.body.removeChild(
+            fallback
+        );
+
+
+        showMessage(
+            "APK download opened. If download does not start, tap the download icon in the browser.",
+            "error"
+        );
+
+    }
+    finally{
+
+        if(
+            apkDownloadButton
+        ){
+
+            apkDownloadButton.disabled =
+                false;
+
+            apkDownloadButton.textContent =
+                "📱 Download APK";
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
    DOWNLOAD COMPLETE APP AS ZIP
 ===================================================== */
 
@@ -1850,17 +2132,9 @@ async function downloadApp(){
         );
 
 
-        /*
-           CREATE ZIP
-        */
-
         const zip =
             new JSZip();
 
-
-        /*
-           ADD EVERY APP FILE
-        */
 
         appFiles.forEach(
             function(file){
@@ -1873,10 +2147,6 @@ async function downloadApp(){
             }
         );
 
-
-        /*
-           CREATE README
-        */
 
         const appName =
             currentApp &&
@@ -1917,10 +2187,6 @@ Open index.html in a web browser.
         );
 
 
-        /*
-           GENERATE ZIP
-        */
-
         const blob =
             await zip.generateAsync({
 
@@ -1934,10 +2200,6 @@ Open index.html in a web browser.
 
             });
 
-
-        /*
-           SAFE APP NAME
-        */
 
         const safeName =
             appName
@@ -1964,10 +2226,6 @@ Open index.html in a web browser.
             +
             ".zip";
 
-
-        /*
-           DOWNLOAD
-        */
 
         const url =
             URL.createObjectURL(
