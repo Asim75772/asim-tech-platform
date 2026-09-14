@@ -11,6 +11,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- ZIP DOWNLOAD LIBRARY -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
 <style>
 
 *{
@@ -133,6 +136,11 @@ body{
 
 .btn:hover{
     opacity:.9;
+}
+
+.btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
 }
 
 .app-info{
@@ -399,19 +407,33 @@ textarea{
 
 <body>
 
+
 <nav class="navbar">
 
     <div class="logo">
-        <span class="green">ASIM</span> TECH
+
+        <span class="green">
+            ASIM
+        </span>
+
+        TECH
+
     </div>
+
 
     <div class="nav-right">
 
-        <a href="apps.html" class="nav-link">
+        <a
+            href="apps.html"
+            class="nav-link"
+        >
             📱 Apps
         </a>
 
-        <a href="dashboard.html" class="nav-link">
+        <a
+            href="dashboard.html"
+            class="nav-link"
+        >
             Dashboard
         </a>
 
@@ -427,7 +449,9 @@ textarea{
 
         <div>
 
-            <h1>🛠️ App Builder</h1>
+            <h1>
+                🛠️ App Builder
+            </h1>
 
             <p>
                 Build your own application with ASIM TECH.
@@ -438,9 +462,13 @@ textarea{
 
         <div class="header-actions">
 
-            <a href="apps.html" class="btn back">
+            <a
+                href="apps.html"
+                class="btn back"
+            >
                 ← Apps
             </a>
+
 
             <button
                 type="button"
@@ -450,6 +478,7 @@ textarea{
                 👁️ Preview
             </button>
 
+
             <button
                 type="button"
                 class="btn save"
@@ -458,6 +487,7 @@ textarea{
                 💾 Save
             </button>
 
+
             <button
                 type="button"
                 class="btn download"
@@ -465,6 +495,7 @@ textarea{
             >
                 ⬇️ Download
             </button>
+
 
             <button
                 type="button"
@@ -479,10 +510,16 @@ textarea{
     </div>
 
 
-    <div id="message" class="message"></div>
+    <div
+        id="message"
+        class="message"
+    ></div>
 
 
-    <div id="appInfo" class="app-info">
+    <div
+        id="appInfo"
+        class="app-info"
+    >
         Loading app...
     </div>
 
@@ -492,17 +529,23 @@ textarea{
 
         <div class="panel">
 
+
             <div class="panel-title">
                 📁 App Files
             </div>
 
-            <div id="fileList" class="file-list">
+
+            <div
+                id="fileList"
+                class="file-list"
+            >
 
                 <div class="loading">
                     Loading files...
                 </div>
 
             </div>
+
 
             <button
                 type="button"
@@ -512,12 +555,15 @@ textarea{
                 + Create File
             </button>
 
+
         </div>
 
 
         <div class="panel editor-panel">
 
+
             <div class="editor-header">
+
 
                 <div
                     id="currentFileName"
@@ -526,12 +572,14 @@ textarea{
                     No file selected
                 </div>
 
+
                 <div
                     id="currentLanguage"
                     class="language"
                 >
                     -
                 </div>
+
 
             </div>
 
@@ -545,6 +593,7 @@ textarea{
 
             <div class="bottom-bar">
 
+
                 <div
                     id="saveStatus"
                     class="status"
@@ -552,30 +601,43 @@ textarea{
                     Ready
                 </div>
 
+
                 <div class="status">
                     ASIM TECH App Builder
                 </div>
 
+
             </div>
+
 
         </div>
 
+
     </div>
+
 
 </main>
 
 
-<div id="fileModal" class="modal">
+<!-- CREATE FILE MODAL -->
+
+<div
+    id="fileModal"
+    class="modal"
+>
 
     <div class="modal-box">
+
 
         <h2>
             📄 Create App File
         </h2>
 
+
         <label for="newFileName">
             File Name
         </label>
+
 
         <input
             id="newFileName"
@@ -583,7 +645,9 @@ textarea{
             placeholder="index.html"
         >
 
+
         <div class="modal-actions">
+
 
             <button
                 type="button"
@@ -593,6 +657,7 @@ textarea{
                 Cancel
             </button>
 
+
             <button
                 type="button"
                 class="btn create"
@@ -601,7 +666,9 @@ textarea{
                 Create File
             </button>
 
+
         </div>
+
 
     </div>
 
@@ -628,7 +695,7 @@ const supabaseClient =
 
 
 /* =====================================================
-   APP
+   URL
 ===================================================== */
 
 const params =
@@ -640,9 +707,16 @@ const appId =
     params.get("id");
 
 
+/* =====================================================
+   VARIABLES
+===================================================== */
+
 let currentUser = null;
+
 let currentApp = null;
+
 let currentFile = null;
+
 let appFiles = [];
 
 
@@ -651,25 +725,39 @@ let appFiles = [];
 ===================================================== */
 
 const appInfo =
-    document.getElementById("appInfo");
+    document.getElementById(
+        "appInfo"
+    );
 
 const fileList =
-    document.getElementById("fileList");
+    document.getElementById(
+        "fileList"
+    );
 
 const codeEditor =
-    document.getElementById("codeEditor");
+    document.getElementById(
+        "codeEditor"
+    );
 
 const currentFileName =
-    document.getElementById("currentFileName");
+    document.getElementById(
+        "currentFileName"
+    );
 
 const currentLanguage =
-    document.getElementById("currentLanguage");
+    document.getElementById(
+        "currentLanguage"
+    );
 
 const saveStatus =
-    document.getElementById("saveStatus");
+    document.getElementById(
+        "saveStatus"
+    );
 
 const messageBox =
-    document.getElementById("message");
+    document.getElementById(
+        "message"
+    );
 
 
 /* =====================================================
@@ -687,6 +775,7 @@ function showMessage(
     messageBox.className =
         "message " + type;
 
+
     setTimeout(
         function(){
 
@@ -701,17 +790,29 @@ function showMessage(
 
 
 /* =====================================================
-   ESCAPE
+   ESCAPE HTML
 ===================================================== */
 
 function escapeHtml(value){
 
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+    return String(
+        value ?? ""
+    ).replace(
+        /[&<>"']/g,
+        function(character){
+
+            return {
+
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#039;"
+
+            }[character];
+
+        }
+    );
 
 }
 
@@ -720,28 +821,49 @@ function escapeHtml(value){
    LANGUAGE
 ===================================================== */
 
-function detectLanguage(fileName){
+function detectLanguage(
+    fileName
+){
 
     const name =
         fileName.toLowerCase();
 
-    if(name.endsWith(".html"))
+
+    if(
+        name.endsWith(".html")
+    )
         return "HTML";
 
-    if(name.endsWith(".css"))
+
+    if(
+        name.endsWith(".css")
+    )
         return "CSS";
 
-    if(name.endsWith(".js"))
+
+    if(
+        name.endsWith(".js")
+    )
         return "JavaScript";
 
-    if(name.endsWith(".json"))
+
+    if(
+        name.endsWith(".json")
+    )
         return "JSON";
 
-    if(name.endsWith(".md"))
+
+    if(
+        name.endsWith(".md")
+    )
         return "Markdown";
 
-    if(name.endsWith(".txt"))
+
+    if(
+        name.endsWith(".txt")
+    )
         return "Text";
+
 
     return "Code";
 
@@ -758,10 +880,14 @@ async function checkLogin(){
         data:{session},
         error
     } =
-        await supabaseClient.auth.getSession();
+        await supabaseClient
+            .auth
+            .getSession();
+
 
     if(error)
         throw error;
+
 
     if(!session){
 
@@ -771,6 +897,7 @@ async function checkLogin(){
         return null;
 
     }
+
 
     return session.user;
 
@@ -785,8 +912,10 @@ async function loadApp(){
 
     try{
 
+
         currentUser =
             await checkLogin();
+
 
         if(!currentUser)
             return;
@@ -798,7 +927,9 @@ async function loadApp(){
                 "<strong>App ID missing.</strong>";
 
             fileList.innerHTML =
-                "<div class='empty'>No App ID was provided.</div>";
+                "<div class='empty'>"
+                + "No App ID was provided."
+                + "</div>";
 
             return;
 
@@ -812,8 +943,14 @@ async function loadApp(){
             await supabaseClient
                 .from("apps")
                 .select("*")
-                .eq("id",appId)
-                .eq("owner_id",currentUser.id)
+                .eq(
+                    "id",
+                    appId
+                )
+                .eq(
+                    "owner_id",
+                    currentUser.id
+                )
                 .single();
 
 
@@ -839,12 +976,18 @@ async function loadApp(){
             error
         );
 
+
         appInfo.innerHTML =
-            "<strong>Unable to load app.</strong>";
+            "<strong>"
+            + "Unable to load app."
+            + "</strong>";
+
 
         fileList.innerHTML =
             "<div class='empty'>"
-            + escapeHtml(error.message)
+            + escapeHtml(
+                error.message
+            )
             + "</div>";
 
     }
@@ -865,7 +1008,10 @@ function updateAppInfo(){
     appInfo.innerHTML = `
 
         <strong>
-            📱 ${escapeHtml(currentApp.name)}
+            📱
+            ${escapeHtml(
+                currentApp.name
+            )}
         </strong>
 
         &nbsp; — &nbsp;
@@ -901,7 +1047,10 @@ async function loadFiles(){
         await supabaseClient
             .from("app_files")
             .select("*")
-            .eq("app_id",appId)
+            .eq(
+                "app_id",
+                appId
+            )
             .order(
                 "file_path",
                 {
@@ -921,21 +1070,29 @@ async function loadFiles(){
     renderFiles();
 
 
-    if(appFiles.length === 0){
+    if(
+        appFiles.length === 0
+    ){
 
-        currentFile = null;
+        currentFile =
+            null;
+
 
         currentFileName.textContent =
             "No file selected";
 
+
         currentLanguage.textContent =
             "-";
+
 
         codeEditor.value =
             "";
 
+
         saveStatus.textContent =
             "Create your first file";
+
 
         return;
 
@@ -955,7 +1112,8 @@ async function loadFiles(){
 
 
     selectFile(
-        indexFile || appFiles[0]
+        indexFile ||
+        appFiles[0]
     );
 
 }
@@ -967,12 +1125,16 @@ async function loadFiles(){
 
 function renderFiles(){
 
-    if(appFiles.length === 0){
+    if(
+        appFiles.length === 0
+    ){
 
         fileList.innerHTML = `
+
             <div class="empty">
                 No files yet.
             </div>
+
         `;
 
         return;
@@ -990,6 +1152,7 @@ function renderFiles(){
                     ? "active"
                     : "";
 
+
                 return `
 
                     <button
@@ -997,10 +1160,13 @@ function renderFiles(){
                         class="file ${active}"
                         onclick="selectFileById('${file.id}')"
                     >
+
                         📄
+
                         ${escapeHtml(
                             file.file_path
                         )}
+
                     </button>
 
                 `;
@@ -1064,7 +1230,7 @@ function selectFile(file){
 
 
 /* =====================================================
-   SAVE
+   SAVE FILE
 ===================================================== */
 
 async function saveFile(){
@@ -1087,6 +1253,7 @@ async function saveFile(){
 
     try{
 
+
         const {
             data,
             error
@@ -1107,8 +1274,14 @@ async function saveFile(){
                         new Date().toISOString()
 
                 })
-                .eq("id",currentFile.id)
-                .eq("app_id",appId)
+                .eq(
+                    "id",
+                    currentFile.id
+                )
+                .eq(
+                    "app_id",
+                    appId
+                )
                 .select()
                 .single();
 
@@ -1131,8 +1304,12 @@ async function saveFile(){
             );
 
 
-        if(index !== -1)
-            appFiles[index] = data;
+        if(index !== -1){
+
+            appFiles[index] =
+                data;
+
+        }
 
 
         saveStatus.textContent =
@@ -1147,10 +1324,14 @@ async function saveFile(){
     }
     catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         saveStatus.textContent =
             "Save failed";
+
 
         showMessage(
             error.message,
@@ -1169,12 +1350,17 @@ async function saveFile(){
 function openFileModal(){
 
     document
-        .getElementById("fileModal")
-        .classList.add("show");
+        .getElementById(
+            "fileModal"
+        )
+        .classList
+        .add("show");
 
 
     document
-        .getElementById("newFileName")
+        .getElementById(
+            "newFileName"
+        )
         .value = "";
 
 
@@ -1182,7 +1368,9 @@ function openFileModal(){
         function(){
 
             document
-                .getElementById("newFileName")
+                .getElementById(
+                    "newFileName"
+                )
                 .focus();
 
         },
@@ -1195,8 +1383,11 @@ function openFileModal(){
 function closeFileModal(){
 
     document
-        .getElementById("fileModal")
-        .classList.remove("show");
+        .getElementById(
+            "fileModal"
+        )
+        .classList
+        .remove("show");
 
 }
 
@@ -1255,6 +1446,7 @@ async function createFile(){
 
     try{
 
+
         const {
             data,
             error
@@ -1288,7 +1480,9 @@ async function createFile(){
             throw error;
 
 
-        appFiles.push(data);
+        appFiles.push(
+            data
+        );
 
 
         closeFileModal();
@@ -1297,7 +1491,9 @@ async function createFile(){
         renderFiles();
 
 
-        selectFile(data);
+        selectFile(
+            data
+        );
 
 
         showMessage(
@@ -1308,7 +1504,10 @@ async function createFile(){
     }
     catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         showMessage(
             error.message,
@@ -1324,10 +1523,14 @@ async function createFile(){
    STARTER CONTENT
 ===================================================== */
 
-function getStarterContent(fileName){
+function getStarterContent(
+    fileName
+){
 
     const language =
-        detectLanguage(fileName);
+        detectLanguage(
+            fileName
+        );
 
 
     if(language === "HTML"){
@@ -1407,8 +1610,11 @@ function buildPreview(){
 <!DOCTYPE html>
 <html>
 <body>
+
 <h2>No index.html found</h2>
+
 <p>Create index.html first.</p>
+
 </body>
 </html>
 `;
@@ -1420,9 +1626,7 @@ function buildPreview(){
         htmlFile.content || "";
 
 
-    /*
-       CSS FILES
-    */
+    /* CSS FILES */
 
     const cssFiles =
         appFiles.filter(
@@ -1451,7 +1655,9 @@ function buildPreview(){
 
             if(
                 html.toLowerCase()
-                    .includes("</head>")
+                    .includes(
+                        "</head>"
+                    )
             ){
 
                 html =
@@ -1461,7 +1667,8 @@ function buildPreview(){
                         "</head>"
                     );
 
-            }else{
+            }
+            else{
 
                 html =
                     cssBlock +
@@ -1473,15 +1680,7 @@ function buildPreview(){
     );
 
 
-    /*
-       JAVASCRIPT FILES
-
-       IMPORTANT:
-       The closing script tag is built
-       from separate strings so that
-       this page's own script cannot
-       be terminated accidentally.
-    */
+    /* JAVASCRIPT FILES */
 
     const jsFiles =
         appFiles.filter(
@@ -1502,6 +1701,12 @@ function buildPreview(){
                 file.content || "";
 
 
+            /*
+               IMPORTANT:
+               Build closing script tag
+               in pieces.
+            */
+
             const closingTag =
                 "<"
                 + "/script>";
@@ -1515,7 +1720,9 @@ function buildPreview(){
 
             if(
                 html.toLowerCase()
-                    .includes("</body>")
+                    .includes(
+                        "</body>"
+                    )
             ){
 
                 html =
@@ -1525,7 +1732,8 @@ function buildPreview(){
                         "</body>"
                     );
 
-            }else{
+            }
+            else{
 
                 html +=
                     jsBlock;
@@ -1547,7 +1755,9 @@ function buildPreview(){
 
 function previewApp(){
 
-    if(appFiles.length === 0){
+    if(
+        appFiles.length === 0
+    ){
 
         showMessage(
             "No app files available.",
@@ -1573,7 +1783,9 @@ function previewApp(){
 
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
 
     window.open(
@@ -1581,16 +1793,30 @@ function previewApp(){
         "_blank"
     );
 
+
+    setTimeout(
+        function(){
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        60000
+    );
+
 }
 
 
 /* =====================================================
-   DOWNLOAD
+   DOWNLOAD COMPLETE APP AS ZIP
 ===================================================== */
 
-function downloadApp(){
+async function downloadApp(){
 
-    if(appFiles.length === 0){
+    if(
+        appFiles.length === 0
+    ){
 
         showMessage(
             "No app files available.",
@@ -1602,78 +1828,224 @@ function downloadApp(){
     }
 
 
-    const html =
-        buildPreview();
+    if(
+        typeof JSZip === "undefined"
+    ){
+
+        showMessage(
+            "ZIP library is not loaded. Please refresh the page.",
+            "error"
+        );
+
+        return;
+
+    }
 
 
-    const blob =
-        new Blob(
-            [html],
-            {
-                type:"text/html"
+    try{
+
+
+        showMessage(
+            "Preparing complete App ZIP..."
+        );
+
+
+        /*
+           CREATE ZIP
+        */
+
+        const zip =
+            new JSZip();
+
+
+        /*
+           ADD EVERY APP FILE
+        */
+
+        appFiles.forEach(
+            function(file){
+
+                zip.file(
+                    file.file_path,
+                    file.content || ""
+                );
+
             }
         );
 
 
-    const url =
-        URL.createObjectURL(blob);
+        /*
+           CREATE README
+        */
+
+        const appName =
+            currentApp &&
+            currentApp.name
+            ? currentApp.name
+            : "ASIM TECH App";
 
 
-    const link =
-        document.createElement("a");
+        const readme =
+`ASIM TECH APP
+
+App Name:
+${appName}
+
+Created with:
+ASIM TECH Platform
+
+Files:
+${appFiles
+    .map(
+        function(file){
+
+            return "- " +
+                file.file_path;
+
+        }
+    )
+    .join("\n")}
+
+To run the app:
+Open index.html in a web browser.
+`;
 
 
-    link.href =
-        url;
+        zip.file(
+            "README.txt",
+            readme
+        );
 
 
-    const appName =
-        currentApp &&
-        currentApp.name
-        ? currentApp.name
-        : "asim-tech-app";
+        /*
+           GENERATE ZIP
+        */
+
+        const blob =
+            await zip.generateAsync({
+
+                type:"blob",
+
+                compression:"DEFLATE",
+
+                compressionOptions:{
+                    level:6
+                }
+
+            });
 
 
-    link.download =
-        appName
-            .replace(
-                /[^a-z0-9-_]/gi,
-                "-"
+        /*
+           SAFE APP NAME
+        */
+
+        const safeName =
+            appName
+                .replace(
+                    /[^a-z0-9-_]/gi,
+                    "-"
+                )
+                .replace(
+                    /-+/g,
+                    "-"
+                )
+                .replace(
+                    /^-|-$/g,
+                    ""
+                )
+                .toLowerCase();
+
+
+        const finalName =
+            (
+                safeName ||
+                "asim-tech-app"
             )
-            .toLowerCase()
-        + ".html";
+            +
+            ".zip";
 
 
-    document.body.appendChild(
-        link
-    );
+        /*
+           DOWNLOAD
+        */
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
 
 
-    link.click();
+        const link =
+            document.createElement(
+                "a"
+            );
 
 
-    link.remove();
+        link.href =
+            url;
 
 
-    setTimeout(
-        function(){
-
-            URL.revokeObjectURL(url);
-
-        },
-        1000
-    );
+        link.download =
+            finalName;
 
 
-    showMessage(
-        "App downloaded successfully."
-    );
+        link.style.display =
+            "none";
+
+
+        document.body.appendChild(
+            link
+        );
+
+
+        link.click();
+
+
+        document.body.removeChild(
+            link
+        );
+
+
+        setTimeout(
+            function(){
+
+                URL.revokeObjectURL(
+                    url
+                );
+
+            },
+            3000
+        );
+
+
+        showMessage(
+            "Complete App downloaded: "
+            + finalName
+        );
+
+
+    }
+    catch(error){
+
+        console.error(
+            "ZIP download error:",
+            error
+        );
+
+
+        showMessage(
+            "Download failed: "
+            + error.message,
+            "error"
+        );
+
+    }
 
 }
 
 
 /* =====================================================
-   PUBLISH
+   PUBLISH APP
 ===================================================== */
 
 async function publishApp(){
@@ -1730,6 +2102,7 @@ async function publishApp(){
 
     try{
 
+
         const {
             data,
             error
@@ -1741,10 +2114,12 @@ async function publishApp(){
                     is_published:true,
 
                     published_at:
-                        new Date().toISOString(),
+                        new Date()
+                            .toISOString(),
 
                     updated_at:
-                        new Date().toISOString()
+                        new Date()
+                            .toISOString()
 
                 })
                 .eq(
@@ -1778,7 +2153,11 @@ async function publishApp(){
     }
     catch(error){
 
-        console.error(error);
+        console.error(
+            "Publish error:",
+            error
+        );
+
 
         showMessage(
             error.message,
@@ -1791,7 +2170,7 @@ async function publishApp(){
 
 
 /* =====================================================
-   KEYBOARD SAVE
+   KEYBOARD SHORTCUT
 ===================================================== */
 
 document.addEventListener(
@@ -1799,11 +2178,13 @@ document.addEventListener(
     function(event){
 
         if(
-            (event.ctrlKey ||
-             event.metaKey)
+            (
+                event.ctrlKey ||
+                event.metaKey
+            )
             &&
             event.key.toLowerCase()
-            === "s"
+                === "s"
         ){
 
             event.preventDefault();
@@ -1817,11 +2198,13 @@ document.addEventListener(
 
 
 /* =====================================================
-   CLOSE MODAL
+   MODAL CLICK OUTSIDE
 ===================================================== */
 
 document
-    .getElementById("fileModal")
+    .getElementById(
+        "fileModal"
+    )
     .addEventListener(
         "click",
         function(event){
