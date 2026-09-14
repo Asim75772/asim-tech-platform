@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publish Web Page — ASIM TECH</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#07111f,#0b2233,#063b35);color:#fff;min-height:100vh}
+nav{background:#050c16;padding:16px 6%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.1)}
+.logo{font-size:22px;font-weight:bold;color:#36e0b5}nav a{color:#fff;text-decoration:none}
+.container{width:92%;max-width:1100px;margin:30px auto}.card{background:rgba(13,29,43,.96);border:1px solid rgba(255,255,255,.1);border-radius:15px;padding:22px;margin-bottom:20px}
+h1{font-size:30px;margin-bottom:8px}.subtitle{color:#aab7c4;margin-bottom:20px}.meta{color:#8fa1b1;font-size:14px;line-height:1.7;margin-top:12px}
+.buttons{display:flex;gap:12px;flex-wrap:wrap}.btn{border:0;border-radius:9px;padding:13px 20px;font-size:15px;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block}.publish{background:#16a34a;color:#fff}.publish:hover{background:#22c55e}.edit{background:#2563eb;color:#fff}.back{background:#64748b;color:#fff}
+.status{margin-top:15px;color:#aab7c4;word-break:break-word}.success{color:#36e0b5}.error{color:#ff7b72}
+.urlbox{display:none;margin-top:18px;padding:14px;border:1px solid #2563eb;border-radius:9px;background:#081521}.urlbox a{color:#58a6ff;word-break:break-all}
+.preview{width:100%;height:520px;border:0;border-radius:9px;background:#fff;margin-top:18px;display:none}
+@media(max-width:700px){.buttons{flex-direction:column}.btn{width:100%;text-align:center}.container{width:94%;margin:20px auto}h1{font-size:25px}.preview{height:600px}}
+</style>
+</head>
+<body>
+<nav><div class="logo">⚡ ASIM TECH</div><a href="dashboard.html">Dashboard</a></nav>
+<div class="container">
+<div class="card">
+<h1 id="title">🌐 Publish Web Page</h1>
+<p class="subtitle">Publish the saved draft of your ASIM TECH webpage.</p>
+<div id="meta" class="meta">Loading...</div>
+<div class="buttons" style="margin-top:20px">
+<a id="editBtn" class="btn edit" href="#">✏️ Edit Page</a>
+<button id="publishBtn" class="btn publish" onclick="publishPage()">🚀 Publish Page</button>
+<a class="btn back" href="javascript:history.back()">← Back</a>
+</div>
+<div id="status" class="status"></div>
+<div id="urlBox" class="urlbox"></div>
+</div>
+<div class="card">
+<h2>👁️ Draft Preview</h2>
+<iframe id="preview" class="preview" sandbox="allow-scripts allow-forms allow-modals"></iframe>
+</div>
+</div>
+<script>
+const SUPABASE_URL="https://lgwaeqgiqrsjprsecwxx.supabase.co";
+const SUPABASE_KEY="sb_publishable_DEoJ1PlONjxqa3eqqXH8Q_uc0hlemT";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const params=new URLSearchParams(window.location.search);
+const pageId=params.get("id")||params.get("page_id");
+let currentUser=null;let page=null;
+
+function status(message,type=""){
+ const el=document.getElementById("status");
+ el.textContent=message;el.className="status "+type;
+}
+function buildPage(html,css,js){
+ return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>${css||""}</style></head><body>${html||""}<script>${js||""}<\/script></body></html>`;
+}
+function draftValue(draft,live){return draft!==null&&draft!==undefined?draft:(live||"");}
+
+async function initialize(){
+ try{
+  if(!pageId) throw new Error("Web page ID is missing.");
+  const {data:{user},error:userError}=await supabaseClient.auth.getUser();
+  if(userError) throw userError;
+  if(!user){location.href="login.html";return;}
+  currentUser=user;
+
+  const {data,error}=await supabaseClient.from("web_pages").select("*").eq("id",pageId).single();
+  if(error) throw error;
+  if(!data) throw new Error("Web page not found.");
+  if(data.owner_id!==currentUser.id) throw new Error("You are not the owner of this web page.");
+  page=data;
+
+  document.getElementById("title").textContent="🚀 Publish: "+(page.page_name||"Web Page");
+  document.getElementById("meta").innerHTML=
+    "Status: <strong>"+(page.is_published?"Published":"Draft")+
+    "</strong><br>Last published: "+(page.published_at?new Date(page.published_at).toLocaleString():"Not published yet");
+
+  document.getElementById("editBtn").href=
+    "page-builder.html?page_id="+encodeURIComponent(page.id)+
+    "&repository_id="+encodeURIComponent(page.repository_id||"");
+
+  const html=draftValue(page.draft_html_content,page.html_content);
+  const css=draftValue(page.draft_css_content,page.css_content);
+  const js=draftValue(page.draft_js_content,page.js_content);
+
+  document.getElementById("preview").srcdoc=buildPage(html,css,js);
+  document.getElementById("preview").style.display="block";
+
+  if(page.is_published)
+    document.getElementById("publishBtn").textContent="🚀 Publish Latest Draft";
+
+  status(page.is_published?
+    "Published page loaded. You can publish any newer saved draft.":
+    "Ready to publish.","success");
+ }catch(e){
+  console.error(e);status(e.message||"Unable to load web page.","error");
+ }
+}
+
+async function publishPage(){
+ try{
+  if(!page||!currentUser) throw new Error("Page is not loaded.");
+
+  const html=draftValue(page.draft_html_content,page.html_content);
+  const css=draftValue(page.draft_css_content,page.css_content);
+  const js=draftValue(page.draft_js_content,page.js_content);
+
+  if(!confirm("Publish this webpage now?")) return;
+
+  const button=document.getElementById("publishBtn");
+  button.disabled=true;status("Publishing...");
+
+  const now=new Date().toISOString();
+  const {data,error}=await supabaseClient
+   .from("web_pages")
+   .update({
+    html_content:html,
+    css_content:css,
+    js_content:js,
+    is_published:true,
+    published_at:now,
+    draft_html_content:null,
+    draft_css_content:null,
+    draft_js_content:null,
+    updated_at:now
+   })
+   .eq("id",page.id)
+   .eq("owner_id",currentUser.id)
+   .select("id,page_name,is_published,published_at");
+
+  if(error) throw error;
+  if(!data||data.length===0) throw new Error("Publish failed. Please check your permissions.");
+
+  page={...page,html_content:html,css_content:css,js_content:js,
+        is_published:true,published_at:now,
+        draft_html_content:null,draft_css_content:null,draft_js_content:null};
+
+  document.getElementById("meta").innerHTML=
+    "Status: <strong>Published</strong><br>Published: "+
+    new Date(now).toLocaleString();
+
+  const publicUrl=location.origin+
+    location.pathname.replace(/[^/]+$/,"web-page.html")+
+    "?id="+encodeURIComponent(page.id);
+
+  const box=document.getElementById("urlBox");
+  box.style.display="block";
+  box.innerHTML="<strong>✅ Published successfully</strong><br><br>Public URL:<br>"+
+    "<a href="+JSON.stringify(publicUrl)+" target=\"_blank\" rel=\"noopener\">"+
+    publicUrl+"</a>";
+
+  button.textContent="🚀 Publish Latest Draft";
+  status("Webpage published successfully.","success");
+ }catch(e){
+  console.error(e);
+  status(e.message||"Unable to publish webpage.","error");
+  document.getElementById("publishBtn").disabled=false;
+ }
+}
+initialize();
+</script>
+</body>
+</html>
