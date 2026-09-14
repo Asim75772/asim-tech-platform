@@ -135,6 +135,7 @@ body{
     border-radius:10px;
     padding:16px 18px;
     margin-bottom:18px;
+    color:#c9d1d9;
 }
 
 .app-info strong{
@@ -196,6 +197,10 @@ body{
     cursor:pointer;
 }
 
+.add-file:hover{
+    background:#30363d;
+}
+
 .editor-panel{
     min-height:600px;
 }
@@ -215,6 +220,7 @@ body{
 .language{
     color:#8b949e;
     font-size:12px;
+    margin-top:4px;
 }
 
 textarea{
@@ -451,6 +457,7 @@ textarea{
             </a>
 
             <button
+                type="button"
                 class="btn preview"
                 onclick="previewApp()"
             >
@@ -458,6 +465,7 @@ textarea{
             </button>
 
             <button
+                type="button"
                 class="btn save"
                 onclick="saveFile()"
             >
@@ -465,6 +473,7 @@ textarea{
             </button>
 
             <button
+                type="button"
                 class="btn publish"
                 onclick="publishApp()"
             >
@@ -493,7 +502,7 @@ textarea{
     <div class="builder">
 
 
-        <!-- FILES -->
+        <!-- APP FILES -->
 
         <div class="panel">
 
@@ -510,6 +519,7 @@ textarea{
             </div>
 
             <button
+                type="button"
                 class="add-file"
                 onclick="openFileModal()"
             >
@@ -519,7 +529,7 @@ textarea{
         </div>
 
 
-        <!-- EDITOR -->
+        <!-- CODE EDITOR -->
 
         <div class="panel editor-panel">
 
@@ -590,7 +600,7 @@ textarea{
             📄 Create App File
         </h2>
 
-        <label>
+        <label for="newFileName">
             File Name
         </label>
 
@@ -603,6 +613,7 @@ textarea{
         <div class="modal-actions">
 
             <button
+                type="button"
                 class="btn cancel"
                 onclick="closeFileModal()"
             >
@@ -610,6 +621,7 @@ textarea{
             </button>
 
             <button
+                type="button"
                 class="btn create"
                 onclick="createFile()"
             >
@@ -625,22 +637,21 @@ textarea{
 
 <script>
 
-
 /* =====================================================
    SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
-"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
 const supabaseClient =
-supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
 /* =====================================================
@@ -648,12 +659,12 @@ supabase.createClient(
 ===================================================== */
 
 const params =
-new URLSearchParams(
-    window.location.search
-);
+    new URLSearchParams(
+        window.location.search
+    );
 
 const appId =
-params.get("id");
+    params.get("id");
 
 
 let currentUser = null;
@@ -667,25 +678,25 @@ let appFiles = [];
 ===================================================== */
 
 const appInfo =
-document.getElementById("appInfo");
+    document.getElementById("appInfo");
 
 const fileList =
-document.getElementById("fileList");
+    document.getElementById("fileList");
 
 const codeEditor =
-document.getElementById("codeEditor");
+    document.getElementById("codeEditor");
 
 const currentFileName =
-document.getElementById("currentFileName");
+    document.getElementById("currentFileName");
 
 const currentLanguage =
-document.getElementById("currentLanguage");
+    document.getElementById("currentLanguage");
 
 const saveStatus =
-document.getElementById("saveStatus");
+    document.getElementById("saveStatus");
 
 const messageBox =
-document.getElementById("message");
+    document.getElementById("message");
 
 
 /* =====================================================
@@ -694,7 +705,7 @@ document.getElementById("message");
 
 function showMessage(
     text,
-    type="success"
+    type = "success"
 ){
 
     messageBox.textContent =
@@ -710,7 +721,7 @@ function showMessage(
                 "message";
 
         },
-        3000
+        3500
     );
 }
 
@@ -725,7 +736,7 @@ async function checkLogin(){
         data:{session},
         error
     } =
-    await supabaseClient.auth.getSession();
+        await supabaseClient.auth.getSession();
 
     if(error){
 
@@ -743,6 +754,7 @@ async function checkLogin(){
     }
 
     return session.user;
+
 }
 
 
@@ -766,6 +778,9 @@ async function loadApp(){
             appInfo.innerHTML =
                 "<strong>App ID missing.</strong>";
 
+            fileList.innerHTML =
+                "<div class='empty'>No App ID was provided.</div>";
+
             return;
 
         }
@@ -775,27 +790,30 @@ async function loadApp(){
             data:app,
             error
         } =
-        await supabaseClient
+            await supabaseClient
 
-            .from("apps")
+                .from("apps")
 
-            .select("*")
+                .select("*")
 
-            .eq(
-                "id",
-                appId
-            )
+                .eq(
+                    "id",
+                    appId
+                )
 
-            .eq(
-                "owner_id",
-                currentUser.id
-            )
+                .eq(
+                    "owner_id",
+                    currentUser.id
+                )
 
-            .single();
+                .single();
 
 
-        if(error)
+        if(error){
+
             throw error;
+
+        }
 
 
         currentApp =
@@ -804,7 +822,9 @@ async function loadApp(){
 
         appInfo.innerHTML = `
 
-            <strong>📱 ${escapeHtml(app.name)}</strong>
+            <strong>
+                📱 ${escapeHtml(app.name)}
+            </strong>
 
             &nbsp; — &nbsp;
 
@@ -829,15 +849,22 @@ async function loadApp(){
 
     }catch(error){
 
-        console.error(error);
-
-        appInfo.innerHTML =
-            "<strong>Unable to load app.</strong>";
-
-        showMessage(
-            error.message,
-            "error"
+        console.error(
+            "Load app error:",
+            error
         );
+
+        appInfo.innerHTML = `
+            <strong>
+                Unable to load app.
+            </strong>
+        `;
+
+        fileList.innerHTML = `
+            <div class="empty">
+                ${escapeHtml(error.message)}
+            </div>
+        `;
 
     }
 
@@ -845,7 +872,7 @@ async function loadApp(){
 
 
 /* =====================================================
-   LOAD FILES
+   LOAD APP FILES
 ===================================================== */
 
 async function loadFiles(){
@@ -854,45 +881,48 @@ async function loadFiles(){
         data,
         error
     } =
-    await supabaseClient
+        await supabaseClient
 
-        .from("app_files")
+            .from("app_files")
 
-        .select("*")
+            .select(
+                "id,app_id,file_path,content,language,created_at,updated_at"
+            )
 
-        .eq(
-            "app_id",
-            appId
-        )
+            .eq(
+                "app_id",
+                appId
+            )
 
-        .order(
-            "file_path",
-            {ascending:true}
-        );
+            .order(
+                "file_path",
+                {
+                    ascending:true
+                }
+            );
 
 
     if(error){
 
-        /*
-          app_files table will be connected
-          to this builder.
-        */
+        console.error(
+            "App files error:",
+            error
+        );
+
+        appFiles = [];
 
         fileList.innerHTML = `
-
             <div class="empty">
 
-                No app files available yet.
+                No app files yet.
 
                 <br><br>
 
-                Create your first file.
+                Click <strong>+ Create File</strong>
+                to create your first file.
 
             </div>
-
         `;
-
-        appFiles = [];
 
         return;
 
@@ -906,13 +936,11 @@ async function loadFiles(){
     if(appFiles.length === 0){
 
         fileList.innerHTML = `
-
             <div class="empty">
 
                 No files yet.
 
             </div>
-
         `;
 
         return;
@@ -936,29 +964,48 @@ async function loadFiles(){
 
 function renderFiles(){
 
+    if(appFiles.length === 0){
+
+        fileList.innerHTML = `
+            <div class="empty">
+                No files yet.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
     fileList.innerHTML =
 
         appFiles.map(
-            file => `
+            function(file){
 
-                <button
-                    class="file ${
-                        currentFile &&
-                        currentFile.id === file.id
-                        ? "active"
-                        : ""
-                    }"
-                    onclick="selectFileById('${file.id}')"
-                >
+                const active =
+                    currentFile &&
+                    currentFile.id === file.id
+                    ? "active"
+                    : "";
 
-                    📄
-                    ${escapeHtml(
-                        file.file_path
-                    )}
+                return `
 
-                </button>
+                    <button
+                        type="button"
+                        class="file ${active}"
+                        onclick="selectFileById('${file.id}')"
+                    >
 
-            `
+                        📄
+                        ${escapeHtml(
+                            file.file_path
+                        )}
+
+                    </button>
+
+                `;
+
+            }
         ).join("");
 
 }
@@ -972,11 +1019,19 @@ function selectFileById(id){
 
     const file =
         appFiles.find(
-            item => item.id === id
+            function(item){
+
+                return item.id === id;
+
+            }
         );
 
-    if(file)
+
+    if(file){
+
         selectFile(file);
+
+    }
 
 }
 
@@ -1036,24 +1091,24 @@ async function saveFile(){
     const {
         error
     } =
-    await supabaseClient
+        await supabaseClient
 
-        .from("app_files")
+            .from("app_files")
 
-        .update({
+            .update({
 
-            content:
-                codeEditor.value,
+                content:
+                    codeEditor.value,
 
-            updated_at:
-                new Date().toISOString()
+                updated_at:
+                    new Date().toISOString()
 
-        })
+            })
 
-        .eq(
-            "id",
-            currentFile.id
-        );
+            .eq(
+                "id",
+                currentFile.id
+            );
 
 
     if(error){
@@ -1146,8 +1201,11 @@ async function createFile(){
 
     const existing =
         appFiles.find(
-            file =>
-                file.file_path === fileName
+            function(file){
+
+                return file.file_path === fileName;
+
+            }
         );
 
 
@@ -1167,29 +1225,33 @@ async function createFile(){
         data,
         error
     } =
-    await supabaseClient
+        await supabaseClient
 
-        .from("app_files")
+            .from("app_files")
 
-        .insert({
+            .insert({
 
-            app_id:
-                appId,
+                app_id:
+                    appId,
 
-            file_path:
-                fileName,
+                file_path:
+                    fileName,
 
-            content:
-                getStarterContent(fileName),
+                content:
+                    getStarterContent(
+                        fileName
+                    ),
 
-            language:
-                detectLanguage(fileName)
+                language:
+                    detectLanguage(
+                        fileName
+                    )
 
-        })
+            })
 
-        .select()
+            .select()
 
-        .single();
+            .single();
 
 
     if(error){
@@ -1209,7 +1271,9 @@ async function createFile(){
 
     closeFileModal();
 
+
     renderFiles();
+
 
     selectFile(data);
 
@@ -1270,13 +1334,22 @@ function getStarterContent(fileName){
     }
 
 
+    if(language === "JSON"){
+
+        return `{
+    "name": "My ASIM TECH App"
+}`;
+
+    }
+
+
     return "";
 
 }
 
 
 /* =====================================================
-   LANGUAGE
+   DETECT LANGUAGE
 ===================================================== */
 
 function detectLanguage(fileName){
@@ -1285,36 +1358,46 @@ function detectLanguage(fileName){
         fileName.toLowerCase();
 
 
-    if(name.endsWith(".html") ||
-       name.endsWith(".htm")){
+    if(
+        name.endsWith(".html") ||
+        name.endsWith(".htm")
+    ){
 
         return "HTML";
 
     }
 
 
-    if(name.endsWith(".css")){
+    if(
+        name.endsWith(".css")
+    ){
 
         return "CSS";
 
     }
 
 
-    if(name.endsWith(".js")){
+    if(
+        name.endsWith(".js")
+    ){
 
         return "JavaScript";
 
     }
 
 
-    if(name.endsWith(".json")){
+    if(
+        name.endsWith(".json")
+    ){
 
         return "JSON";
 
     }
 
 
-    if(name.endsWith(".txt")){
+    if(
+        name.endsWith(".txt")
+    ){
 
         return "Text";
 
@@ -1327,12 +1410,12 @@ function detectLanguage(fileName){
 
 
 /* =====================================================
-   PREVIEW
+   PREVIEW APP
 ===================================================== */
 
 function previewApp(){
 
-    if(appFiles.length === 0){
+    if(!appFiles.length){
 
         showMessage(
             "Create an index.html file first.",
@@ -1346,10 +1429,13 @@ function previewApp(){
 
     const htmlFile =
         appFiles.find(
-            file =>
-                file.file_path
+            function(file){
+
+                return file.file_path
                     .toLowerCase() ===
-                "index.html"
+                    "index.html";
+
+            }
         );
 
 
@@ -1365,35 +1451,46 @@ function previewApp(){
     }
 
 
+    let html =
+        htmlFile.content || "";
+
+
     const cssFiles =
         appFiles.filter(
-            file =>
-                file.file_path
+            function(file){
+
+                return file.file_path
                     .toLowerCase()
-                    .endsWith(".css")
+                    .endsWith(".css");
+
+            }
         );
 
 
     const jsFiles =
         appFiles.filter(
-            file =>
-                file.file_path
+            function(file){
+
+                return file.file_path
                     .toLowerCase()
-                    .endsWith(".js")
+                    .endsWith(".js");
+
+            }
         );
-
-
-    let html =
-        htmlFile.content || "";
 
 
     const css =
         cssFiles
             .map(
-                file =>
-                    "\n<style>\n" +
-                    file.content +
-                    "\n</style>\n"
+                function(file){
+
+                    return (
+                        "\n<style>\n" +
+                        file.content +
+                        "\n<\\/style>\n"
+                    );
+
+                }
             )
             .join("");
 
@@ -1401,21 +1498,26 @@ function previewApp(){
     const js =
         jsFiles
             .map(
-                file =>
-                    "\n<script>\n" +
-                    file.content +
-                    "\n</script>\n"
+                function(file){
+
+                    return (
+                        "\n<script>\n" +
+                        file.content +
+                        "\n<\\/script>\n"
+                    );
+
+                }
             )
             .join("");
 
 
     if(
-        html.includes("</head>")
+        html.toLowerCase().includes("</head>")
     ){
 
         html =
             html.replace(
-                "</head>",
+                /<\/head>/i,
                 css +
                 "</head>"
             );
@@ -1430,12 +1532,12 @@ function previewApp(){
 
 
     if(
-        html.includes("</body>")
+        html.toLowerCase().includes("</body>")
     ){
 
         html =
             html.replace(
-                "</body>",
+                /<\/body>/i,
                 js +
                 "</body>"
             );
@@ -1476,8 +1578,9 @@ function previewApp(){
 
 function publishApp(){
 
-    alert(
-        "App publishing will be enabled in the next App Builder step."
+    showMessage(
+        "App publishing will be enabled after the Builder is completed.",
+        "error"
     );
 
 }
@@ -1492,9 +1595,7 @@ function escapeHtml(value){
     return String(
         value ?? ""
     ).replace(
-
         /[&<>"']/g,
-
         function(character){
 
             return {
@@ -1508,7 +1609,6 @@ function escapeHtml(value){
             }[character];
 
         }
-
     );
 
 }
