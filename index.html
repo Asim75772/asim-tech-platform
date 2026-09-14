@@ -462,35 +462,6 @@ body::before{
 
 
 /* =====================================================
-   APK BUTTON
-===================================================== */
-
-.apk-button{
-    color:white;
-
-    border:
-        1px solid rgba(0,230,150,.55);
-
-    background:
-        linear-gradient(
-            100deg,
-            rgba(0,170,120,.75),
-            rgba(0,120,190,.75)
-        );
-
-    box-shadow:
-        0 12px 35px rgba(0,190,150,.20);
-}
-
-.apk-button:hover{
-    transform:translateY(-4px);
-
-    box-shadow:
-        0 17px 45px rgba(0,220,180,.35);
-}
-
-
-/* =====================================================
    BENEFITS
 ===================================================== */
 
@@ -1497,23 +1468,6 @@ body::before{
         </a>
 
 
-        <!-- =================================================
-             DIRECT APK DOWNLOAD
-        ================================================== -->
-
-        <a
-            href="https://lgwaeqgiqrsjprsecwxx.supabase.co/storage/v1/object/public/apk-files/apps/329f1bdf-2ea6-44f2-a8cb-0e5699972b56/1.0.0/app-release.apk"
-            class="hero-button apk-button"
-            download="app-release.apk"
-            target="_blank"
-            rel="noopener"
-            onclick="countAPKDownload()"
-        >
-
-            📱 &nbsp; Download APK &nbsp; ↓
-
-        </a>
-
     </div>
 
 
@@ -1844,8 +1798,8 @@ body::before{
         </h3>
 
         <p>
-            Create, manage and download
-            Android applications built with ASIM TECH.
+            Create and manage
+            Android applications with ASIM TECH.
         </p>
 
         <div class="card-action">
@@ -1936,14 +1890,6 @@ const supabaseClient =
 
 
 /* =====================================================
-   REAL APK URL
-===================================================== */
-
-const APK_URL =
-    "https://lgwaeqgiqrsjprsecwxx.supabase.co/storage/v1/object/public/apk-files/apps/329f1bdf-2ea6-44f2-a8cb-0e5699972b56/1.0.0/app-release.apk";
-
-
-/* =====================================================
    GET STARTED LOGIN PROTECTION
 ===================================================== */
 
@@ -2000,29 +1946,6 @@ async function handleGetStarted(event){
             "login.html";
 
     }
-
-}
-
-
-/* =====================================================
-   APK DOWNLOAD COUNTER
-===================================================== */
-
-function countAPKDownload(){
-
-    let count =
-        Number(
-            localStorage.getItem(
-                "asim_tech_apk_downloads"
-            ) || 0
-        );
-
-    count++;
-
-    localStorage.setItem(
-        "asim_tech_apk_downloads",
-        count
-    );
 
 }
 
