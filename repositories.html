@@ -796,6 +796,7 @@ try{
 
 hideError();
 
+
 const {
 data:{user},
 error:userError
@@ -805,9 +806,12 @@ await supabaseClient
 .getUser();
 
 
-if(userError)
-throw userError;
-
+/*
+IMPORTANT:
+If there is no authenticated user,
+send the visitor directly to login.
+Do not throw the auth error first.
+*/
 
 if(!user){
 
@@ -855,7 +859,10 @@ allRepositories
 
 }catch(error){
 
-console.error(error);
+console.error(
+"Repositories error:",
+error
+);
 
 showError(
 error.message ||
