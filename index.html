@@ -9,10 +9,6 @@
 
 <title>ASIM TECH — Build. Create. Innovate.</title>
 
-<!-- =====================================================
-     GOOGLE ANALYTICS
-===================================================== -->
-
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FE8PQDLLEB"></script>
 
 <script>
@@ -23,7 +19,6 @@ function gtag(){
 }
 
 gtag('js', new Date());
-
 gtag('config', 'G-FE8PQDLLEB');
 </script>
 
@@ -31,10 +26,6 @@ gtag('config', 'G-FE8PQDLLEB');
     name="description"
     content="ASIM TECH — Build. Create. Innovate. A modern digital platform for creating, managing and publishing digital projects."
 >
-
-<!-- =====================================================
-     SUPABASE
-===================================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -407,6 +398,8 @@ body::before{
     gap:20px;
 
     margin-top:31px;
+
+    flex-wrap:wrap;
 }
 
 .hero-button{
@@ -465,6 +458,35 @@ body::before{
 
     background:
         rgba(35,72,125,.30);
+}
+
+
+/* =====================================================
+   APK BUTTON
+===================================================== */
+
+.apk-button{
+    color:white;
+
+    border:
+        1px solid rgba(0,230,150,.55);
+
+    background:
+        linear-gradient(
+            100deg,
+            rgba(0,170,120,.75),
+            rgba(0,120,190,.75)
+        );
+
+    box-shadow:
+        0 12px 35px rgba(0,190,150,.20);
+}
+
+.apk-button:hover{
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 17px 45px rgba(0,220,180,.35);
 }
 
 
@@ -865,6 +887,40 @@ body::before{
 
 
 /* =====================================================
+   ANDROID CARD
+===================================================== */
+
+.android-card{
+    border:
+        1px solid rgba(0,230,150,.38);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(0,75,58,.72),
+            rgba(3,28,48,.78)
+        );
+}
+
+.android-card:hover{
+    border-color:
+        rgba(0,240,170,.80);
+
+    box-shadow:
+        0 16px 45px rgba(0,220,160,.20);
+}
+
+.android-icon{
+    background:
+        linear-gradient(
+            135deg,
+            #00d084,
+            #009e75
+        );
+}
+
+
+/* =====================================================
    CARD ICON
 ===================================================== */
 
@@ -987,6 +1043,14 @@ body::before{
 .platform-card:hover .card-action{
     background:
         rgba(30,100,180,.30);
+}
+
+.android-card .card-action{
+    border-color:
+        rgba(0,230,150,.45);
+
+    background:
+        rgba(0,150,100,.15);
 }
 
 
@@ -1305,7 +1369,6 @@ body::before{
 
 <div class="header-inner">
 
-
     <a
         href="index.html"
         class="brand"
@@ -1368,10 +1431,6 @@ body::before{
 <section class="hero">
 
 
-<!-- =====================================================
-     LEFT
-===================================================== -->
-
 <div class="hero-left">
 
 
@@ -1417,11 +1476,6 @@ body::before{
     <div class="hero-buttons">
 
 
-        <!-- =================================================
-             GET STARTED
-             LOGIN PROTECTION
-        ================================================== -->
-
         <a
             href="login.html"
             onclick="handleGetStarted(event)"
@@ -1433,16 +1487,30 @@ body::before{
         </a>
 
 
-        <!-- =================================================
-             EXPLORE PLATFORM
-        ================================================== -->
-
         <a
             href="repositories.html"
             class="hero-button secondary-button"
         >
 
             ▦ &nbsp; Explore Platform &nbsp; →
+
+        </a>
+
+
+        <!-- =================================================
+             DIRECT APK DOWNLOAD
+        ================================================== -->
+
+        <a
+            href="https://lgwaeqgiqrsjprsecwxx.supabase.co/storage/v1/object/public/apk-files/apps/329f1bdf-2ea6-44f2-a8cb-0e5699972b56/1.0.0/app-release.apk"
+            class="hero-button apk-button"
+            download="app-release.apk"
+            target="_blank"
+            rel="noopener"
+            onclick="countAPKDownload()"
+        >
+
+            📱 &nbsp; Download APK &nbsp; ↓
 
         </a>
 
@@ -1488,10 +1556,10 @@ body::before{
         <div class="benefit">
 
             <span class="benefit-icon">
-                📊
+                📱
             </span>
 
-            Future Ready
+            Android Ready
 
         </div>
 
@@ -1592,6 +1660,7 @@ body::before{
 </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -1755,9 +1824,41 @@ body::before{
 
     </div>
 
+
+
+    <!-- =================================================
+         ANDROID APPS
+    ================================================== -->
+
+    <a
+        href="published-website.html?id=bd47ed1e-130c-4341-a0a3-8416317cefb4"
+        class="platform-card android-card"
+    >
+
+        <div class="card-icon android-icon">
+            📱
+        </div>
+
+        <h3>
+            Android Apps
+        </h3>
+
+        <p>
+            Create, manage and download
+            Android applications built with ASIM TECH.
+        </p>
+
+        <div class="card-action">
+            Open Android Apps &nbsp; →
+        </div>
+
+    </a>
+
+
 </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -1801,6 +1902,7 @@ body::before{
 </footer>
 
 
+
 <!-- =====================================================
      POPUP
 ===================================================== -->
@@ -1810,6 +1912,7 @@ body::before{
     class="popup"
 >
 </div>
+
 
 
 <script>
@@ -1830,6 +1933,14 @@ const supabaseClient =
         SUPABASE_URL,
         SUPABASE_KEY
     );
+
+
+/* =====================================================
+   REAL APK URL
+===================================================== */
+
+const APK_URL =
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co/storage/v1/object/public/apk-files/apps/329f1bdf-2ea6-44f2-a8cb-0e5699972b56/1.0.0/app-release.apk";
 
 
 /* =====================================================
@@ -1867,20 +1978,10 @@ async function handleGetStarted(event){
 
         if(session){
 
-            /*
-             * User is already logged in.
-             * Go directly to Dashboard.
-             */
-
             window.location.href =
                 "dashboard.html";
 
         }else{
-
-            /*
-             * User is not logged in.
-             * Send user to Login page.
-             */
 
             window.location.href =
                 "login.html";
@@ -1895,17 +1996,33 @@ async function handleGetStarted(event){
             error
         );
 
-
-        /*
-         * Security-first fallback:
-         * If authentication cannot be verified,
-         * require login.
-         */
-
         window.location.href =
             "login.html";
 
     }
+
+}
+
+
+/* =====================================================
+   APK DOWNLOAD COUNTER
+===================================================== */
+
+function countAPKDownload(){
+
+    let count =
+        Number(
+            localStorage.getItem(
+                "asim_tech_apk_downloads"
+            ) || 0
+        );
+
+    count++;
+
+    localStorage.setItem(
+        "asim_tech_apk_downloads",
+        count
+    );
 
 }
 
