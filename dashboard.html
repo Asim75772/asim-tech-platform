@@ -539,13 +539,13 @@ footer{
 
 
 
-        <!-- WEB PAGE BUILDER -->
+        <!-- MY WEBSITES -->
 
         <a
-            href="page-builder.html"
+            href="websites.html"
             class="btn page-builder"
         >
-            🌐 Web Page Builder
+            🌐 My Websites
         </a>
 
 
@@ -892,6 +892,7 @@ async function loadDashboard(){
 }
 
 
+
 /* =====================================================
    LOAD NOTIFICATION COUNT
 ===================================================== */
@@ -978,6 +979,7 @@ async function loadNotificationCount(){
 }
 
 
+
 /* =====================================================
    RECENT ACTIVITY
 ===================================================== */
@@ -997,11 +999,14 @@ async function loadRecentActivity(){
         }
 
 
-
         const [
+
             repoResult,
+
             fileResult,
+
             pageResult
+
         ] =
         await Promise.all([
 
@@ -1182,10 +1187,7 @@ async function loadRecentActivity(){
                         page.created_at,
 
                         link:
-                        "repository-files.html?repository_id=" +
-                        encodeURIComponent(
-                            page.repository_id
-                        )
+                        "websites.html"
 
                     });
 
@@ -1316,6 +1318,7 @@ async function loadRecentActivity(){
 }
 
 
+
 /* =====================================================
    LOGOUT
 ===================================================== */
@@ -1387,6 +1390,7 @@ async function logoutUser(){
 }
 
 
+
 /* =====================================================
    ESCAPE HTML
 ===================================================== */
@@ -1422,6 +1426,7 @@ function escapeHtml(value){
 }
 
 
+
 /* =====================================================
    FORMAT DATE
 ===================================================== */
@@ -1454,6 +1459,7 @@ function formatDate(value){
         );
 
 }
+
 
 
 /* =====================================================
