@@ -149,14 +149,14 @@ color:white;
 background:#2ea043;
 }
 
-.btn-purple{
-background:#8957e5;
-border-color:#8957e5;
+.btn-blue{
+background:#1f6feb;
+border-color:#1f6feb;
 color:white;
 }
 
-.btn-purple:hover{
-background:#a371f7;
+.btn-blue:hover{
+background:#388bfd;
 }
 
 .btn-danger{
@@ -234,13 +234,20 @@ display:flex;
 align-items:center;
 justify-content:space-between;
 gap:10px;
-padding:12px 14px;
+padding:14px;
 border-bottom:1px solid #21262d;
 cursor:pointer;
+user-select:none;
+-webkit-tap-highlight-color:rgba(88,166,255,.18);
+transition:background .15s ease;
 }
 
 .file-row:hover{
 background:#161b22;
+}
+
+.file-row:active{
+background:#1f2937;
 }
 
 .file-row.selected{
@@ -253,12 +260,14 @@ display:flex;
 align-items:center;
 gap:10px;
 min-width:0;
+flex:1;
 }
 
 .file-icon{
-width:25px;
+width:30px;
 text-align:center;
-font-size:18px;
+font-size:20px;
+flex-shrink:0;
 }
 
 .file-name{
@@ -329,13 +338,13 @@ color:#8b949e;
 }
 
 .binary-box{
-padding:50px 20px;
+padding:60px 20px;
 text-align:center;
 color:#8b949e;
 }
 
 .binary-icon{
-font-size:50px;
+font-size:55px;
 margin-bottom:15px;
 }
 
@@ -424,6 +433,49 @@ gap:15px;
 
 .navbar a{
 font-size:12px;
+}
+
+}
+
+@media(max-width:600px){
+
+.container{
+width:92%;
+margin:20px auto;
+}
+
+.toolbar{
+flex-direction:column;
+align-items:stretch;
+}
+
+.branch-select,
+.search,
+.toolbar .btn{
+width:100%;
+}
+
+.file-row{
+padding:16px 12px;
+min-height:62px;
+}
+
+.file-name{
+font-size:15px;
+}
+
+.viewer-actions{
+width:100%;
+}
+
+.viewer-actions .btn{
+flex:1;
+text-align:center;
+}
+
+pre{
+font-size:12px;
+padding:15px;
 }
 
 }
@@ -531,7 +583,7 @@ id="branchSelect"
 class="branch-select"
 onchange="switchBranch(this.value)">
 
-<option>
+<option value="">
 Loading branches...
 </option>
 
@@ -711,6 +763,7 @@ ASIM TECH Platform
 
 <script>
 
+
 /* =====================================================
    SUPABASE
 ===================================================== */
@@ -753,101 +806,119 @@ let selectedFile = null;
 
 function getRepositoryId(){
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+const params =
+new URLSearchParams(
+window.location.search
+);
 
-    /*
-       Supports both:
+return (
 
-       ?repository_id=XXXX
+params.get("repository_id") ||
 
-       and
+params.get("id")
 
-       ?id=XXXX
-    */
-
-    return (
-        params.get("repository_id") ||
-        params.get("id")
-    );
+);
 
 }
 
 
 /* =====================================================
-   STATUS FUNCTIONS
+   GET BRANCH ID
+===================================================== */
+
+function getBranchId(){
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+return (
+
+params.get("branch_id") ||
+
+params.get("branch")
+
+);
+
+}
+
+
+/* =====================================================
+   STATUS
 ===================================================== */
 
 function showError(message){
 
-    const box =
-        document.getElementById("error");
+const box =
+document.getElementById("error");
 
-    box.textContent =
-        "❌ " + message;
+box.textContent =
+"❌ " + message;
 
-    box.style.display =
-        "block";
+box.style.display =
+"block";
 
 }
 
 
 function showSuccess(message){
 
-    const box =
-        document.getElementById("success");
+const box =
+document.getElementById("success");
 
-    box.textContent =
-        "✓ " + message;
+box.textContent =
+"✓ " + message;
 
-    box.style.display =
-        "block";
+box.style.display =
+"block";
 
-    setTimeout(
-        function(){
+setTimeout(
 
-            box.style.display =
-                "none";
+function(){
 
-        },
-        3500
-    );
+box.style.display =
+"none";
+
+},
+
+3000
+
+);
 
 }
 
 
 function showInfo(message){
 
-    const box =
-        document.getElementById("info");
+const box =
+document.getElementById("info");
 
-    box.textContent =
-        message;
+box.textContent =
+message;
 
-    box.style.display =
-        "block";
+box.style.display =
+"block";
 
 }
 
 
 function hideStatus(){
 
-    document.getElementById(
-        "error"
-    ).style.display =
-        "none";
+document.getElementById(
+"error"
+).style.display =
+"none";
 
-    document.getElementById(
-        "success"
-    ).style.display =
-        "none";
+document.getElementById(
+"success"
+).style.display =
+"none";
 
-    document.getElementById(
-        "info"
-    ).style.display =
-        "none";
+document.getElementById(
+"info"
+).style.display =
+"none";
 
 }
 
@@ -858,76 +929,66 @@ function hideStatus(){
 
 async function init(){
 
-    hideStatus();
+hideStatus();
+
+repoId =
+getRepositoryId();
 
 
-    repoId =
-        getRepositoryId();
+if(!repoId){
+
+showError(
+"Repository ID is missing."
+);
+
+return;
+
+}
 
 
-    /*
-       IMPORTANT FIX:
-
-       Your URL currently uses:
-
-       repository-explorer.html?id=XXXX
-
-       This code accepts it.
-    */
-
-    if(!repoId){
-
-        showError(
-            "Repository ID is missing."
-        );
-
-        return;
-
-    }
+try{
 
 
-    try{
+const {
 
-        const {
-            data:userData,
-            error:userError
-        } =
-        await supabaseClient.auth.getUser();
+data:userData,
+error:userError
 
-
-        if(userError){
-
-            console.warn(
-                userError.message
-            );
-
-        }
+} =
+await supabaseClient.auth.getUser();
 
 
-        user =
-            userData?.user || null;
+if(userError){
+
+console.warn(
+userError.message
+);
+
+}
 
 
-        await loadRepository();
+user =
+userData?.user ||
+null;
 
 
-        await loadBranches();
+await loadRepository();
+
+await loadBranches();
+
+await loadFiles();
 
 
-        await loadFiles();
+}catch(error){
 
+console.error(error);
 
-    }catch(error){
+showError(
+error.message ||
+"Unable to load repository."
+);
 
-        console.error(error);
-
-
-        showError(
-            error.message ||
-            "Unable to load repository."
-        );
-
-    }
+}
 
 }
 
@@ -938,80 +999,63 @@ async function init(){
 
 async function loadRepository(){
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .from("repositories")
-        .select("*")
-        .eq(
-            "id",
-            repoId
-        )
-        .single();
+const {
+
+data,
+error
+
+} =
+await supabaseClient
+
+.from("repositories")
+
+.select("*")
+
+.eq(
+"id",
+repoId
+)
+
+.single();
 
 
-    if(error){
-
-        throw error;
-
-    }
+if(error)
+throw error;
 
 
-    if(!data){
+if(!data){
 
-        throw new Error(
-            "Repository not found."
-        );
+throw new Error(
+"Repository not found."
+);
 
-    }
-
-
-    repo =
-        data;
+}
 
 
-    /*
-       PRIVATE REPOSITORY CHECK
-    */
-
-    if(
-        repo.is_private &&
-        (
-            !user ||
-            user.id !== repo.owner_id
-        )
-    ){
-
-        throw new Error(
-            "You do not have access to this private repository."
-        );
-
-    }
+repo =
+data;
 
 
-    document.getElementById(
-        "repoName"
-    ).textContent =
-        repo.name ||
-        "Repository";
+document.getElementById(
+"repoName"
+).textContent =
+data.name;
 
 
-    document.getElementById(
-        "repoDescription"
-    ).textContent =
-        repo.description ||
-        "Repository File Explorer";
+document.getElementById(
+"repoDescription"
+).textContent =
+data.description ||
+"Repository File Explorer";
 
 
-    document.getElementById(
-        "backButton"
-    ).href =
-        "repository-details.html?id=" +
-        encodeURIComponent(
-            repo.id
-        );
+document.getElementById(
+"backButton"
+).href =
+"repository-details.html?id=" +
+encodeURIComponent(
+repoId
+);
 
 }
 
@@ -1022,189 +1066,177 @@ async function loadRepository(){
 
 async function loadBranches(){
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .from("repository_branches")
-        .select(
-            "id,name,repository_id,created_by,created_at"
-        )
-        .eq(
-            "repository_id",
-            repoId
-        )
-        .order(
-            "name",
-            {
-                ascending:true
-            }
-        );
+const {
+
+data,
+error
+
+} =
+await supabaseClient
+
+.from("repository_branches")
+
+.select("*")
+
+.eq(
+"repository_id",
+repoId
+)
+
+.order(
+"created_at",
+{
+ascending:true
+}
+);
 
 
-    if(error){
-
-        throw error;
-
-    }
+if(error)
+throw error;
 
 
-    branches =
-        data || [];
+branches =
+data || [];
 
 
-    if(!branches.length){
-
-        throw new Error(
-            "No branches found for this repository."
-        );
-
-    }
+const select =
+document.getElementById(
+"branchSelect"
+);
 
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+select.innerHTML =
+"";
 
 
-    const branchId =
-        params.get("branch_id");
+if(branches.length === 0){
+
+throw new Error(
+"No branches found for this repository."
+);
+
+}
 
 
-    const branchName =
-        params.get("branch");
+const urlBranchId =
+getBranchId();
 
 
-    let selected =
-        branches.find(
-            function(branch){
-
-                return branch.id ===
-                    branchId;
-
-            }
-        );
+let selectedBranch = null;
 
 
-    if(
-        !selected &&
-        branchName
-    ){
+/*
+Prefer branch from URL.
+*/
 
-        selected =
-            branches.find(
-                function(branch){
+if(urlBranchId){
 
-                    return branch.name ===
-                        branchName;
+selectedBranch =
+branches.find(
+b => b.id === urlBranchId
+);
 
-                }
-            );
-
-    }
+}
 
 
-    if(!selected){
+/*
+Otherwise use repository default branch.
+*/
 
-        selected =
-            branches.find(
-                function(branch){
+if(!selectedBranch){
 
-                    return branch.name ===
-                        (
-                            repo.default_branch ||
-                            "main"
-                        );
+selectedBranch =
+branches.find(
+b => b.name === repo.default_branch
+);
 
-                }
-            );
-
-    }
+}
 
 
-    if(!selected){
+/*
+Otherwise use main.
+*/
 
-        selected =
-            branches[0];
+if(!selectedBranch){
 
-    }
+selectedBranch =
+branches.find(
+b => b.name === "main"
+);
 
-
-    currentBranch =
-        selected;
-
-
-    renderBranches();
+}
 
 
-    updateBranchUrl();
+/*
+Otherwise first branch.
+*/
 
+if(!selectedBranch){
+
+selectedBranch =
+branches[0];
+
+}
+
+
+currentBranch =
+selectedBranch;
+
+
+branches.forEach(
+
+function(branch){
+
+const option =
+document.createElement(
+"option"
+);
+
+option.value =
+branch.id;
+
+option.textContent =
+"🌿 " +
+branch.name;
+
+if(
+branch.id ===
+currentBranch.id
+){
+
+option.selected =
+true;
+
+}
+
+select.appendChild(
+option
+);
+
+}
+
+);
+
+
+updateBranchLabel();
 
 }
 
 
 /* =====================================================
-   RENDER BRANCHES
+   UPDATE BRANCH LABEL
 ===================================================== */
 
-function renderBranches(){
+function updateBranchLabel(){
 
-    const select =
-        document.getElementById(
-            "branchSelect"
-        );
-
-
-    select.innerHTML =
-        "";
-
-
-    branches.forEach(
-        function(branch){
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-
-            option.value =
-                branch.id;
-
-
-            option.textContent =
-                "🌿 " +
-                branch.name;
-
-
-            if(
-                currentBranch &&
-                branch.id ===
-                    currentBranch.id
-            ){
-
-                option.selected =
-                    true;
-
-            }
-
-
-            select.appendChild(
-                option
-            );
-
-        }
-    );
-
-
-    document.getElementById(
-        "branchLabel"
-    ).textContent =
-        currentBranch
-        ? "🌿 " + currentBranch.name
-        : "Not selected";
+document.getElementById(
+"branchLabel"
+).textContent =
+currentBranch
+?
+currentBranch.name
+:
+"Unknown";
 
 }
 
@@ -1213,104 +1245,31 @@ function renderBranches(){
    SWITCH BRANCH
 ===================================================== */
 
-async function switchBranch(branchId){
+function switchBranch(branchId){
 
-    const branch =
-        branches.find(
-            function(item){
-
-                return item.id ===
-                    branchId;
-
-            }
-        );
+const branch =
+branches.find(
+b => b.id === branchId
+);
 
 
-    if(!branch){
-
-        return;
-
-    }
+if(!branch)
+return;
 
 
-    currentBranch =
-        branch;
+currentBranch =
+branch;
 
 
-    selectedFile =
-        null;
+selectedFile =
+null;
 
 
-    document.getElementById(
-        "viewerName"
-    ).textContent =
-        "Select a file";
+updateBranchLabel();
 
+clearViewer();
 
-    document.getElementById(
-        "viewerActions"
-    ).innerHTML =
-        "";
-
-
-    document.getElementById(
-        "viewerBody"
-    ).innerHTML =
-        `
-        <div class="empty">
-            Select a file from the explorer to preview it.
-        </div>
-        `;
-
-
-    document.getElementById(
-        "branchLabel"
-    ).textContent =
-        "🌿 " +
-        currentBranch.name;
-
-
-    updateBranchUrl();
-
-
-    await loadFiles();
-
-}
-
-
-/* =====================================================
-   UPDATE URL
-===================================================== */
-
-function updateBranchUrl(){
-
-    const url =
-        new URL(
-            window.location.href
-        );
-
-
-    url.searchParams.set(
-        "repository_id",
-        repoId
-    );
-
-
-    if(currentBranch){
-
-        url.searchParams.set(
-            "branch_id",
-            currentBranch.id
-        );
-
-    }
-
-
-    window.history.replaceState(
-        {},
-        "",
-        url.toString()
-    );
+loadFiles();
 
 }
 
@@ -1321,85 +1280,72 @@ function updateBranchUrl(){
 
 async function loadFiles(){
 
-    if(!repoId){
+if(!currentBranch){
 
-        return;
+return;
 
-    }
-
-
-    if(!currentBranch){
-
-        return;
-
-    }
+}
 
 
-    const list =
-        document.getElementById(
-            "fileList"
-        );
+const fileList =
+document.getElementById(
+"fileList"
+);
 
 
-    list.innerHTML =
-        `
-        <div class="empty">
-            Loading files...
-        </div>
-        `;
+fileList.innerHTML =
+
+'<div class="empty">Loading files...</div>';
 
 
-    let query =
-        supabaseClient
-            .from("repository_files")
-            .select("*")
-            .eq(
-                "repository_id",
-                repoId
-            )
-            .eq(
-                "branch_id",
-                currentBranch.id
-            )
-            .order(
-                "file_path",
-                {
-                    ascending:true
-                }
-            );
+const {
+
+data,
+error
+
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.select("*")
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"branch_id",
+currentBranch.id
+)
+
+.order(
+"file_path",
+{
+ascending:true
+}
+);
 
 
-    const {
-        data,
-        error
-    } =
-    await query;
+if(error){
+
+showError(
+error.message
+);
+
+return;
+
+}
 
 
-    if(error){
-
-        console.error(error);
-
-
-        showError(
-            error.message ||
-            "Unable to load files."
-        );
+files =
+data || [];
 
 
-        return;
-
-    }
-
-
-    files =
-        data || [];
-
-
-    renderFiles(
-        files
-    );
-
+renderFiles(
+files
+);
 
 }
 
@@ -1408,109 +1354,139 @@ async function loadFiles(){
    RENDER FILES
 ===================================================== */
 
-function renderFiles(fileArray){
+function renderFiles(fileData){
 
-    const list =
-        document.getElementById(
-            "fileList"
-        );
-
-
-    document.getElementById(
-        "fileCount"
-    ).textContent =
-        fileArray.length +
-        (
-            fileArray.length === 1
-            ? " file"
-            : " files"
-        );
+const fileList =
+document.getElementById(
+"fileList"
+);
 
 
-    if(!fileArray.length){
-
-        list.innerHTML =
-            `
-            <div class="empty">
-                No files in this branch.
-            </div>
-            `;
-
-        return;
-
-    }
+fileList.innerHTML =
+"";
 
 
-    list.innerHTML =
-        "";
+document.getElementById(
+"fileCount"
+).textContent =
+fileData.length +
+(
+fileData.length === 1
+?
+" file"
+:
+" files"
+);
 
 
-    fileArray.forEach(
-        function(file){
+if(fileData.length === 0){
 
-            const row =
-                document.createElement(
-                    "div"
-                );
+fileList.innerHTML =
 
+'<div class="empty">' +
 
-            row.className =
-                "file-row";
+'📂<br><br>' +
 
+'No files in this branch.' +
 
-            row.dataset.fileName =
-                file.file_path ||
-                "";
+'</div>';
 
+return;
 
-            const icon =
-                file.is_binary
-                ? "📦"
-                : "📄";
+}
 
 
-            row.innerHTML =
-                `
-                <div class="file-main">
+fileData.forEach(
 
-                    <div class="file-icon">
-                        ${icon}
-                    </div>
+function(file){
 
-                    <div class="file-name">
-                        ${escapeHtml(
-                            file.file_path ||
-                            "Unnamed file"
-                        )}
-                    </div>
-
-                </div>
-
-                <div class="file-size">
-                    ${formatFileSize(
-                        file.file_size
-                    )}
-                </div>
-                `;
+const row =
+document.createElement(
+"div"
+);
 
 
-            row.onclick =
-                function(){
-
-                    selectFile(
-                        file,
-                        row
-                    );
-
-                };
+row.className =
+"file-row";
 
 
-            list.appendChild(
-                row
-            );
+row.dataset.fileId =
+file.id;
 
-        }
-    );
+
+const icon =
+getFileIcon(
+file
+);
+
+
+row.innerHTML =
+
+'<div class="file-main">' +
+
+'<div class="file-icon">' +
+
+icon +
+
+'</div>' +
+
+'<div>' +
+
+'<div class="file-name">' +
+
+escapeHtml(
+file.file_path
+) +
+
+'</div>' +
+
+'<div class="file-size">' +
+
+formatFileSize(
+file.file_size
+) +
+
+'</div>' +
+
+'</div>' +
+
+'</div>';
+
+
+/*
+IMPORTANT FIX:
+
+The complete row is clickable.
+
+This works on mobile tap as well.
+*/
+
+row.addEventListener(
+"click",
+function(){
+
+selectFile(
+file.id
+);
+
+}
+);
+
+
+fileList.appendChild(
+row
+);
+
+}
+
+);
+
+
+/*
+If only one file exists,
+do not automatically open it.
+User can tap it.
+*/
 
 }
 
@@ -1519,870 +1495,440 @@ function renderFiles(fileArray){
    SELECT FILE
 ===================================================== */
 
-async function selectFile(
-    file,
-    row
+async function selectFile(fileId){
+
+const file =
+files.find(
+f => f.id === fileId
+);
+
+
+if(!file){
+
+showError(
+"File not found."
+);
+
+return;
+
+}
+
+
+selectedFile =
+file;
+
+
+/*
+Highlight selected row.
+*/
+
+document.querySelectorAll(
+".file-row"
+).forEach(
+
+function(row){
+
+row.classList.remove(
+"selected"
+);
+
+if(
+row.dataset.fileId ===
+file.id
 ){
 
-    selectedFile =
-        file;
+row.classList.add(
+"selected"
+);
 
+}
 
-    document.querySelectorAll(
-        ".file-row"
-    ).forEach(
-        function(item){
+}
 
-            item.classList.remove(
-                "selected"
-            );
+);
 
-        }
-    );
 
-
-    if(row){
-
-        row.classList.add(
-            "selected"
-        );
-
-    }
-
-
-    document.getElementById(
-        "viewerName"
-    ).textContent =
-        file.file_path ||
-        "File";
-
-
-    document.getElementById(
-        "viewerActions"
-    ).innerHTML =
-        "";
-
-
-    /*
-       EDIT BUTTON
-    */
-
-    const edit =
-        document.createElement(
-            "a"
-        );
-
-
-    edit.className =
-        "btn btn-purple";
-
-
-    edit.textContent =
-        "✏️ Edit";
-
-
-    edit.href =
-        "file-editor.html" +
-        "?repository_id=" +
-        encodeURIComponent(repoId) +
-        "&file_id=" +
-        encodeURIComponent(file.id) +
-        (
-            currentBranch
-            ? "&branch_id=" +
-                encodeURIComponent(
-                    currentBranch.id
-                )
-            : ""
-        );
-
-
-    document.getElementById(
-        "viewerActions"
-    ).appendChild(
-        edit
-    );
-
-
-    /*
-       DOWNLOAD BUTTON
-    */
-
-    if(file.is_binary){
-
-        if(file.storage_path){
-
-            const download =
-                document.createElement(
-                    "button"
-                );
-
-
-            download.className =
-                "btn";
-
-
-            download.textContent =
-                "⬇️ Download";
-
-
-            download.onclick =
-                function(){
-
-                    downloadBinaryFile(
-                        file
-                    );
-
-                };
-
-
-            document.getElementById(
-                "viewerActions"
-            ).appendChild(
-                download
-            );
-
-        }
-
-    }else{
-
-        const download =
-            document.createElement(
-                "button"
-            );
-
-
-        download.className =
-            "btn";
-
-
-        download.textContent =
-            "⬇️ Download";
-
-
-        download.onclick =
-            function(){
-
-                downloadTextFile(
-                    file
-                );
-
-            };
-
-
-        document.getElementById(
-            "viewerActions"
-        ).appendChild(
-            download
-        );
-
-    }
-
-
-    /*
-       RENAME
-    */
-
-    const rename =
-        document.createElement(
-            "button"
-        );
-
-
-    rename.className =
-        "btn";
-
-
-    rename.textContent =
-        "✏️ Rename";
-
-
-    rename.onclick =
-        function(){
-
-            renameFile(
-                file
-            );
-
-        };
-
-
-    document.getElementById(
-        "viewerActions"
-    ).appendChild(
-        rename
-    );
-
-
-    /*
-       DELETE
-    */
-
-    const del =
-        document.createElement(
-            "button"
-        );
-
-
-    del.className =
-        "btn btn-danger";
-
-
-    del.textContent =
-        "🗑 Delete";
-
-
-    del.onclick =
-        function(){
-
-            deleteFile(
-                file
-            );
-
-        };
-
-
-    document.getElementById(
-        "viewerActions"
-    ).appendChild(
-        del
-    );
-
-
-    /*
-       PREVIEW
-    */
-
-    if(file.is_binary){
-
-        await previewBinary(
-            file
-        );
-
-    }else{
-
-        previewText(
-            file
-        );
-
-    }
+showFileViewer(
+file
+);
 
 }
 
 
 /* =====================================================
-   TEXT PREVIEW
+   SHOW FILE VIEWER
 ===================================================== */
 
-function previewText(file){
+function showFileViewer(file){
 
-    const body =
-        document.getElementById(
-            "viewerBody"
-        );
-
-
-    body.innerHTML =
-        "";
+document.getElementById(
+"viewerName"
+).textContent =
+"📄 " +
+file.file_path;
 
 
-    const pre =
-        document.createElement(
-            "pre"
-        );
+const actions =
+document.getElementById(
+"viewerActions"
+);
 
 
-    pre.textContent =
-        file.content ||
-        "";
+actions.innerHTML =
+"";
 
 
-    body.appendChild(
-        pre
-    );
+/*
+EDIT BUTTON
+*/
+
+const editButton =
+document.createElement(
+"a"
+);
+
+
+editButton.className =
+"btn btn-blue";
+
+
+editButton.textContent =
+"✏️ Edit";
+
+
+let editUrl =
+"file-editor.html" +
+
+"?id=" +
+encodeURIComponent(
+file.id
+) +
+
+"&file_id=" +
+encodeURIComponent(
+file.id
+) +
+
+"&repository_id=" +
+encodeURIComponent(
+repoId
+);
+
+
+if(
+currentBranch &&
+currentBranch.id
+){
+
+editUrl +=
+"&branch_id=" +
+encodeURIComponent(
+currentBranch.id
+);
+
+}
+
+
+editButton.href =
+editUrl;
+
+
+actions.appendChild(
+editButton
+);
+
+
+/*
+DOWNLOAD BUTTON
+*/
+
+const downloadButton =
+document.createElement(
+"button"
+);
+
+
+downloadButton.className =
+"btn";
+
+
+downloadButton.textContent =
+"⬇️ Download";
+
+
+downloadButton.addEventListener(
+
+"click",
+
+function(event){
+
+event.stopPropagation();
+
+downloadFile(
+file
+);
+
+}
+
+);
+
+
+actions.appendChild(
+downloadButton
+);
+
+
+/*
+PREVIEW BUTTON FOR HTML
+*/
+
+if(
+isHtmlFile(file.file_path)
+){
+
+const previewButton =
+document.createElement(
+"a"
+);
+
+previewButton.className =
+"btn";
+
+previewButton.textContent =
+"👁️ Preview";
+
+previewButton.href =
+buildPreviewUrl(
+file
+);
+
+previewButton.target =
+"_blank";
+
+actions.appendChild(
+previewButton
+);
+
+}
+
+
+/*
+SHOW BODY
+*/
+
+const body =
+document.getElementById(
+"viewerBody"
+);
+
+
+if(
+file.is_binary
+){
+
+body.innerHTML =
+
+'<div class="binary-box">' +
+
+'<div class="binary-icon">📦</div>' +
+
+'<h3>Binary File</h3>' +
+
+'<p style="margin-top:10px">' +
+
+escapeHtml(
+file.file_path
+) +
+
+'</p>' +
+
+'<p style="margin-top:8px">' +
+
+formatFileSize(
+file.file_size
+) +
+
+'</p>' +
+
+'</div>';
+
+return;
+
+}
+
+
+/*
+TEXT FILE
+*/
+
+body.innerHTML =
+"";
+
+
+const pre =
+document.createElement(
+"pre"
+);
+
+
+pre.textContent =
+file.content ||
+"";
+
+
+body.appendChild(
+pre
+);
 
 }
 
 
 /* =====================================================
-   BINARY PREVIEW
+   PREVIEW URL
 ===================================================== */
 
-async function previewBinary(file){
+function buildPreviewUrl(file){
 
-    const body =
-        document.getElementById(
-            "viewerBody"
-        );
+return (
 
+"web-page.html" +
 
-    body.innerHTML =
-        `
-        <div class="binary-box">
+"?id=" +
 
-            <div class="binary-icon">
-                📦
-            </div>
+encodeURIComponent(
+file.id
+)
 
-            <h3>
-                Binary File
-            </h3>
-
-            <p style="margin-top:10px;">
-                ${escapeHtml(
-                    file.file_path ||
-                    ""
-                )}
-            </p>
-
-            <p style="margin-top:7px;">
-                ${formatFileSize(
-                    file.file_size
-                )}
-            </p>
-
-            <p style="margin-top:12px;">
-                Use Download to save this file.
-            </p>
-
-        </div>
-        `;
-
-
-    if(!file.storage_path){
-
-        return;
-
-    }
-
-
-    try{
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-            .storage
-            .from("repository-files")
-            .createSignedUrl(
-                file.storage_path,
-                300
-            );
-
-
-        if(error){
-
-            console.warn(
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        if(data?.signedUrl){
-
-            /*
-               IMAGE PREVIEW
-            */
-
-            if(
-                file.mime_type &&
-                file.mime_type.startsWith(
-                    "image/"
-                )
-            ){
-
-                body.innerHTML =
-                    `
-                    <div style="
-                        padding:20px;
-                        text-align:center;
-                    ">
-
-                    <img
-                        src="${data.signedUrl}"
-                        style="
-                            max-width:100%;
-                            max-height:600px;
-                            border-radius:6px;
-                        "
-                    >
-
-                    </div>
-                    `;
-
-            }
-
-        }
-
-    }catch(error){
-
-        console.warn(error);
-
-    }
+);
 
 }
 
 
 /* =====================================================
-   DOWNLOAD TEXT FILE
+   HTML CHECK
 ===================================================== */
 
-function downloadTextFile(file){
+function isHtmlFile(path){
 
-    const blob =
-        new Blob(
-            [
-                file.content ||
-                ""
-            ],
-            {
-                type:
-                    file.mime_type ||
-                    "text/plain"
-            }
-        );
-
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const a =
-        document.createElement(
-            "a"
-        );
-
-
-    a.href =
-        url;
-
-
-    a.download =
-        getFileName(
-            file.file_path
-        );
-
-
-    document.body.appendChild(
-        a
-    );
-
-
-    a.click();
-
-
-    a.remove();
-
-
-    URL.revokeObjectURL(
-        url
-    );
+return (
+path.toLowerCase()
+.endsWith(".html") ||
+path.toLowerCase()
+.endsWith(".htm")
+);
 
 }
 
 
 /* =====================================================
-   DOWNLOAD BINARY FILE
+   DOWNLOAD
 ===================================================== */
 
-async function downloadBinaryFile(file){
+function downloadFile(file){
 
-    if(!file.storage_path){
+if(file.is_binary){
 
-        alert(
-            "Storage path is not available."
-        );
+showInfo(
+"Binary file download is not available from this viewer."
+);
 
-        return;
+return;
 
-    }
-
-
-    try{
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-            .storage
-            .from("repository-files")
-            .createSignedUrl(
-                file.storage_path,
-                300
-            );
+}
 
 
-        if(error){
+const blob =
+new Blob(
 
-            throw error;
+[
+file.content || ""
+],
 
-        }
+{
+type:
+"text/plain;charset=utf-8"
+}
 
-
-        if(!data?.signedUrl){
-
-            throw new Error(
-                "Unable to create download URL."
-            );
-
-        }
-
-
-        const a =
-            document.createElement(
-                "a"
-            );
+);
 
 
-        a.href =
-            data.signedUrl;
+const url =
+URL.createObjectURL(
+blob
+);
 
 
-        a.download =
-            getFileName(
-                file.file_path
-            );
+const a =
+document.createElement(
+"a"
+);
 
 
-        a.target =
-            "_blank";
+a.href =
+url;
 
 
-        document.body.appendChild(
-            a
-        );
+a.download =
+file.file_path
+.split("/")
+.pop();
 
 
-        a.click();
+document.body.appendChild(
+a
+);
 
 
-        a.remove();
+a.click();
 
 
-    }catch(error){
+a.remove();
 
-        alert(
-            error.message ||
-            "Download failed."
-        );
 
-    }
+setTimeout(
+
+function(){
+
+URL.revokeObjectURL(
+url
+);
+
+},
+
+1000
+
+);
 
 }
 
 
 /* =====================================================
-   RENAME FILE
+   CLEAR VIEWER
 ===================================================== */
 
-async function renameFile(file){
+function clearViewer(){
 
-    if(
-        !currentBranch
-    ){
+document.getElementById(
+"viewerName"
+).textContent =
+"Select a file";
 
-        alert(
-            "Please select a branch first."
-        );
 
-        return;
+document.getElementById(
+"viewerActions"
+).innerHTML =
+"";
 
-    }
 
+document.getElementById(
+"viewerBody"
+).innerHTML =
 
-    const oldPath =
-        file.file_path || "";
+'<div class="empty">' +
 
+'Select a file from the explorer to preview it.' +
 
-    const newPath =
-        prompt(
-            "Enter new file name/path:",
-            oldPath
-        );
-
-
-    if(
-        newPath === null
-    ){
-
-        return;
-
-    }
-
-
-    const cleanPath =
-        newPath.trim();
-
-
-    if(!cleanPath){
-
-        alert(
-            "File name cannot be empty."
-        );
-
-        return;
-
-    }
-
-
-    if(
-        cleanPath === oldPath
-    ){
-
-        return;
-
-    }
-
-
-    /*
-       CHECK DUPLICATE IN SAME BRANCH
-    */
-
-    const {
-        data:existing,
-        error:checkError
-    } =
-    await supabaseClient
-        .from("repository_files")
-        .select("id")
-        .eq(
-            "repository_id",
-            repoId
-        )
-        .eq(
-            "branch_id",
-            currentBranch.id
-        )
-        .eq(
-            "file_path",
-            cleanPath
-        )
-        .maybeSingle();
-
-
-    if(checkError){
-
-        alert(
-            checkError.message
-        );
-
-        return;
-
-    }
-
-
-    if(existing){
-
-        alert(
-            "A file with this name already exists in this branch."
-        );
-
-        return;
-
-    }
-
-
-    const {
-        error
-    } =
-    await supabaseClient
-        .from("repository_files")
-        .update({
-
-            file_path:
-                cleanPath,
-
-            updated_at:
-                new Date().toISOString()
-
-        })
-        .eq(
-            "id",
-            file.id
-        )
-        .eq(
-            "repository_id",
-            repoId
-        )
-        .eq(
-            "branch_id",
-            currentBranch.id
-        );
-
-
-    if(error){
-
-        alert(
-            error.message
-        );
-
-        return;
-
-    }
-
-
-    showSuccess(
-        "File renamed successfully."
-    );
-
-
-    await loadFiles();
-
-}
-
-
-/* =====================================================
-   DELETE FILE
-===================================================== */
-
-async function deleteFile(file){
-
-    if(
-        !currentBranch
-    ){
-
-        alert(
-            "Please select a branch first."
-        );
-
-        return;
-
-    }
-
-
-    const confirmed =
-        confirm(
-            "Are you sure you want to delete '" +
-            file.file_path +
-            "' from branch '" +
-            currentBranch.name +
-            "'?"
-        );
-
-
-    if(!confirmed){
-
-        return;
-
-    }
-
-
-    /*
-       DELETE STORAGE FILE FIRST
-       FOR BINARY FILES
-    */
-
-    if(
-        file.is_binary &&
-        file.storage_path
-    ){
-
-        try{
-
-            const {
-                error:storageError
-            } =
-            await supabaseClient
-                .storage
-                .from("repository-files")
-                .remove([
-                    file.storage_path
-                ]);
-
-
-            if(storageError){
-
-                console.warn(
-                    "Storage delete warning:",
-                    storageError.message
-                );
-
-            }
-
-        }catch(error){
-
-            console.warn(error);
-
-        }
-
-    }
-
-
-    /*
-       DELETE DATABASE RECORD
-       WITH BRANCH CHECK
-    */
-
-    const {
-        error
-    } =
-    await supabaseClient
-        .from("repository_files")
-        .delete()
-        .eq(
-            "id",
-            file.id
-        )
-        .eq(
-            "repository_id",
-            repoId
-        )
-        .eq(
-            "branch_id",
-            currentBranch.id
-        );
-
-
-    if(error){
-
-        alert(
-            error.message
-        );
-
-        return;
-
-    }
-
-
-    selectedFile =
-        null;
-
-
-    document.getElementById(
-        "viewerName"
-    ).textContent =
-        "Select a file";
-
-
-    document.getElementById(
-        "viewerActions"
-    ).innerHTML =
-        "";
-
-
-    document.getElementById(
-        "viewerBody"
-    ).innerHTML =
-        `
-        <div class="empty">
-            Select a file from the explorer to preview it.
-        </div>
-        `;
-
-
-    showSuccess(
-        "File deleted successfully."
-    );
-
-
-    await loadFiles();
+'</div>';
 
 }
 
@@ -2393,78 +1939,42 @@ async function deleteFile(file){
 
 function filterFiles(){
 
-    const search =
-        document.getElementById(
-            "searchInput"
-        ).value
-        .toLowerCase()
-        .trim();
+const query =
+document.getElementById(
+"searchInput"
+).value
+.trim()
+.toLowerCase();
 
 
-    document.querySelectorAll(
-        ".file-row"
-    ).forEach(
-        function(row){
+if(!query){
 
-            const name =
-                (
-                    row.dataset.fileName ||
-                    ""
-                ).toLowerCase();
+renderFiles(
+files
+);
 
-
-            row.style.display =
-                (
-                    !search ||
-                    name.includes(search)
-                )
-                ? "flex"
-                : "none";
-
-        }
-    );
+return;
 
 }
 
 
-/* =====================================================
-   CREATE BRANCH MODAL
-===================================================== */
+const filtered =
+files.filter(
 
-function openCreateBranch(){
+function(file){
 
-    document.getElementById(
-        "branchNameInput"
-    ).value =
-        "";
-
-
-    document.getElementById(
-        "branchModal"
-    ).style.display =
-        "flex";
-
-
-    setTimeout(
-        function(){
-
-            document.getElementById(
-                "branchNameInput"
-            ).focus();
-
-        },
-        100
-    );
+return file.file_path
+.toLowerCase()
+.includes(query);
 
 }
 
+);
 
-function closeCreateBranch(){
 
-    document.getElementById(
-        "branchModal"
-    ).style.display =
-        "none";
+renderFiles(
+filtered
+);
 
 }
 
@@ -2473,145 +1983,349 @@ function closeCreateBranch(){
    CREATE BRANCH
 ===================================================== */
 
+function openCreateBranch(){
+
+document.getElementById(
+"branchModal"
+).style.display =
+"flex";
+
+
+document.getElementById(
+"branchNameInput"
+).value =
+"";
+
+
+setTimeout(
+
+function(){
+
+document.getElementById(
+"branchNameInput"
+).focus();
+
+},
+
+100
+
+);
+
+}
+
+
+function closeCreateBranch(){
+
+document.getElementById(
+"branchModal"
+).style.display =
+"none";
+
+}
+
+
+/* =====================================================
+   CREATE NEW BRANCH
+===================================================== */
+
 async function createBranch(){
 
-    const input =
-        document.getElementById(
-            "branchNameInput"
-        );
+const input =
+document.getElementById(
+"branchNameInput"
+);
 
 
-    const branchName =
-        input.value.trim();
+const branchName =
+input.value.trim();
 
 
-    if(!branchName){
+if(!branchName){
 
-        alert(
-            "Please enter a branch name."
-        );
+alert(
+"Please enter a branch name."
+);
 
-        return;
+return;
 
-    }
-
-
-    if(
-        !/^[A-Za-z0-9._\/-]+$/.test(
-            branchName
-        )
-    ){
-
-        alert(
-            "Use only letters, numbers, -, _, / and ."
-        );
-
-        return;
-
-    }
+}
 
 
-    if(
-        branches.some(
-            function(branch){
+if(
+branchName.includes(" ") ||
+branchName.includes("/") &&
+branchName.startsWith("/")
+){
 
-                return branch.name ===
-                    branchName;
+alert(
+"Please enter a valid branch name."
+);
 
-            }
-        )
-    ){
+return;
 
-        alert(
-            "This branch already exists."
-        );
-
-        return;
-
-    }
+}
 
 
-    if(!user){
+/*
+Check duplicate.
+*/
 
-        alert(
-            "Please login first."
-        );
+const {
 
-        return;
+data:existing,
+error:checkError
 
-    }
+} =
+await supabaseClient
 
+.from("repository_branches")
 
-    try{
+.select("id")
 
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-            .from("repository_branches")
-            .insert({
+.eq(
+"repository_id",
+repoId
+)
 
-                repository_id:
-                    repoId,
-
-                name:
-                    branchName,
-
-                created_by:
-                    user.id
-
-            })
-            .select()
-            .single();
+.eq(
+"name",
+branchName
+);
 
 
-        if(error){
+if(checkError){
 
-            throw error;
+alert(
+checkError.message
+);
 
-        }
+return;
 
-
-        branches.push(
-            data
-        );
-
-
-        currentBranch =
-            data;
+}
 
 
-        renderBranches();
+if(
+existing &&
+existing.length > 0
+){
+
+alert(
+"This branch already exists."
+);
+
+return;
+
+}
 
 
-        updateBranchUrl();
+/*
+Authentication check.
+*/
+
+if(!user){
+
+alert(
+"Please login first."
+);
+
+return;
+
+}
 
 
-        closeCreateBranch();
+const {
+
+data:newBranch,
+error
+
+} =
+await supabaseClient
+
+.from("repository_branches")
+
+.insert({
+
+repository_id:
+repoId,
+
+name:
+branchName,
+
+created_by:
+user.id
+
+})
+
+.select()
+
+.single();
 
 
-        showSuccess(
-            "Branch '" +
-            branchName +
-            "' created successfully."
-        );
+if(error){
+
+alert(
+error.message
+);
+
+return;
+
+}
 
 
-        await loadFiles();
+showSuccess(
+"Branch created successfully."
+);
 
 
-    }catch(error){
-
-        console.error(error);
+closeCreateBranch();
 
 
-        alert(
-            error.message ||
-            "Unable to create branch."
-        );
+await loadBranches();
 
-    }
+
+/*
+Switch to newly created branch.
+*/
+
+if(newBranch){
+
+currentBranch =
+newBranch;
+
+document.getElementById(
+"branchSelect"
+).value =
+newBranch.id;
+
+updateBranchLabel();
+
+await loadFiles();
+
+}
+
+}
+
+
+/* =====================================================
+   FILE ICON
+===================================================== */
+
+function getFileIcon(file){
+
+if(file.is_binary){
+
+return "📦";
+
+}
+
+
+const path =
+file.file_path
+.toLowerCase();
+
+
+if(path.endsWith(".html")){
+
+return "🌐";
+
+}
+
+if(path.endsWith(".css")){
+
+return "🎨";
+
+}
+
+if(
+path.endsWith(".js") ||
+path.endsWith(".javascript")
+){
+
+return "📜";
+
+}
+
+if(path.endsWith(".json")){
+
+return "🧩";
+
+}
+
+if(path.endsWith(".md")){
+
+return "📝";
+
+}
+
+if(
+path.endsWith(".png") ||
+path.endsWith(".jpg") ||
+path.endsWith(".jpeg") ||
+path.endsWith(".webp") ||
+path.endsWith(".gif")
+){
+
+return "🖼️";
+
+}
+
+return "📄";
+
+}
+
+
+/* =====================================================
+   FILE SIZE
+===================================================== */
+
+function formatFileSize(size){
+
+if(
+size === null ||
+size === undefined
+){
+
+return "Text file";
+
+}
+
+
+const number =
+Number(size);
+
+
+if(
+isNaN(number)
+){
+
+return "Text file";
+
+}
+
+
+if(number < 1024){
+
+return number +
+" B";
+
+}
+
+
+if(number < 1024 * 1024){
+
+return (
+number / 1024
+).toFixed(1) +
+" KB";
+
+}
+
+
+return (
+number /
+(1024 * 1024)
+).toFixed(1) +
+" MB";
 
 }
 
@@ -2622,146 +2336,34 @@ async function createBranch(){
 
 function escapeHtml(value){
 
-    return String(value || "")
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+return String(value)
 
-}
+.replace(
+/&/g,
+"&amp;"
+)
 
+.replace(
+/</g,
+"&lt;"
+)
 
-/* =====================================================
-   FILE SIZE
-===================================================== */
+.replace(
+/>/g,
+"&gt;"
+)
 
-function formatFileSize(bytes){
+.replace(
+/"/g,
+"&quot;"
+)
 
-    if(
-        bytes === null ||
-        bytes === undefined
-    ){
-
-        return "";
-
-    }
-
-
-    const size =
-        Number(bytes);
-
-
-    if(
-        !Number.isFinite(size)
-    ){
-
-        return "";
-
-    }
-
-
-    if(size < 1024){
-
-        return size + " B";
-
-    }
-
-
-    if(size < 1024 * 1024){
-
-        return (
-            size / 1024
-        ).toFixed(1) +
-        " KB";
-
-    }
-
-
-    if(size < 1024 * 1024 * 1024){
-
-        return (
-            size /
-            (1024 * 1024)
-        ).toFixed(1) +
-        " MB";
-
-    }
-
-
-    return (
-        size /
-        (1024 * 1024 * 1024)
-    ).toFixed(1) +
-    " GB";
-
-}
-
-
-/* =====================================================
-   FILE NAME
-===================================================== */
-
-function getFileName(path){
-
-    if(!path){
-
-        return "download";
-
-    }
-
-
-    const parts =
-        path.split("/");
-
-
-    return parts[
-        parts.length - 1
-    ];
-
-}
-
-
-/* =====================================================
-   MODAL OUTSIDE CLICK
-===================================================== */
-
-window.addEventListener(
-    "click",
-    function(event){
-
-        const modal =
-            document.getElementById(
-                "branchModal"
-            );
-
-
-        if(
-            event.target ===
-            modal
-        ){
-
-            closeCreateBranch();
-
-        }
-
-    }
+.replace(
+/'/g,
+"&#039;"
 );
+
+}
 
 
 /* =====================================================
