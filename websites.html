@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Websites — ASIM TECH</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0d1117;color:#fff;min-height:100vh}
+nav{background:#161b22;border-bottom:1px solid #30363d;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.logo{font-size:21px;font-weight:700}.green{color:#39d353}nav a{color:#58a6ff;text-decoration:none;font-weight:700}
+.container{max-width:1050px;margin:auto;padding:32px 18px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:25px}
+.head h1{font-size:30px}.sub{color:#8b949e;margin-top:7px}
+.btn{display:inline-block;border:1px solid #30363d;border-radius:8px;padding:11px 16px;text-decoration:none;font-weight:700;color:#fff}
+.create{background:#238636;border-color:#238636}.create:hover{background:#2ea043}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;margin-bottom:16px;overflow:hidden}
+.site{padding:20px;border-bottom:1px solid #30363d}.site:last-child{border-bottom:0}
+.site h2{color:#58a6ff;margin-bottom:8px}.meta{color:#8b949e;font-size:14px;margin-bottom:14px}
+.actions{display:flex;gap:9px;flex-wrap:wrap}.edit{background:#1f6feb}.publish{background:#f59e0b;color:#111}.view{background:#21262d}
+.empty,.loading{text-align:center;padding:45px 20px;color:#8b949e}.error{color:#ff7b72;text-align:center;padding:25px}
+.badge{display:inline-block;padding:4px 9px;border-radius:20px;font-size:12px;margin-left:8px;background:#21262d;border:1px solid #30363d}
+.published{color:#3fb950}.draft{color:#d29922}
+@media(max-width:650px){.head h1{font-size:25px}.create{width:100%;text-align:center}.actions{flex-direction:column}.actions .btn{width:100%;text-align:center}}
+</style>
+</head>
+<body>
+<nav><div class="logo"><span class="green">ASIM</span> TECH</div><a href="dashboard.html">← Dashboard</a></nav>
+<div class="container">
+<div class="head">
+<div><h1>🌐 My Websites</h1><p class="sub">Create, edit, preview and publish your websites from one place.</p></div>
+<a class="btn create" href="page-builder.html">➕ Create New Website</a>
+</div>
+<div id="list" class="card"><div class="loading">Loading your websites...</div></div>
+</div>
+<script>
+const SUPABASE_URL="https://lgwaeqgiqrsjprsecwxx.supabase.co";
+const SUPABASE_KEY="sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const list=document.getElementById('list');
+
+function esc(v){
+ return String(v??'').replace(/[&<>'"]/g,c=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'
+ }[c]));
+}
+function date(v){return v?new Date(v).toLocaleString():''}
+
+async function load(){
+ try{
+  const {data:{user},error:ue}=await client.auth.getUser();
+  if(ue)throw ue;
+  if(!user){location.href='login.html';return;}
+
+  const {data,error}=await client
+   .from('web_pages')
+   .select('id,repository_id,page_name,is_published,published_at,created_at,updated_at')
+   .eq('owner_id',user.id)
+   .order('updated_at',{ascending:false});
+
+  if(error)throw error;
+
+  if(!data||!data.length){
+   list.innerHTML='<div class="empty"><div style="font-size:40px;margin-bottom:12px">🌐</div><h2>No websites yet</h2><p style="margin:10px 0 20px">Create your first website and start designing.</p><a class="btn create" href="page-builder.html">➕ Create New Website</a></div>';
+   return;
+  }
+
+  list.innerHTML=data.map(p=>{
+   const status=p.is_published
+    ? '<span class="badge published">● Published</span>'
+    : '<span class="badge draft">● Draft</span>';
+
+   const edit='page-builder.html?page_id='+encodeURIComponent(p.id)+'&repository_id='+encodeURIComponent(p.repository_id||'');
+   const publish='web-page-publish.html?id='+encodeURIComponent(p.id);
+   const view='web-page.html?id='+encodeURIComponent(p.id);
+
+   return '<div class="site">'+
+    '<h2>'+esc(p.page_name||'Untitled Website')+status+'</h2>'+
+    '<div class="meta">Last updated: '+esc(date(p.updated_at||p.created_at))+'</div>'+
+    '<div class="actions">'+
+    '<a class="btn edit" href="'+edit+'">✏️ Edit</a>'+
+    (p.is_published
+      ? '<a class="btn view" target="_blank" href="'+view+'">🌍 View Website</a><a class="btn publish" href="'+publish+'">🚀 Publish / Update</a>'
+      : '<a class="btn publish" href="'+publish+'">🚀 Publish</a>')+
+    '</div></div>';
+  }).join('');
+ }catch(e){
+  console.error(e);
+  list.innerHTML='<div class="error">Unable to load websites. Please refresh the page.</div>';
+ }
+}
+load();
+</script>
+</body>
+</html>
