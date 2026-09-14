@@ -4,7 +4,6 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>App Builder — ASIM TECH</title>
@@ -124,11 +123,6 @@ body{
     color:#fff;
 }
 
-.download{
-    background:#0969da;
-    color:#fff;
-}
-
 .zip-download{
     background:#6e40c9;
     color:#fff;
@@ -159,19 +153,6 @@ body{
 
 .app-info strong{
     color:#58a6ff;
-}
-
-.apk-info{
-    background:#0f2d1b;
-    border:1px solid #238636;
-    border-radius:10px;
-    padding:15px 18px;
-    margin-bottom:18px;
-    color:#7ee787;
-}
-
-.apk-info strong{
-    color:#ffffff;
 }
 
 .builder{
@@ -425,33 +406,19 @@ textarea{
 
 <body>
 
-
 <nav class="navbar">
 
     <div class="logo">
-
-        <span class="green">
-            ASIM
-        </span>
-
-        TECH
-
+        <span class="green">ASIM</span> TECH
     </div>
-
 
     <div class="nav-right">
 
-        <a
-            href="apps.html"
-            class="nav-link"
-        >
+        <a href="apps.html" class="nav-link">
             📱 Apps
         </a>
 
-        <a
-            href="dashboard.html"
-            class="nav-link"
-        >
+        <a href="dashboard.html" class="nav-link">
             Dashboard
         </a>
 
@@ -459,24 +426,19 @@ textarea{
 
 </nav>
 
-
 <main class="container">
-
 
     <div class="header">
 
         <div>
 
-            <h1>
-                🛠️ App Builder
-            </h1>
+            <h1>🛠️ App Builder</h1>
 
             <p>
                 Build your own application with ASIM TECH.
             </p>
 
         </div>
-
 
         <div class="header-actions">
 
@@ -487,7 +449,6 @@ textarea{
                 ← Apps
             </a>
 
-
             <button
                 type="button"
                 class="btn preview"
@@ -495,7 +456,6 @@ textarea{
             >
                 👁️ Preview
             </button>
-
 
             <button
                 type="button"
@@ -505,21 +465,6 @@ textarea{
                 💾 Save
             </button>
 
-
-            <!-- APK DOWNLOAD -->
-
-            <button
-                type="button"
-                class="btn download"
-                id="apkDownloadButton"
-                onclick="downloadAPK()"
-            >
-                📱 Download APK
-            </button>
-
-
-            <!-- ZIP DOWNLOAD -->
-
             <button
                 type="button"
                 class="btn zip-download"
@@ -527,7 +472,6 @@ textarea{
             >
                 📦 Download ZIP
             </button>
-
 
             <button
                 type="button"
@@ -541,12 +485,10 @@ textarea{
 
     </div>
 
-
     <div
         id="message"
         class="message"
     ></div>
-
 
     <div
         id="appInfo"
@@ -555,52 +497,22 @@ textarea{
         Loading app...
     </div>
 
-
-    <!-- APK INFORMATION -->
-
-    <div class="apk-info">
-
-        📱 <strong>Android APK</strong>
-
-        <br><br>
-
-        Your latest successful Android build can be downloaded directly from ASIM TECH.
-
-        <br><br>
-
-        <strong>File:</strong>
-        app-release.apk
-
-        <br>
-
-        <strong>Format:</strong>
-        Android APK
-
-    </div>
-
-
     <div class="builder">
 
-
         <div class="panel">
-
 
             <div class="panel-title">
                 📁 App Files
             </div>
 
-
             <div
                 id="fileList"
                 class="file-list"
             >
-
                 <div class="loading">
                     Loading files...
                 </div>
-
             </div>
-
 
             <button
                 type="button"
@@ -610,15 +522,11 @@ textarea{
                 + Create File
             </button>
 
-
         </div>
-
 
         <div class="panel editor-panel">
 
-
             <div class="editor-header">
-
 
                 <div
                     id="currentFileName"
@@ -627,7 +535,6 @@ textarea{
                     No file selected
                 </div>
 
-
                 <div
                     id="currentLanguage"
                     class="language"
@@ -635,9 +542,7 @@ textarea{
                     -
                 </div>
 
-
             </div>
-
 
             <textarea
                 id="codeEditor"
@@ -645,9 +550,7 @@ textarea{
                 placeholder="Select a file to start editing..."
             ></textarea>
 
-
             <div class="bottom-bar">
-
 
                 <div
                     id="saveStatus"
@@ -656,23 +559,17 @@ textarea{
                     Ready
                 </div>
 
-
                 <div class="status">
                     ASIM TECH App Builder
                 </div>
 
-
             </div>
-
 
         </div>
 
-
     </div>
 
-
 </main>
-
 
 <!-- CREATE FILE MODAL -->
 
@@ -683,16 +580,11 @@ textarea{
 
     <div class="modal-box">
 
-
-        <h2>
-            📄 Create App File
-        </h2>
-
+        <h2>📄 Create App File</h2>
 
         <label for="newFileName">
             File Name
         </label>
-
 
         <input
             id="newFileName"
@@ -700,9 +592,7 @@ textarea{
             placeholder="index.html"
         >
 
-
         <div class="modal-actions">
-
 
             <button
                 type="button"
@@ -712,7 +602,6 @@ textarea{
                 Cancel
             </button>
 
-
             <button
                 type="button"
                 class="btn create"
@@ -721,14 +610,11 @@ textarea{
                 Create File
             </button>
 
-
         </div>
-
 
     </div>
 
 </div>
-
 
 <script>
 
@@ -750,22 +636,6 @@ const supabaseClient =
 
 
 /* =====================================================
-   REAL APK URL
-===================================================== */
-
-const APK_DOWNLOAD_URL =
-    "https://lgwaeqgiqrsjprsec9?";
-
-/*
-   IMPORTANT:
-   The actual APK URL is set below.
-*/
-
-const REAL_APK_URL =
-    "https://lgwaeqgiqrsjprsecwxx.supabase.co/storage/v1/object/public/apk-files/apps/329f1bdf-2ea6-44f2-a8cb-0e5699972b56/1.0.0/app-release.apk";
-
-
-/* =====================================================
    URL
 ===================================================== */
 
@@ -783,11 +653,8 @@ const appId =
 ===================================================== */
 
 let currentUser = null;
-
 let currentApp = null;
-
 let currentFile = null;
-
 let appFiles = [];
 
 
@@ -796,44 +663,25 @@ let appFiles = [];
 ===================================================== */
 
 const appInfo =
-    document.getElementById(
-        "appInfo"
-    );
+    document.getElementById("appInfo");
 
 const fileList =
-    document.getElementById(
-        "fileList"
-    );
+    document.getElementById("fileList");
 
 const codeEditor =
-    document.getElementById(
-        "codeEditor"
-    );
+    document.getElementById("codeEditor");
 
 const currentFileName =
-    document.getElementById(
-        "currentFileName"
-    );
+    document.getElementById("currentFileName");
 
 const currentLanguage =
-    document.getElementById(
-        "currentLanguage"
-    );
+    document.getElementById("currentLanguage");
 
 const saveStatus =
-    document.getElementById(
-        "saveStatus"
-    );
+    document.getElementById("saveStatus");
 
 const messageBox =
-    document.getElementById(
-        "message"
-    );
-
-const apkDownloadButton =
-    document.getElementById(
-        "apkDownloadButton"
-    );
+    document.getElementById("message");
 
 
 /* =====================================================
@@ -845,12 +693,10 @@ function showMessage(
     type = "success"
 ){
 
-    messageBox.textContent =
-        text;
+    messageBox.textContent = text;
 
     messageBox.className =
         "message " + type;
-
 
     setTimeout(
         function(){
@@ -897,52 +743,30 @@ function escapeHtml(value){
    LANGUAGE
 ===================================================== */
 
-function detectLanguage(
-    fileName
-){
+function detectLanguage(fileName){
 
     const name =
         fileName.toLowerCase();
 
-
-    if(
-        name.endsWith(".html")
-    )
+    if(name.endsWith(".html"))
         return "HTML";
 
-
-    if(
-        name.endsWith(".css")
-    )
+    if(name.endsWith(".css"))
         return "CSS";
 
-
-    if(
-        name.endsWith(".js")
-    )
+    if(name.endsWith(".js"))
         return "JavaScript";
 
-
-    if(
-        name.endsWith(".json")
-    )
+    if(name.endsWith(".json"))
         return "JSON";
 
-
-    if(
-        name.endsWith(".md")
-    )
+    if(name.endsWith(".md"))
         return "Markdown";
 
-
-    if(
-        name.endsWith(".txt")
-    )
+    if(name.endsWith(".txt"))
         return "Text";
 
-
     return "Code";
-
 }
 
 
@@ -960,10 +784,8 @@ async function checkLogin(){
             .auth
             .getSession();
 
-
     if(error)
         throw error;
-
 
     if(!session){
 
@@ -973,7 +795,6 @@ async function checkLogin(){
         return null;
 
     }
-
 
     return session.user;
 
@@ -988,14 +809,11 @@ async function loadApp(){
 
     try{
 
-
         currentUser =
             await checkLogin();
 
-
         if(!currentUser)
             return;
-
 
         if(!appId){
 
@@ -1011,7 +829,6 @@ async function loadApp(){
 
         }
 
-
         const {
             data:app,
             error
@@ -1019,30 +836,18 @@ async function loadApp(){
             await supabaseClient
                 .from("apps")
                 .select("*")
-                .eq(
-                    "id",
-                    appId
-                )
-                .eq(
-                    "owner_id",
-                    currentUser.id
-                )
+                .eq("id",appId)
+                .eq("owner_id",currentUser.id)
                 .single();
-
 
         if(error)
             throw error;
 
-
-        currentApp =
-            app;
-
+        currentApp = app;
 
         updateAppInfo();
 
-
         await loadFiles();
-
 
     }
     catch(error){
@@ -1052,18 +857,12 @@ async function loadApp(){
             error
         );
 
-
         appInfo.innerHTML =
-            "<strong>"
-            + "Unable to load app."
-            + "</strong>";
-
+            "<strong>Unable to load app.</strong>";
 
         fileList.innerHTML =
             "<div class='empty'>"
-            + escapeHtml(
-                error.message
-            )
+            + escapeHtml(error.message)
             + "</div>";
 
     }
@@ -1080,14 +879,11 @@ function updateAppInfo(){
     if(!currentApp)
         return;
 
-
     appInfo.innerHTML = `
 
         <strong>
             📱
-            ${escapeHtml(
-                currentApp.name
-            )}
+            ${escapeHtml(currentApp.name)}
         </strong>
 
         &nbsp; — &nbsp;
@@ -1123,10 +919,7 @@ async function loadFiles(){
         await supabaseClient
             .from("app_files")
             .select("*")
-            .eq(
-                "app_id",
-                appId
-            )
+            .eq("app_id",appId)
             .order(
                 "file_path",
                 {
@@ -1134,46 +927,31 @@ async function loadFiles(){
                 }
             );
 
-
     if(error)
         throw error;
 
-
-    appFiles =
-        data || [];
-
+    appFiles = data || [];
 
     renderFiles();
 
+    if(appFiles.length === 0){
 
-    if(
-        appFiles.length === 0
-    ){
-
-        currentFile =
-            null;
-
+        currentFile = null;
 
         currentFileName.textContent =
             "No file selected";
 
-
         currentLanguage.textContent =
             "-";
 
-
-        codeEditor.value =
-            "";
-
+        codeEditor.value = "";
 
         saveStatus.textContent =
             "Create your first file";
 
-
         return;
 
     }
-
 
     const indexFile =
         appFiles.find(
@@ -1185,7 +963,6 @@ async function loadFiles(){
 
             }
         );
-
 
     selectFile(
         indexFile ||
@@ -1201,22 +978,17 @@ async function loadFiles(){
 
 function renderFiles(){
 
-    if(
-        appFiles.length === 0
-    ){
+    if(appFiles.length === 0){
 
         fileList.innerHTML = `
-
             <div class="empty">
                 No files yet.
             </div>
-
         `;
 
         return;
 
     }
-
 
     fileList.innerHTML =
         appFiles.map(
@@ -1228,7 +1000,6 @@ function renderFiles(){
                     ? "active"
                     : "";
 
-
                 return `
 
                     <button
@@ -1238,10 +1009,7 @@ function renderFiles(){
                     >
 
                         📄
-
-                        ${escapeHtml(
-                            file.file_path
-                        )}
+                        ${escapeHtml(file.file_path)}
 
                     </button>
 
@@ -1262,12 +1030,9 @@ function selectFileById(id){
     const file =
         appFiles.find(
             function(item){
-
                 return item.id === id;
-
             }
         );
-
 
     if(file)
         selectFile(file);
@@ -1277,28 +1042,20 @@ function selectFileById(id){
 
 function selectFile(file){
 
-    currentFile =
-        file;
-
+    currentFile = file;
 
     currentFileName.textContent =
         file.file_path;
 
-
     currentLanguage.textContent =
         file.language ||
-        detectLanguage(
-            file.file_path
-        );
-
+        detectLanguage(file.file_path);
 
     codeEditor.value =
         file.content || "";
 
-
     saveStatus.textContent =
         "Editing";
-
 
     renderFiles();
 
@@ -1322,13 +1079,10 @@ async function saveFile(){
 
     }
 
-
     saveStatus.textContent =
         "Saving...";
 
-
     try{
-
 
         const {
             data,
@@ -1350,64 +1104,40 @@ async function saveFile(){
                         new Date().toISOString()
 
                 })
-                .eq(
-                    "id",
-                    currentFile.id
-                )
-                .eq(
-                    "app_id",
-                    appId
-                )
+                .eq("id",currentFile.id)
+                .eq("app_id",appId)
                 .select()
                 .single();
-
 
         if(error)
             throw error;
 
-
-        currentFile =
-            data;
-
+        currentFile = data;
 
         const index =
             appFiles.findIndex(
                 function(file){
-
                     return file.id === data.id;
-
                 }
             );
 
-
-        if(index !== -1){
-
-            appFiles[index] =
-                data;
-
-        }
-
+        if(index !== -1)
+            appFiles[index] = data;
 
         saveStatus.textContent =
             "Saved ✓";
-
 
         showMessage(
             "File saved successfully."
         );
 
-
     }
     catch(error){
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         saveStatus.textContent =
             "Save failed";
-
 
         showMessage(
             error.message,
@@ -1426,27 +1156,18 @@ async function saveFile(){
 function openFileModal(){
 
     document
-        .getElementById(
-            "fileModal"
-        )
-        .classList
-        .add("show");
-
+        .getElementById("fileModal")
+        .classList.add("show");
 
     document
-        .getElementById(
-            "newFileName"
-        )
+        .getElementById("newFileName")
         .value = "";
-
 
     setTimeout(
         function(){
 
             document
-                .getElementById(
-                    "newFileName"
-                )
+                .getElementById("newFileName")
                 .focus();
 
         },
@@ -1459,11 +1180,8 @@ function openFileModal(){
 function closeFileModal(){
 
     document
-        .getElementById(
-            "fileModal"
-        )
-        .classList
-        .remove("show");
+        .getElementById("fileModal")
+        .classList.remove("show");
 
 }
 
@@ -1475,14 +1193,10 @@ function closeFileModal(){
 async function createFile(){
 
     const input =
-        document.getElementById(
-            "newFileName"
-        );
-
+        document.getElementById("newFileName");
 
     const fileName =
         input.value.trim();
-
 
     if(!fileName){
 
@@ -1495,7 +1209,6 @@ async function createFile(){
 
     }
 
-
     const duplicate =
         appFiles.some(
             function(file){
@@ -1506,7 +1219,6 @@ async function createFile(){
 
             }
         );
-
 
     if(duplicate){
 
@@ -1519,9 +1231,7 @@ async function createFile(){
 
     }
 
-
     try{
-
 
         const {
             data,
@@ -1531,59 +1241,39 @@ async function createFile(){
                 .from("app_files")
                 .insert({
 
-                    app_id:
-                        appId,
+                    app_id:appId,
 
-                    file_path:
-                        fileName,
+                    file_path:fileName,
 
                     content:
-                        getStarterContent(
-                            fileName
-                        ),
+                        getStarterContent(fileName),
 
                     language:
-                        detectLanguage(
-                            fileName
-                        )
+                        detectLanguage(fileName)
 
                 })
                 .select()
                 .single();
 
-
         if(error)
             throw error;
 
-
-        appFiles.push(
-            data
-        );
-
+        appFiles.push(data);
 
         closeFileModal();
 
-
         renderFiles();
 
-
-        selectFile(
-            data
-        );
-
+        selectFile(data);
 
         showMessage(
             "File created successfully."
         );
 
-
     }
     catch(error){
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         showMessage(
             error.message,
@@ -1599,15 +1289,10 @@ async function createFile(){
    STARTER CONTENT
 ===================================================== */
 
-function getStarterContent(
-    fileName
-){
+function getStarterContent(fileName){
 
     const language =
-        detectLanguage(
-            fileName
-        );
-
+        detectLanguage(fileName);
 
     if(language === "HTML"){
 
@@ -1629,7 +1314,6 @@ function getStarterContent(
 
     }
 
-
     if(language === "CSS"){
 
         return `body {
@@ -1640,13 +1324,11 @@ function getStarterContent(
 
     }
 
-
     if(language === "JavaScript"){
 
         return `console.log("Hello from ASIM TECH App!");`;
 
     }
-
 
     if(language === "JSON"){
 
@@ -1655,7 +1337,6 @@ function getStarterContent(
 }`;
 
     }
-
 
     return "";
 
@@ -1679,7 +1360,6 @@ function buildPreview(){
             }
         );
 
-
     if(!htmlFile){
 
         return `
@@ -1696,7 +1376,6 @@ function buildPreview(){
 `;
 
     }
-
 
     let html =
         htmlFile.content || "";
@@ -1715,25 +1394,20 @@ function buildPreview(){
             }
         );
 
-
     cssFiles.forEach(
         function(file){
 
             const css =
                 file.content || "";
 
-
             const cssBlock =
                 "<style>"
                 + css
                 + "</style>";
 
-
             if(
                 html.toLowerCase()
-                    .includes(
-                        "</head>"
-                    )
+                    .includes("</head>")
             ){
 
                 html =
@@ -1769,30 +1443,23 @@ function buildPreview(){
             }
         );
 
-
     jsFiles.forEach(
         function(file){
 
             const js =
                 file.content || "";
 
-
             const closingTag =
-                "<"
-                + "/script>";
-
+                "<" + "/script>";
 
             const jsBlock =
                 "<script>"
                 + js
                 + closingTag;
 
-
             if(
                 html.toLowerCase()
-                    .includes(
-                        "</body>"
-                    )
+                    .includes("</body>")
             ){
 
                 html =
@@ -1805,14 +1472,12 @@ function buildPreview(){
             }
             else{
 
-                html +=
-                    jsBlock;
+                html += jsBlock;
 
             }
 
         }
     );
-
 
     return html;
 
@@ -1825,9 +1490,7 @@ function buildPreview(){
 
 function previewApp(){
 
-    if(
-        appFiles.length === 0
-    ){
+    if(appFiles.length === 0){
 
         showMessage(
             "No app files available.",
@@ -1838,10 +1501,8 @@ function previewApp(){
 
     }
 
-
     const html =
         buildPreview();
-
 
     const blob =
         new Blob(
@@ -1851,241 +1512,22 @@ function previewApp(){
             }
         );
 
-
     const url =
-        URL.createObjectURL(
-            blob
-        );
-
+        URL.createObjectURL(blob);
 
     window.open(
         url,
         "_blank"
     );
 
-
     setTimeout(
         function(){
 
-            URL.revokeObjectURL(
-                url
-            );
+            URL.revokeObjectURL(url);
 
         },
         60000
     );
-
-}
-
-
-/* =====================================================
-   DOWNLOAD REAL ANDROID APK
-===================================================== */
-
-async function downloadAPK(){
-
-    if(
-        apkDownloadButton
-    ){
-
-        apkDownloadButton.disabled =
-            true;
-
-        apkDownloadButton.textContent =
-            "⏳ Preparing APK...";
-
-    }
-
-
-    try{
-
-        showMessage(
-            "Preparing Android APK download..."
-        );
-
-
-        /*
-           Fetch the real APK from
-           Supabase Storage.
-        */
-
-        const response =
-            await fetch(
-                REAL_APK_URL,
-                {
-                    method:"GET",
-                    cache:"no-store"
-                }
-            );
-
-
-        if(!response.ok){
-
-            throw new Error(
-                "APK download failed. HTTP "
-                + response.status
-            );
-
-        }
-
-
-        const blob =
-            await response.blob();
-
-
-        if(
-            !blob ||
-            blob.size === 0
-        ){
-
-            throw new Error(
-                "APK file is empty."
-            );
-
-        }
-
-
-        /*
-           Convert response to
-           downloadable local object.
-        */
-
-        const blobUrl =
-            URL.createObjectURL(
-                blob
-            );
-
-
-        const link =
-            document.createElement(
-                "a"
-            );
-
-
-        link.href =
-            blobUrl;
-
-
-        link.download =
-            "app-release.apk";
-
-
-        link.setAttribute(
-            "download",
-            "app-release.apk"
-        );
-
-
-        link.style.display =
-            "none";
-
-
-        document.body.appendChild(
-            link
-        );
-
-
-        link.click();
-
-
-        document.body.removeChild(
-            link
-        );
-
-
-        /*
-           Release temporary object URL.
-        */
-
-        setTimeout(
-            function(){
-
-                URL.revokeObjectURL(
-                    blobUrl
-                );
-
-            },
-            10000
-        );
-
-
-        showMessage(
-            "APK download started: app-release.apk"
-        );
-
-
-    }
-    catch(error){
-
-        console.error(
-            "APK download error:",
-            error
-        );
-
-
-        /*
-           Fallback:
-           If the mobile browser blocks
-           blob download, open the real
-           APK URL directly.
-        */
-
-        const fallback =
-            document.createElement(
-                "a"
-            );
-
-
-        fallback.href =
-            REAL_APK_URL;
-
-
-        fallback.download =
-            "app-release.apk";
-
-
-        fallback.target =
-            "_blank";
-
-
-        fallback.rel =
-            "noopener";
-
-
-        document.body.appendChild(
-            fallback
-        );
-
-
-        fallback.click();
-
-
-        document.body.removeChild(
-            fallback
-        );
-
-
-        showMessage(
-            "APK download opened. If download does not start, tap the download icon in the browser.",
-            "error"
-        );
-
-    }
-    finally{
-
-        if(
-            apkDownloadButton
-        ){
-
-            apkDownloadButton.disabled =
-                false;
-
-            apkDownloadButton.textContent =
-                "📱 Download APK";
-
-        }
-
-    }
 
 }
 
@@ -2096,9 +1538,7 @@ async function downloadAPK(){
 
 async function downloadApp(){
 
-    if(
-        appFiles.length === 0
-    ){
+    if(appFiles.length === 0){
 
         showMessage(
             "No app files available.",
@@ -2109,10 +1549,7 @@ async function downloadApp(){
 
     }
 
-
-    if(
-        typeof JSZip === "undefined"
-    ){
+    if(typeof JSZip === "undefined"){
 
         showMessage(
             "ZIP library is not loaded. Please refresh the page.",
@@ -2123,18 +1560,14 @@ async function downloadApp(){
 
     }
 
-
     try{
-
 
         showMessage(
             "Preparing complete App ZIP..."
         );
 
-
         const zip =
             new JSZip();
-
 
         appFiles.forEach(
             function(file){
@@ -2147,13 +1580,11 @@ async function downloadApp(){
             }
         );
 
-
         const appName =
             currentApp &&
             currentApp.name
             ? currentApp.name
             : "ASIM TECH App";
-
 
         const readme =
 `ASIM TECH APP
@@ -2168,10 +1599,7 @@ Files:
 ${appFiles
     .map(
         function(file){
-
-            return "- " +
-                file.file_path;
-
+            return "- " + file.file_path;
         }
     )
     .join("\n")}
@@ -2180,12 +1608,10 @@ To run the app:
 Open index.html in a web browser.
 `;
 
-
         zip.file(
             "README.txt",
             readme
         );
-
 
         const blob =
             await zip.generateAsync({
@@ -2199,7 +1625,6 @@ Open index.html in a web browser.
                 }
 
             });
-
 
         const safeName =
             appName
@@ -2217,70 +1642,44 @@ Open index.html in a web browser.
                 )
                 .toLowerCase();
 
-
         const finalName =
             (
                 safeName ||
                 "asim-tech-app"
             )
-            +
-            ".zip";
-
+            + ".zip";
 
         const url =
-            URL.createObjectURL(
-                blob
-            );
-
+            URL.createObjectURL(blob);
 
         const link =
-            document.createElement(
-                "a"
-            );
+            document.createElement("a");
 
+        link.href = url;
 
-        link.href =
-            url;
+        link.download = finalName;
 
+        link.style.display = "none";
 
-        link.download =
-            finalName;
-
-
-        link.style.display =
-            "none";
-
-
-        document.body.appendChild(
-            link
-        );
-
+        document.body.appendChild(link);
 
         link.click();
 
-
-        document.body.removeChild(
-            link
-        );
-
+        document.body.removeChild(link);
 
         setTimeout(
             function(){
 
-                URL.revokeObjectURL(
-                    url
-                );
+                URL.revokeObjectURL(url);
 
             },
             3000
         );
 
-
         showMessage(
             "Complete App downloaded: "
             + finalName
         );
-
 
     }
     catch(error){
@@ -2289,7 +1688,6 @@ Open index.html in a web browser.
             "ZIP download error:",
             error
         );
-
 
         showMessage(
             "Download failed: "
@@ -2319,7 +1717,6 @@ async function publishApp(){
 
     }
 
-
     const indexFile =
         appFiles.find(
             function(file){
@@ -2330,7 +1727,6 @@ async function publishApp(){
 
             }
         );
-
 
     if(!indexFile){
 
@@ -2343,7 +1739,6 @@ async function publishApp(){
 
     }
 
-
     const confirmed =
         confirm(
             "Publish this app?\n\n"
@@ -2353,13 +1748,10 @@ async function publishApp(){
             currentApp.name
         );
 
-
     if(!confirmed)
         return;
 
-
     try{
-
 
         const {
             data,
@@ -2372,41 +1764,27 @@ async function publishApp(){
                     is_published:true,
 
                     published_at:
-                        new Date()
-                            .toISOString(),
+                        new Date().toISOString(),
 
                     updated_at:
-                        new Date()
-                            .toISOString()
+                        new Date().toISOString()
 
                 })
-                .eq(
-                    "id",
-                    currentApp.id
-                )
-                .eq(
-                    "owner_id",
-                    currentUser.id
-                )
+                .eq("id",currentApp.id)
+                .eq("owner_id",currentUser.id)
                 .select()
                 .single();
-
 
         if(error)
             throw error;
 
-
-        currentApp =
-            data;
-
+        currentApp = data;
 
         updateAppInfo();
-
 
         showMessage(
             "App published successfully."
         );
-
 
     }
     catch(error){
@@ -2415,7 +1793,6 @@ async function publishApp(){
             "Publish error:",
             error
         );
-
 
         showMessage(
             error.message,
@@ -2441,8 +1818,7 @@ document.addEventListener(
                 event.metaKey
             )
             &&
-            event.key.toLowerCase()
-                === "s"
+            event.key.toLowerCase() === "s"
         ){
 
             event.preventDefault();
@@ -2460,16 +1836,12 @@ document.addEventListener(
 ===================================================== */
 
 document
-    .getElementById(
-        "fileModal"
-    )
+    .getElementById("fileModal")
     .addEventListener(
         "click",
         function(event){
 
-            if(
-                event.target === this
-            ){
+            if(event.target === this){
 
                 closeFileModal();
 
