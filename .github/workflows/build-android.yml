@@ -124,8 +124,11 @@ jobs:
 
 
           echo "======================================"
+
           echo "Build ID: $BUILD_ID"
+
           echo "App ID:   $APP_ID"
+
           echo "======================================"
 
 
@@ -147,7 +150,7 @@ jobs:
         if: steps.job.outputs.found == 'true'
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: "temurin"
           java-version: "17"
 
 
@@ -160,6 +163,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.10.2"
+          cache-disabled: true
 
 
       # ================================================
@@ -169,6 +173,8 @@ jobs:
       - name: Set up Android SDK
         if: steps.job.outputs.found == 'true'
         uses: android-actions/setup-android@v3
+        with:
+          packages: ''
 
 
       # ================================================
@@ -180,7 +186,7 @@ jobs:
         shell: bash
         run: |
 
-          set -e
+          set -euo pipefail
 
           echo "Accepting Android SDK licenses..."
 
@@ -196,7 +202,9 @@ jobs:
 
 
           echo "======================================"
+
           echo "Android SDK installation completed."
+
           echo "======================================"
 
 
@@ -208,6 +216,8 @@ jobs:
         if: steps.job.outputs.found == 'true'
         shell: bash
         run: |
+
+          set -euo pipefail
 
           curl -sS --fail \
             -X PATCH \
@@ -231,7 +241,6 @@ jobs:
         run: |
 
           set -euo pipefail
-
 
           echo "Fetching ASIM TECH application..."
 
@@ -264,7 +273,6 @@ jobs:
         run: |
 
           set -euo pipefail
-
 
           python3 - <<'PY'
 
@@ -408,7 +416,6 @@ jobs:
           for element in elements:
 
               typ = element.get("type", "")
-
 
               text = esc(
                   element.get("text", "")
@@ -696,7 +703,6 @@ jobs:
               """
           android.useAndroidX=true
           android.nonTransitiveRClass=true
-          org.gradle.jvmargs=-Xmx2048m
           """
           )
 
@@ -715,6 +721,7 @@ jobs:
 
           android {{
               namespace "{package}"
+
               compileSdk 35
 
               defaultConfig {{
@@ -744,7 +751,9 @@ jobs:
           ).write_text(
               f"""
           <resources>
-              <string name="app_name">{esc(name)}</string>
+              <string name="app_name">
+                  {esc(name)}
+              </string>
           </resources>
           """
           )
@@ -833,7 +842,7 @@ jobs:
           # MAIN ACTIVITY
           # --------------------------------------------
 
-          java_code = f"""
+          java = f"""
           package {package};
 
           import android.app.Activity;
@@ -848,7 +857,8 @@ jobs:
 
                   super.onCreate(savedInstanceState);
 
-                  WebView webView = new WebView(this);
+                  WebView webView =
+                      new WebView(this);
 
                   webView.setWebViewClient(
                       new WebViewClient()
@@ -872,7 +882,7 @@ jobs:
 
           (
               java_dir / "MainActivity.java"
-          ).write_text(java_code)
+          ).write_text(java)
 
 
           # --------------------------------------------
@@ -900,22 +910,22 @@ jobs:
                       "package": package,
                       "versionName": version_name,
                       "versionCode": version_code
-                  },
-                  indent=2
+                  }
               )
           )
 
 
-          print("")
           print("======================================")
-          print("ASIM TECH Android project generated.")
-          print("App Name:", name)
-          print("Package:", package)
-          print("Version:", version_name)
-          print("Version Code:", version_code)
-          print("======================================")
-          print("")
 
+          print("Android project generated successfully.")
+
+          print("App Name:", name)
+
+          print("Package:", package)
+
+          print("Version:", version_name)
+
+          print("======================================")
 
           PY
 
@@ -930,16 +940,15 @@ jobs:
         shell: bash
         run: |
 
-          set -e
+          set -euo pipefail
 
           echo "Creating Gradle wrapper..."
 
-          gradle wrapper \
+          gradle --no-daemon wrapper \
             --gradle-version 8.10.2
 
 
-          echo "Starting ASIM TECH APK build..."
-
+          echo "Building Android APK..."
 
           ./gradlew \
             --no-daemon \
@@ -947,14 +956,15 @@ jobs:
             :app:assembleDebug
 
 
-          echo ""
           echo "======================================"
-          echo "ASIM TECH APK BUILD SUCCESSFUL"
+
+          echo "Android APK build completed."
+
           echo "======================================"
 
 
       # ================================================
-      # 12. UPLOAD APK TO SUPABASE
+      # 12. UPLOAD APK TO SUPABASE STORAGE
       # ================================================
 
       - name: Upload APK to Supabase Storage
@@ -970,7 +980,7 @@ jobs:
 
           if [ ! -f "$APK" ]; then
 
-            echo "ERROR: APK file was not found."
+            echo "ERROR: APK file not found."
 
             exit 1
 
@@ -979,29 +989,20 @@ jobs:
 
           SIZE=$(stat -c%s "$APK")
 
-
           SHA=$(sha256sum "$APK" | awk '{print $1}')
 
 
-          VERSION=$(python3 -c "
-          import json
-          print(json.load(open('build-meta.json'))['versionName'])
-          ")
+          VERSION=$(python3 -c \
+            "import json; print(json.load(open('build-meta.json'))['versionName'])"
+          )
 
 
-          FILE_NAME="ASIM-TECH-v${VERSION}.apk"
-
-
-          PATHNAME="$APP_ID/$BUILD_ID/$FILE_NAME"
+          PATHNAME="$APP_ID/$BUILD_ID/ASIM-TECH-v$VERSION.apk"
 
 
           echo "Uploading APK..."
 
-          echo "File: $FILE_NAME"
-
-          echo "Size: $SIZE bytes"
-
-          echo "SHA256: $SHA"
+          echo "File: $PATHNAME"
 
 
           curl -sS --fail \
@@ -1013,7 +1014,7 @@ jobs:
             --data-binary "@$APK"
 
 
-          echo "Updating Supabase build record..."
+          echo "Updating build record..."
 
 
           curl -sS --fail \
@@ -1025,7 +1026,7 @@ jobs:
             --data '{
               "status": "success",
               "storage_path": "'"$PATHNAME"'",
-              "file_name": "'"$FILE_NAME"'",
+              "file_name": "'"$(basename "$PATHNAME")"'",
               "mime_type": "application/vnd.android.package-archive",
               "file_size": '"$SIZE"',
               "sha256": "'"$SHA"'",
@@ -1033,11 +1034,11 @@ jobs:
             }'
 
 
-          echo ""
           echo "======================================"
-          echo "APK UPLOADED SUCCESSFULLY"
+
+          echo "APK uploaded successfully."
+
           echo "======================================"
-          echo ""
 
 
       # ================================================
@@ -1049,14 +1050,13 @@ jobs:
         shell: bash
         run: |
 
-          curl -sS \
-            -X PATCH \
+          curl -sS -X PATCH \
             "$SUPABASE_URL/rest/v1/app_builds?id=eq.$BUILD_ID" \
             -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             --data '{
               "status": "failed",
-              "build_log": "GitHub Actions Android build failed. Please check the GitHub Actions log.",
+              "build_log": "GitHub Actions Android build failed. Please check the GitHub Actions run for details.",
               "completed_at": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
             }' || true
