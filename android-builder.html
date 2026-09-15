@@ -1,376 +1,1488 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Android App Builder — ASIM TECH</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#07111f;color:#fff}
-nav{height:62px;background:#050c16;border-bottom:1px solid #263646;display:flex;align-items:center;justify-content:space-between;padding:0 18px}
-.logo{font-size:20px;font-weight:700}.green{color:#36e0b5}nav a{color:#fff;text-decoration:none;margin-left:14px}
-.layout{display:grid;grid-template-columns:280px 1fr 330px;min-height:calc(100vh - 62px)}
-.panel{background:#0d1d2b;border-right:1px solid #263646;padding:16px;overflow:auto}
-.right{border-left:1px solid #263646;border-right:0}
-.stage{padding:25px;display:flex;justify-content:center;background:radial-gradient(circle at top,#193046,#07111f);overflow:auto}
-.phone{width:360px;max-width:92vw;min-height:720px;background:#fff;color:#111;border:10px solid #050505;border-radius:32px;overflow:hidden;box-shadow:0 15px 40px #0008}
-.phonebar{height:28px;background:#050505}
-.canvas{min-height:682px;padding:16px}
-.btn{border:0;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer;color:#fff}
+nav{min-height:58px;background:#050c16;border-bottom:1px solid #263646;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:20}
+.logo{font-size:19px;font-weight:700}.green{color:#36e0b5}
+nav a{color:#fff;text-decoration:none;margin-left:14px;font-size:13px}
+
+.layout{display:grid;grid-template-columns:260px minmax(380px,1fr) 320px;min-height:calc(100vh - 58px)}
+.panel{background:#0d1d2b;padding:14px;overflow:auto;border-right:1px solid #263646}
+.right{border-right:0;border-left:1px solid #263646}
+.stage{padding:22px;display:flex;justify-content:center;align-items:flex-start;background:radial-gradient(circle at top,#193046,#07111f);overflow:auto}
+.phone{width:360px;max-width:94vw;min-height:720px;background:#fff;color:#111;border:9px solid #050505;border-radius:30px;overflow:hidden;box-shadow:0 15px 40px #0008}
+.phonebar{height:25px;background:#050505}.canvas{min-height:680px;padding:16px;background:#fff;color:#111}
+
+.btn{border:0;border-radius:8px;padding:9px 11px;font-weight:700;cursor:pointer;color:#fff}
 .greenbtn{background:#238636}.blue{background:#1f6feb}.orange{background:#d97706}.dark{background:#21262d;border:1px solid #30363d}.red{background:#b91c1c}
-.topactions{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}.status{font-size:12px;color:#9fb0bf;line-height:1.5}
-.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tool{background:#172536;border:1px solid #304354;color:#fff;border-radius:8px;padding:10px;cursor:pointer}
-.section{margin-top:18px;padding-top:14px;border-top:1px solid #263646}
-.pages{margin-top:18px}.page{padding:9px;border:1px solid #303f4e;border-radius:7px;margin-bottom:7px;cursor:pointer}.page.active{border-color:#36e0b5;background:#07111f}
+.topactions{display:flex;gap:7px;flex-wrap:wrap}
+.status{font-size:12px;color:#9fb0bf;line-height:1.5;margin-top:8px}
+.success{color:#36e0b5}.error{color:#ff7b72}.warn{color:#fbbf24}
+
+.section{margin-top:17px;padding-top:13px;border-top:1px solid #263646}
+h3{font-size:15px;margin:0 0 10px}
+.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tool{background:#172536;border:1px solid #304354;color:#fff;border-radius:8px;padding:10px;cursor:pointer}
+.tool:active{transform:scale(.98)}
+
 label{display:block;font-size:12px;color:#9fb0bf;margin:8px 0 4px}
-input,select{width:100%;background:#07111f;color:#fff;border:1px solid #304354;border-radius:7px;padding:9px}
-.row{display:flex;gap:7px}.row>*{flex:1}.hidden{display:none}
-.el{position:relative;border:1px dashed transparent;padding:6px;margin:3px 0;cursor:pointer}.el:hover,.el.sel{border-color:#1f6feb}
+input,select,textarea{width:100%;background:#07111f;color:#fff;border:1px solid #304354;border-radius:7px;padding:9px;font-family:Arial}
+input:focus,textarea:focus{outline:none;border-color:#36e0b5}
+.row{display:flex;gap:7px}.row>*{flex:1}
+
+.pages{margin-top:17px}.page{padding:9px;border:1px solid #303f4e;border-radius:7px;margin-bottom:7px;cursor:pointer}
+.page.active{border-color:#36e0b5;background:#07111f}
+
+.el{position:relative;border:1px dashed transparent;padding:6px;margin:3px 0;cursor:pointer}
+.el:hover,.el.sel{border-color:#1f6feb;background:#eef7ff}
 .el img{max-width:100%;border-radius:8px}.btnel{display:inline-block;background:#1f6feb;color:#fff;padding:9px 14px;border-radius:7px;text-decoration:none}
 .preview-title{font-size:13px;color:#8fa1b1;margin-bottom:8px}
 .buildbox{background:#07111f;border:1px solid #304354;border-radius:9px;padding:10px;margin-top:10px}
 .build{padding:8px 0;border-bottom:1px solid #263646;font-size:12px}.build:last-child{border-bottom:0}
-.success{color:#36e0b5}.warn{color:#fbbf24}.error{color:#ff7b72}
-@media(max-width:1050px){.layout{grid-template-columns:230px 1fr}.right{display:none}}
-@media(max-width:700px){nav{height:54px}.layout{grid-template-columns:1fr}.panel{display:none}.stage{padding:12px}.phone{min-height:680px}}
+
+.mobile-tools{display:none}
+.mobile-props-title{display:none}
+
+@media(max-width:1100px){
+  .layout{grid-template-columns:230px 1fr}
+  .right{grid-column:1/-1;border-left:0;border-top:1px solid #263646}
+}
+
+@media(max-width:700px){
+  nav{padding:8px 10px;min-height:52px}
+  .logo{font-size:15px}
+  nav a{font-size:11px;margin-left:7px}
+
+  .layout{display:flex;flex-direction:column;min-height:0}
+  .panel{border:0;border-bottom:1px solid #263646;overflow:visible}
+  .left-panel{order:1}
+  .stage{order:2;padding:12px;min-height:700px}
+  .right{order:3;border:0;border-top:1px solid #263646;display:block!important;padding:14px}
+
+  .left-panel .section.app-settings{display:none}
+  .left-panel .build-history{display:none}
+
+  .mobile-tools{display:flex;gap:7px;margin-top:10px}
+  .mobile-tools button{flex:1}
+
+  .phone{width:340px;max-width:96vw;min-height:650px}
+  .canvas{min-height:610px}
+
+  .mobile-props-title{display:block;color:#36e0b5;font-weight:bold;margin-bottom:8px}
+}
 </style>
 </head>
+
 <body>
 
 <nav>
-<div class="logo"><span class="green">⚡ ASIM</span> TECH — Android Builder</div>
-<div><a href="android-apps.html">My Apps</a><a href="dashboard.html">Dashboard</a></div>
+  <div class="logo"><span class="green">⚡ ASIM</span> TECH — Android Builder</div>
+  <div>
+    <a href="android-apps.html">My Apps</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
 </nav>
 
 <div class="layout">
 
-<aside class="panel">
-<div class="topactions">
-<button class="btn greenbtn" onclick="save()">💾 Save</button>
-<button class="btn orange" onclick="requestBuild()">🏗️ Build APK</button>
-</div>
-<div id="status" class="status">Loading…</div>
+<!-- LEFT -->
+<aside class="panel left-panel">
 
-<div class="section">
-<h3>App Settings</h3>
-<label>App Name</label><input id="appName">
-<label>Package Name</label><input id="packageName" placeholder="com.asimtech.myapp">
-<label>Version Name</label><input id="versionName" value="1.0.0">
-<label>Version Code</label><input id="versionCode" type="number" value="1">
-</div>
+  <div class="topactions">
+    <button class="btn greenbtn" onclick="saveProject()">💾 Save</button>
+    <button class="btn orange" onclick="requestBuild()">🏗️ Build APK</button>
+  </div>
 
-<div class="section">
-<h3>Elements</h3>
-<div class="toolgrid">
-<button class="tool" onclick="add('heading')">H Heading</button>
-<button class="tool" onclick="add('text')">T Text</button>
-<button class="tool" onclick="add('button')">🔘 Button</button>
-<button class="tool" onclick="add('link')">🔗 Link</button>
-<button class="tool" onclick="add('input')">⌨ Input</button>
-<button class="tool" onclick="add('image')">🖼 Image</button>
-<button class="tool" onclick="add('container')">▣ Container</button>
-</div>
-</div>
+  <div id="status" class="status">Loading...</div>
 
-<div class="pages">
-<h3>Pages</h3>
-<div id="pages"></div>
-<button class="btn dark" onclick="newPage()">＋ New Page</button>
-</div>
+  <div class="mobile-tools">
+    <button class="btn dark" onclick="document.getElementById('elementSection').scrollIntoView({behavior:'smooth'})">Elements</button>
+    <button class="btn dark" onclick="showProperties()">Properties</button>
+  </div>
 
-<div class="section">
-<h3>Build History</h3>
-<div id="builds" class="buildbox">Loading…</div>
-</div>
+  <div class="section app-settings">
+    <h3>App Settings</h3>
+
+    <label>App Name</label>
+    <input id="appName">
+
+    <label>Package Name</label>
+    <input id="packageName" placeholder="com.asimtech.myapp">
+
+    <label>Version Name</label>
+    <input id="versionName" value="1.0.0">
+
+    <label>Version Code</label>
+    <input id="versionCode" type="number" value="1">
+  </div>
+
+  <div class="section" id="elementSection">
+    <h3>Elements</h3>
+
+    <div class="toolgrid">
+      <button class="tool" onclick="addElement('heading')">H Heading</button>
+      <button class="tool" onclick="addElement('text')">T Text</button>
+      <button class="tool" onclick="addElement('button')">🔘 Button</button>
+      <button class="tool" onclick="addElement('link')">🔗 Link</button>
+      <button class="tool" onclick="addElement('input')">⌨ Input</button>
+      <button class="tool" onclick="addElement('image')">🖼 Image</button>
+      <button class="tool" onclick="addElement('container')">▣ Container</button>
+    </div>
+  </div>
+
+  <div class="pages">
+    <h3>Pages</h3>
+    <div id="pages"></div>
+    <button class="btn dark" onclick="newPage()">＋ New Page</button>
+  </div>
+
+  <div class="section build-history">
+    <h3>Build History</h3>
+    <div id="builds" class="buildbox">Loading...</div>
+  </div>
+
 </aside>
 
+<!-- CENTER -->
 <section class="stage">
-<div>
-<div class="preview-title">📱 Android Preview</div>
-<div class="phone">
-<div class="phonebar"></div>
-<div id="canvas" class="canvas"></div>
-</div>
-</div>
+  <div>
+    <div class="preview-title">📱 Android Preview</div>
+
+    <div class="phone">
+      <div class="phonebar"></div>
+      <div id="canvas" class="canvas"></div>
+    </div>
+  </div>
 </section>
 
-<aside class="panel right">
-<h3>Element Properties</h3>
-<div id="emptyProps" class="status">Select an element to edit it.</div>
+<!-- RIGHT / PROPERTIES -->
+<aside class="panel right" id="propertiesPanel">
 
-<div id="form" class="hidden">
-<label>Text</label><input id="ptext">
-<label>Link / URL</label><input id="plink" placeholder="https://example.com">
-<label>Image URL</label><input id="pimage">
-<label>Placeholder</label><input id="pplaceholder">
-<div class="row">
-<div><label>Font size</label><input id="psize" type="number"></div>
-<div><label>Padding</label><input id="ppad" type="number"></div>
-</div>
-<div class="row" style="margin-top:8px">
-<button class="btn blue" onclick="applyProps()">Apply</button>
-<button class="btn red" onclick="removeEl()">Delete</button>
-</div>
-</div>
+  <div class="mobile-props-title">✏️ Element Properties</div>
 
-<div class="section">
-<h3>Build</h3>
-<div class="status">
-Save your project and use <b>🏗️ Build APK</b> to create a build request.
-</div>
-<div id="buildInfo" class="buildbox">No build requested yet.</div>
-</div>
+  <h3>Element Properties</h3>
+
+  <div id="emptyProps" class="status">
+    Tap an element in the phone preview to edit it.
+  </div>
+
+  <div id="form" style="display:none">
+
+    <label>Text</label>
+    <input id="ptext">
+
+    <label>Link / URL</label>
+    <input id="plink" placeholder="https://example.com">
+
+    <label>Image URL</label>
+    <input id="pimage" placeholder="https://...">
+
+    <label>Placeholder</label>
+    <input id="pplaceholder">
+
+    <div class="row">
+      <div>
+        <label>Font Size</label>
+        <input id="psize" type="number">
+      </div>
+
+      <div>
+        <label>Padding</label>
+        <input id="ppad" type="number">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button class="btn blue" onclick="applyProperties()">Apply</button>
+      <button class="btn red" onclick="deleteElement()">Delete</button>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <h3>Build</h3>
+
+    <div class="status">
+      Save your project and then use <b>🏗️ Build APK</b>.
+    </div>
+
+    <div id="buildInfo" class="buildbox">
+      No build requested yet.
+    </div>
+  </div>
+
 </aside>
 
 </div>
 
 <script>
-const SUPABASE_URL="https://lgwaeqgiqrsjprsecwxx.supabase.co";
-const SUPABASE_KEY="sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const appId=new URLSearchParams(location.search).get("id");
-let user=null,app=null,pages=[],active=null,selected=null,builds=[];
-const $=id=>document.getElementById(id);
+/* =========================================================
+   SUPABASE
+========================================================= */
 
-function esc(s){
- return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
+const SUPABASE_URL =
+  "https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const sb = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth:{
+      autoRefreshToken:true,
+      persistSession:true,
+      detectSessionInUrl:true
+    }
+  }
+);
+
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+const appId =
+  new URLSearchParams(location.search).get("id");
+
+let user = null;
+let app = null;
+let pages = [];
+let activePage = null;
+let selectedId = null;
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function esc(value){
+
+  return String(value ?? "")
+    .replace(/[&<>"']/g, function(m){
+      return {
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[m];
+    });
+
 }
 
-function setStatus(t,c=""){ $("status").textContent=t; $("status").className="status "+c; }
 
-async function init(){
- try{
-  if(!appId) return location.href="android-apps.html";
+function setStatus(text, type=""){
 
-  const {data:{user:u},error:ue}=await sb.auth.getUser();
-  if(ue) throw ue;
-  if(!u) return location.href="login.html";
-  user=u;
+  $("status").textContent = text;
 
-  let r=await sb.from("apps").select("*").eq("id",appId).eq("owner_id",user.id).single();
-  if(r.error) throw r.error;
-  app=r.data;
+  $("status").className =
+    "status " + type;
 
-  $("appName").value=app.name||"";
-  $("packageName").value=await loadSetting("packageName")||makePackage(app.name||"myapp");
-  $("versionName").value=await loadSetting("versionName")||"1.0.0";
-  $("versionCode").value=await loadSetting("versionCode")||1;
-
-  r=await sb.from("android_app_pages").select("*").eq("app_id",appId).order("created_at");
-  if(r.error) throw r.error;
-  pages=r.data||[];
-
-  if(!pages.length) await newPage(true);
-  else {active=pages[0];await loadPage();}
-
-  await loadBuilds();
-  renderPages();render();
-  setStatus("Android project loaded.","success");
- }catch(e){console.error(e);setStatus(e.message||"Unable to load app.","error");}
 }
+
 
 function makePackage(name){
- let x=String(name||"myapp").toLowerCase().replace(/[^a-z0-9]+/g,"");
- if(!x)x="myapp";
- return "com.asimtech."+x;
+
+  let x =
+    String(name || "myapp")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g,"");
+
+  if(!x){
+    x = "myapp";
+  }
+
+  return "com.asimtech." + x;
+
 }
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function init(){
+
+  try{
+
+    if(!appId){
+
+      location.href =
+        "android-apps.html";
+
+      return;
+
+    }
+
+
+    const {
+      data:{user:u},
+      error:userError
+    } =
+    await sb.auth.getUser();
+
+
+    if(userError){
+
+      throw userError;
+
+    }
+
+
+    if(!u){
+
+      location.href =
+        "login.html";
+
+      return;
+
+    }
+
+
+    user = u;
+
+
+    let result =
+      await sb
+        .from("apps")
+        .select("*")
+        .eq("id",appId)
+        .eq("owner_id",user.id)
+        .single();
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    app = result.data;
+
+
+    $("appName").value =
+      app.name || "";
+
+
+    $("packageName").value =
+      await loadSetting("packageName")
+      ||
+      makePackage(app.name);
+
+
+    $("versionName").value =
+      await loadSetting("versionName")
+      ||
+      "1.0.0";
+
+
+    $("versionCode").value =
+      await loadSetting("versionCode")
+      ||
+      1;
+
+
+    result =
+      await sb
+        .from("android_app_pages")
+        .select("*")
+        .eq("app_id",appId)
+        .order("created_at");
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    pages =
+      result.data || [];
+
+
+    if(!pages.length){
+
+      await newPage(true);
+
+    }else{
+
+      activePage =
+        pages[0];
+
+      await loadPage();
+
+    }
+
+
+    await loadBuilds();
+
+    renderPages();
+    renderCanvas();
+
+    setStatus(
+      "Android project loaded.",
+      "success"
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      error.message ||
+      "Unable to load project.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
 
 async function loadSetting(key){
- const r=await sb.from("app_files").select("content").eq("app_id",appId).eq("file_path","android-settings.json").maybeSingle();
- if(r.error) return null;
- try{
-  const o=JSON.parse(r.data?.content||"{}");
-  return o[key]??null;
- }catch{return null}
+
+  const result =
+    await sb
+      .from("app_files")
+      .select("content")
+      .eq("app_id",appId)
+      .eq("file_path","android-settings.json")
+      .maybeSingle();
+
+
+  if(result.error ||
+     !result.data){
+
+    return null;
+
+  }
+
+
+  try{
+
+    const obj =
+      JSON.parse(
+        result.data.content || "{}"
+      );
+
+    return obj[key] ?? null;
+
+  }catch{
+
+    return null;
+
+  }
+
 }
+
 
 async function saveSettings(){
- const settings={
-  appName:$("appName").value.trim()||app.name||"ASIM TECH App",
-  packageName:$("packageName").value.trim()||makePackage(app.name),
-  versionName:$("versionName").value.trim()||"1.0.0",
-  versionCode:Math.max(1,parseInt($("versionCode").value,10)||1)
- };
- if(!/^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$/.test(settings.packageName))
-  throw new Error("Invalid package name. Example: com.asimtech.myapp");
 
- let r=await sb.from("app_files").upsert({
-  app_id:appId,file_path:"android-settings.json",
-  content:JSON.stringify(settings,null,2),language:"json",
-  updated_at:new Date().toISOString()
- },{onConflict:"app_id,file_path"});
- if(r.error) throw r.error;
+  const settings = {
 
- r=await sb.from("apps").update({
-  name:settings.appName,updated_at:new Date().toISOString()
- }).eq("id",appId).eq("owner_id",user.id);
- if(r.error) throw r.error;
- app.name=settings.appName;
- return settings;
+    appName:
+      $("appName").value.trim()
+      ||
+      app.name
+      ||
+      "ASIM TECH App",
+
+    packageName:
+      $("packageName").value.trim()
+      ||
+      makePackage(app.name),
+
+    versionName:
+      $("versionName").value.trim()
+      ||
+      "1.0.0",
+
+    versionCode:
+      Math.max(
+        1,
+        parseInt(
+          $("versionCode").value,
+          10
+        ) || 1
+      )
+
+  };
+
+
+  if(
+    !/^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$/
+      .test(settings.packageName)
+  ){
+
+    throw new Error(
+      "Invalid package name. Example: com.asimtech.myapp"
+    );
+
+  }
+
+
+  let result =
+    await sb
+      .from("app_files")
+      .upsert(
+        {
+          app_id:appId,
+          file_path:"android-settings.json",
+          content:
+            JSON.stringify(
+              settings,
+              null,
+              2
+            ),
+          language:"json",
+          updated_at:
+            new Date().toISOString()
+        },
+        {
+          onConflict:
+            "app_id,file_path"
+        }
+      );
+
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+
+  result =
+    await sb
+      .from("apps")
+      .update({
+        name:settings.appName,
+        updated_at:
+          new Date().toISOString()
+      })
+      .eq("id",appId)
+      .eq("owner_id",user.id);
+
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+
+  app.name =
+    settings.appName;
+
 }
+
+
+/* =========================================================
+   PAGES
+========================================================= */
 
 async function newPage(first=false){
- try{
-  const title=first?"Home":"Page "+(pages.length+1);
-  const slug=title.toLowerCase().replace(/[^a-z0-9]+/g,"-");
-  const r=await sb.from("android_app_pages").insert({
-   app_id:appId,title,slug,is_published:true
-  }).select("*").single();
-  if(r.error) throw r.error;
-  pages.push(r.data);active=r.data;active.elements=[];
-  await saveFile([]);
-  renderPages();render();
- }catch(e){alert(e.message)}
+
+  try{
+
+    const title =
+      first
+      ? "Home"
+      : "Page " + (pages.length + 1);
+
+
+    const slug =
+      title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,"-");
+
+
+    const result =
+      await sb
+        .from("android_app_pages")
+        .insert({
+          app_id:appId,
+          title:title,
+          slug:slug,
+          is_published:true
+        })
+        .select("*")
+        .single();
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    activePage =
+      result.data;
+
+
+    activePage.elements =
+      [];
+
+
+    pages.push(
+      result.data
+    );
+
+
+    await savePageFile();
+
+
+    selectedId = null;
+
+    renderPages();
+    renderCanvas();
+
+
+  }catch(error){
+
+    alert(error.message);
+
+  }
+
 }
+
 
 async function loadPage(){
- const r=await sb.from("app_files").select("content")
-  .eq("app_id",appId)
-  .eq("file_path",`builder-${active.id}.json`)
-  .maybeSingle();
- if(r.error) throw r.error;
- try{active.elements=r.data?JSON.parse(r.data.content||"[]"):[]}catch{active.elements=[]}
+
+  const result =
+    await sb
+      .from("app_files")
+      .select("content")
+      .eq("app_id",appId)
+      .eq(
+        "file_path",
+        "builder-" +
+        activePage.id +
+        ".json"
+      )
+      .maybeSingle();
+
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+
+  try{
+
+    activePage.elements =
+      result.data
+      ?
+      JSON.parse(
+        result.data.content || "[]"
+      )
+      :
+      [];
+
+  }catch{
+
+    activePage.elements =
+      [];
+
+  }
+
 }
 
-async function switchPage(pid){
- active=pages.find(p=>p.id===pid);selected=null;
- await loadPage();renderPages();render();
+
+async function savePageFile(){
+
+  const result =
+    await sb
+      .from("app_files")
+      .upsert(
+        {
+          app_id:appId,
+          file_path:
+            "builder-" +
+            activePage.id +
+            ".json",
+
+          content:
+            JSON.stringify(
+              activePage.elements || [],
+              null,
+              2
+            ),
+
+          language:"json",
+
+          updated_at:
+            new Date().toISOString()
+        },
+        {
+          onConflict:
+            "app_id,file_path"
+        }
+      );
+
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
 }
+
+
+async function switchPage(id){
+
+  activePage =
+    pages.find(
+      p => p.id === id
+    );
+
+
+  selectedId = null;
+
+  await loadPage();
+
+  renderPages();
+  renderCanvas();
+
+}
+
+
+/* =========================================================
+   RENDER PAGES
+========================================================= */
 
 function renderPages(){
- $("pages").innerHTML=pages.map(p=>
- `<div class="page ${p.id===active?.id?"active":""}" onclick="switchPage('${p.id}')">${esc(p.title)}</div>`
- ).join("");
+
+  $("pages").innerHTML =
+    pages.map(
+      p => `
+        <div
+          class="page ${
+            p.id === activePage?.id
+            ? "active"
+            : ""
+          }"
+          onclick="switchPage('${p.id}')"
+        >
+          ${esc(p.title)}
+        </div>
+      `
+    ).join("");
+
 }
 
-function add(type){
- const text={
-  heading:"Heading",text:"Your text",button:"Button",
-  link:"Open link",input:"",image:"",container:"Container"
- }[type]||"";
- const e={
-  id:crypto.randomUUID(),type,text,
-  href:(type==="button"||type==="link")?"https://example.com":"",
-  image:type==="image"?"https://placehold.co/600x300":"",
-  placeholder:type==="input"?"Enter text…":"",
-  fontSize:type==="heading"?28:16,padding:10
- };
- active.elements=[...(active.elements||[]),e];
- selected=e.id;render();
+
+/* =========================================================
+   ADD ELEMENT
+========================================================= */
+
+function addElement(type){
+
+  const defaults = {
+
+    heading:"Heading",
+
+    text:"Your text",
+
+    button:"Button",
+
+    link:"Open link",
+
+    input:"",
+
+    image:"",
+
+    container:"Container"
+
+  };
+
+
+  const element = {
+
+    id:
+      crypto.randomUUID(),
+
+    type:type,
+
+    text:
+      defaults[type] || "",
+
+    href:
+      (
+        type === "button" ||
+        type === "link"
+      )
+      ?
+      "https://example.com"
+      :
+      "",
+
+    image:
+      type === "image"
+      ?
+      "https://placehold.co/600x300"
+      :
+      "",
+
+    placeholder:
+      type === "input"
+      ?
+      "Enter text..."
+      :
+      "",
+
+    fontSize:
+      type === "heading"
+      ?
+      28
+      :
+      16,
+
+    padding:10
+
+  };
+
+
+  activePage.elements =
+    [
+      ...(activePage.elements || []),
+      element
+    ];
+
+
+  selectedId =
+    element.id;
+
+
+  renderCanvas();
+
+  showProperties();
+
 }
 
-function render(){
- const els=active?.elements||[];
- $("canvas").innerHTML=els.map(e=>{
-  let x="";
-  if(e.type==="heading") x=`<h1 style="font-size:${e.fontSize}px">${esc(e.text)}</h1>`;
-  else if(e.type==="text") x=`<div style="font-size:${e.fontSize}px">${esc(e.text)}</div>`;
-  else if(e.type==="button") x=`<a class="btnel" href="#">${esc(e.text)}</a>`;
-  else if(e.type==="link") x=`<a href="#">${esc(e.text)}</a>`;
-  else if(e.type==="input") x=`<input style="width:100%;padding:${e.padding}px" placeholder="${esc(e.placeholder)}">`;
-  else if(e.type==="image") x=`<img src="${esc(e.image)}">`;
-  else x=`<div style="border:1px solid #ddd;border-radius:8px;padding:${e.padding}px">${esc(e.text)}</div>`;
-  return `<div class="el ${selected===e.id?"sel":""}" onclick="selectEl('${e.id}',event)">${x}</div>`;
- }).join("");
 
- if(selected) fill();
- else {$("form").classList.add("hidden");$("emptyProps").classList.remove("hidden");}
+/* =========================================================
+   CANVAS
+========================================================= */
+
+function renderCanvas(){
+
+  const elements =
+    activePage?.elements || [];
+
+
+  $("canvas").innerHTML =
+    elements.map(
+      e => {
+
+        let html = "";
+
+
+        if(e.type === "heading"){
+
+          html =
+            `
+              <h1
+                style="
+                  font-size:${e.fontSize || 28}px;
+                  margin:0;
+                "
+              >
+                ${esc(e.text)}
+              </h1>
+            `;
+
+        }
+
+
+        else if(e.type === "text"){
+
+          html =
+            `
+              <div
+                style="
+                  font-size:${e.fontSize || 16}px;
+                  padding:${e.padding || 0}px;
+                "
+              >
+                ${esc(e.text)}
+              </div>
+            `;
+
+        }
+
+
+        else if(e.type === "button"){
+
+          html =
+            `
+              <a
+                class="btnel"
+                href="javascript:void(0)"
+              >
+                ${esc(e.text)}
+              </a>
+            `;
+
+        }
+
+
+        else if(e.type === "link"){
+
+          html =
+            `
+              <a href="javascript:void(0)">
+                ${esc(e.text)}
+              </a>
+            `;
+
+        }
+
+
+        else if(e.type === "input"){
+
+          html =
+            `
+              <input
+                style="
+                  width:100%;
+                  padding:${e.padding || 10}px;
+                  color:#111;
+                  background:#fff;
+                "
+                placeholder="${esc(e.placeholder)}"
+              >
+            `;
+
+        }
+
+
+        else if(e.type === "image"){
+
+          html =
+            `
+              <img
+                src="${esc(e.image)}"
+                alt=""
+              >
+            `;
+
+        }
+
+
+        else{
+
+          html =
+            `
+              <div
+                style="
+                  border:1px solid #ddd;
+                  border-radius:8px;
+                  padding:${e.padding || 10}px;
+                "
+              >
+                ${esc(e.text)}
+              </div>
+            `;
+
+        }
+
+
+        return `
+          <div
+            class="el ${
+              selectedId === e.id
+              ? "sel"
+              : ""
+            }"
+            onclick="selectElement('${e.id}',event)"
+          >
+            ${html}
+          </div>
+        `;
+
+      }
+    ).join("");
+
+
+  if(selectedId){
+
+    fillProperties();
+
+  }else{
+
+    $("form").style.display =
+      "none";
+
+    $("emptyProps").style.display =
+      "block";
+
+  }
+
 }
 
-function selectEl(id,e){e.stopPropagation();selected=id;render()}
 
-function fill(){
- const e=active.elements.find(x=>x.id===selected);
- if(!e)return;
- $("emptyProps").classList.add("hidden");$("form").classList.remove("hidden");
- $("ptext").value=e.text||"";
- $("plink").value=e.href||"";
- $("pimage").value=e.image||"";
- $("pplaceholder").value=e.placeholder||"";
- $("psize").value=e.fontSize||16;
- $("ppad").value=e.padding??10;
+/* =========================================================
+   SELECT ELEMENT
+========================================================= */
+
+function selectElement(id,event){
+
+  if(event){
+
+    event.stopPropagation();
+
+  }
+
+
+  selectedId =
+    id;
+
+
+  renderCanvas();
+
+  showProperties();
+
 }
 
-function applyProps(){
- const e=active.elements.find(x=>x.id===selected);if(!e)return;
- Object.assign(e,{
-  text:$("ptext").value,href:$("plink").value,image:$("pimage").value,
-  placeholder:$("pplaceholder").value,
-  fontSize:+$("psize").value||16,padding:+$("ppad").value||0
- });
- render();
+
+/* =========================================================
+   SHOW PROPERTIES
+========================================================= */
+
+function showProperties(){
+
+  if(!selectedId){
+
+    return;
+
+  }
+
+
+  $("propertiesPanel")
+    .scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
 }
 
-function removeEl(){
- active.elements=active.elements.filter(e=>e.id!==selected);
- selected=null;render();
+
+/* =========================================================
+   FILL PROPERTIES
+========================================================= */
+
+function fillProperties(){
+
+  const element =
+    (activePage.elements || [])
+      .find(
+        x => x.id === selectedId
+      );
+
+
+  if(!element){
+
+    return;
+
+  }
+
+
+  $("emptyProps").style.display =
+    "none";
+
+  $("form").style.display =
+    "block";
+
+
+  $("ptext").value =
+    element.text || "";
+
+
+  $("plink").value =
+    element.href || "";
+
+
+  $("pimage").value =
+    element.image || "";
+
+
+  $("pplaceholder").value =
+    element.placeholder || "";
+
+
+  $("psize").value =
+    element.fontSize || 16;
+
+
+  $("ppad").value =
+    element.padding ?? 10;
+
 }
 
-async function saveFile(elements){
- const r=await sb.from("app_files").upsert({
-  app_id:appId,file_path:`builder-${active.id}.json`,
-  content:JSON.stringify(elements||[]),language:"json",
-  updated_at:new Date().toISOString()
- },{onConflict:"app_id,file_path"});
- if(r.error)throw r.error;
+
+/* =========================================================
+   APPLY PROPERTIES
+========================================================= */
+
+function applyProperties(){
+
+  const element =
+    (activePage.elements || [])
+      .find(
+        x => x.id === selectedId
+      );
+
+
+  if(!element){
+
+    return;
+
+  }
+
+
+  element.text =
+    $("ptext").value;
+
+
+  element.href =
+    $("plink").value;
+
+
+  element.image =
+    $("pimage").value;
+
+
+  element.placeholder =
+    $("pplaceholder").value;
+
+
+  element.fontSize =
+    Math.max(
+      8,
+      parseInt(
+        $("psize").value,
+        10
+      ) || 16
+    );
+
+
+  element.padding =
+    Math.max(
+      0,
+      parseInt(
+        $("ppad").value,
+        10
+      ) || 0
+    );
+
+
+  renderCanvas();
+
+
+  setStatus(
+    "Element updated. Press Save to store it.",
+    "success"
+  );
+
 }
 
-async function save(){
- try{
-  const settings=await saveSettings();
-  await saveFile(active.elements||[]);
-  setStatus("Project saved ✓","success");
- }catch(e){setStatus("Save failed: "+e.message,"error");alert(e.message)}
+
+/* =========================================================
+   DELETE ELEMENT
+========================================================= */
+
+function deleteElement(){
+
+  if(!selectedId){
+
+    return;
+
+  }
+
+
+  activePage.elements =
+    (activePage.elements || [])
+      .filter(
+        x => x.id !== selectedId
+      );
+
+
+  selectedId = null;
+
+
+  renderCanvas();
+
+
+  setStatus(
+    "Element deleted. Press Save.",
+    "warn"
+  );
+
 }
+
+
+/* =========================================================
+   SAVE PROJECT
+========================================================= */
+
+async function saveProject(){
+
+  try{
+
+    setStatus(
+      "Saving...",
+      "warn"
+    );
+
+
+    await saveSettings();
+
+    await savePageFile();
+
+
+    setStatus(
+      "Project saved successfully.",
+      "success"
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      error.message ||
+      "Save failed.",
+      "error"
+    );
+
+    alert(
+      error.message ||
+      "Unable to save project."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   BUILD REQUEST
+========================================================= */
 
 async function requestBuild(){
- try{
-  const settings=await saveSettings();
-  await saveFile(active.elements||[]);
 
-  const sourceCount=pages.length;
-  const r=await sb.from("app_builds").insert({
-   app_id:appId,
-   version_name:settings.versionName,
-   version_code:settings.versionCode,
-   status:"queued",
-   created_by:user.id,
-   queued_at:new Date().toISOString(),
-   source_file_count:sourceCount
-  }).select("*").single();
+  try{
 
-  if(r.error)throw r.error;
+    await saveProject();
 
-  setStatus("APK build request queued ✓","success");
-  $("buildInfo").innerHTML=
-   `<span class="success">✓ Build queued</span><br>Build ID: ${esc(r.data.id)}<br>Status: queued`;
-  await loadBuilds();
- }catch(e){
-  setStatus("Build request failed: "+e.message,"error");
-  alert(e.message);
- }
+
+    const settings = {
+
+      version_name:
+        $("versionName").value.trim()
+        ||
+        "1.0.0",
+
+      version_code:
+        Math.max(
+          1,
+          parseInt(
+            $("versionCode").value,
+            10
+          ) || 1
+        )
+
+    };
+
+
+    const result =
+      await sb
+        .from("app_builds")
+        .insert({
+
+          app_id:appId,
+
+          version_name:
+            settings.version_name,
+
+          version_code:
+            settings.version_code,
+
+          status:"queued",
+
+          created_by:
+            user.id,
+
+          queued_at:
+            new Date().toISOString(),
+
+          source_file_count:
+            (activePage.elements || []).length
+
+        })
+        .select("*")
+        .single();
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    setStatus(
+      "APK build request queued.",
+      "success"
+    );
+
+
+    $("buildInfo").innerHTML =
+      `
+        <div class="build">
+          <b>Build ID</b><br>
+          ${esc(result.data.id)}
+        </div>
+
+        <div class="build">
+          <b>Status</b><br>
+          <span class="warn">
+            queued
+          </span>
+        </div>
+      `;
+
+
+    await loadBuilds();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Build request failed:\n\n" +
+      error.message
+    );
+
+  }
+
 }
+
+
+/* =========================================================
+   BUILD HISTORY
+========================================================= */
 
 async function loadBuilds(){
- const r=await sb.from("app_builds").select("*")
-  .eq("app_id",appId).order("created_at",{ascending:false}).limit(10);
- if(r.error){$("builds").textContent="Unable to load builds";return}
- builds=r.data||[];
- if(!builds.length){$("builds").textContent="No build requested yet.";return}
- $("builds").innerHTML=builds.map(b=>{
-  const cls=b.status==="success"?"success":b.status==="failed"?"error":"warn";
-  return `<div class="build">
-   <b>v${esc(b.version_name||"1.0.0")}</b>
-   — <span class="${cls}">${esc(b.status)}</span><br>
-   ${new Date(b.created_at).toLocaleString()}<br>
-   ${b.file_name?`📦 ${esc(b.file_name)}`:""}
-  </div>`;
- }).join("");
+
+  const result =
+    await sb
+      .from("app_builds")
+      .select(
+        "id,version_name,version_code,status,file_name,created_at,queued_at"
+      )
+      .eq("app_id",appId)
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      )
+      .limit(10);
+
+
+  if(result.error){
+
+    $("builds").textContent =
+      "Unable to load builds.";
+
+    return;
+
+  }
+
+
+  const data =
+    result.data || [];
+
+
+  if(!data.length){
+
+    $("builds").textContent =
+      "No build requested yet.";
+
+    return;
+
+  }
+
+
+  $("builds").innerHTML =
+    data.map(
+      b => `
+        <div class="build">
+
+          <b>
+            v${esc(b.version_name)}
+          </b>
+
+          ·
+
+          ${esc(b.status)}
+
+          <br>
+
+          <span class="status">
+            ${new Date(
+              b.created_at ||
+              b.queued_at
+            ).toLocaleString()}
+          </span>
+
+        </div>
+      `
+    ).join("");
+
 }
 
+
+/* =========================================================
+   START
+========================================================= */
+
 init();
+
 </script>
+
 </body>
 </html>
