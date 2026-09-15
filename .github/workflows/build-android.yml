@@ -2,19 +2,20 @@ name: Build Android APK
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: "*/5 * * * *"
 
   workflow_dispatch:
     inputs:
       app_id:
-        description: 'ASIM TECH app UUID'
+        description: "ASIM TECH app UUID"
         required: true
         type: string
 
       build_id:
-        description: 'ASIM TECH build UUID'
+        description: "ASIM TECH build UUID"
         required: true
         type: string
+
 
 jobs:
   build:
@@ -30,103 +31,154 @@ jobs:
 
     steps:
 
-      # --------------------------------
-      # CHECKOUT
-      # --------------------------------
+      # --------------------------------------------------
+      # 1. CHECKOUT
+      # --------------------------------------------------
+
       - name: Checkout
         uses: actions/checkout@v4
 
 
-      # --------------------------------
-      # FIND BUILD
-      # --------------------------------
+      # --------------------------------------------------
+      # 2. FIND BUILD
+      # --------------------------------------------------
+
       - name: Find queued build
         id: job
         shell: bash
         run: |
+
           set -euo pipefail
 
-          test -n "$SUPABASE_SERVICE_ROLE_KEY" || {
-            echo "Missing SUPABASE_SERVICE_ROLE_KEY GitHub secret"
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "ERROR: SUPABASE_SERVICE_ROLE_KEY is missing."
             exit 1
-          }
+          fi
 
           INPUT_BUILD_ID="${{ inputs.build_id }}"
           INPUT_APP_ID="${{ inputs.app_id }}"
 
           if [ -n "$INPUT_BUILD_ID" ]; then
-            echo "Manual workflow selected build: $INPUT_BUILD_ID"
+
+            echo "Manual workflow selected build:"
+            echo "$INPUT_BUILD_ID"
 
             JOB=$(curl -sS --fail \
               "$SUPABASE_URL/rest/v1/app_builds?id=eq.$INPUT_BUILD_ID&select=id,app_id,status" \
               -H "apikey: $SUPABASE_SERVICE_ROLE_KEY")
+
           else
-            echo "Scheduled workflow: finding queued build"
+
+            echo "Scheduled workflow: searching for queued build."
 
             JOB=$(curl -sS --fail \
               "$SUPABASE_URL/rest/v1/app_builds?status=eq.queued&order=created_at.asc&limit=1&select=id,app_id,status" \
               -H "apikey: $SUPABASE_SERVICE_ROLE_KEY")
+
           fi
 
-          BUILD_ID=$(python3 -c "import json,sys; x=json.load(sys.stdin); print(x[0]['id'] if x else '')" <<< "$JOB")
-          APP_ID=$(python3 -c "import json,sys; x=json.load(sys.stdin); print(x[0]['app_id'] if x else '')" <<< "$JOB")
+
+          BUILD_ID=$(python3 -c "
+          import json,sys
+          data=json.load(sys.stdin)
+          print(data[0]['id'] if data else '')
+          " <<< "$JOB")
+
+
+          APP_ID=$(python3 -c "
+          import json,sys
+          data=json.load(sys.stdin)
+          print(data[0]['app_id'] if data else '')
+          " <<< "$JOB")
+
 
           if [ -z "$BUILD_ID" ]; then
+
             echo "found=false" >> "$GITHUB_OUTPUT"
+
+            echo "No build found."
+
             exit 0
+
           fi
+
 
           if [ -n "$INPUT_APP_ID" ] && [ "$APP_ID" != "$INPUT_APP_ID" ]; then
-            echo "ERROR: App UUID does not match build UUID"
-            echo "Expected: $INPUT_APP_ID"
-            echo "Found: $APP_ID"
+
+            echo "ERROR: App UUID does not match Build UUID."
+
+            echo "Expected App ID: $INPUT_APP_ID"
+
+            echo "Found App ID: $APP_ID"
+
             exit 1
+
           fi
 
+
           echo "found=true" >> "$GITHUB_OUTPUT"
+
           echo "BUILD_ID=$BUILD_ID" >> "$GITHUB_ENV"
+
           echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
 
-          echo "Build ID: $BUILD_ID"
-          echo "App ID: $APP_ID"
+
+          echo "Build ID:"
+          echo "$BUILD_ID"
+
+          echo "App ID:"
+          echo "$APP_ID"
 
 
-      # --------------------------------
-      # STOP IF QUEUE EMPTY
-      # --------------------------------
+      # --------------------------------------------------
+      # 3. STOP IF NO BUILD
+      # --------------------------------------------------
+
       - name: Stop when queue is empty
         if: steps.job.outputs.found != 'true'
-        run: echo "No queued Android builds."
+        run: |
+          echo "No Android builds are waiting."
 
 
-      # --------------------------------
-      # JAVA
-      # --------------------------------
+      # --------------------------------------------------
+      # 4. JAVA
+      # --------------------------------------------------
+
       - name: Set up Java
         if: steps.job.outputs.found == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
           cache: gradle
 
 
-      # --------------------------------
-      # ANDROID SDK
-      # --------------------------------
+      # --------------------------------------------------
+      # 5. ANDROID SDK
+      # --------------------------------------------------
+
       - name: Set up Android SDK
         if: steps.job.outputs.found == 'true'
         uses: android-actions/setup-android@v3
 
 
-      # --------------------------------
-      # INSTALL SDK COMPONENTS
-      # --------------------------------
+      # --------------------------------------------------
+      # 6. INSTALL ANDROID SDK COMPONENTS
+      # --------------------------------------------------
+
       - name: Install Android SDK components
         if: steps.job.outputs.found == 'true'
         shell: bash
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
+
+          set -e
+
+          echo "Accepting Android SDK licenses..."
+
+          yes | sdkmanager --licenses > /dev/null || true
+
+
+          echo "Installing Android SDK components..."
 
           sdkmanager \
             "platform-tools" \
@@ -134,306 +186,451 @@ jobs:
             "build-tools;35.0.0"
 
 
-      # --------------------------------
-      # MARK BUILDING
-      # --------------------------------
+          echo "Android SDK installation completed."
+
+
+      # --------------------------------------------------
+      # 7. MARK BUILDING
+      # --------------------------------------------------
+
       - name: Mark build as building
         if: steps.job.outputs.found == 'true'
         shell: bash
         run: |
-          curl -sS --fail -X PATCH \
+
+          curl -sS --fail \
+            -X PATCH \
             "$SUPABASE_URL/rest/v1/app_builds?id=eq.$BUILD_ID" \
             -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             --data '{
-              "status":"building",
-              "started_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+              "status": "building",
+              "started_at": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
             }'
 
 
-      # --------------------------------
-      # FETCH APP FILES
-      # --------------------------------
+      # --------------------------------------------------
+      # 8. FETCH APP DATA
+      # --------------------------------------------------
+
       - name: Fetch ASIM TECH app files
         if: steps.job.outputs.found == 'true'
         shell: bash
         run: |
+
           set -euo pipefail
+
+
+          echo "Fetching application information..."
+
 
           curl -sS --fail \
             "$SUPABASE_URL/rest/v1/apps?id=eq.$APP_ID&select=id,name" \
             -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
             > app.json
 
+
+          echo "Fetching application files..."
+
+
           curl -sS --fail \
             "$SUPABASE_URL/rest/v1/app_files?app_id=eq.$APP_ID&select=file_path,content,language" \
             -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
             > files.json
 
-          echo "App files fetched successfully."
+
+          echo "Application files fetched successfully."
 
 
-      # --------------------------------
-      # GENERATE ANDROID PROJECT
-      # --------------------------------
+      # --------------------------------------------------
+      # 9. GENERATE ANDROID PROJECT
+      # --------------------------------------------------
+
       - name: Generate Android project
         if: steps.job.outputs.found == 'true'
         shell: bash
         run: |
+
+          set -euo pipefail
 
           python3 - <<'PY'
 
           import json
           import html
           import re
+
           from pathlib import Path
 
-          app = json.load(open('app.json'))[0]
-          rows = json.load(open('files.json'))
+
+          # ---------------------------------------------
+          # LOAD APP INFORMATION
+          # ---------------------------------------------
+
+          app_data = json.load(open("app.json"))
+
+          if not app_data:
+              raise SystemExit("ASIM TECH app was not found.")
+
+          app = app_data[0]
+
+          rows = json.load(open("files.json"))
+
+
+          # ---------------------------------------------
+          # DEFAULT SETTINGS
+          # ---------------------------------------------
 
           settings = {}
+
           elements = []
 
-          for r in rows:
 
-              if r['file_path'] == 'android-settings.json':
+          # ---------------------------------------------
+          # READ APP FILES
+          # ---------------------------------------------
+
+          for row in rows:
+
+              file_path = row.get("file_path", "")
+
+              content = row.get("content") or ""
+
+
+              if file_path == "android-settings.json":
+
                   try:
-                      settings = json.loads(r.get('content') or '{}')
+
+                      settings = json.loads(content)
+
                   except Exception:
+
                       settings = {}
 
-              elif r['file_path'].startswith('builder-'):
+
+              elif file_path.startswith("builder-"):
+
                   try:
-                      elements = json.loads(r.get('content') or '[]')
+
+                      elements = json.loads(content)
+
                   except Exception:
+
                       elements = []
 
 
-          # --------------------------------
-          # APP SETTINGS
-          # --------------------------------
+          # ---------------------------------------------
+          # APP NAME
+          # ---------------------------------------------
 
           name = (
-              settings.get('appName')
-              or app.get('name')
-              or 'ASIM TECH App'
+              settings.get("appName")
+              or app.get("name")
+              or "ASIM TECH App"
           )
+
+
+          # ---------------------------------------------
+          # PACKAGE NAME
+          # ---------------------------------------------
 
           package = (
-              settings.get('packageName')
-              or 'com.asimtech.myapp'
+              settings.get("packageName")
+              or "com.asimtech.myapp"
           )
+
+
+          # ---------------------------------------------
+          # VERSION
+          # ---------------------------------------------
 
           version_name = (
-              settings.get('versionName')
-              or '1.0.0'
+              settings.get("versionName")
+              or "1.0.0"
           )
 
+
           try:
+
               version_code = int(
-                  settings.get('versionCode') or 1
+                  settings.get("versionCode") or 1
               )
+
           except Exception:
+
               version_code = 1
 
 
+          # ---------------------------------------------
+          # CLEAN PACKAGE NAME
+          # ---------------------------------------------
+
           package = re.sub(
-              r'[^A-Za-z0-9_.]',
-              '',
+              r"[^A-Za-z0-9_.]",
+              "",
               package
           )
 
+
           if not re.match(
-              r'^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$',
+              r"^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$",
               package
           ):
-              package = 'com.asimtech.myapp'
 
+              package = "com.asimtech.myapp"
+
+
+          # ---------------------------------------------
+          # HTML ESCAPE
+          # ---------------------------------------------
 
           def esc(value):
+
               return html.escape(
-                  str(value or ''),
+                  str(value or ""),
                   quote=True
               )
 
 
-          # --------------------------------
-          # GENERATE HTML
-          # --------------------------------
+          # ---------------------------------------------
+          # CREATE HTML BODY
+          # ---------------------------------------------
 
           body = []
 
-          for e in elements:
 
-              typ = e.get('type', '')
+          for element in elements:
+
+              typ = element.get("type", "")
+
 
               text = esc(
-                  e.get('text', '')
+                  element.get("text", "")
               )
+
+
+              try:
+
+                  fs = int(
+                      element.get("fontSize") or 16
+                  )
+
+              except Exception:
+
+                  fs = 16
+
 
               fs = max(
                   8,
-                  min(
-                      72,
-                      int(
-                          e.get('fontSize') or 16
-                      )
-                  )
+                  min(72, fs)
               )
+
+
+              try:
+
+                  pad = int(
+                      element.get("padding") or 10
+                  )
+
+              except Exception:
+
+                  pad = 10
+
 
               pad = max(
                   0,
-                  min(
-                      80,
-                      int(
-                          e.get('padding') or 10
-                      )
-                  )
+                  min(80, pad)
               )
+
 
               href = esc(
-                  e.get('href', '')
+                  element.get("href", "")
               )
+
 
               image = esc(
-                  e.get('image', '')
+                  element.get("image", "")
               )
+
 
               placeholder = esc(
-                  e.get('placeholder', '')
+                  element.get("placeholder", "")
               )
 
 
-              if typ == 'heading':
+              # -----------------------------------------
+              # HEADING
+              # -----------------------------------------
+
+              if typ == "heading":
 
                   body.append(
-                      f'<h1 style="font-size:{fs}px;padding:{pad}px">'
-                      f'{text}'
-                      f'</h1>'
+                      f"<h1 style='font-size:{fs}px;"
+                      f"padding:{pad}px'>"
+                      f"{text}"
+                      f"</h1>"
                   )
 
 
-              elif typ == 'text':
+              # -----------------------------------------
+              # TEXT
+              # -----------------------------------------
+
+              elif typ == "text":
 
                   body.append(
-                      f'<p style="font-size:{fs}px;padding:{pad}px">'
-                      f'{text}'
-                      f'</p>'
+                      f"<p style='font-size:{fs}px;"
+                      f"padding:{pad}px'>"
+                      f"{text}"
+                      f"</p>"
                   )
 
 
-              elif typ == 'button':
+              # -----------------------------------------
+              # BUTTON
+              # -----------------------------------------
+
+              elif typ == "button":
 
                   body.append(
                       f"<a class='btn' "
                       f"href='{href or '#'}' "
-                      f"style='font-size:{fs}px;margin:{pad}px'>"
+                      f"style='font-size:{fs}px;"
+                      f"margin:{pad}px'>"
                       f"{text or 'Button'}"
                       f"</a>"
                   )
 
 
-              elif typ == 'link':
+              # -----------------------------------------
+              # LINK
+              # -----------------------------------------
+
+              elif typ == "link":
 
                   body.append(
-                      f'<a href="{href or "#"}" '
-                      f'style="display:block;'
-                      f'font-size:{fs}px;'
-                      f'padding:{pad}px">'
-                      f'{text or "Link"}'
-                      f'</a>'
+                      f"<a href='{href or '#'}' "
+                      f"style='display:block;"
+                      f"font-size:{fs}px;"
+                      f"padding:{pad}px'>"
+                      f"{text or 'Link'}"
+                      f"</a>"
                   )
 
 
-              elif typ == 'input':
+              # -----------------------------------------
+              # INPUT
+              # -----------------------------------------
+
+              elif typ == "input":
 
                   body.append(
-                      f'<input '
-                      f'placeholder="{placeholder}" '
-                      f'style="font-size:{fs}px;'
-                      f'padding:{pad}px">'
+                      f"<input "
+                      f"placeholder='{placeholder}' "
+                      f"style='font-size:{fs}px;"
+                      f"padding:{pad}px'>"
                   )
 
 
-              elif typ == 'image' and image:
+              # -----------------------------------------
+              # IMAGE
+              # -----------------------------------------
+
+              elif typ == "image" and image:
 
                   body.append(
-                      f'<img src="{image}" '
-                      f'style="max-width:100%;'
-                      f'border-radius:10px;'
-                      f'padding:{pad}px">'
+                      f"<img src='{image}' "
+                      f"style='max-width:100%;"
+                      f"border-radius:10px;"
+                      f"padding:{pad}px'>"
                   )
 
 
-              elif typ == 'container':
+              # -----------------------------------------
+              # CONTAINER
+              # -----------------------------------------
+
+              elif typ == "container":
 
                   body.append(
-                      f'<div style="padding:{pad}px;'
-                      f'border:1px solid #ddd;'
-                      f'border-radius:12px">'
-                      f'{text}'
-                      f'</div>'
+                      f"<div style='padding:{pad}px;"
+                      f"border:1px solid #ddd;"
+                      f"border-radius:12px'>"
+                      f"{text}"
+                      f"</div>"
                   )
 
+
+          # ---------------------------------------------
+          # DEFAULT CONTENT
+          # ---------------------------------------------
 
           if not body:
 
               body = [
-                  '<h1>Welcome to ASIM TECH</h1>'
+                  "<h1>Welcome to ASIM TECH</h1>"
               ]
 
 
+          # ---------------------------------------------
+          # COMPLETE HTML
+          # ---------------------------------------------
+
           html_doc = (
-              '<!doctype html>'
-              '<html>'
-              '<head>'
-              '<meta name="viewport" '
-              'content="width=device-width,initial-scale=1">'
-              '<style>'
-              'body{'
-              'font-family:sans-serif;'
-              'margin:0;'
-              'padding:16px;'
-              'color:#111;'
-              'background:#fff'
-              '}'
-              'h1{margin-top:0}'
-              '.btn{'
-              'display:inline-block;'
-              'background:#1976d2;'
-              'color:#fff;'
-              'text-decoration:none;'
-              'border-radius:8px;'
-              'padding:12px 18px'
-              '}'
-              '</style>'
-              '</head>'
-              '<body>'
-              + ''.join(body)
-              + '</body>'
-              '</html>'
+              "<!doctype html>"
+              "<html>"
+              "<head>"
+              "<meta name='viewport' "
+              "content='width=device-width,initial-scale=1'>"
+              "<style>"
+              "body{"
+              "font-family:sans-serif;"
+              "margin:0;"
+              "padding:16px;"
+              "color:#111;"
+              "background:#fff"
+              "}"
+              "h1{margin-top:0}"
+              ".btn{"
+              "display:inline-block;"
+              "background:#1976d2;"
+              "color:#fff;"
+              "text-decoration:none;"
+              "border-radius:8px;"
+              "padding:12px 18px"
+              "}"
+              "input{"
+              "box-sizing:border-box;"
+              "width:100%;"
+              "border:1px solid #ccc;"
+              "border-radius:8px;"
+              "margin:8px 0"
+              "}"
+              "</style>"
+              "</head>"
+              "<body>"
+              + "".join(body)
+              + "</body>"
+              "</html>"
           )
 
 
-          # --------------------------------
-          # CREATE PROJECT
-          # --------------------------------
+          # ---------------------------------------------
+          # ANDROID PROJECT DIRECTORIES
+          # ---------------------------------------------
 
-          root = Path(
-              'android-project'
-          )
+          root = Path("android-project")
+
 
           java_dir = (
               root
-              / 'app'
-              / 'src'
-              / 'main'
-              / 'java'
-              / Path(
-                  package.replace('.', '/')
-              )
+              / "app"
+              / "src"
+              / "main"
+              / "java"
+              / Path(package.replace(".", "/"))
           )
+
 
           java_dir.mkdir(
               parents=True,
@@ -443,7 +640,10 @@ jobs:
 
           (
               root
-              / 'app/src/main/assets'
+              / "app"
+              / "src"
+              / "main"
+              / "assets"
           ).mkdir(
               parents=True,
               exist_ok=True
@@ -452,130 +652,138 @@ jobs:
 
           (
               root
-              / 'app/src/main/res/values'
+              / "app"
+              / "src"
+              / "main"
+              / "res"
+              / "values"
           ).mkdir(
               parents=True,
               exist_ok=True
           )
 
 
-          # --------------------------------
-          # SETTINGS GRADLE
-          # --------------------------------
+          # ---------------------------------------------
+          # SETTINGS.GRADLE
+          # ---------------------------------------------
 
           (
-              root / 'settings.gradle'
+              root / "settings.gradle"
           ).write_text(
-              """pluginManagement {
-          repositories {
-              google()
-              mavenCentral()
-              gradlePluginPortal()
-          }
+              """
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
           }
 
           dependencyResolutionManagement {
-          repositoriesMode.set(
-              RepositoriesMode.FAIL_ON_PROJECT_REPOS
-          )
-
-          repositories {
-              google()
-              mavenCentral()
-          }
+              repositories {
+                  google()
+                  mavenCentral()
+              }
           }
 
-          rootProject.name='ASIMTECH'
+          rootProject.name = "ASIMTECH"
 
-          include ':app'
+          include(":app")
           """
           )
 
 
-          # --------------------------------
-          # ROOT BUILD GRADLE
-          # --------------------------------
+          # ---------------------------------------------
+          # ROOT BUILD.GRADLE
+          # ---------------------------------------------
 
           (
-              root / 'build.gradle'
+              root / "build.gradle"
           ).write_text(
               """
           plugins {
-              id 'com.android.application'
-              version '8.6.1'
-              apply false
+              id "com.android.application" version "8.6.1" apply false
           }
           """
           )
 
 
-          # --------------------------------
+          # ---------------------------------------------
           # GRADLE PROPERTIES
-          # --------------------------------
+          # ---------------------------------------------
 
           (
-              root / 'gradle.properties'
+              root / "gradle.properties"
           ).write_text(
               """
           android.useAndroidX=true
           android.nonTransitiveRClass=true
+          org.gradle.jvmargs=-Xmx2048m
           """
           )
 
 
-          # --------------------------------
-          # APP BUILD GRADLE
-          # --------------------------------
+          # ---------------------------------------------
+          # APP BUILD.GRADLE
+          # ---------------------------------------------
 
           (
-              root / 'app/build.gradle'
+              root / "app" / "build.gradle"
           ).write_text(
               f"""
           plugins {{
-              id 'com.android.application'
+              id "com.android.application"
           }}
 
           android {{
-              namespace '{package}'
+              namespace "{package}"
               compileSdk 35
 
               defaultConfig {{
-                  applicationId '{package}'
+                  applicationId "{package}"
                   minSdk 23
                   targetSdk 35
                   versionCode {version_code}
-                  versionName '{version_name}'
+                  versionName "{version_name}"
               }}
           }}
           """
           )
 
 
-          # --------------------------------
-          # STRINGS
-          # --------------------------------
+          # ---------------------------------------------
+          # STRINGS.XML
+          # ---------------------------------------------
 
           (
               root
-              / 'app/src/main/res/values/strings.xml'
+              / "app"
+              / "src"
+              / "main"
+              / "res"
+              / "values"
+              / "strings.xml"
           ).write_text(
               f"""
           <resources>
-              <string name="app_name">
-                  {esc(name)}
-              </string>
+              <string name="app_name">{esc(name)}</string>
           </resources>
           """
           )
 
 
-          # --------------------------------
-          # STYLES
-          # --------------------------------
+          # ---------------------------------------------
+          # STYLES.XML
+          # ---------------------------------------------
 
           (
               root
-              / 'app/src/main/res/values/styles.xml'
+              / "app"
+              / "src"
+              / "main"
+              / "res"
+              / "values"
+              / "styles.xml"
           ).write_text(
               """
           <resources>
@@ -584,9 +792,7 @@ jobs:
                   name="AppTheme"
                   parent="android:style/Theme.Material.Light.NoActionBar">
 
-                  <item name="android:fontFamily">
-                      sans
-                  </item>
+                  <item name="android:fontFamily">sans</item>
 
                   <item name="android:colorAccent">
                       #1976d2
@@ -599,13 +805,16 @@ jobs:
           )
 
 
-          # --------------------------------
-          # MANIFEST
-          # --------------------------------
+          # ---------------------------------------------
+          # ANDROID MANIFEST
+          # ---------------------------------------------
 
           (
               root
-              / 'app/src/main/AndroidManifest.xml'
+              / "app"
+              / "src"
+              / "main"
+              / "AndroidManifest.xml"
           ).write_text(
               f"""
           <manifest
@@ -642,11 +851,11 @@ jobs:
           )
 
 
-          # --------------------------------
+          # ---------------------------------------------
           # MAIN ACTIVITY
-          # --------------------------------
+          # ---------------------------------------------
 
-          java = f"""
+          java_code = f"""
           package {package};
 
           import android.app.Activity;
@@ -661,8 +870,7 @@ jobs:
 
                   super.onCreate(savedInstanceState);
 
-                  WebView webView =
-                      new WebView(this);
+                  WebView webView = new WebView(this);
 
                   webView.setWebViewClient(
                       new WebViewClient()
@@ -685,64 +893,89 @@ jobs:
 
 
           (
-              java_dir / 'MainActivity.java'
-          ).write_text(java)
+              java_dir / "MainActivity.java"
+          ).write_text(java_code)
 
 
-          # --------------------------------
-          # HTML
-          # --------------------------------
+          # ---------------------------------------------
+          # INDEX.HTML
+          # ---------------------------------------------
 
           (
               root
-              / 'app/src/main/assets/index.html'
-          ).write_text(
-              html_doc
-          )
+              / "app"
+              / "src"
+              / "main"
+              / "assets"
+              / "index.html"
+          ).write_text(html_doc)
 
 
-          # --------------------------------
+          # ---------------------------------------------
           # BUILD META
-          # --------------------------------
+          # ---------------------------------------------
 
-          Path(
-              'build-meta.json'
-          ).write_text(
+          Path("build-meta.json").write_text(
               json.dumps(
                   {
-                      'name': name,
-                      'package': package,
-                      'versionName': version_name,
-                      'versionCode': version_code
-                  }
+                      "name": name,
+                      "package": package,
+                      "versionName": version_name,
+                      "versionCode": version_code
+                  },
+                  indent=2
               )
           )
 
-          print("Android project generated successfully.")
+
+          print("")
+          print("======================================")
+          print("ASIM TECH Android project generated.")
+          print("App Name:", name)
+          print("Package:", package)
+          print("Version:", version_name)
+          print("Version Code:", version_code)
+          print("======================================")
+          print("")
+
 
           PY
 
 
-      # --------------------------------
-      # BUILD APK
-      # --------------------------------
+      # --------------------------------------------------
+      # 10. BUILD APK
+      # --------------------------------------------------
+
       - name: Build debug APK
         if: steps.job.outputs.found == 'true'
         working-directory: android-project
         shell: bash
         run: |
 
-          gradle --no-daemon wrapper \
+          set -e
+
+          echo "Creating Gradle wrapper..."
+
+          gradle wrapper \
             --gradle-version 8.10.2
 
-          ./gradlew --no-daemon \
+
+          echo "Building ASIM TECH APK..."
+
+
+          ./gradlew \
+            --no-daemon \
             --stacktrace \
             :app:assembleDebug
 
 
-      # --------------------------------
-      # UPLOAD APK
-      # --------------------------------
+          echo "APK build completed."
+
+
+      # --------------------------------------------------
+      # 11. UPLOAD APK
+      # --------------------------------------------------
+
       - name: Upload APK to Supabase Storage
         if: steps.job.outputs.found == 'true'
         shell: bash
@@ -750,22 +983,41 @@ jobs:
 
           set -euo pipefail
 
+
           APK="android-project/app/build/outputs/apk/debug/app-debug.apk"
 
-          test -f "$APK" || {
-            echo "APK file not found"
+
+          if [ ! -f "$APK" ]; then
+
+            echo "ERROR: APK file was not found."
+
             exit 1
-          }
+
+          fi
+
 
           SIZE=$(stat -c%s "$APK")
 
+
           SHA=$(sha256sum "$APK" | awk '{print $1}')
 
-          VERSION=$(python3 -c \
-            "import json; print(json.load(open('build-meta.json'))['versionName'])"
-          )
 
-          PATHNAME="$APP_ID/$BUILD_ID/ASIM-TECH-v$VERSION.apk"
+          VERSION=$(python3 -c "
+          import json
+          print(json.load(open('build-meta.json'))['versionName'])
+          ")
+
+
+          FILE_NAME="ASIM-TECH-v${VERSION}.apk"
+
+
+          PATHNAME="$APP_ID/$BUILD_ID/$FILE_NAME"
+
+
+          echo "Uploading APK..."
+
+          echo "File:"
+          echo "$FILE_NAME"
 
 
           curl -sS --fail \
@@ -777,6 +1029,9 @@ jobs:
             --data-binary "@$APK"
 
 
+          echo "Updating build record..."
+
+
           curl -sS --fail \
             -X PATCH \
             "$SUPABASE_URL/rest/v1/app_builds?id=eq.$BUILD_ID" \
@@ -784,34 +1039,40 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             --data '{
-              "status":"success",
-              "storage_path":"'"$PATHNAME"'",
-              "file_name":"'"$(basename "$PATHNAME")"'",
-              "mime_type":"application/vnd.android.package-archive",
-              "file_size":'"$SIZE"',
-              "sha256":"'"$SHA"'",
-              "completed_at":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
+              "status": "success",
+              "storage_path": "'"$PATHNAME"'",
+              "file_name": "'"$FILE_NAME"'",
+              "mime_type": "application/vnd.android.package-archive",
+              "file_size": '"$SIZE"',
+              "sha256": "'"$SHA"'",
+              "completed_at": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
             }'
 
 
+          echo ""
+          echo "======================================"
           echo "APK uploaded successfully."
+          echo "======================================"
+          echo ""
 
 
-      # --------------------------------
-      # MARK FAILED
-      # --------------------------------
+      # --------------------------------------------------
+      # 12. MARK BUILD FAILED
+      # --------------------------------------------------
+
       - name: Mark build failed on error
         if: failure() && steps.job.outputs.found == 'true'
         shell: bash
         run: |
 
-          curl -sS -X PATCH \
+          curl -sS \
+            -X PATCH \
             "$SUPABASE_URL/rest/v1/app_builds?id=eq.$BUILD_ID" \
             -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             --data '{
-              "status":"failed",
-              "build_log":"GitHub Actions build failed. See Actions run for details.",
-              "completed_at":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
-            }'
+              "status": "failed",
+              "build_log": "GitHub Actions Android build failed. Please check the GitHub Actions log.",
+              "completed_at": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
+            }' || true
