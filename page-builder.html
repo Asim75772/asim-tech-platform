@@ -84,6 +84,13 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const p=new URLSearchParams(location.search),pageId=p.get('page_id'),repoId=p.get('repository_id');
 let user=null,selected=null,previewURL=null;
 const $=id=>document.getElementById(id);
+const repo=$('repository'), name=$('pageName'), canvas=$('canvas');
+const html=$('htmlCode'), css=$('cssCode'), js=$('jsCode'), preview=$('preview');
+const visualMode=$('visualMode'), codeMode=$('codeMode'), visualTab=$('visualTab'), codeTab=$('codeTab');
+const noSelection=$('noSelection'), propertyEditor=$('propertyEditor'), imageTools=$('imageTools');
+const propText=$('propText'), propSize=$('propSize'), propAlign=$('propAlign'), propColor=$('propColor'), propBg=$('propBg');
+const propImageUrl=$('propImageUrl'), uploadInfo=$('uploadInfo'), imgPreview=$('imgPreview');
+const pageTitle=$('pageTitle'), mode=$('mode'), publishButton=$('publishButton'), saveButton=$('saveButton');
 function status(t,c=''){ $('status').textContent=t;$('status').className='status '+c }
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function showMode(m){visualMode.classList.toggle('hidden',m!=='visual');codeMode.classList.toggle('hidden',m!=='code');visualTab.classList.toggle('active',m==='visual');codeTab.classList.toggle('active',m==='code');if(m==='code')sync()}
@@ -177,7 +184,7 @@ function openPublish(){if(!pageId){alert('Save the website first.');return}locat
 async function init(){
  try{let r=await sb.auth.getUser();if(r.error)throw r.error;if(!r.data.user){location.href='login.html';return}user=r.data.user;await loadRepos();
  if(pageId)await loadPage();else{['heading','text','button'].forEach(addBlock);name.value='index.html';updatePreview();status('Ready. Add elements and save your website.','success')}
- }catch(e){status(e.message,'error')}
+ }catch(e){status(e.message||'Unable to load the builder.','error');alert(e.message||'Unable to load the builder.')}
 }
 init();
 </script>
