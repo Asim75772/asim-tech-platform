@@ -18,6 +18,7 @@ on:
 
 
 jobs:
+
   build:
 
     runs-on: ubuntu-latest
@@ -27,8 +28,11 @@ jobs:
     permissions:
       contents: read
 
+
     env:
+
       SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
+
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
 
@@ -44,7 +48,6 @@ jobs:
         uses: actions/checkout@v4
 
 
-
       # ==========================================
       # 2. FIND BUILD
       # ==========================================
@@ -58,7 +61,6 @@ jobs:
         run: |
 
           set -euo pipefail
-
 
           if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
 
@@ -76,19 +78,15 @@ jobs:
 
           if [ -n "$INPUT_BUILD_ID" ]; then
 
-            echo "Manual workflow selected build:"
-            echo "$INPUT_BUILD_ID"
-
+            echo "Manual workflow selected build."
 
             JOB=$(curl -sS --fail \
               "$SUPABASE_URL/rest/v1/app_builds?id=eq.$INPUT_BUILD_ID&select=id,app_id,status" \
               -H "apikey: $SUPABASE_SERVICE_ROLE_KEY")
 
-
           else
 
             echo "Scheduled workflow: finding queued build."
-
 
             JOB=$(curl -sS --fail \
               "$SUPABASE_URL/rest/v1/app_builds?status=eq.queued&order=created_at.asc&limit=1&select=id,app_id,status" \
@@ -126,10 +124,6 @@ jobs:
 
             echo "ERROR: App UUID does not match Build UUID."
 
-            echo "Expected App ID: $INPUT_APP_ID"
-
-            echo "Found App ID: $APP_ID"
-
             exit 1
 
           fi
@@ -142,14 +136,13 @@ jobs:
           echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
 
 
-          echo "======================================"
+          echo "=========================================="
 
-          echo "Build ID: $BUILD_ID"
+          echo "BUILD ID: $BUILD_ID"
 
-          echo "App ID:   $APP_ID"
+          echo "APP ID:   $APP_ID"
 
-          echo "======================================"
-
+          echo "=========================================="
 
 
       # ==========================================
@@ -163,7 +156,6 @@ jobs:
         run: |
 
           echo "No Android builds are waiting."
-
 
 
       # ==========================================
@@ -183,7 +175,6 @@ jobs:
           java-version: "17"
 
 
-
       # ==========================================
       # 5. SET UP GRADLE
       # ==========================================
@@ -201,9 +192,8 @@ jobs:
           cache-disabled: true
 
 
-
       # ==========================================
-      # 6. SET UP ANDROID SDK
+      # 6. SET UP ANDROID
       # ==========================================
 
       - name: Set up Android SDK
@@ -213,9 +203,8 @@ jobs:
         uses: android-actions/setup-android@v3
 
 
-
       # ==========================================
-      # 7. INSTALL ANDROID SDK
+      # 7. INSTALL SDK COMPONENTS
       # ==========================================
 
       - name: Install Android SDK components
@@ -229,13 +218,18 @@ jobs:
           set -euo pipefail
 
 
+          echo "ANDROID_HOME=$ANDROID_HOME"
+
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+
+
           echo "Accepting Android SDK licenses..."
 
 
           yes | sdkmanager --licenses > /dev/null || true
 
 
-          echo "Installing Android SDK components..."
+          echo "Installing required Android SDK packages..."
 
 
           sdkmanager \
@@ -244,12 +238,17 @@ jobs:
             "build-tools;35.0.0"
 
 
+          echo "Checking installed SDK packages..."
+
+
+          sdkmanager --list_installed | head -100
+
+
           echo "Android SDK installation completed."
 
 
-
       # ==========================================
-      # 8. MARK BUILD AS BUILDING
+      # 8. MARK BUILDING
       # ==========================================
 
       - name: Mark build as building
@@ -275,9 +274,11 @@ jobs:
             }'
 
 
+          echo "Build marked as building."
+
 
       # ==========================================
-      # 9. GENERATE ANDROID PROJECT
+      # 9. CREATE ANDROID PROJECT
       # ==========================================
 
       - name: Generate Android project
@@ -301,14 +302,11 @@ jobs:
           mkdir -p android-project/app/src/main/res/values
 
 
-
           # ========================================
           # SETTINGS.GRADLE
           # ========================================
 
           cat > android-project/settings.gradle <<'EOF'
-
-          import org.gradle.api.initialization.resolve.RepositoriesMode
 
           pluginManagement {
 
@@ -326,10 +324,6 @@ jobs:
 
 
           dependencyResolutionManagement {
-
-              repositoriesMode.set(
-                  RepositoriesMode.FAIL_ON_PROJECT_REPOS
-              )
 
               repositories {
 
@@ -349,7 +343,6 @@ jobs:
           EOF
 
 
-
           # ========================================
           # ROOT BUILD.GRADLE
           # ========================================
@@ -365,9 +358,8 @@ jobs:
           EOF
 
 
-
           # ========================================
-          # GRADLE.PROPERTIES
+          # GRADLE PROPERTIES
           # ========================================
 
           cat > android-project/gradle.properties <<'EOF'
@@ -379,7 +371,6 @@ jobs:
           org.gradle.jvmargs=-Xmx2048m
 
           EOF
-
 
 
           # ========================================
@@ -421,9 +412,8 @@ jobs:
           EOF
 
 
-
           # ========================================
-          # STRINGS.XML
+          # STRINGS
           # ========================================
 
           cat > android-project/app/src/main/res/values/strings.xml <<'EOF'
@@ -437,9 +427,8 @@ jobs:
           EOF
 
 
-
           # ========================================
-          # STYLES.XML
+          # STYLES
           # ========================================
 
           cat > android-project/app/src/main/res/values/styles.xml <<'EOF'
@@ -452,16 +441,17 @@ jobs:
 
                   <item name="android:fontFamily">sans</item>
 
-                  <item name="android:colorAccent">#00C853</item>
+                  <item name="android:windowLightStatusBar">true</item>
 
-                  <item name="android:windowActionModeOverlay">true</item>
+                  <item name="android:statusBarColor">#FFFFFF</item>
+
+                  <item name="android:navigationBarColor">#FFFFFF</item>
 
               </style>
 
           </resources>
 
           EOF
-
 
 
           # ========================================
@@ -516,7 +506,6 @@ jobs:
           </manifest>
 
           EOF
-
 
 
           # ========================================
@@ -608,14 +597,13 @@ jobs:
           EOF
 
 
-          echo "======================================"
+          echo "=========================================="
 
           echo "ASIM TECH Android project generated."
 
-          echo "Platform URL configured."
+          echo "APK will open ASIM TECH Platform directly."
 
-          echo "======================================"
-
+          echo "=========================================="
 
 
       # ==========================================
@@ -651,12 +639,11 @@ jobs:
             :app:assembleDebug
 
 
-          echo "======================================"
+          echo "=========================================="
 
           echo "APK BUILD SUCCESSFUL"
 
-          echo "======================================"
-
+          echo "=========================================="
 
 
       # ==========================================
@@ -692,9 +679,8 @@ jobs:
           ls -lh "$APK"
 
 
-
       # ==========================================
-      # 12. UPLOAD APK TO SUPABASE
+      # 12. UPLOAD APK
       # ==========================================
 
       - name: Upload APK to Supabase Storage
@@ -726,9 +712,15 @@ jobs:
           PATHNAME="$APP_ID/$BUILD_ID/$FILE_NAME"
 
 
+          echo "=========================================="
+
           echo "Uploading APK..."
 
+          echo "File: $FILE_NAME"
+
           echo "Path: $PATHNAME"
+
+          echo "=========================================="
 
 
           curl -sS --fail \
@@ -760,7 +752,7 @@ jobs:
             }'
 
 
-          echo "======================================"
+          echo "=========================================="
 
           echo "ASIM TECH APK READY"
 
@@ -768,8 +760,7 @@ jobs:
 
           echo "Size: $SIZE bytes"
 
-          echo "======================================"
-
+          echo "=========================================="
 
 
       # ==========================================
