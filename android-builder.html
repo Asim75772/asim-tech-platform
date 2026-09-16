@@ -1,1 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Android App Builder — ASIM TECH</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#07111f;color:#fff}
+nav{height:62px;background:#050c16;border-bottom:1px solid #263646;display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+.logo{font-size:20px;font-weight:700}.green{color:#36e0b5}nav a{color:#fff;text-decoration:none;margin-left:14px}
+.layout{display:grid;grid-template-columns:280px 1fr 330px;min-height:calc(100vh - 62px)}
+.panel{background:#0d1d2b;border-right:1px solid #263646;padding:16px;overflow:auto}
+.right{border-left:1px solid #263646;border-right:0}
+.stage{padding:25px;display:flex;justify-content:center;background:radial-gradient(circle at top,#193046,#07111f);overflow:auto}
+.phone{width:360px;max-width:92vw;min-height:720px;background:#fff;color:#111;border:10px solid #050505;border-radius:32px;overflow:hidden;box-shadow:0 15px 40px #0008}
+.phonebar{height:28px;background:#050505}
+.canvas{min-height:682px;padding:16px}
+.btn{border:0;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer;color:#fff}
+.greenbtn{background:#238636}.blue{background:#1f6feb}.orange{background:#d97706}.dark{background:#21262d;border:1px solid #30363d}.red{background:#b91c1c}
+.topactions{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}.status{font-size:12px;color:#9fb0bf;line-height:1.5}
+.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tool{background:#172536;border:1px solid #304354;color:#fff;border-radius:8px;padding:10px;cursor:pointer}
+.section{margin-top:18px;padding-top:14px;border-top:1px solid #263646}
+.pages{margin-top:18px}.page{padding:9px;border:1px solid #303f4e;border-radius:7px;margin-bottom:7px;cursor:pointer}.page.active{border-color:#36e0b5;background:#07111f}
+label{display:block;font-size:12px;color:#9fb0bf;margin:8px 0 4px}
+input,select{width:100%;background:#07111f;color:#fff;border:1px solid #304354;border-radius:7px;padding:9px}
+.row{display:flex;gap:7px}.row>*{flex:1}.hidden{display:none}
+.el{position:relative;border:1px dashed transparent;padding:6px;margin:3px 0;cursor:pointer}.el:hover,.el.sel{border-color:#1f6feb}
+.el img{max-width:100%;border-radius:8px}.btnel{display:inline-block;background:#1f6feb;color:#fff;padding:9px 14px;border-radius:7px;text-decoration:none}
+.preview-title{font-size:13px;color:#8fa1b1;margin-bottom:8px}
+.buildbox{background:#07111f;border:1px solid #304354;border-radius:9px;padding:10px;margin-top:10px}
+.build{padding:8px 0;border-bottom:1px solid #263646;font-size:12px}.build:last-child{border-bottom:0}
+.success{color:#36e0b5}.warn{color:#fbbf24}.error{color:#ff7b72}
+@media(max-width:1050px){
+.layout{grid-template-columns:1fr}
+.panel{display:block;border-right:0;border-bottom:1px solid #263646}
+.right{display:block;border-left:0;border-top:1px solid #263646}
+}
+@media(max-width:700px){
+nav{height:auto;min-height:54px;gap:8px;flex-wrap:wrap;padding:10px 12px}
+.logo{font-size:16px}
+nav a{font-size:13px;margin-left:8px}
+.layout{grid-template-columns:1fr}
+.panel{display:block;padding:12px;overflow:visible;order:1}
+.stage{padding:12px;order:2;overflow:visible}
+.right{display:block;padding:12px;order:3;overflow:visible}
+.phone{width:360px;max-width:100%;min-height:680px}
+.canvas{min-height:642px;padding:14px}
+.topactions{position:sticky;top:0;z-index:5;background:#0d1d2b;padding-bottom:8px}
+.toolgrid{grid-template-columns:1fr 1fr}
+textarea{width:100%;min-height:260px;background:#07111f;color:#fff;border:1px solid #304354;border-radius:7px;padding:10px;font-family:monospace;font-size:13px;line-height:1.5}
+}
+</style>
+</head>
+<body>
 
+<nav>
+<div class="logo"><span class="green">⚡ ASIM</span> TECH — Android Builder</div>
+<div><a href="android-apps.html">My Apps</a><a href="dashboard.html">Dashboard</a></div>
+</nav>
+
+<div class="layout">
+
+<aside class="panel">
+<div class="topactions">
+<button class="btn greenbtn" onclick="save()">💾 Save</button>
+<button class="btn orange" onclick="requestBuild()">🏗️ Build APK</button>
+</div>
+<div id="status" class="status">Loading…</div>
+
+<div class="section">
+<h3>App Settings</h3>
+<label>App Name</label><input id="appName">
+<label>Package Name</label><input id="packageName" placeholder="com.asimtech.myapp">
+<label>Version Name</label><input id="versionName" value="1.0.0">
+<label>Version Code</label><input id="versionCode" type="number" value="1">
+</div>
+
+
+<div class="section" id="sourceSection">
+<h3>🚀 Code / URL Mode</h3>
+<label>Source Type</label>
+<select id="sourceMode" onchange="changeSourceMode()">
+<option value="code">💻 HTML / CSS / JavaScript Code</option>
+<option value="url">🌐 Web App URL</option>
+</select>
+<div id="codeSource">
+<label>Paste Complete HTML Code</label>
+<textarea id="webAppCode" rows="14" placeholder="Paste your complete HTML code here..."></textarea>
+<div class="status">Paste a complete HTML file including CSS and JavaScript.</div>
+</div>
+<div id="urlSource" class="hidden">
+<label>Web App URL</label>
+<input id="webAppUrl" type="url" placeholder="https://example.com">
+<div class="status">Use a public HTTPS web-app URL.</div>
+</div>
+<div class="row" style="margin-top:10px">
+<button class="btn blue" onclick="previewWebApp()">👁 Preview</button>
+<button class="btn greenbtn" onclick="saveWebAppSource()">💾 Save Source</button>
+</div>
+<div id="webAppStatus" class="status" style="margin-top:10px"></div>
+</div>
+
+<div class="section">
+<h3>Elements</h3>
+<div class="toolgrid">
+<button class="tool" onclick="add('heading')">H Heading</button>
+<button class="tool" onclick="add('text')">T Text</button>
+<button class="tool" onclick="add('button')">🔘 Button</button>
+<button class="tool" onclick="add('link')">🔗 Link</button>
+<button class="tool" onclick="add('input')">⌨ Input</button>
+<button class="tool" onclick="add('image')">🖼 Image</button>
+<button class="tool" onclick="add('container')">▣ Container</button>
+</div>
+</div>
+
+<div class="pages">
+<h3>Pages</h3>
+<div id="pages"></div>
+<button class="btn dark" onclick="newPage()">＋ New Page</button>
+</div>
+
+<div class="section">
+<h3>Build History</h3>
+<div id="builds" class="buildbox">Loading…</div>
+</div>
+</aside>
+
+<section class="stage">
+<div>
+<div class="preview-title">📱 Android Preview</div>
+<div class="phone">
+<div class="phonebar"></div>
+<div id="canvas" class="canvas"></div>
+</div>
+</div>
+</section>
+
+<aside class="panel right">
+<h3>Element Properties</h3>
+<div id="emptyProps" class="status">Select an element to edit it.</div>
+
+<div id="form" class="hidden">
+<label>Text</label><input id="ptext">
+<label>Link / URL</label><input id="plink" placeholder="https://example.com">
+<label>Image URL</label><input id="pimage">
+<label>Placeholder</label><input id="pplaceholder">
+<div class="row">
+<div><label>Font size</label><input id="psize" type="number"></div>
+<div><label>Padding</label><input id="ppad" type="number"></div>
+</div>
+<div class="row" style="margin-top:8px">
+<button class="btn blue" onclick="applyProps()">Apply</button>
+<button class="btn red" onclick="removeEl()">Delete</button>
+</div>
+</div>
+
+<div class="section">
+<h3>Build</h3>
+<div class="status">
+Save your project and use <b>🏗️ Build APK</b> to create a build request.
+</div>
+<div id="buildInfo" class="buildbox">No build requested yet.</div>
+</div>
+</aside>
+
+</div>
+
+<script>
+const SUPABASE_URL="https://lgwaeqgiqrsjprsecwxx.supabase.co";
+const SUPABASE_KEY="sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const appId=new URLSearchParams(location.search).get("id");
+let user=null,app=null,pages=[],active=null,selected=null,builds=[];
+const $=id=>document.getElementById(id);
+
+function esc(s){
+ return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
+}
+
+function setStatus(t,c=""){ $("status").textContent=t; $("status").className="status "+c; }
+
+function changeSourceMode(){
+  const mode=$("sourceMode").value;
+  $("codeSource").classList.toggle("hidden",mode!=="code");
+  $("urlSource").classList.toggle("hidden",mode!=="url");
+}
+function sourceStatus(t,c=""){
+  $("webAppStatus").textContent=t;
+  $("webAppStatus").className="status "+c;
+}
+function previewWebApp(){
+  const mode=$("sourceMode").value;
+  if(mode==="code"){
+    const code=$("webAppCode").value.trim();
+    if(!code){sourceStatus("Please paste HTML code first.","error");return;}
+    const blob=new Blob([code],{type:"text/html"});
+    const u=URL.createObjectURL(blob);
+    $("canvas").innerHTML=`<iframe src="${u}" style="width:100%;height:650px;border:0;border-radius:8px"></iframe>`;
+    sourceStatus("Code preview loaded ✓","success");
+  }else{
+    const url=$("webAppUrl").value.trim();
+    if(!url){sourceStatus("Please enter a Web App URL.","error");return;}
+    try{new URL(url)}catch{sourceStatus("Please enter a valid URL.","error");return;}
+    $("canvas").innerHTML=`<iframe src="${esc(url)}" style="width:100%;height:650px;border:0;border-radius:8px"></iframe>`;
+    sourceStatus("URL preview loaded ✓","success");
+  }
+}
+async function loadWebAppSource(){
+  try{
+    let r=await sb.from("app_files").select("content").eq("app_id",appId).eq("file_path","index.html").maybeSingle();
+    if(!r.error && r.data?.content){
+      $("sourceMode").value="code";
+      $("webAppCode").value=r.data.content;
+      changeSourceMode();
+      return;
+    }
+    r=await sb.from("app_files").select("content").eq("app_id",appId).eq("file_path","webapp-url.txt").maybeSingle();
+    if(!r.error && r.data?.content){
+      $("sourceMode").value="url";
+      $("webAppUrl").value=r.data.content;
+      changeSourceMode();
+    }
+  }catch(e){console.error(e)}
+}
+async function saveWebAppSource(){
+  const mode=$("sourceMode").value;
+  const content=mode==="code"?$("webAppCode").value.trim():$("webAppUrl").value.trim();
+  if(!content){sourceStatus("Nothing to save.","error");return false;}
+  if(mode==="url"){try{new URL(content)}catch{sourceStatus("Invalid URL.","error");return false;}}
+  const filePath=mode==="code"?"index.html":"webapp-url.txt";
+  const otherPath=mode==="code"?"webapp-url.txt":"index.html";
+  try{
+    let r=await sb.from("app_files").upsert({
+      app_id:appId,file_path:filePath,content,
+      language:mode==="code"?"HTML":"URL",
+      updated_at:new Date().toISOString()
+    },{onConflict:"app_id,file_path"});
+    if(r.error)throw r.error;
+    await sb.from("app_files").delete().eq("app_id",appId).eq("file_path",otherPath);
+    sourceStatus("Source saved successfully ✓","success");
+    return true;
+  }catch(e){
+    sourceStatus(e.message||"Unable to save source.","error");
+    return false;
+  }
+}
+
+
+async function init(){
+ try{
+  if(!appId) return location.href="android-apps.html";
+
+  const {data:{user:u},error:ue}=await sb.auth.getUser();
+  if(ue) throw ue;
+  if(!u) return location.href="login.html";
+  user=u;
+
+  let r=await sb.from("apps").select("*").eq("id",appId).eq("owner_id",user.id).single();
+  if(r.error) throw r.error;
+  app=r.data;
+
+  $("appName").value=app.name||"";
+  $("packageName").value=await loadSetting("packageName")||makePackage(app.name||"myapp");
+  $("versionName").value=await loadSetting("versionName")||"1.0.0";
+  $("versionCode").value=await loadSetting("versionCode")||1;
+
+  r=await sb.from("android_app_pages").select("*").eq("app_id",appId).order("created_at");
+  if(r.error) throw r.error;
+  pages=r.data||[];
+
+  if(!pages.length) await newPage(true);
+  else {active=pages[0];await loadPage();}
+
+  await loadBuilds();
+  renderPages();render();
+  setStatus("Android project loaded.","success");
+ }catch(e){console.error(e);setStatus(e.message||"Unable to load app.","error");}
+}
+
+function makePackage(name){
+ let x=String(name||"myapp").toLowerCase().replace(/[^a-z0-9]+/g,"");
+ if(!x)x="myapp";
+ return "com.asimtech."+x;
+}
+
+async function loadSetting(key){
+ const r=await sb.from("app_files").select("content").eq("app_id",appId).eq("file_path","android-settings.json").maybeSingle();
+ if(r.error) return null;
+ try{
+  const o=JSON.parse(r.data?.content||"{}");
+  return o[key]??null;
+ }catch{return null}
+}
+
+async function saveSettings(){
+ const settings={
+  appName:$("appName").value.trim()||app.name||"ASIM TECH App",
+  packageName:$("packageName").value.trim()||makePackage(app.name),
+  versionName:$("versionName").value.trim()||"1.0.0",
+  versionCode:Math.max(1,parseInt($("versionCode").value,10)||1)
+ };
+ if(!/^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$/.test(settings.packageName))
+  throw new Error("Invalid package name. Example: com.asimtech.myapp");
+
+ let r=await sb.from("app_files").upsert({
+  app_id:appId,file_path:"android-settings.json",
+  content:JSON.stringify(settings,null,2),language:"json",
+  updated_at:new Date().toISOString()
+ },{onConflict:"app_id,file_path"});
+ if(r.error) throw r.error;
+
+ r=await sb.from("apps").update({
+  name:settings.appName,updated_at:new Date().toISOString()
+ }).eq("id",appId).eq("owner_id",user.id);
+ if(r.error) throw r.error;
+ app.name=settings.appName;
+ return settings;
+}
+
+async function newPage(first=false){
+ try{
+  const title=first?"Home":"Page "+(pages.length+1);
+  const slug=title.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+  const r=await sb.from("android_app_pages").insert({
+   app_id:appId,title,slug,is_published:true
+  }).select("*").single();
+  if(r.error) throw r.error;
+  pages.push(r.data);active=r.data;active.elements=[];
+  await saveFile([]);
+  renderPages();render();
+ }catch(e){alert(e.message)}
+}
+
+async function loadPage(){
+ const r=await sb.from("app_files").select("content")
+  .eq("app_id",appId)
+  .eq("file_path",`builder-${active.id}.json`)
+  .maybeSingle();
+ if(r.error) throw r.error;
+ try{active.elements=r.data?JSON.parse(r.data.content||"[]"):[]}catch{active.elements=[]}
+}
+
+async function switchPage(pid){
+ active=pages.find(p=>p.id===pid);selected=null;
+ await loadPage();renderPages();render();
+}
+
+function renderPages(){
+ $("pages").innerHTML=pages.map(p=>
+ `<div class="page ${p.id===active?.id?"active":""}" onclick="switchPage('${p.id}')">${esc(p.title)}</div>`
+ ).join("");
+}
+
+function add(type){
+ const text={
+  heading:"Heading",text:"Your text",button:"Button",
+  link:"Open link",input:"",image:"",container:"Container"
+ }[type]||"";
+ const e={
+  id:crypto.randomUUID(),type,text,
+  href:(type==="button"||type==="link")?"https://example.com":"",
+  image:type==="image"?"https://placehold.co/600x300":"",
+  placeholder:type==="input"?"Enter text…":"",
+  fontSize:type==="heading"?28:16,padding:10
+ };
+ active.elements=[...(active.elements||[]),e];
+ selected=e.id;render();
+}
+
+function render(){
+ const els=active?.elements||[];
+ $("canvas").innerHTML=els.map(e=>{
+  let x="";
+  if(e.type==="heading") x=`<h1 style="font-size:${e.fontSize}px">${esc(e.text)}</h1>`;
+  else if(e.type==="text") x=`<div style="font-size:${e.fontSize}px">${esc(e.text)}</div>`;
+  else if(e.type==="button") x=`<a class="btnel" href="#">${esc(e.text)}</a>`;
+  else if(e.type==="link") x=`<a href="#">${esc(e.text)}</a>`;
+  else if(e.type==="input") x=`<input style="width:100%;padding:${e.padding}px" placeholder="${esc(e.placeholder)}">`;
+  else if(e.type==="image") x=`<img src="${esc(e.image)}">`;
+  else x=`<div style="border:1px solid #ddd;border-radius:8px;padding:${e.padding}px">${esc(e.text)}</div>`;
+  return `<div class="el ${selected===e.id?"sel":""}" onclick="selectEl('${e.id}',event)">${x}</div>`;
+ }).join("");
+
+ if(selected) fill();
+ else {$("form").classList.add("hidden");$("emptyProps").classList.remove("hidden");}
+}
+
+function selectEl(id,e){e.stopPropagation();selected=id;render()}
+
+function fill(){
+ const e=active.elements.find(x=>x.id===selected);
+ if(!e)return;
+ $("emptyProps").classList.add("hidden");$("form").classList.remove("hidden");
+ $("ptext").value=e.text||"";
+ $("plink").value=e.href||"";
+ $("pimage").value=e.image||"";
+ $("pplaceholder").value=e.placeholder||"";
+ $("psize").value=e.fontSize||16;
+ $("ppad").value=e.padding??10;
+}
+
+function applyProps(){
+ const e=active.elements.find(x=>x.id===selected);if(!e)return;
+ Object.assign(e,{
+  text:$("ptext").value,href:$("plink").value,image:$("pimage").value,
+  placeholder:$("pplaceholder").value,
+  fontSize:+$("psize").value||16,padding:+$("ppad").value||0
+ });
+ render();
+}
+
+function removeEl(){
+ active.elements=active.elements.filter(e=>e.id!==selected);
+ selected=null;render();
+}
+
+async function saveFile(elements){
+ const r=await sb.from("app_files").upsert({
+  app_id:appId,file_path:`builder-${active.id}.json`,
+  content:JSON.stringify(elements||[]),language:"json",
+  updated_at:new Date().toISOString()
+ },{onConflict:"app_id,file_path"});
+ if(r.error)throw r.error;
+}
+
+async function save(){
+ try{
+  const settings=await saveSettings();
+  await saveFile(active.elements||[]);
+  setStatus("Project saved ✓","success");
+ }catch(e){setStatus("Save failed: "+e.message,"error");alert(e.message)}
+}
+
+async function requestBuild(){
+ try{
+  const settings=await saveSettings();
+  await saveFile(active.elements||[]);
+
+  const sourceCount=pages.length;
+  const r=await sb.from("app_builds").insert({
+   app_id:appId,
+   version_name:settings.versionName,
+   version_code:settings.versionCode,
+   status:"queued",
+   created_by:user.id,
+   queued_at:new Date().toISOString(),
+   source_file_count:sourceCount
+  }).select("*").single();
+
+  if(r.error)throw r.error;
+
+  setStatus("APK build request queued ✓","success");
+  $("buildInfo").innerHTML=
+   `<span class="success">✓ Build queued</span><br>Build ID: ${esc(r.data.id)}<br>Status: queued`;
+  await loadBuilds();
+ }catch(e){
+  setStatus("Build request failed: "+e.message,"error");
+  alert(e.message);
+ }
+}
+
+async function loadBuilds(){
+ const r=await sb.from("app_builds").select("*")
+  .eq("app_id",appId).order("created_at",{ascending:false}).limit(10);
+ if(r.error){$("builds").textContent="Unable to load builds";return}
+ builds=r.data||[];
+ if(!builds.length){$("builds").textContent="No build requested yet.";return}
+ $("builds").innerHTML=builds.map(b=>{
+  const cls=b.status==="success"?"success":b.status==="failed"?"error":"warn";
+  return `<div class="build">
+   <b>v${esc(b.version_name||"1.0.0")}</b>
+   — <span class="${cls}">${esc(b.status)}</span><br>
+   ${new Date(b.created_at).toLocaleString()}<br>
+   ${b.file_name?`📦 ${esc(b.file_name)}`:""}
+  </div>`;
+ }).join("");
+}
+
+init();
+</script>
+</body>
+</html>
