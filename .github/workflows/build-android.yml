@@ -80,7 +80,6 @@ jobs:
       - name: Setup Android SDK
         shell: bash
         run: |
-
           set -e
 
           SDK="$HOME/android-sdk"
@@ -101,40 +100,28 @@ jobs:
             commandlinetools.zip \
             -d "$SDK/cmdline-tools/latest"
 
-
           if [ -d "$SDK/cmdline-tools/latest/cmdline-tools" ]; then
-
             cp -R \
               "$SDK/cmdline-tools/latest/cmdline-tools/." \
               "$SDK/cmdline-tools/latest/"
 
             rm -rf \
               "$SDK/cmdline-tools/latest/cmdline-tools"
-
           fi
 
-
           echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
-
           echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
 
           echo "$SDK/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-
           echo "$SDK/platform-tools" >> "$GITHUB_PATH"
-
           echo "$SDK/build-tools/35.0.0" >> "$GITHUB_PATH"
 
-
           export ANDROID_HOME="$SDK"
-
           export ANDROID_SDK_ROOT="$SDK"
-
           export PATH="$SDK/cmdline-tools/latest/bin:$PATH"
-
 
           yes | sdkmanager --licenses \
             >/dev/null 2>&1 || true
-
 
           sdkmanager \
             "platform-tools" \
@@ -150,35 +137,25 @@ jobs:
         id: find
         shell: bash
         run: |
-
           set -e
 
           if [ -z "$SUPABASE_KEY" ]; then
-
             echo "ERROR: SUPABASE_SERVICE_ROLE_KEY is missing."
-
             exit 1
-
           fi
-
 
           API="$SUPABASE_URL/rest/v1"
 
-
           INPUT_APP="${{ inputs.app_id }}"
-
           INPUT_BUILD="${{ inputs.build_id }}"
-
 
           if [ -n "$INPUT_BUILD" ]; then
 
             QUERY="$API/app_builds?id=eq.$INPUT_BUILD&select=*"
 
-
           elif [ -n "$INPUT_APP" ]; then
 
             QUERY="$API/app_builds?app_id=eq.$INPUT_APP&status=eq.queued&order=created_at.asc&limit=1"
-
 
           else
 
@@ -186,47 +163,31 @@ jobs:
 
           fi
 
-
           echo "Checking for queued build..."
-
 
           DATA="$(curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             "$QUERY")"
 
-
           COUNT="$(echo "$DATA" | jq 'length')"
 
-
           if [ "$COUNT" = "0" ]; then
-
             echo "No queued build found."
-
             echo "found=false" >> "$GITHUB_OUTPUT"
-
             exit 0
-
           fi
 
-
           APP_ID_VALUE="$(echo "$DATA" | jq -r '.[0].app_id')"
-
           BUILD_ID_VALUE="$(echo "$DATA" | jq -r '.[0].id')"
 
-
           echo "Build found."
-
           echo "App ID: $APP_ID_VALUE"
-
           echo "Build ID: $BUILD_ID_VALUE"
 
-
           echo "found=true" >> "$GITHUB_OUTPUT"
-
           echo "app_id=$APP_ID_VALUE" >> "$GITHUB_OUTPUT"
-
-          echo "build_id=$BUILD_ID_VALUE" >> "$GITHUB_OUTPUT"
+          echo "build_id=$BUILD_ID_VALUE"
 
 
       # ==================================================
@@ -237,11 +198,9 @@ jobs:
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
-
           set -e
 
           ID="${{ steps.find.outputs.build_id }}"
-
 
           curl -fsS \
             -X PATCH \
@@ -251,33 +210,24 @@ jobs:
             -H "Content-Type: application/json" \
             --data '{"status":"building"}'
 
-
           echo "Build status changed to BUILDING."
 
 
       # ==================================================
-      # READ APP DATA
+      # READ APPLICATION DATA
       # ==================================================
 
       - name: Read application data
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
-
           set -e
-
 
           APP="${{ steps.find.outputs.app_id }}"
 
           API="$SUPABASE_URL/rest/v1"
 
-
           echo "Reading application settings..."
-
-
-          # ------------------------------------------------
-          # ANDROID SETTINGS
-          # ------------------------------------------------
 
           curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
@@ -285,21 +235,11 @@ jobs:
             "$API/app_files?app_id=eq.$APP&file_path=eq.android-settings.json&select=content" \
             > settings.json
 
-
-          # ------------------------------------------------
-          # HTML SOURCE
-          # ------------------------------------------------
-
           curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             "$API/app_files?app_id=eq.$APP&file_path=eq.index.html&select=content" \
             > html.json
-
-
-          # ------------------------------------------------
-          # URL SOURCE
-          # ------------------------------------------------
 
           curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
@@ -307,15 +247,9 @@ jobs:
             "$API/app_files?app_id=eq.$APP&file_path=eq.webapp-url.txt&select=content" \
             > url.json
 
-
-          # ------------------------------------------------
-          # SETTINGS
-          # ------------------------------------------------
-
           SETTINGS_CONTENT="$(jq -r '.[0].content // "{}"' settings.json)"
 
           echo "$SETTINGS_CONTENT" > settings-content.json
-
 
           APP_NAME_VALUE="$(jq -r '.appName // "ASIM TECH App"' settings-content.json)"
 
@@ -325,7 +259,6 @@ jobs:
 
           VERSION_CODE_VALUE="$(jq -r '.versionCode // 1' settings-content.json)"
 
-
           echo "APP_NAME=$APP_NAME_VALUE" >> "$GITHUB_ENV"
 
           echo "PACKAGE_NAME=$PACKAGE_VALUE" >> "$GITHUB_ENV"
@@ -334,11 +267,8 @@ jobs:
 
           echo "VERSION_CODE=$VERSION_CODE_VALUE" >> "$GITHUB_ENV"
 
-
           echo "App Name: $APP_NAME_VALUE"
-
           echo "Package: $PACKAGE_VALUE"
-
           echo "Version: $VERSION_NAME_VALUE"
 
 
@@ -350,16 +280,11 @@ jobs:
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
-
           set -e
-
 
           APP="${{ steps.find.outputs.app_id }}"
 
-
-          mkdir -p \
-            android-app/app/src/main/assets
-
+          mkdir -p android-app/app/src/main/assets
 
           HTML_CONTENT="$(jq -r '.[0].content // empty' html.json)"
 
@@ -372,57 +297,32 @@ jobs:
 
           if [ "$APP" = "6b305668-ffb5-4e2d-94ff-0bda17978ac2" ]; then
 
-
             cat > android-app/app/src/main/assets/index.html <<'HTML'
-
 <!doctype html>
-
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
->
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-
 html,
 body,
 iframe {
-
   margin: 0;
-
   width: 100%;
-
   height: 100%;
-
   border: 0;
-
   overflow: hidden;
-
 }
-
 </style>
-
 </head>
-
-
 <body>
-
 <iframe
   src="https://asim75772.github.io/asim-tech-platform/"
+  style="width:100%;height:100%;border:0"
 ></iframe>
-
 </body>
-
 </html>
-
 HTML
-
 
             exit 0
 
@@ -435,7 +335,6 @@ HTML
 
           if [ -n "$HTML_CONTENT" ]; then
 
-
             printf '%s' "$HTML_CONTENT" \
               > android-app/app/src/main/assets/index.html
 
@@ -446,56 +345,31 @@ HTML
 
           elif [ -n "$URL_CONTENT" ]; then
 
-
             cat > android-app/app/src/main/assets/index.html <<HTML
-
 <!doctype html>
-
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
->
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-
 html,
 body,
 iframe {
-
   margin: 0;
-
   width: 100%;
-
   height: 100%;
-
   border: 0;
-
   overflow: hidden;
-
 }
-
 </style>
-
 </head>
-
-
 <body>
-
 <iframe
   src="$URL_CONTENT"
   style="width:100%;height:100%;border:0"
 ></iframe>
-
 </body>
-
 </html>
-
 HTML
 
 
@@ -505,34 +379,18 @@ HTML
 
           else
 
-
             cat > android-app/app/src/main/assets/index.html <<HTML
-
 <!doctype html>
-
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-
 </head>
-
-
-<body
-  style="font-family:Arial;text-align:center;padding:40px"
->
-
+<body style="font-family:Arial;text-align:center;padding:40px">
 <h1>$APP_NAME</h1>
-
 <p>No Web App source saved.</p>
-
 </body>
-
 </html>
-
 HTML
-
 
           fi
 
@@ -545,18 +403,14 @@ HTML
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
-
           set -e
-
 
           PKG="$PACKAGE_NAME"
 
           PKG_PATH="${PKG//./\/}"
 
-
           mkdir -p \
             "android-app/app/src/main/java/$PKG_PATH"
-
 
           mkdir -p \
             android-app/app/src/main/res/values
@@ -567,62 +421,41 @@ HTML
           # ------------------------------------------------
 
           cat > android-app/settings.gradle <<'EOF'
-
 import org.gradle.api.initialization.resolve.RepositoriesMode
 
 pluginManagement {
-
     repositories {
-
         google()
-
         mavenCentral()
-
         gradlePluginPortal()
-
     }
-
 }
 
-
 dependencyResolutionManagement {
-
     repositoriesMode.set(
         RepositoriesMode.FAIL_ON_PROJECT_REPOS
     )
 
-
     repositories {
-
         google()
-
         mavenCentral()
-
     }
-
 }
-
 
 rootProject.name = "ASIMTECH"
 
 include(":app")
-
 EOF
 
 
           # ------------------------------------------------
           # ROOT BUILD.GRADLE
-          # IMPORTANT: FIXED GRADLE SYNTAX
           # ------------------------------------------------
 
           cat > android-app/build.gradle <<'EOF'
-
 plugins {
-
     id "com.android.application" version "8.7.3" apply false
-
 }
-
 EOF
 
 
@@ -631,37 +464,22 @@ EOF
           # ------------------------------------------------
 
           cat > android-app/app/build.gradle <<EOF
-
 plugins {
-
     id "com.android.application"
-
 }
-
 
 android {
-
     namespace "$PKG"
-
     compileSdk 35
 
-
     defaultConfig {
-
         applicationId "$PKG"
-
         minSdk 23
-
         targetSdk 35
-
         versionCode $VERSION_CODE
-
         versionName "$VERSION_NAME"
-
     }
-
 }
-
 EOF
 
 
@@ -670,13 +488,9 @@ EOF
           # ------------------------------------------------
 
           cat > android-app/app/src/main/res/values/strings.xml <<EOF
-
 <resources>
-
     <string name="app_name">$APP_NAME</string>
-
 </resources>
-
 EOF
 
 
@@ -685,30 +499,21 @@ EOF
           # ------------------------------------------------
 
           cat > android-app/app/src/main/res/values/styles.xml <<'EOF'
-
 <resources>
 
     <style
         name="AppTheme"
-        parent="android:style/Theme.Material.Light.NoActionBar"
-    >
+        parent="android:style/Theme.Material.Light.NoActionBar">
 
-        <item name="android:fontFamily">
-            sans
-        </item>
+        <item name="android:fontFamily">sans</item>
 
-        <item name="android:windowActionModeOverlay">
-            true
-        </item>
+        <item name="android:windowActionModeOverlay">true</item>
 
-        <item name="android:colorAccent">
-            #1565C0
-        </item>
+        <item name="android:colorAccent">#1565C0</item>
 
     </style>
 
 </resources>
-
 EOF
 
 
@@ -717,59 +522,35 @@ EOF
           # ------------------------------------------------
 
           cat > android-app/app/src/main/AndroidManifest.xml <<'EOF'
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
->
-
-
-    <uses-permission
-        android:name="android.permission.INTERNET"
-    />
-
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-
         android:allowBackup="true"
-
         android:usesCleartextTraffic="true"
-
         android:label="@string/app_name"
-
-        android:theme="@style/AppTheme"
-    >
-
+        android:theme="@style/AppTheme">
 
         <activity
-
             android:name=".MainActivity"
-
-            android:exported="true"
-        >
-
+            android:exported="true">
 
             <intent-filter>
 
                 <action
-                    android:name="android.intent.action.MAIN"
-                />
-
+                    android:name="android.intent.action.MAIN" />
 
                 <category
-                    android:name="android.intent.category.LAUNCHER"
-                />
+                    android:name="android.intent.category.LAUNCHER" />
 
             </intent-filter>
 
-
         </activity>
-
 
     </application>
 
-
 </manifest>
-
 EOF
 
 
@@ -778,102 +559,68 @@ EOF
           # ------------------------------------------------
 
           cat > "android-app/app/src/main/java/$PKG_PATH/MainActivity.java" <<JAVA
-
 package $PKG;
 
-
 import android.app.Activity;
-
 import android.os.Bundle;
-
 import android.webkit.WebSettings;
-
 import android.webkit.WebView;
-
 import android.webkit.WebViewClient;
-
 
 public class MainActivity extends Activity {
 
-
     private WebView webView;
 
-
     @Override
-
     protected void onCreate(Bundle state) {
-
 
         super.onCreate(state);
 
-
         webView = new WebView(this);
 
-
-        WebSettings settings =
-            webView.getSettings();
-
+        WebSettings settings = webView.getSettings();
 
         settings.setJavaScriptEnabled(true);
 
-
         settings.setDomStorageEnabled(true);
-
 
         settings.setDatabaseEnabled(true);
 
-
         settings.setAllowFileAccess(true);
-
 
         settings.setAllowContentAccess(true);
 
-
         settings.setSupportZoom(false);
-
 
         settings.setBuiltInZoomControls(false);
 
-
         settings.setDisplayZoomControls(false);
-
 
         webView.setWebViewClient(
             new WebViewClient()
         );
 
-
         webView.loadUrl(
             "file:///android_asset/index.html"
         );
 
-
         setContentView(webView);
-
     }
 
-
     @Override
-
     public void onBackPressed() {
-
 
         if (webView.canGoBack()) {
 
             webView.goBack();
 
-        }
-
-        else {
+        } else {
 
             super.onBackPressed();
 
         }
-
     }
-
 }
-
 JAVA
 
 
@@ -885,32 +632,24 @@ JAVA
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
-
           set -e
-
 
           cd android-app
 
-
           echo "Starting Gradle build..."
-
 
           gradle \
             --no-daemon \
             --stacktrace \
             assembleDebug
 
-
           cd ..
 
-
           mkdir -p output
-
 
           cp \
             android-app/app/build/outputs/apk/debug/app-debug.apk \
             output/app-release.apk
-
 
           echo "APK build completed."
 
@@ -923,28 +662,21 @@ JAVA
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
-
           set -e
-
 
           APP="${{ steps.find.outputs.app_id }}"
 
           ID="${{ steps.find.outputs.build_id }}"
 
-
           FILE="ASIM-TECH-$ID.apk"
 
-
           STORAGE="$APP/$ID/$FILE"
-
 
           cp \
             output/app-release.apk \
             "output/$FILE"
 
-
           echo "Uploading APK..."
-
 
           curl -fsS \
             -X POST \
@@ -955,14 +687,11 @@ JAVA
             -H "x-upsert: true" \
             --data-binary "@output/$FILE"
 
-
           echo "FILE_NAME=$FILE" \
             >> "$GITHUB_ENV"
 
-
           echo "STORAGE_PATH=$STORAGE" \
             >> "$GITHUB_ENV"
-
 
           echo "APK uploaded successfully."
 
@@ -975,28 +704,22 @@ JAVA
         if: success() && steps.find.outputs.found == 'true'
         shell: bash
         run: |
-
           set -e
 
-
           ID="${{ steps.find.outputs.build_id }}"
-
 
           SIZE="$(
             stat -c%s "output/$FILE_NAME"
           )"
-
 
           SHA="$(
             sha256sum "output/$FILE_NAME" \
             | awk '{print $1}'
           )"
 
-
           NOW="$(
             date -u +"%Y-%m-%dT%H:%M:%SZ"
           )"
-
 
           curl -fsS \
             -X PATCH \
@@ -1012,7 +735,6 @@ JAVA
               \"sha256\":\"$SHA\",
               \"completed_at\":\"$NOW\"
             }"
-
 
           echo "======================================"
 
@@ -1032,13 +754,9 @@ JAVA
       - name: Upload APK artifact
         if: success() && steps.find.outputs.found == 'true'
         uses: actions/upload-artifact@v4
-
         with:
-
           name: ASIM-TECH-APK
-
           path: output/*.apk
-
           if-no-files-found: error
 
 
@@ -1050,12 +768,9 @@ JAVA
         if: failure() && steps.find.outputs.found == 'true'
         shell: bash
         run: |
-
           ID="${{ steps.find.outputs.build_id }}"
 
-
           echo "Build failed."
-
 
           curl -sS \
             -X PATCH \
