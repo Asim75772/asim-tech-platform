@@ -92,6 +92,10 @@ background:#d97706
 background:#334155
 }
 
+.redbtn{
+background:#b42318
+}
+
 label{
 display:block;
 font-size:15px;
@@ -223,14 +227,14 @@ background:#334155;
 margin-bottom:12px
 }
 
-.remove-btn{
-background:#b42318
-}
-
 .choose-btn{
 display:inline-block;
 margin-top:5px;
 cursor:pointer
+}
+
+.remove-btn{
+background:#b42318
 }
 
 @media(max-width:700px){
@@ -296,8 +300,6 @@ font-size:14px
 
 <main class="wrap">
 
-
-<!-- TOP ACTIONS -->
 
 <div class="topactions">
 
@@ -392,11 +394,7 @@ value="1">
 
 <div class="imagebox">
 
-
 <label>Select PNG / Image</label>
-
-
-<!-- REAL FILE INPUT -->
 
 <input
 id="appImageFile"
@@ -404,8 +402,6 @@ type="file"
 accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
 style="display:none">
 
-
-<!-- CUSTOM CHOOSE BUTTON -->
 
 <button
 type="button"
@@ -421,12 +417,10 @@ onclick="chooseImage()">
 class="small"
 style="margin-top:8px">
 
-PNG, JPG or WebP — Maximum 2 MB.
+PNG, JPG or WebP — <b>Maximum 10 MB.</b>
 
 </div>
 
-
-<!-- IMAGE PREVIEW -->
 
 <div
 id="imagePreview"
@@ -443,7 +437,6 @@ No image selected.
 class="topactions"
 style="margin-top:10px;margin-bottom:0">
 
-
 <button
 type="button"
 class="btn remove-btn"
@@ -453,7 +446,6 @@ onclick="clearImage()">
 
 </button>
 
-
 </div>
 
 
@@ -461,7 +453,6 @@ onclick="clearImage()">
 id="imageStatus"
 class="status">
 </div>
-
 
 </div>
 
@@ -495,9 +486,7 @@ Example:
 
 <h2>🚀 Code / URL Mode</h2>
 
-
 <label>Source Type</label>
-
 
 <select
 id="sourceMode"
@@ -519,7 +508,6 @@ onchange="changeSourceMode()">
 <label>
 Paste Complete HTML Code
 </label>
-
 
 <textarea
 id="webAppCode"
@@ -599,7 +587,6 @@ Paste code and press Preview.
 
 <h2>📦 Build History</h2>
 
-
 <button
 class="btn refresh-btn"
 type="button"
@@ -608,7 +595,6 @@ onclick="loadBuilds()">
 🔄 Refresh Build History
 
 </button>
-
 
 <div id="builds">
 Loading…
@@ -630,7 +616,6 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
-
 
 const sb =
 supabase.createClient(
@@ -654,7 +639,7 @@ const $ =
 id => document.getElementById(id);
 
 
-/* STATUS FUNCTIONS */
+/* STATUS */
 
 function status(t,c=""){
 
@@ -686,7 +671,7 @@ $("imageStatus").className=
 }
 
 
-/* ESCAPE HTML */
+/* ESCAPE */
 
 function esc(s){
 
@@ -705,7 +690,7 @@ m=>({
 }
 
 
-/* PACKAGE NAME */
+/* PACKAGE */
 
 function makePackage(n){
 
@@ -747,7 +732,7 @@ c?"none":"block";
 }
 
 
-/* IMAGE CHOOSER */
+/* CHOOSE IMAGE */
 
 function chooseImage(){
 
@@ -777,16 +762,14 @@ appImageData+
 }else{
 
 $("imagePreview").innerHTML=
-'<span class="small">'+
-'No image selected.'+
-'</span>';
+'<span class="small">No image selected.</span>';
 
 }
 
 }
 
 
-/* REMOVE IMAGE */
+/* CLEAR IMAGE */
 
 function clearImage(){
 
@@ -804,7 +787,7 @@ imageStatus(
 }
 
 
-/* IMAGE FILE CHANGE */
+/* IMAGE UPLOAD */
 
 $("appImageFile")
 .addEventListener(
@@ -822,15 +805,15 @@ return;
 }
 
 
-/* SIZE */
+/* MAXIMUM 10 MB */
 
 if(
 f.size >
-2*1024*1024
+10*1024*1024
 ){
 
 imageStatus(
-"Image is larger than 2 MB.",
+"Image is larger than 10 MB.",
 "error"
 );
 
@@ -841,7 +824,7 @@ return;
 }
 
 
-/* TYPE */
+/* FILE TYPE */
 
 if(
 !/^image\/(png|jpeg|webp)$/
@@ -860,7 +843,7 @@ return;
 }
 
 
-/* READ FILE */
+/* READ IMAGE */
 
 const reader=
 new FileReader();
@@ -1035,6 +1018,27 @@ changeSourceMode();
 }
 
 
+/* IMAGE REPLACEMENT */
+
+function imageFor(code){
+
+if(!appImageData){
+
+return code;
+
+}
+
+return code.replace(
+/ASIM_APP_IMAGE/g,
+function(){
+
+return appImageData;
+
+});
+
+}
+
+
 /* PREVIEW */
 
 function previewWebApp(){
@@ -1140,27 +1144,6 @@ sourceStatus(
 );
 
 }
-
-}
-
-
-/* IMAGE REPLACEMENT */
-
-function imageFor(code){
-
-if(!appImageData){
-
-return code;
-
-}
-
-return code.replace(
-/ASIM_APP_IMAGE/g,
-function(){
-
-return appImageData;
-
-});
 
 }
 
@@ -1430,7 +1413,7 @@ return true;
 }
 
 
-/* SAVE PROJECT */
+/* SAVE */
 
 async function save(){
 
@@ -1460,7 +1443,7 @@ e.message,
 }
 
 
-/* REQUEST BUILD */
+/* BUILD */
 
 async function requestBuild(){
 
@@ -1556,9 +1539,7 @@ status(
 
 try{
 
-/*
-Try secure signed URL first.
-*/
+/* SIGNED URL */
 
 const signed=
 await sb.storage
@@ -1590,10 +1571,7 @@ return;
 }
 
 
-/*
-Fallback:
-Direct public storage URL.
-*/
+/* PUBLIC URL FALLBACK */
 
 const publicUrl=
 SUPABASE_URL+
@@ -1626,9 +1604,7 @@ e
 );
 
 
-/*
-Final direct URL fallback.
-*/
+/* FINAL FALLBACK */
 
 try{
 
@@ -1654,6 +1630,7 @@ status(
 "success"
 );
 
+
 }catch(err){
 
 status(
@@ -1674,7 +1651,7 @@ err.message
 }
 
 
-/* FORMAT FILE SIZE */
+/* FILE SIZE */
 
 function formatBytes(bytes){
 
@@ -1699,8 +1676,7 @@ return "";
 
 if(n<1024){
 
-return n+
-" B";
+return n+" B";
 
 }
 
@@ -1786,11 +1762,6 @@ b.status==="success"
 
 let downloadButton="";
 
-
-/*
-Show Download button
-only after successful build.
-*/
 
 if(
 b.status==="success" &&
@@ -1896,7 +1867,6 @@ async function init(){
 
 try{
 
-
 if(!appId){
 
 status(
@@ -1933,7 +1903,7 @@ user=
 g.data.user;
 
 
-/* LOAD APP */
+/* APP */
 
 const r=
 await sb
@@ -2002,7 +1972,7 @@ imageStatus(
 await loadSource();
 
 
-/* BUILDS */
+/* BUILD HISTORY */
 
 await loadBuilds();
 
