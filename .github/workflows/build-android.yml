@@ -10,10 +10,20 @@ on:
   schedule:
     - cron: "*/5 * * * *"
 
+
+# IMPORTANT:
+# Only one APK queue processor can run at a time.
+concurrency:
+  group: android-apk-build-queue
+  cancel-in-progress: false
+
+
 permissions:
   contents: read
 
+
 jobs:
+
   build:
     runs-on: ubuntu-latest
 
@@ -23,9 +33,17 @@ jobs:
 
     steps:
 
+      # --------------------------------------------------
+      # CHECKOUT
+      # --------------------------------------------------
+
       - name: Checkout
         uses: actions/checkout@v4
 
+
+      # --------------------------------------------------
+      # JAVA
+      # --------------------------------------------------
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
@@ -34,12 +52,20 @@ jobs:
           java-version: "17"
 
 
+      # --------------------------------------------------
+      # GRADLE
+      # --------------------------------------------------
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.10.2"
           cache-disabled: true
 
+
+      # --------------------------------------------------
+      # ANDROID SDK
+      # --------------------------------------------------
 
       - name: Install Android SDK
         shell: bash
@@ -91,6 +117,10 @@ jobs:
           echo "Android SDK installed successfully."
 
 
+      # --------------------------------------------------
+      # FIND QUEUED BUILD
+      # --------------------------------------------------
+
       - name: Find Queued Build
         id: find
         shell: bash
@@ -98,11 +128,13 @@ jobs:
           set -e
 
           if [ -z "$SUPABASE_KEY" ]; then
-            echo "SUPABASE_SERVICE_ROLE_KEY is missing."
+            echo "ERROR: SUPABASE_SERVICE_ROLE_KEY is missing."
             exit 1
           fi
 
           API="$SUPABASE_URL/rest/v1"
+
+          echo "Checking Supabase build queue..."
 
           DATA=$(curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
@@ -111,40 +143,55 @@ jobs:
 
           COUNT=$(echo "$DATA" | jq 'length')
 
-          echo "Queued builds: $COUNT"
+          echo "Queued builds found: $COUNT"
 
           if [ "$COUNT" = "0" ]; then
             echo "No queued build found."
+
             echo "found=false" >> "$GITHUB_OUTPUT"
+
             exit 0
           fi
 
           APP_ID=$(echo "$DATA" | jq -r '.[0].app_id')
           BUILD_ID=$(echo "$DATA" | jq -r '.[0].id')
 
-          echo "App ID: $APP_ID"
-          echo "Build ID: $BUILD_ID"
+          echo "----------------------------------------"
+          echo "APP ID   : $APP_ID"
+          echo "BUILD ID : $BUILD_ID"
+          echo "----------------------------------------"
 
           echo "found=true" >> "$GITHUB_OUTPUT"
           echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
 
 
+      # --------------------------------------------------
+      # MARK BUILD AS BUILDING
+      # --------------------------------------------------
+
       - name: Mark Build Building
         if: steps.find.outputs.found == 'true'
+        shell: bash
         run: |
+          set -e
+
           ID="${{ steps.find.outputs.build_id }}"
 
           curl -fsS \
             -X PATCH \
-            "$SUPABASE_URL/rest/v1/app_builds?id=eq.$ID" \
+            "$SUPABASE_URL/rest/v1/app_builds?id=eq.$ID&status=eq.queued" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/json" \
             --data '{"status":"building"}'
 
-          echo "Build marked as building."
+          echo "Build marked as BUILDING."
 
+
+      # --------------------------------------------------
+      # DOWNLOAD APP FILES
+      # --------------------------------------------------
 
       - name: Download App Files
         if: steps.find.outputs.found == 'true'
@@ -153,7 +200,10 @@ jobs:
           set -e
 
           APP="${{ steps.find.outputs.app_id }}"
+
           API="$SUPABASE_URL/rest/v1"
+
+          echo "Downloading index.html..."
 
           curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
@@ -161,14 +211,20 @@ jobs:
             "$API/app_files?app_id=eq.$APP&file_path=eq.index.html&select=content" \
             > html.json
 
+          echo "Downloading android-settings.json..."
+
           curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             "$API/app_files?app_id=eq.$APP&file_path=eq.android-settings.json&select=content" \
             > settings.json
 
-          echo "App files downloaded."
+          echo "App files downloaded successfully."
 
+
+      # --------------------------------------------------
+      # CREATE ANDROID PROJECT
+      # --------------------------------------------------
 
       - name: Create Android Project
         if: steps.find.outputs.found == 'true'
@@ -180,28 +236,58 @@ jobs:
           mkdir -p android-app/app/src/main/res/values
           mkdir -p android-app/app/src/main/java/com/asimtech/app
 
-          jq -r '.[0].content // "<!doctype html><html><body><h1>ASIM TECH</h1></body></html>"' \
+          # --------------------------------------------
+          # HTML
+          # --------------------------------------------
+
+          jq -r \
+            '.[0].content // "<!doctype html><html><body><h1>ASIM TECH</h1></body></html>"' \
             html.json \
             > android-app/app/src/main/assets/index.html
 
+
+          # --------------------------------------------
+          # APP NAME
+          # --------------------------------------------
+
           APP_NAME=$(jq -r '
             .[0].content
-            | if type == "string" then (try fromjson catch {}) else . end
+            | if type == "string" then
+                (try fromjson catch {})
+              else
+                .
+              end
             | .appName // "ASIM TECH App"
           ' settings.json)
 
+
+          # --------------------------------------------
+          # VERSION
+          # --------------------------------------------
+
           VERSION=$(jq -r '
             .[0].content
-            | if type == "string" then (try fromjson catch {}) else . end
+            | if type == "string" then
+                (try fromjson catch {})
+              else
+                .
+              end
             | .versionName // "1.0"
           ' settings.json)
 
+
           PACKAGE="com.asimtech.app"
 
-          echo "Application: $APP_NAME"
-          echo "Package: $PACKAGE"
-          echo "Version: $VERSION"
+          echo "----------------------------------------"
+          echo "Application : $APP_NAME"
+          echo "Package     : $PACKAGE"
+          echo "Version     : $VERSION"
+          echo "----------------------------------------"
 
+
+          # --------------------------------------------
+          # SETTINGS.GRADLE
+          # --------------------------------------------
 
           printf '%s\n' \
             'pluginManagement {' \
@@ -223,12 +309,20 @@ jobs:
             > android-app/settings.gradle
 
 
+          # --------------------------------------------
+          # ROOT BUILD.GRADLE
+          # --------------------------------------------
+
           printf '%s\n' \
             'plugins {' \
             '  id "com.android.application" version "8.7.3" apply false' \
             '}' \
             > android-app/build.gradle
 
+
+          # --------------------------------------------
+          # APP BUILD.GRADLE
+          # --------------------------------------------
 
           printf '%s\n' \
             'plugins {' \
@@ -248,6 +342,10 @@ jobs:
             > android-app/app/build.gradle
 
 
+          # --------------------------------------------
+          # STRINGS.XML
+          # --------------------------------------------
+
           printf '%s\n' \
             '<resources>' \
             "  <string name=\"app_name\">$APP_NAME</string>" \
@@ -255,12 +353,20 @@ jobs:
             > android-app/app/src/main/res/values/strings.xml
 
 
+          # --------------------------------------------
+          # STYLES.XML
+          # --------------------------------------------
+
           printf '%s\n' \
             '<resources>' \
             '  <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar"/>' \
             '</resources>' \
             > android-app/app/src/main/res/values/styles.xml
 
+
+          # --------------------------------------------
+          # ANDROID MANIFEST
+          # --------------------------------------------
 
           printf '%s\n' \
             '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' \
@@ -281,6 +387,10 @@ jobs:
             '</manifest>' \
             > android-app/app/src/main/AndroidManifest.xml
 
+
+          # --------------------------------------------
+          # MAIN ACTIVITY
+          # --------------------------------------------
 
           printf '%s\n' \
             'package com.asimtech.app;' \
@@ -313,8 +423,12 @@ jobs:
             '}' \
             > android-app/app/src/main/java/com/asimtech/app/MainActivity.java
 
-          echo "Android project created."
+          echo "Android project created successfully."
 
+
+      # --------------------------------------------------
+      # BUILD APK
+      # --------------------------------------------------
 
       - name: Build APK
         id: apk
@@ -324,6 +438,8 @@ jobs:
           set -e
 
           cd android-app
+
+          echo "Starting Gradle APK build..."
 
           gradle \
             --no-daemon \
@@ -338,8 +454,16 @@ jobs:
             android-app/app/build/outputs/apk/debug/app-debug.apk \
             output/app.apk
 
-          echo "APK created successfully."
+          echo "----------------------------------------"
+          echo "APK CREATED SUCCESSFULLY"
+          echo "----------------------------------------"
 
+          ls -lh output/app.apk
+
+
+      # --------------------------------------------------
+      # UPLOAD APK TO SUPABASE
+      # --------------------------------------------------
 
       - name: Upload APK to Supabase
         id: upload
@@ -353,8 +477,10 @@ jobs:
 
           FILE="$APP/$BUILD.apk"
 
-          echo "Uploading APK..."
+          echo "----------------------------------------"
+          echo "Uploading APK to Supabase Storage"
           echo "Storage path: $FILE"
+          echo "----------------------------------------"
 
           curl -fsS \
             -X POST \
@@ -365,23 +491,36 @@ jobs:
             -H "x-upsert: true" \
             --data-binary "@output/app.apk"
 
-          echo "APK uploaded to Supabase Storage."
+          echo "APK uploaded successfully."
+
+
+          # --------------------------------------------
+          # FILE INFORMATION
+          # --------------------------------------------
 
           FILE_SIZE=$(stat -c%s output/app.apk)
+
           SHA256=$(sha256sum output/app.apk | awk '{print $1}')
+
           FILE_NAME="$BUILD.apk"
 
-          echo "File size: $FILE_SIZE"
-          echo "SHA256: $SHA256"
+          echo "File size : $FILE_SIZE"
+          echo "SHA256    : $SHA256"
+
+
+          # --------------------------------------------
+          # UPDATE SUPABASE BUILD RECORD
+          # --------------------------------------------
 
           API="$SUPABASE_URL/rest/v1"
 
-          curl -fsS \
+          RESPONSE=$(curl -fsS \
             -X PATCH \
             "$API/app_builds?id=eq.$BUILD" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
             --data "$(jq -n \
               --arg status "success" \
               --arg storage_path "$FILE" \
@@ -398,12 +537,20 @@ jobs:
                 sha256: $sha256,
                 completed_at: (now | todate)
               }'
-            )"
+            )")
 
-          echo "Build marked SUCCESS."
+          echo "Supabase build record updated."
+
+          echo "----------------------------------------"
+          echo "BUILD SUCCESS"
           echo "APK URL:"
           echo "$SUPABASE_URL/storage/v1/object/public/android-apks/$FILE"
+          echo "----------------------------------------"
 
+
+      # --------------------------------------------------
+      # GITHUB ARTIFACT
+      # --------------------------------------------------
 
       - name: Upload GitHub Artifact
         if: steps.find.outputs.found == 'true' && steps.apk.outcome == 'success'
@@ -413,6 +560,10 @@ jobs:
           path: output/app.apk
           if-no-files-found: error
 
+
+      # --------------------------------------------------
+      # MARK BUILD FAILED
+      # --------------------------------------------------
 
       - name: Mark Build Failed
         if: |
@@ -425,6 +576,8 @@ jobs:
         shell: bash
         run: |
           ID="${{ steps.find.outputs.build_id }}"
+
+          echo "Marking build as FAILED..."
 
           curl -sS \
             -X PATCH \
