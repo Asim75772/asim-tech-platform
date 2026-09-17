@@ -1,1632 +1,1582 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ASIM TECH — Android Builder</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASIM TECH Android Builder</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
-  font-family:Arial,sans-serif;
-  background:#07111f;
-  color:#fff
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f6f8;
+  color:#222;
 }
 
-nav{
-  min-height:62px;
-  background:#050c16;
-  border-bottom:1px solid #263646;
+header{
+  background:#111827;
+  color:white;
+  padding:16px 20px;
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  padding:10px 18px;
-  gap:10px;
-  flex-wrap:wrap
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:10;
 }
 
-.logo{
-  font-size:20px;
-  font-weight:700
+header h1{
+  margin:0;
+  font-size:21px;
 }
 
-.green{
-  color:#36e0b5
+header span{
+  font-size:13px;
+  opacity:.8;
 }
 
-nav a{
-  color:#fff;
-  text-decoration:none;
-  margin-left:14px
-}
-
-.wrap{
-  max-width:1000px;
+.container{
+  max-width:1200px;
   margin:auto;
-  padding:16px
+  padding:20px;
 }
 
 .card{
-  background:#0d1d2b;
-  border:1px solid #263646;
-  border-radius:12px;
-  padding:16px;
-  margin-bottom:16px
+  background:white;
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 3px 15px rgba(0,0,0,.08);
 }
 
-.topactions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  position:sticky;
-  top:0;
-  z-index:5;
-  background:#07111f;
-  padding:8px 0
+.card h2{
+  margin-top:0;
+  font-size:18px;
 }
 
-.btn{
-  border:0;
-  border-radius:9px;
-  padding:13px 18px;
-  font-weight:700;
-  font-size:16px;
-  cursor:pointer;
-  color:#fff
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
 }
 
-.greenbtn{
-  background:#238636
-}
-
-.blue{
-  background:#1f6feb
-}
-
-.orange{
-  background:#d97706
-}
-
-.red{
-  background:#dc2626
-}
-
-.download{
-  background:#16a34a
+@media(max-width:700px){
+  .grid{
+    grid-template-columns:1fr;
+  }
 }
 
 label{
   display:block;
-  font-size:15px;
-  color:#9fb0bf;
-  margin:12px 0 6px
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:6px;
 }
 
-input,select,textarea{
+input,textarea,select{
   width:100%;
-  background:#07111f;
-  color:#fff;
-  border:1px solid #304354;
-  border-radius:9px;
-  padding:12px;
-  font-size:16px
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  padding:10px;
+  font-size:14px;
+  outline:none;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:#2563eb;
 }
 
 textarea{
-  min-height:320px;
+  min-height:180px;
   resize:vertical;
   font-family:monospace;
-  font-size:14px;
-  line-height:1.5
 }
 
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px
+button{
+  border:0;
+  border-radius:8px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-weight:bold;
+  margin:4px;
+}
+
+.btn-primary{
+  background:#2563eb;
+  color:white;
+}
+
+.btn-success{
+  background:#16a34a;
+  color:white;
+}
+
+.btn-warning{
+  background:#f59e0b;
+  color:white;
+}
+
+.btn-danger{
+  background:#dc2626;
+  color:white;
+}
+
+.btn-secondary{
+  background:#6b7280;
+  color:white;
+}
+
+.btn-dark{
+  background:#111827;
+  color:white;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-top:15px;
 }
 
 .status{
-  margin-top:10px;
+  padding:12px;
+  border-radius:8px;
+  margin-top:12px;
   font-size:14px;
-  line-height:1.5
+  font-weight:bold;
+  display:none;
 }
 
-.success{
-  color:#36e0b5
+.status.success{
+  display:block;
+  background:#dcfce7;
+  color:#166534;
 }
 
-.error{
-  color:#ff7b72
+.status.error{
+  display:block;
+  background:#fee2e2;
+  color:#991b1b;
 }
 
-.warn{
-  color:#fbbf24
+.status.warn{
+  display:block;
+  background:#fef3c7;
+  color:#92400e;
 }
 
 .preview{
-  background:#050c16;
-  border:1px solid #304354;
-  border-radius:10px;
-  padding:12px
-}
-
-.preview iframe{
   width:100%;
-  height:650px;
-  border:0;
-  border-radius:8px;
-  background:#fff
+  min-height:450px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:white;
 }
 
-.buildrow{
-  padding:14px 0;
-  border-bottom:1px solid #263646
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
 }
 
-.buildrow:last-child{
-  border-bottom:0
+th,td{
+  border-bottom:1px solid #e5e7eb;
+  padding:10px 7px;
+  text-align:left;
 }
 
-.buildid{
-  font-size:12px;
-  color:#9fb0bf;
-  word-break:break-all
+th{
+  background:#f3f4f6;
 }
 
-.downloadbox{
-  margin-top:10px;
-  padding:12px;
-  border:1px solid #276749;
-  border-radius:9px;
-  background:#071f17
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:bold;
 }
 
-.dangerbox{
-  border:1px solid #7f1d1d;
-  background:#210b0b
+.badge-success{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.badge-building{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.badge-queued{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.badge-failed{
+  background:#fee2e2;
+  color:#991b1b;
 }
 
 .small{
-  font-size:13px;
-  color:#9fb0bf
+  font-size:12px;
+  color:#6b7280;
 }
 
-@media(max-width:700px){
+.hidden{
+  display:none !important;
+}
 
-  .wrap{
-    padding:10px
-  }
+.url-box{
+  margin-top:12px;
+  padding:12px;
+  background:#f9fafb;
+  border-radius:8px;
+  word-break:break-all;
+  font-size:12px;
+}
 
-  .row{
-    grid-template-columns:1fr
-  }
+.app-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
 
-  .logo{
-    font-size:16px
-  }
+.logo{
+  width:45px;
+  height:45px;
+  border-radius:10px;
+  object-fit:cover;
+  background:#e5e7eb;
+}
 
-  nav{
-    padding:10px 12px
-  }
+.app-info{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 
-  .btn{
-    width:100%
-  }
-
-  .topactions .btn{
-    width:auto;
-    flex:1
-  }
-
-  textarea{
-    min-height:360px
-  }
+hr{
+  border:0;
+  border-top:1px solid #e5e7eb;
+  margin:18px 0;
 }
 </style>
 </head>
 
 <body>
 
-<nav>
+<header>
+  <div>
+    <h1>ASIM TECH Android Builder</h1>
+    <span>Build • Preview • Download • Manage Apps</span>
+  </div>
+</header>
 
-<div class="logo">
-<span class="green">⚡ ASIM</span> TECH — Android Builder
-</div>
+<div class="container">
 
-<div>
-<a href="android-apps.html">My Apps</a>
-<a href="dashboard.html">Dashboard</a>
-</div>
+  <!-- APP SETTINGS -->
+  <div class="card">
+    <div class="app-title">
+      <h2>App Settings</h2>
+      <img id="appLogo" class="logo" src="" alt="">
+    </div>
 
-</nav>
+    <div class="grid">
 
-<main class="wrap">
+      <div>
+        <label>App Name</label>
+        <input id="appName" placeholder="My Android App">
+      </div>
 
-<div class="topactions">
+      <div>
+        <label>Package Name</label>
+        <input id="packageName" placeholder="com.asimtech.myapp">
+      </div>
 
-<button class="btn greenbtn" onclick="save()">
-💾 Save
-</button>
+      <div>
+        <label>Version Name</label>
+        <input id="versionName" value="1.0.0">
+      </div>
 
-<button class="btn orange" onclick="requestBuild()">
-🏗️ Build APK
-</button>
+      <div>
+        <label>Version Code</label>
+        <input id="versionCode" type="number" value="1">
+      </div>
 
-<button class="btn blue" onclick="loadBuilds()">
-🔄 Refresh
-</button>
+      <div>
+        <label>App Description</label>
+        <input id="appDescription" placeholder="My Android application">
+      </div>
 
-<button class="btn red" onclick="deleteApp()">
-🗑️ Delete App
-</button>
+      <div>
+        <label>App Image URL</label>
+        <input id="appImageUrl" placeholder="https://...">
+      </div>
 
-</div>
+    </div>
 
-<div id="status" class="status">
-Loading…
-</div>
+    <div class="actions">
+      <button class="btn-primary" onclick="saveApp()">💾 Save App</button>
+      <button class="btn-success" onclick="buildAPK()">🏗️ Build APK</button>
+      <button class="btn-secondary" onclick="loadApp()">🔄 Refresh</button>
+      <button class="btn-danger" onclick="deleteCurrentApp()">🗑️ Delete App</button>
+    </div>
 
+    <div id="status" class="status"></div>
+  </div>
 
-<!-- APP SETTINGS -->
 
-<section class="card">
+  <!-- SOURCE CODE -->
+  <div class="card">
 
-<h2>⚙️ App Settings</h2>
+    <h2>App Source</h2>
 
-<div class="row">
+    <div class="grid">
 
-<div>
+      <div>
+        <label>Source Mode</label>
 
-<label>App Name</label>
+        <select id="sourceMode" onchange="sourceModeChanged()">
+          <option value="code">HTML Code</option>
+          <option value="url">Website URL</option>
+        </select>
+      </div>
 
-<input
-id="appName"
-placeholder="ASIM TECH Calculator">
+      <div>
+        <label>File Name</label>
+        <input id="fileName" value="index.html">
+      </div>
 
-</div>
+    </div>
 
-<div>
+    <div id="codeArea">
+      <label style="margin-top:14px;">HTML Code</label>
 
-<label>Package Name</label>
+      <textarea id="sourceCode" placeholder="Paste your HTML code here..."></textarea>
+    </div>
 
-<input
-id="packageName"
-placeholder="com.asimtech.calculator">
+    <div id="urlArea" class="hidden">
 
-</div>
+      <label style="margin-top:14px;">Website URL</label>
 
-</div>
+      <input
+        id="websiteUrl"
+        placeholder="https://example.com"
+      >
 
+    </div>
 
-<div class="row">
+    <div class="actions">
 
-<div>
+      <button class="btn-dark" onclick="previewApp()">
+        👁️ Preview
+      </button>
 
-<label>Version Name</label>
+      <button class="btn-primary" onclick="saveApp()">
+        💾 Save
+      </button>
 
-<input
-id="versionName"
-value="1.0.0">
+    </div>
 
-</div>
+  </div>
 
-<div>
 
-<label>Version Code</label>
+  <!-- PREVIEW -->
+  <div class="card">
 
-<input
-id="versionCode"
-type="number"
-value="1">
+    <h2>Preview</h2>
 
-</div>
+    <iframe
+      id="previewFrame"
+      class="preview"
+      sandbox="allow-scripts allow-forms allow-modals allow-popups"
+    ></iframe>
 
-</div>
+  </div>
 
-</section>
 
+  <!-- BUILD HISTORY -->
+  <div class="card">
 
-<!-- CODE -->
+    <h2>Build History</h2>
 
-<section class="card">
+    <div style="overflow-x:auto;">
 
-<h2>🚀 Code / URL Mode</h2>
+      <table>
 
-<label>Source Type</label>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Version</th>
+            <th>Status</th>
+            <th>File</th>
+            <th>Action</th>
+          </tr>
+        </thead>
 
-<select
-id="sourceMode"
-onchange="changeSourceMode()">
+        <tbody id="buildHistory">
+          <tr>
+            <td colspan="5" class="small">
+              No builds found.
+            </td>
+          </tr>
+        </tbody>
 
-<option value="code">
-💻 HTML / CSS / JavaScript Code
-</option>
+      </table>
 
-<option value="url">
-🌐 Web App URL
-</option>
+    </div>
 
-</select>
-
-
-<div id="codeSource">
-
-<label>Paste Complete HTML Code</label>
-
-<textarea
-id="webAppCode"
-placeholder="Paste your complete HTML code here...">
-</textarea>
-
-</div>
-
-
-<div
-id="urlSource"
-style="display:none">
-
-<label>Web App URL</label>
-
-<input
-id="webAppUrl"
-type="url"
-placeholder="https://example.com">
-
-</div>
-
-
-<div
-class="topactions"
-style="position:static">
-
-<button
-class="btn blue"
-onclick="previewWebApp()">
-
-👁 Preview
-
-</button>
-
-<button
-class="btn greenbtn"
-onclick="saveWebAppSource()">
-
-💾 Save Source
-
-</button>
+  </div>
 
 </div>
 
-<div
-id="webAppStatus"
-class="status">
-</div>
 
-</section>
+<script type="module">
 
+/* ============================================================
+   SUPABASE
+============================================================ */
 
-<!-- PREVIEW -->
+import {
+  createClient
+} from "https://esm.sh/@supabase/supabase-js@2";
 
-<section class="card">
-
-<h2>📱 Preview</h2>
-
-<div
-class="preview"
-id="previewBox">
-
-Paste code and press Preview.
-
-</div>
-
-</section>
-
-
-<!-- BUILD HISTORY -->
-
-<section class="card">
-
-<h2>📦 Build History</h2>
-
-<div id="builds">
-Loading…
-</div>
-
-</section>
-
-
-<!-- DELETE -->
-
-<section class="card dangerbox">
-
-<h2>🗑️ Delete App</h2>
-
-<p class="small">
-
-This permanently deletes:
-
-<br>
-• App
-<br>
-• Source files
-<br>
-• Build records
-<br>
-• APK files
-<br>
-• App images
-
-</p>
-
-<button
-class="btn red"
-onclick="deleteApp()">
-
-🗑️ Permanently Delete This App
-
-</button>
-
-</section>
-
-</main>
-
-
-<script>
 
 const SUPABASE_URL =
-"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+  "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-const SUPABASE_KEY =
-"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
-const sb =
-supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+const SUPABASE_ANON_KEY =
+  "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+
+const sb = createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
 );
 
-const appId =
-new URLSearchParams(location.search).get("id");
 
-let user=null;
-let app=null;
-let pollingTimer=null;
+/* ============================================================
+   GLOBAL
+============================================================ */
 
+let currentAppId = null;
 
-const $ =
-id => document.getElementById(id);
+let pollTimer = null;
 
 
-function setStatus(text,cls=""){
+/* ============================================================
+   DOM HELPERS
+============================================================ */
 
-$("status").textContent=text;
+function $(id){
+  return document.getElementById(id);
+}
 
-$("status").className=
-"status "+cls;
+
+function setStatus(message,type="success"){
+
+  const box = $("status");
+
+  box.className =
+    "status " + type;
+
+  box.textContent =
+    message;
 
 }
 
 
-function sourceStatus(text,cls=""){
+/* ============================================================
+   SOURCE MODE
+============================================================ */
 
-$("webAppStatus").textContent=text;
+window.sourceModeChanged = function(){
 
-$("webAppStatus").className=
-"status "+cls;
+  const mode =
+    $("sourceMode").value;
 
-}
+  if(mode === "url"){
 
+    $("codeArea")
+      .classList
+      .add("hidden");
 
-function esc(value){
+    $("urlArea")
+      .classList
+      .remove("hidden");
 
-return String(value ?? "")
-.replace(/[&<>"']/g,m=>({
+  }else{
 
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-'"':"&quot;",
-"'":"&#039;"
+    $("codeArea")
+      .classList
+      .remove("hidden");
 
-}[m]));
+    $("urlArea")
+      .classList
+      .add("hidden");
 
-}
-
-
-function makePackage(name){
-
-let x=
-String(name||"myapp")
-.toLowerCase()
-.replace(/[^a-z0-9]+/g,"");
-
-if(!x)x="myapp";
-
-return "com.asimtech."+x;
-
-}
-
-
-function validPackage(x){
-
-return /^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$/
-.test(x);
-
-}
-
-
-function changeSourceMode(){
-
-const code =
-$("sourceMode").value==="code";
-
-$("codeSource").style.display =
-code ? "block" : "none";
-
-$("urlSource").style.display =
-code ? "none" : "block";
-
-}
-
-
-function previewWebApp(){
-
-const mode =
-$("sourceMode").value;
-
-if(mode==="code"){
-
-const code =
-$("webAppCode").value.trim();
-
-if(!code){
-
-sourceStatus(
-"Please paste HTML code first.",
-"error"
-);
-
-return;
-}
-
-const blob =
-new Blob(
-[code],
-{type:"text/html"}
-);
-
-const url =
-URL.createObjectURL(blob);
-
-$("previewBox").innerHTML =
-`<iframe src="${url}"></iframe>`;
-
-sourceStatus(
-"Code preview loaded ✓",
-"success"
-);
-
-}else{
-
-const url =
-$("webAppUrl").value.trim();
-
-if(!url){
-
-sourceStatus(
-"Please enter a Web App URL.",
-"error"
-);
-
-return;
-}
-
-try{
-
-new URL(url);
-
-}catch{
-
-sourceStatus(
-"Please enter a valid URL.",
-"error"
-);
-
-return;
-}
-
-$("previewBox").innerHTML =
-`<iframe src="${esc(url)}"></iframe>`;
-
-sourceStatus(
-"URL preview loaded ✓",
-"success"
-);
-
-}
-
-}
-
-
-async function loadSettings(){
-
-const r =
-await sb
-.from("app_files")
-.select("content")
-.eq("app_id",appId)
-.eq("file_path","android-settings.json")
-.maybeSingle();
-
-if(r.error || !r.data?.content)
-return null;
-
-try{
-
-return JSON.parse(r.data.content);
-
-}catch{
-
-return null;
-
-}
-
-}
-
-
-async function loadSource(){
-
-let r =
-await sb
-.from("app_files")
-.select("content")
-.eq("app_id",appId)
-.eq("file_path","index.html")
-.maybeSingle();
-
-
-if(!r.error && r.data?.content){
-
-$("sourceMode").value="code";
-
-$("webAppCode").value =
-r.data.content;
-
-changeSourceMode();
-
-return;
-
-}
-
-
-r =
-await sb
-.from("app_files")
-.select("content")
-.eq("app_id",appId)
-.eq("file_path","webapp-url.txt")
-.maybeSingle();
-
-
-if(!r.error && r.data?.content){
-
-$("sourceMode").value="url";
-
-$("webAppUrl").value =
-r.data.content;
-
-changeSourceMode();
-
-}
-
-}
-
-
-async function saveSettings(){
-
-const settings={
-
-appName:
-$("appName").value.trim()
-|| app?.name
-|| "ASIM TECH App",
-
-packageName:
-$("packageName").value.trim()
-|| makePackage(app?.name),
-
-versionName:
-$("versionName").value.trim()
-|| "1.0.0",
-
-versionCode:
-Math.max(
-1,
-parseInt(
-$("versionCode").value,
-10
-)||1
-)
+  }
 
 };
 
 
-if(!validPackage(settings.packageName)){
+/* ============================================================
+   LOAD APP
+============================================================ */
 
-throw new Error(
-"Invalid package name. Example: com.asimtech.myapp"
-);
+window.loadApp = async function(){
 
+  try{
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const appId =
+      params.get("id");
+
+    if(!appId){
+
+      setStatus(
+        "No app selected.",
+        "warn"
+      );
+
+      return;
+
+    }
+
+    currentAppId =
+      appId;
+
+    const {
+      data,
+      error
+    } = await sb
+      .from("apps")
+      .select("*")
+      .eq("id",appId)
+      .single();
+
+    if(error)
+      throw error;
+
+
+    $("appName").value =
+      data.name || "";
+
+    $("appDescription").value =
+      data.description || "";
+
+    $("appImageUrl").value =
+      data.app_image_url || "";
+
+
+    if(data.app_image_url){
+
+      $("appLogo").src =
+        data.app_image_url;
+
+    }
+
+
+    /* LOAD FILE */
+
+    const {
+      data:files,
+      error:fileError
+    } = await sb
+      .from("app_files")
+      .select("*")
+      .eq("app_id",appId)
+      .order("file_path");
+
+
+    if(fileError)
+      throw fileError;
+
+
+    if(files && files.length){
+
+      const htmlFile =
+        files.find(
+          f =>
+          f.file_path === "index.html"
+        ) || files[0];
+
+
+      $("sourceCode").value =
+        htmlFile.content || "";
+
+      $("fileName").value =
+        htmlFile.file_path ||
+        "index.html";
+
+      $("sourceMode").value =
+        "code";
+
+      sourceModeChanged();
+
+    }
+
+
+    await loadBuildHistory();
+
+    setStatus(
+      "App loaded ✓",
+      "success"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      "Load failed: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+};
+
+
+/* ============================================================
+   SAVE APP
+============================================================ */
+
+window.saveApp = async function(){
+
+  try{
+
+    if(!currentAppId){
+
+      setStatus(
+        "App ID not found.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const name =
+      $("appName").value.trim();
+
+    const description =
+      $("appDescription").value.trim();
+
+    const imageUrl =
+      $("appImageUrl").value.trim();
+
+
+    if(!name){
+
+      setStatus(
+        "Please enter App Name.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    setStatus(
+      "Saving app…",
+      "warn"
+    );
+
+
+    const {
+      error
+    } = await sb
+      .from("apps")
+      .update({
+
+        name:name,
+
+        description:
+          description,
+
+        app_image_url:
+          imageUrl || null,
+
+        updated_at:
+          new Date().toISOString()
+
+      })
+      .eq(
+        "id",
+        currentAppId
+      );
+
+
+    if(error)
+      throw error;
+
+
+    if(imageUrl){
+
+      $("appLogo").src =
+        imageUrl;
+
+    }
+
+
+    /* SAVE SOURCE */
+
+    const mode =
+      $("sourceMode").value;
+
+
+    let filePath =
+      $("fileName").value.trim();
+
+    if(!filePath)
+      filePath = "index.html";
+
+
+    let content = "";
+
+
+    if(mode === "url"){
+
+      const website =
+        $("websiteUrl")
+          .value
+          .trim();
+
+      if(!website){
+
+        setStatus(
+          "Please enter Website URL.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      content = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeHtml(name)}</title>
+<style>
+html,body{
+margin:0;
+padding:0;
+width:100%;
+height:100%;
+overflow:hidden;
 }
-
-
-let r =
-await sb
-.from("app_files")
-.upsert({
-
-app_id:appId,
-
-file_path:
-"android-settings.json",
-
-content:
-JSON.stringify(
-settings,
-null,
-2
-),
-
-language:"json",
-
-updated_at:
-new Date().toISOString()
-
-},
-{
-onConflict:
-"app_id,file_path"
-});
-
-
-if(r.error)
-throw r.error;
-
-
-r =
-await sb
-.from("apps")
-.update({
-
-name:
-settings.appName,
-
-updated_at:
-new Date().toISOString()
-
-})
-.eq("id",appId)
-.eq("owner_id",user.id);
-
-
-if(r.error)
-throw r.error;
-
-
-app.name =
-settings.appName;
-
-
-return settings;
-
+iframe{
+width:100%;
+height:100%;
+border:0;
 }
+</style>
+</head>
+<body>
+<iframe src="${escapeAttribute(website)}"></iframe>
+</body>
+</html>`;
 
+    }else{
 
-async function saveWebAppSource(){
+      content =
+        $("sourceCode").value;
 
-const mode =
-$("sourceMode").value;
+      if(!content.trim()){
 
-const content =
-(
-mode==="code"
-?
-$("webAppCode").value
-:
-$("webAppUrl").value
-).trim();
+        setStatus(
+          "Please enter HTML code.",
+          "error"
+        );
 
+        return;
 
-if(!content){
+      }
 
-sourceStatus(
-"Nothing to save.",
-"error"
-);
+    }
 
-return false;
 
-}
+    const {
+      data:existing
+    } = await sb
+      .from("app_files")
+      .select("id")
+      .eq(
+        "app_id",
+        currentAppId
+      )
+      .eq(
+        "file_path",
+        filePath
+      )
+      .maybeSingle();
 
 
-if(mode==="url"){
+    if(existing){
 
-try{
+      const {
+        error:updateError
+      } = await sb
+        .from("app_files")
+        .update({
 
-new URL(content);
+          content:content,
 
-}catch{
+          language:"html",
 
-sourceStatus(
-"Invalid URL.",
-"error"
-);
+          updated_at:
+            new Date().toISOString()
 
-return false;
+        })
+        .eq(
+          "id",
+          existing.id
+        );
 
-}
+      if(updateError)
+        throw updateError;
 
-}
+    }else{
 
+      const {
+        error:insertError
+      } = await sb
+        .from("app_files")
+        .insert({
 
-const filePath =
-mode==="code"
-?
-"index.html"
-:
-"webapp-url.txt";
+          app_id:
+            currentAppId,
 
-const otherPath =
-mode==="code"
-?
-"webapp-url.txt"
-:
-"index.html";
+          file_path:
+            filePath,
 
+          content:
+            content,
 
-let r =
-await sb
-.from("app_files")
-.upsert({
+          language:
+            "html"
 
-app_id:appId,
+        });
 
-file_path:filePath,
+      if(insertError)
+        throw insertError;
 
-content:content,
+    }
 
-language:
-mode==="code"
-?
-"HTML"
-:
-"URL",
 
-updated_at:
-new Date().toISOString()
+    setStatus(
+      "App saved successfully ✓",
+      "success"
+    );
 
-},
-{
-onConflict:
-"app_id,file_path"
-});
 
+  }catch(error){
 
-if(r.error)
-throw r.error;
+    console.error(error);
 
+    setStatus(
+      "Save failed: " +
+      error.message,
+      "error"
+    );
 
-await sb
-.from("app_files")
-.delete()
-.eq("app_id",appId)
-.eq("file_path",otherPath);
+  }
 
+};
 
-sourceStatus(
-"Source saved successfully ✓",
-"success"
-);
 
-return true;
+/* ============================================================
+   BUILD APK
+============================================================ */
 
-}
+window.buildAPK = async function(){
 
+  try{
 
-async function save(){
+    if(!currentAppId){
 
-try{
+      setStatus(
+        "App ID not found.",
+        "error"
+      );
 
-await saveSettings();
+      return;
 
-await saveWebAppSource();
+    }
 
-setStatus(
-"Project saved ✓",
-"success"
-);
 
-}catch(e){
+    /* SAVE FIRST */
 
-console.error(e);
+    await saveApp();
 
-setStatus(
-"Save failed: "+e.message,
-"error"
-);
 
-}
+    setStatus(
+      "Requesting APK build…",
+      "warn"
+    );
 
-}
 
+    const {
+      data,
+      error
+    } = await sb.functions.invoke(
+      "request-apk-build",
+      {
+        body:{
+          appId:
+            currentAppId,
 
-async function requestBuild(){
+          versionName:
+            $("versionName")
+              .value
+              .trim() ||
+            "1.0.0",
 
-try{
+          versionCode:
+            parseInt(
+              $("versionCode").value
+            ) || 1
+        }
+      }
+    );
 
-const settings =
-await saveSettings();
 
-const saved =
-await saveWebAppSource();
+    if(error)
+      throw error;
 
-if(!saved)
-throw new Error(
-"Please save a valid source first."
-);
 
+    if(data && data.error)
+      throw new Error(data.error);
 
-const r =
-await sb
-.from("app_builds")
-.insert({
 
-app_id:appId,
+    setStatus(
+      "APK build queued ✓",
+      "success"
+    );
 
-version_name:
-settings.versionName,
 
-version_code:
-settings.versionCode,
+    await loadBuildHistory();
 
-status:"queued",
 
-created_by:user.id,
+    startBuildPolling();
 
-queued_at:
-new Date().toISOString(),
 
-source_file_count:1
+  }catch(error){
 
-})
-.select("*")
-.single();
+    console.error(error);
 
+    setStatus(
+      "Build request failed: " +
+      error.message,
+      "error"
+    );
 
-if(r.error)
-throw r.error;
+  }
 
+};
 
-setStatus(
-"APK build request queued ✓",
-"success"
-);
 
-
-await loadBuilds();
-
-startBuildPolling();
-
-
-}catch(e){
-
-console.error(e);
-
-setStatus(
-"Build request failed: "+e.message,
-"error"
-);
-
-}
-
-}
-
-
-/* =========================
-   APK DOWNLOAD
-========================= */
-
-function downloadAPK(
-storagePath,
-fileName
-){
-
-if(!storagePath){
-
-alert(
-"APK file path not found."
-);
-
-return;
-
-}
-
-
-const name =
-fileName ||
-"ASIM-TECH-App.apk";
-
-
-const url =
-SUPABASE_URL+
-"/functions/v1/download-apk?path="+
-encodeURIComponent(storagePath)+
-"&name="+
-encodeURIComponent(name);
-
-
-setStatus(
-"Starting APK download…",
-"warn"
-);
-
-
-const link =
-document.createElement("a");
-
-link.href=url;
-
-link.download=name;
-
-link.target="_blank";
-
-link.rel="noopener";
-
-document.body.appendChild(link);
-
-link.click();
-
-link.remove();
-
-
-setTimeout(()=>{
-
-setStatus(
-"APK download started ✓",
-"success"
-);
-
-},800);
-
-}
-
-
-/* =========================
-   OPEN APK
-========================= */
-
-function openAPK(
-storagePath,
-fileName
-){
-
-if(!storagePath)
-return;
-
-
-const name =
-fileName ||
-"ASIM-TECH-App.apk";
-
-
-const url =
-SUPABASE_URL+
-"/functions/v1/download-apk?path="+
-encodeURIComponent(storagePath)+
-"&name="+
-encodeURIComponent(name);
-
-
-window.open(
-url,
-"_blank"
-);
-
-}
-
-
-/* =========================
-   BUILD HISTORY
-========================= */
-
-async function loadBuilds(){
-
-const r =
-await sb
-.from("app_builds")
-.select("*")
-.eq("app_id",appId)
-.order(
-"created_at",
-{ascending:false}
-)
-.limit(20);
-
-
-if(r.error){
-
-$("builds").innerHTML =
-"<span class='error'>Unable to load builds</span>";
-
-return;
-
-}
-
-
-if(!r.data?.length){
-
-$("builds").textContent =
-"No build requested yet.";
-
-return;
-
-}
-
-
-$("builds").innerHTML =
-r.data.map(build=>{
-
-const cls =
-build.status==="success"
-?
-"success"
-:
-build.status==="failed"
-?
-"error"
-:
-"warn";
-
-
-let actions="";
-
-
-if(
-build.status==="success"
-&&
-build.storage_path
-){
-
-const fn =
-build.file_name ||
-"ASIM-TECH-App.apk";
-
-
-actions=`
-
-<div class="downloadbox">
-
-<div class="small">
-✅ APK READY
-</div>
-
-<div
-style="
-margin-top:8px;
-font-weight:700;
-word-break:break-all">
-
-${esc(fn)}
-
-</div>
-
-
-${
-build.file_size
-?
-`
-<div class="small">
-${(
-Number(build.file_size)/1024
-).toFixed(2)} KB
-</div>
-`
-:
-""
-}
-
-
-<div
-style="
-margin-top:10px;
-display:flex;
-gap:8px;
-flex-wrap:wrap">
-
-<button
-class="btn download"
-onclick='downloadAPK(
-${JSON.stringify(build.storage_path)},
-${JSON.stringify(fn)}
-)'>
-
-⬇️ Download APK
-
-</button>
-
-
-<button
-class="btn blue"
-onclick='openAPK(
-${JSON.stringify(build.storage_path)},
-${JSON.stringify(fn)}
-)'>
-
-🔗 Open APK
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}
-
-
-return `
-
-<div class="buildrow">
-
-<b>
-v${esc(
-build.version_name || "1.0.0"
-)}
-</b>
-
-—
-
-<span class="${cls}">
-${esc(build.status || "queued")}
-</span>
-
-<br>
-
-<span class="small">
-
-${
-build.created_at
-?
-new Date(
-build.created_at
-).toLocaleString()
-:
-""
-}
-
-</span>
-
-<br>
-
-${
-build.file_name
-?
-"📦 "+esc(build.file_name)
-+"<br>"
-:
-""
-}
-
-<span class="buildid">
-
-Build ID:
-${esc(build.id)}
-
-</span>
-
-${actions}
-
-</div>
-
-`;
-
-}).join("");
-
-}
-
-
-/* =========================
+/* ============================================================
    BUILD POLLING
-========================= */
+============================================================ */
 
 function startBuildPolling(){
 
-if(pollingTimer)
-clearInterval(pollingTimer);
+  if(pollTimer)
+    clearInterval(pollTimer);
 
 
-let checks=0;
+  pollTimer =
+    setInterval(
+      async ()=>{
+        await loadBuildHistory();
+      },
+      5000
+    );
 
 
-pollingTimer =
-setInterval(async()=>{
+  setTimeout(
+    ()=>{
+      if(pollTimer){
 
-checks++;
+        clearInterval(
+          pollTimer
+        );
 
-await loadBuilds();
+        pollTimer =
+          null;
 
-
-if(checks>=90){
-
-clearInterval(
-pollingTimer
-);
-
-pollingTimer=null;
+      }
+    },
+    15 * 60 * 1000
+  );
 
 }
 
-},10000);
+
+/* ============================================================
+   BUILD HISTORY
+============================================================ */
+
+async function loadBuildHistory(){
+
+  if(!currentAppId)
+    return;
+
+
+  try{
+
+    const {
+      data,
+      error
+    } = await sb
+      .from("app_builds")
+      .select("*")
+      .eq(
+        "app_id",
+        currentAppId
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      )
+      .limit(20);
+
+
+    if(error)
+      throw error;
+
+
+    const tbody =
+      $("buildHistory");
+
+
+    if(!data || !data.length){
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5"
+              class="small">
+            No builds found.
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    tbody.innerHTML =
+      data.map(
+        build =>
+          buildRow(build)
+      ).join("");
+
+
+  }catch(error){
+
+    console.error(
+      "History error:",
+      error
+    );
+
+  }
 
 }
 
 
-/* =========================
+/* ============================================================
+   BUILD ROW
+============================================================ */
+
+function buildRow(build){
+
+  const date =
+    build.created_at
+      ? new Date(
+          build.created_at
+        ).toLocaleString()
+      : "-";
+
+
+  let badgeClass =
+    "badge-queued";
+
+
+  if(build.status === "success")
+    badgeClass =
+      "badge-success";
+
+  if(build.status === "building")
+    badgeClass =
+      "badge-building";
+
+  if(build.status === "failed")
+    badgeClass =
+      "badge-failed";
+
+
+  let action = "-";
+
+
+  if(
+    build.status === "success" &&
+    build.storage_path
+  ){
+
+    const storagePath =
+      build.storage_path
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
+
+    const fileName =
+      (
+        build.file_name ||
+        "ASIM-TECH-App.apk"
+      )
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
+
+
+    action = `
+
+      <button
+        class="btn-success"
+        onclick="downloadAPK('${storagePath}','${fileName}')">
+        ⬇️ Download
+      </button>
+
+      <button
+        class="btn-dark"
+        onclick="openAPK('${storagePath}','${fileName}')">
+        📂 Open
+      </button>
+
+    `;
+
+  }
+
+
+  return `
+
+    <tr>
+
+      <td>${escapeHtml(date)}</td>
+
+      <td>
+        ${escapeHtml(
+          build.version_name ||
+          "-"
+        )}
+      </td>
+
+      <td>
+        <span class="badge ${badgeClass}">
+          ${escapeHtml(
+            build.status ||
+            "-"
+          )}
+        </span>
+      </td>
+
+      <td>
+        ${escapeHtml(
+          build.file_name ||
+          "-"
+        )}
+      </td>
+
+      <td>
+        ${action}
+      </td>
+
+    </tr>
+
+  `;
+
+}
+
+
+/* ============================================================
+   ⭐ FIXED APK DOWNLOAD
+============================================================ */
+
+window.downloadAPK = function(
+  storagePath,
+  fileName
+){
+
+  if(!storagePath){
+
+    alert(
+      "APK file path not found."
+    );
+
+    return;
+
+  }
+
+
+  const name =
+    fileName ||
+    "ASIM-TECH-App.apk";
+
+
+  const url =
+    SUPABASE_URL +
+    "/functions/v1/download-apk" +
+    "?path=" +
+    encodeURIComponent(
+      storagePath
+    ) +
+    "&name=" +
+    encodeURIComponent(
+      name
+    );
+
+
+  setStatus(
+    "Downloading APK…",
+    "warn"
+  );
+
+
+  /*
+   * IMPORTANT:
+   * Do NOT use the HTML download attribute here.
+   * The Edge Function sends:
+   *
+   * Content-Disposition:
+   * attachment
+   *
+   * so Chrome will handle the APK as a real download.
+   */
+
+  window.location.href =
+    url;
+
+
+  setTimeout(
+    ()=>{
+      setStatus(
+        "APK download started ✓",
+        "success"
+      );
+    },
+    1200
+  );
+
+};
+
+
+/* ============================================================
+   OPEN APK
+============================================================ */
+
+window.openAPK = function(
+  storagePath,
+  fileName
+){
+
+  if(!storagePath){
+
+    alert(
+      "APK file path not found."
+    );
+
+    return;
+
+  }
+
+
+  const name =
+    fileName ||
+    "ASIM-TECH-App.apk";
+
+
+  const url =
+    SUPABASE_URL +
+    "/functions/v1/download-apk" +
+    "?path=" +
+    encodeURIComponent(
+      storagePath
+    ) +
+    "&name=" +
+    encodeURIComponent(
+      name
+    );
+
+
+  window.open(
+    url,
+    "_blank"
+  );
+
+};
+
+
+/* ============================================================
+   PREVIEW
+============================================================ */
+
+window.previewApp = function(){
+
+  const mode =
+    $("sourceMode").value;
+
+
+  if(mode === "url"){
+
+    const url =
+      $("websiteUrl")
+        .value
+        .trim();
+
+
+    if(!url){
+
+      setStatus(
+        "Please enter Website URL.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    $("previewFrame").src =
+      url;
+
+    return;
+
+  }
+
+
+  const code =
+    $("sourceCode").value;
+
+
+  if(!code.trim()){
+
+    setStatus(
+      "No HTML code to preview.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const blob =
+    new Blob(
+      [code],
+      {
+        type:
+          "text/html"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  $("previewFrame").src =
+    url;
+
+};
+
+
+/* ============================================================
    DELETE APP
-========================= */
+============================================================ */
 
-async function deleteApp(){
+window.deleteCurrentApp =
+  async function(){
 
-if(!appId){
+  if(!currentAppId){
 
-alert(
-"Missing app ID."
-);
+    setStatus(
+      "No app selected.",
+      "error"
+    );
 
-return;
+    return;
 
-}
-
-
-const appName =
-app?.name ||
-$("appName").value ||
-"this app";
+  }
 
 
-const first =
-confirm(
-
-`Delete "${appName}"?
-
-This will remove:
-
-• App
-• Source files
-• Build records
-• APK files
-• App images
-
-Continue?`
-
-);
+  const ok =
+    confirm(
+      "Are you sure you want to delete this app and its builds?"
+    );
 
 
-if(!first)
-return;
+  if(!ok)
+    return;
 
 
-const second =
-confirm(
+  try{
 
-"⚠️ PERMANENT DELETE\n\n"+
-"This action cannot be undone.\n\n"+
-"Are you absolutely sure?"
-
-);
+    setStatus(
+      "Deleting app…",
+      "warn"
+    );
 
 
-if(!second)
-return;
+    const {
+      data,
+      error
+    } = await sb.functions.invoke(
+      "delete-app",
+      {
+        body:{
+          appId:
+            currentAppId
+        }
+      }
+    );
 
 
-try{
-
-setStatus(
-"Deleting app… Please wait.",
-"warn"
-);
+    if(error)
+      throw error;
 
 
-const result =
-await sb.functions.invoke(
-"delete-app",
-{
-body:{
-appId:appId
-}
-}
-);
+    if(data && data.error)
+      throw new Error(
+        data.error
+      );
 
 
-if(result.error)
-throw result.error;
+    setStatus(
+      "App deleted successfully ✓",
+      "success"
+    );
 
 
-if(!result.data?.ok){
-
-throw new Error(
-result.data?.error ||
-"Delete failed"
-);
-
-}
-
-
-setStatus(
-"App deleted successfully ✓",
-"success"
-);
+    setTimeout(
+      ()=>{
+        window.location.href =
+          "android-builder.html";
+      },
+      1000
+    );
 
 
-if(pollingTimer)
-clearInterval(
-pollingTimer
-);
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      "Delete failed: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+};
 
 
-setTimeout(()=>{
+/* ============================================================
+   ESCAPE HTML
+============================================================ */
 
-location.href=
-"android-apps.html";
+function escapeHtml(value){
 
-},1000);
-
-
-}catch(e){
-
-console.error(e);
-
-
-setStatus(
-"Delete failed: "+
-(e.message || "Unknown error"),
-"error"
-);
-
-
-alert(
-"Delete failed.\n\n"+
-(e.message || "Unknown error")
-);
-
-}
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
 
-/* =========================
-   INIT
-========================= */
+function escapeAttribute(value){
 
-async function init(){
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  );
 
-try{
+}
 
-if(!appId){
 
-setStatus(
-"Missing app ID.",
-"error"
+/* ============================================================
+   INITIAL LOAD
+============================================================ */
+
+window.addEventListener(
+  "DOMContentLoaded",
+  ()=>{
+    loadApp();
+  }
 );
-
-return;
-
-}
-
-
-const {
-data:{
-user:u
-},
-error:authError
-} =
-await sb.auth.getUser();
-
-
-if(authError)
-throw authError;
-
-
-if(!u){
-
-location.href=
-"login.html";
-
-return;
-
-}
-
-
-user=u;
-
-
-const r =
-await sb
-.from("apps")
-.select("*")
-.eq("id",appId)
-.eq("owner_id",user.id)
-.single();
-
-
-if(r.error)
-throw r.error;
-
-
-app=r.data;
-
-
-$("appName").value =
-app.name || "";
-
-
-const settings =
-await loadSettings();
-
-
-$("packageName").value =
-settings?.packageName ||
-makePackage(app.name);
-
-
-$("versionName").value =
-settings?.versionName ||
-"1.0.0";
-
-
-$("versionCode").value =
-settings?.versionCode ||
-1;
-
-
-await loadSource();
-
-await loadBuilds();
-
-
-setStatus(
-"Android project loaded ✓",
-"success"
-);
-
-
-/* Automatically check queued/building APK */
-
-startBuildPolling();
-
-
-}catch(e){
-
-console.error(e);
-
-setStatus(
-e.message ||
-"Unable to load app.",
-"error"
-);
-
-}
-
-}
-
-
-init();
 
 </script>
 
