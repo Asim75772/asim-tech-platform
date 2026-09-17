@@ -73,12 +73,6 @@ jobs:
 
             echo "ERROR: sdkmanager not found."
 
-            find "$ANDROID_HOME" \
-              -maxdepth 5 \
-              -type f \
-              -name sdkmanager \
-              -print || true
-
             exit 1
 
           fi
@@ -88,7 +82,7 @@ jobs:
 
           "$SDKMANAGER" --version
 
-          echo "Accepting Android SDK licenses..."
+          echo "Accepting licenses..."
 
           yes | "$SDKMANAGER" --licenses || true
 
@@ -103,7 +97,7 @@ jobs:
 
 
       # ==================================================
-      # 4. INSTALL DEPENDENCIES
+      # 4. DEPENDENCIES
       # ==================================================
 
       - name: Install dependencies
@@ -130,27 +124,47 @@ jobs:
 
         run: |
 
-          echo "Checking Supabase build queue..."
+          echo "======================================"
+          echo "CHECKING BUILD QUEUE"
+          echo "======================================"
 
           if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
 
-            echo "ERROR: SUPABASE_SERVICE_ROLE_KEY secret is missing."
+            echo "ERROR: SUPABASE_SERVICE_ROLE_KEY is missing."
 
             exit 1
 
           fi
 
-          RESPONSE=$(curl -sS \
-            "${SUPABASE_URL}/rest/v1/app_builds?status=eq.queued&order=created_at.asc&limit=1" \
+          RESPONSE=$(curl -f -sS \
+            --get \
+            "${SUPABASE_URL}/rest/v1/app_builds" \
+            --data-urlencode "status=eq.queued" \
+            --data-urlencode "order=created_at.asc" \
+            --data-urlencode "limit=1" \
+            --data-urlencode "select=id,app_id,version_name,version_code,status" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
 
           echo "Queue response:"
           echo "$RESPONSE"
 
+          if ! echo "$RESPONSE" | jq -e 'type == "array"' >/dev/null
+          then
+
+            echo "ERROR: Supabase returned invalid JSON."
+
+            exit 1
+
+          fi
+
           BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
 
           APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
+
+          VERSION_NAME=$(echo "$RESPONSE" | jq -r '.[0].version_name // "1.0.0"')
+
+          VERSION_CODE=$(echo "$RESPONSE" | jq -r '.[0].version_code // 1')
 
           if [ -z "$BUILD_ID" ]; then
 
@@ -162,19 +176,47 @@ jobs:
 
           fi
 
-          echo "Build ID: $BUILD_ID"
+          echo "--------------------------------------"
+          echo "BUILD ID      : $BUILD_ID"
+          echo "APP ID        : $APP_ID"
+          echo "VERSION NAME  : $VERSION_NAME"
+          echo "VERSION CODE  : $VERSION_CODE"
+          echo "--------------------------------------"
 
-          echo "App ID: $APP_ID"
+          # Strict UUID validation
+          if ! echo "$BUILD_ID" | grep -Eq \
+            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+          then
+
+            echo "ERROR: Invalid BUILD_ID:"
+            printf '<%s>\n' "$BUILD_ID"
+
+            exit 1
+
+          fi
+
+          if ! echo "$APP_ID" | grep -Eq \
+            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+          then
+
+            echo "ERROR: Invalid APP_ID:"
+            printf '<%s>\n' "$APP_ID"
+
+            echo "The queued build contains an invalid app_id."
+
+            exit 1
+
+          fi
 
           echo "found=true" >> "$GITHUB_OUTPUT"
 
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
 
-          echo "app_id=$APP_ID"
+          echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
 
 
       # ==================================================
-      # 6. STOP IF QUEUE EMPTY
+      # 6. STOP IF EMPTY
       # ==================================================
 
       - name: Stop when queue is empty
@@ -202,9 +244,9 @@ jobs:
 
         run: |
 
-          echo "Marking build as building..."
+          echo "Marking build as BUILDING..."
 
-          curl -sS -X PATCH \
+          curl -f -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
@@ -217,7 +259,7 @@ jobs:
           }
           EOF
 
-          echo "Build status = building"
+          echo "Build marked BUILDING."
 
 
       # ==================================================
@@ -236,19 +278,61 @@ jobs:
 
         run: |
 
+          echo "======================================"
+          echo "DOWNLOADING APP FILES"
+          echo "======================================"
+
           mkdir -p source
 
-          echo "Downloading app files..."
+          echo "APP_ID:"
+          printf '<%s>\n' "$APP_ID"
 
-          curl -sS \
-            "${SUPABASE_URL}/rest/v1/app_files?app_id=eq.${APP_ID}&select=file_path,content" \
+          # Validate again before REST request
+
+          if ! echo "$APP_ID" | grep -Eq \
+            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+          then
+
+            echo "ERROR: APP_ID is not a valid UUID."
+
+            exit 1
+
+          fi
+
+          # IMPORTANT:
+          # Use --data-urlencode so UUID/filter is safely encoded.
+
+          curl -f -sS \
+            --get \
+            "${SUPABASE_URL}/rest/v1/app_files" \
+            --data-urlencode "app_id=eq.${APP_ID}" \
+            --data-urlencode "select=file_path,content" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
             > source/files.json
 
-          echo "App files response:"
+          echo "Supabase app_files response:"
 
           cat source/files.json | jq .
+
+          # Detect Supabase error object
+
+          if echo "$RESPONSE" | jq -e '.code' >/dev/null 2>&1; then
+
+            echo "Supabase returned an error."
+
+            exit 1
+
+          fi
+
+          if ! jq -e 'type == "array"' source/files.json >/dev/null
+          then
+
+            echo "ERROR: app_files response is not an array."
+
+            exit 1
+
+          fi
 
           COUNT=$(jq 'length' source/files.json)
 
@@ -256,18 +340,30 @@ jobs:
 
           if [ "$COUNT" -eq 0 ]; then
 
-            echo "ERROR: No app files found."
+            echo "ERROR: No app files found for this app."
 
             exit 1
 
           fi
 
-          jq -c '.[]' source/files.json | while read -r ITEM
+          # Safely process only objects
+
+          jq -c '.[] | select(type == "object" and has("file_path"))' \
+            source/files.json |
+          while IFS= read -r ITEM
           do
 
             FILE_PATH=$(echo "$ITEM" | jq -r '.file_path')
 
-            CONTENT=$(echo "$ITEM" | jq -r '.content')
+            CONTENT=$(echo "$ITEM" | jq -r '.content // ""')
+
+            if [ -z "$FILE_PATH" ]; then
+
+              echo "Skipping empty file path."
+
+              continue
+
+            fi
 
             mkdir -p "source/$(dirname "$FILE_PATH")"
 
@@ -277,6 +373,8 @@ jobs:
 
           done
 
+          echo "App files downloaded successfully."
+
 
       # ==================================================
       # 9. READ ANDROID SETTINGS
@@ -285,6 +383,8 @@ jobs:
       - name: Read Android settings
         if: steps.queue.outputs.found == 'true'
         run: |
+
+          echo "Reading Android settings..."
 
           if [ ! -f source/android-settings.json ]; then
 
@@ -321,10 +421,10 @@ jobs:
           echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
 
           echo ""
-          echo "App Name: $APP_NAME"
-          echo "Package: $PACKAGE_NAME"
-          echo "Version: $VERSION_NAME"
-          echo "Version Code: $VERSION_CODE"
+          echo "App Name     : $APP_NAME"
+          echo "Package Name : $PACKAGE_NAME"
+          echo "Version Name : $VERSION_NAME"
+          echo "Version Code : $VERSION_CODE"
 
 
       # ==================================================
@@ -357,11 +457,14 @@ jobs:
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          mkdir -p android/app/src/main/java
+          mkdir -p \
+            android/app/src/main/java
 
-          mkdir -p android/app/src/main/res/values
+          mkdir -p \
+            android/app/src/main/res/values
 
-          mkdir -p android/app/src/main/assets
+          mkdir -p \
+            android/app/src/main/assets
 
           echo "Android project created."
 
@@ -510,7 +613,9 @@ jobs:
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          cat > android/app/src/main/AndroidManifest.xml <<EOF
+          cat > \
+            android/app/src/main/AndroidManifest.xml \
+            <<EOF
 
           <manifest
               xmlns:android="http://schemas.android.com/apk/res/android">
@@ -555,14 +660,19 @@ jobs:
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          cat > android/app/src/main/res/values/styles.xml <<'EOF'
+          cat > \
+            android/app/src/main/res/values/styles.xml \
+            <<'EOF'
+
           <resources>
 
               <style
                   name="AppTheme"
                   parent="android:style/Theme.Material.Light.NoActionBar">
 
-                  <item name="android:fontFamily">sans</item>
+                  <item name="android:fontFamily">
+                      sans
+                  </item>
 
                   <item name="android:colorAccent">
                       #238636
@@ -571,11 +681,12 @@ jobs:
               </style>
 
           </resources>
+
           EOF
 
 
       # ==================================================
-      # 19. HTML ASSET
+      # 19. PREPARE HTML
       # ==================================================
 
       - name: Prepare HTML assets
@@ -584,17 +695,21 @@ jobs:
 
           if [ -f source/index.html ]; then
 
+            echo "Using index.html"
+
             cp \
               source/index.html \
               android/app/src/main/assets/index.html
 
-            echo "index.html copied."
-
           elif [ -f source/webapp-url.txt ]; then
+
+            echo "Using webapp-url.txt"
 
             URL=$(cat source/webapp-url.txt)
 
-            cat > android/app/src/main/assets/index.html <<EOF
+            cat > \
+              android/app/src/main/assets/index.html \
+              <<EOF
 
           <!doctype html>
 
@@ -641,7 +756,7 @@ jobs:
 
           else
 
-            echo "ERROR: No HTML source found."
+            echo "ERROR: No index.html or webapp-url.txt."
 
             exit 1
 
@@ -688,7 +803,7 @@ jobs:
 
 
       # ==================================================
-      # 21. SETUP GRADLE
+      # 21. GRADLE
       # ==================================================
 
       - name: Setup Gradle
@@ -707,7 +822,9 @@ jobs:
         working-directory: android
         run: |
 
-          echo "Building APK..."
+          echo "======================================"
+          echo "BUILDING APK"
+          echo "======================================"
 
           gradle assembleDebug \
             --no-daemon \
@@ -740,7 +857,7 @@ jobs:
 
           echo "APK=$APK" >> "$GITHUB_ENV"
 
-          echo "APK:"
+          echo "APK found:"
           echo "$APK"
 
 
@@ -787,6 +904,8 @@ jobs:
 
           STORAGE_PATH="${APP_ID}/${BUILD_ID}/ASIM-TECH-${BUILD_ID}.apk"
 
+          echo "Uploading APK..."
+
           echo "Storage path:"
           echo "$STORAGE_PATH"
 
@@ -819,7 +938,9 @@ jobs:
 
         run: |
 
-          curl -sS -X PATCH \
+          echo "Marking build SUCCESS..."
+
+          curl -f -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
@@ -840,7 +961,9 @@ jobs:
 
           EOF
 
-          echo "BUILD SUCCESS."
+          echo "======================================"
+          echo "BUILD SUCCESS"
+          echo "======================================"
 
 
       # ==================================================
@@ -871,7 +994,9 @@ jobs:
 
         run: |
 
-          echo "Build failed."
+          echo "======================================"
+          echo "BUILD FAILED"
+          echo "======================================"
 
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
@@ -888,5 +1013,3 @@ jobs:
           }
 
           EOF
-
-          echo "BUILD FAILED."
