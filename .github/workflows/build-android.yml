@@ -52,7 +52,7 @@ jobs:
 
 
       # ==================================================
-      # JAVA
+      # JAVA 17
       # ==================================================
 
       - name: Setup Java 17
@@ -101,12 +101,14 @@ jobs:
             -d "$SDK/cmdline-tools/latest"
 
           if [ -d "$SDK/cmdline-tools/latest/cmdline-tools" ]; then
+
             cp -R \
               "$SDK/cmdline-tools/latest/cmdline-tools/." \
               "$SDK/cmdline-tools/latest/"
 
             rm -rf \
               "$SDK/cmdline-tools/latest/cmdline-tools"
+
           fi
 
           echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
@@ -118,6 +120,7 @@ jobs:
 
           export ANDROID_HOME="$SDK"
           export ANDROID_SDK_ROOT="$SDK"
+
           export PATH="$SDK/cmdline-tools/latest/bin:$PATH"
 
           yes | sdkmanager --licenses \
@@ -173,21 +176,30 @@ jobs:
           COUNT="$(echo "$DATA" | jq 'length')"
 
           if [ "$COUNT" = "0" ]; then
+
             echo "No queued build found."
+
             echo "found=false" >> "$GITHUB_OUTPUT"
+
             exit 0
+
           fi
 
           APP_ID_VALUE="$(echo "$DATA" | jq -r '.[0].app_id')"
+
           BUILD_ID_VALUE="$(echo "$DATA" | jq -r '.[0].id')"
 
           echo "Build found."
+
           echo "App ID: $APP_ID_VALUE"
+
           echo "Build ID: $BUILD_ID_VALUE"
 
           echo "found=true" >> "$GITHUB_OUTPUT"
+
           echo "app_id=$APP_ID_VALUE" >> "$GITHUB_OUTPUT"
-          echo "build_id=$BUILD_ID_VALUE"
+
+          echo "build_id=$BUILD_ID_VALUE" >> "$GITHUB_OUTPUT"
 
 
       # ==================================================
@@ -195,6 +207,7 @@ jobs:
       # ==================================================
 
       - name: Mark build as building
+        id: mark_building
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
@@ -218,6 +231,7 @@ jobs:
       # ==================================================
 
       - name: Read application data
+        id: read
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
@@ -268,7 +282,9 @@ jobs:
           echo "VERSION_CODE=$VERSION_CODE_VALUE" >> "$GITHUB_ENV"
 
           echo "App Name: $APP_NAME_VALUE"
+
           echo "Package: $PACKAGE_VALUE"
+
           echo "Version: $VERSION_NAME_VALUE"
 
 
@@ -277,6 +293,7 @@ jobs:
       # ==================================================
 
       - name: Prepare Web App
+        id: prepare
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
@@ -297,100 +314,32 @@ jobs:
 
           if [ "$APP" = "6b305668-ffb5-4e2d-94ff-0bda17978ac2" ]; then
 
-            cat > android-app/app/src/main/assets/index.html <<'HTML'
-<!doctype html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-html,
-body,
-iframe {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  overflow: hidden;
-}
-</style>
-</head>
-<body>
-<iframe
-  src="https://asim75772.github.io/asim-tech-platform/"
-  style="width:100%;height:100%;border:0"
-></iframe>
-</body>
-</html>
-HTML
+            printf '%s' 'PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLGluaXRpYWwtc2NhbGU9MSI+CjxzdHlsZT4KaHRtbCwKYm9keSwKaWZyYW1lIHsKICBtYXJnaW46IDA7CiAgd2lkdGg6IDEwMCU7CiAgaGVpZ2h0OiAxMDAlOwogIGJvcmRlcjogMDsKICBvdmVyZmxvdzogaGlkZGVuOwp9Cjwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxpZnJhbWUKICBzcmM9Imh0dHBzOi8vYXNpbTc1NzcyLmdpdGh1Yi5pby9hc2ltLXRlY2gtcGxhdGZvcm0vIgo+PC9pZnJhbWU+CjwvYm9keT4KPC9odG1sPgo=' \
+              | base64 -d \
+              > android-app/app/src/main/assets/index.html
 
-            exit 0
+            echo "Special ASIM TECH platform app prepared."
 
-          fi
-
-
-          # ------------------------------------------------
-          # HTML MODE
-          # ------------------------------------------------
-
-          if [ -n "$HTML_CONTENT" ]; then
+          elif [ -n "$HTML_CONTENT" ]; then
 
             printf '%s' "$HTML_CONTENT" \
               > android-app/app/src/main/assets/index.html
 
-
-          # ------------------------------------------------
-          # URL MODE
-          # ------------------------------------------------
+            echo "HTML source prepared."
 
           elif [ -n "$URL_CONTENT" ]; then
 
-            cat > android-app/app/src/main/assets/index.html <<HTML
-<!doctype html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-html,
-body,
-iframe {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  overflow: hidden;
-}
-</style>
-</head>
-<body>
-<iframe
-  src="$URL_CONTENT"
-  style="width:100%;height:100%;border:0"
-></iframe>
-</body>
-</html>
-HTML
+            URL_CONTENT="$URL_CONTENT" \
+            python3 -c 'import os; from pathlib import Path; u=os.environ["URL_CONTENT"]; p=Path("android-app/app/src/main/assets/index.html"); p.write_text("<!doctype html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<style>html,body,iframe{margin:0;width:100%;height:100%;border:0;overflow:hidden}</style>\n</head>\n<body>\n<iframe src=\"" + u.replace("&","&amp;").replace("\"","&quot;") + "\" style=\"width:100%;height:100%;border:0\"></iframe>\n</body>\n</html>\n", encoding="utf-8")'
 
-
-          # ------------------------------------------------
-          # NO SOURCE
-          # ------------------------------------------------
+            echo "URL source prepared."
 
           else
 
-            cat > android-app/app/src/main/assets/index.html <<HTML
-<!doctype html>
-<html>
-<head>
-<meta charset="UTF-8">
-</head>
-<body style="font-family:Arial;text-align:center;padding:40px">
-<h1>$APP_NAME</h1>
-<p>No Web App source saved.</p>
-</body>
-</html>
-HTML
+            APP_NAME="$APP_NAME" \
+            python3 -c 'import os; from pathlib import Path; n=os.environ.get("APP_NAME","ASIM TECH App"); Path("android-app/app/src/main/assets/index.html").write_text("<!doctype html>\n<html>\n<head><meta charset=\"UTF-8\"></head>\n<body style=\"font-family:Arial;text-align:center;padding:40px\"><h1>"+n+"</h1><p>No Web App source saved.</p></body>\n</html>\n",encoding="utf-8")'
+
+            echo "No source found. Placeholder page prepared."
 
           fi
 
@@ -400,6 +349,7 @@ HTML
       # ==================================================
 
       - name: Create Android project
+        id: project
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
@@ -420,208 +370,83 @@ HTML
           # SETTINGS.GRADLE
           # ------------------------------------------------
 
-          cat > android-app/settings.gradle <<'EOF'
-import org.gradle.api.initialization.resolve.RepositoriesMode
-
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-dependencyResolutionManagement {
-    repositoriesMode.set(
-        RepositoriesMode.FAIL_ON_PROJECT_REPOS
-    )
-
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-rootProject.name = "ASIMTECH"
-
-include(":app")
-EOF
+          printf '%s' 'cGx1Z2luTWFuYWdlbWVudCB7CiAgICByZXBvc2l0b3JpZXMgewogICAgICAgIGdvb2dsZSgpCiAgICAgICAgbWF2ZW5DZW50cmFsKCkKICAgICAgICBncmFkbGVQbHVnaW5Qb3J0YWwoKQogICAgfQp9CgpkZXBlbmRlbmN5UmVzb2x1dGlvbk1hbmFnZW1lbnQgewogICAgcmVwb3NpdG9yaWVzTW9kZS5zZXQoCiAgICAgICAgb3JnLmdyYWRsZS5hcGkuaW5pdGlhbGl6YXRpb24ucmVzb2x2ZS5SZXBvc2l0b3JpZXNNb2RlLkZBSUxfT05fUFJPSkVDVF9SRVBPUwogICAgKQogICAgcmVwb3NpdG9yaWVzIHsKICAgICAgICBnb29nbGUoKQogICAgICAgIG1hdmVuQ2VudHJhbCgpCiAgICB9Cn0KCnJvb3RQcm9qZWN0Lm5hbWUgPSAiQVNJTVRFQ0giCmluY2x1ZGUoIjphcHAiKQo=' \
+            | base64 -d \
+            > android-app/settings.gradle
 
 
           # ------------------------------------------------
           # ROOT BUILD.GRADLE
           # ------------------------------------------------
 
-          cat > android-app/build.gradle <<'EOF'
-plugins {
-    id "com.android.application" version "8.7.3" apply false
-}
-EOF
+          printf '%s' 'cGx1Z2lucyB7CiAgICBpZCAiY29tLmFuZHJvaWQuYXBwbGljYXRpb24iIHZlcnNpb24gIjguNy4zIiBhcHBseSBmYWxzZQp9Cg==' \
+            | base64 -d \
+            > android-app/build.gradle
 
 
           # ------------------------------------------------
           # APP BUILD.GRADLE
           # ------------------------------------------------
 
-          cat > android-app/app/build.gradle <<EOF
-plugins {
+          PKG="$PKG" \
+          VERSION_CODE="$VERSION_CODE" \
+          VERSION_NAME="$VERSION_NAME" \
+          python3 -c 'import os; from pathlib import Path; p=Path("android-app/app/build.gradle"); p.write_text("""plugins {
     id "com.android.application"
 }
 
 android {
-    namespace "$PKG"
+    namespace "%s"
     compileSdk 35
 
     defaultConfig {
-        applicationId "$PKG"
+        applicationId "%s"
         minSdk 23
         targetSdk 35
-        versionCode $VERSION_CODE
-        versionName "$VERSION_NAME"
+        versionCode %s
+        versionName "%s"
     }
 }
-EOF
+""" % (os.environ["PKG"],os.environ["PKG"],os.environ["VERSION_CODE"],os.environ["VERSION_NAME"]),encoding="utf-8")'
 
 
           # ------------------------------------------------
-          # STRINGS
+          # STRINGS.XML
           # ------------------------------------------------
 
-          cat > android-app/app/src/main/res/values/strings.xml <<EOF
-<resources>
-    <string name="app_name">$APP_NAME</string>
-</resources>
-EOF
+          APP_NAME="$APP_NAME" \
+          python3 -c 'import os,html; from pathlib import Path; n=html.escape(os.environ.get("APP_NAME","ASIM TECH App")); Path("android-app/app/src/main/res/values/strings.xml").write_text("<resources>\n    <string name=\"app_name\">"+n+"</string>\n</resources>\n",encoding="utf-8")'
 
 
           # ------------------------------------------------
-          # STYLES
+          # STYLES.XML
           # ------------------------------------------------
 
-          cat > android-app/app/src/main/res/values/styles.xml <<'EOF'
-<resources>
-
-    <style
-        name="AppTheme"
-        parent="android:style/Theme.Material.Light.NoActionBar">
-
-        <item name="android:fontFamily">sans</item>
-
-        <item name="android:windowActionModeOverlay">true</item>
-
-        <item name="android:colorAccent">#1565C0</item>
-
-    </style>
-
-</resources>
-EOF
+          printf '%s' 'PHJlc291cmNlcz4KICAgIDxzdHlsZSBuYW1lPSJBcHBUaGVtZSIgcGFyZW50PSJhbmRyb2lkOnN0eWxlL1RoZW1lLk1hdGVyaWFsLkxpZ2h0Lk5vQWN0aW9uQmFyIj4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOmZvbnRGYW1pbHkiPnNhbnM8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iYW5kcm9pZDp3aW5kb3dBY3Rpb25Nb2RlT3ZlcmxheSI+dHJ1ZTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOmNvbG9yQWNjZW50Ij4jMTU2NUMwPC9pdGVtPgogICAgPC9zdHlsZT4KPC9yZXNvdXJjZXM+Cg==' \
+            | base64 -d \
+            > android-app/app/src/main/res/values/styles.xml
 
 
           # ------------------------------------------------
           # ANDROID MANIFEST
           # ------------------------------------------------
 
-          cat > android-app/app/src/main/AndroidManifest.xml <<'EOF'
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <application
-        android:allowBackup="true"
-        android:usesCleartextTraffic="true"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-
-            <intent-filter>
-
-                <action
-                    android:name="android.intent.action.MAIN" />
-
-                <category
-                    android:name="android.intent.category.LAUNCHER" />
-
-            </intent-filter>
-
-        </activity>
-
-    </application>
-
-</manifest>
-EOF
+          printf '%s' 'PG1hbmlmZXN0IHhtbG5zOmFuZHJvaWQ9Imh0dHA6Ly9zY2hlbWFzLmFuZHJvaWQuY29tL2Fway9yZXMvYW5kcm9pZCI+CiAgICA8dXNlcy1wZXJtaXNzaW9uIGFuZHJvaWQ6bmFtZT0iYW5kcm9pZC5wZXJtaXNzaW9uLklOVEVSTkVUIiAvPgogICAgPGFwcGxpY2F0aW9uCiAgICAgICAgYW5kcm9pZDphbGxvd0JhY2t1cD0idHJ1ZSIKICAgICAgICBhbmRyb2lkOnVzZXNDbGVhcnRleFRyYWZmaWM9InRydWUiCiAgICAgICAgYW5kcm9pZDpsYWJlbD0iQHN0cmluZy9hcHBfbmFtZSIKICAgICAgICBhbmRyb2lkOnRoZW1lPSJAc3R5bGUvQXBwVGhlbWUiPgogICAgICAgIDxhY3Rpdml0eQogICAgICAgICAgICBhbmRyb2lkOm5hbWU9Ii5NYWluQWN0aXZpdHkiCiAgICAgICAgICAgIGFuZHJvaWQ6ZXhwb3J0ZWQ9InRydWUiPgogICAgICAgICAgICA8aW50ZW50LWZpbHRlcj4KICAgICAgICAgICAgICAgIDxhY3Rpb24gYW5kcm9pZDpuYW1lPSJhbmRyb2lkLmludGVudC5hY3Rpb24uTUFJTiIgLz4KICAgICAgICAgICAgICAgIDxjYXRlZ29yeSBhbmRyb2lkOm5hbWU9ImFuZHJvaWQuaW50ZW50LmNhdGVnb3J5LkxBVU5DSEVSIiAvPgogICAgICAgICAgICA8L2ludGVudC1maWx0ZXI+CiAgICAgICAgPC9hY3Rpdml0eT4KICAgIDwvYXBwbGljYXRpb24+Cjwv bWFuaWZlc3Q+Cg==' \
+            | tr -d ' ' \
+            | base64 -d \
+            > android-app/app/src/main/AndroidManifest.xml
 
 
           # ------------------------------------------------
           # MAIN ACTIVITY
           # ------------------------------------------------
 
-          cat > "android-app/app/src/main/java/$PKG_PATH/MainActivity.java" <<JAVA
-package $PKG;
+          printf '%s' 'cGFja2FnZSBfX1BLR19fOwoKaW1wb3J0IGFuZHJvaWQuYXBwLkFjdGl2aXR5OwppbXBvcnQgYW5kcm9pZC5vcy5CdW5kbGU7CmltcG9ydCBhbmRyb2lkLndlYmtpdC5XZWJTZXR0aW5nczsKaW1wb3J0IGFuZHJvaWQud2Via2l0LldlYlZpZXc7CmltcG9ydCBhbmRyb2lkLndlYmtpdC5XZWJWaWV3Q2xpZW50OwoKcHVibGljIGNsYXNzIE1haW5BY3Rpdml0eSBleHRlbmRzIEFjdGl2aXR5IHsKICAgIHByaXZhdGUgV2ViVmlldyB3ZWJWaWV3OwoKICAgIEBPdmVycmlkZQogICAgcHJvdGVjdGVkIHZvaWQgb25DcmVhdGUoQnVuZGxlIHN0YXRlKSB7CiAgICAgICAgc3VwZXIub25DcmVhdGUoc3RhdGUpOwogICAgICAgIHdlYlZpZXcgPSBuZXcgV2ViVmlldyh0aGlzKTsKICAgICAgICBXZWJTZXR0aW5ncyBzZXR0aW5ncyA9IHdlYlZpZXcuZ2V0U2V0dGluZ3MoKTsKICAgICAgICBzZXR0aW5ncy5zZXRKYXZhU2NyaXB0RW5hYmxlZCh0cnVlKTsKICAgICAgICBzZXR0aW5ncy5zZXREb21TdG9yYWdlRW5hYmxlZCh0cnVlKTsKICAgICAgICBzZXR0aW5ncy5zZXREYXRhYmFzZUVuYWJsZWQodHJ1ZSk7CiAgICAgICAgc2V0dGluZ3Muc2V0QWxsb3dGaWxlQWNjZXNzKHRydWUpOwogICAgICAgIHNldHRpbmdzLnNldEFsbG93Q29udGVudEFjY2Vzcyh0cnVlKTsKICAgICAgICBzZXR0aW5ncy5zZXRTdXBwb3J0Wm9vbShmYWxzZSk7CiAgICAgICAgc2V0dGluZ3Muc2V0QnVpbHRJblpvb21Db250cm9scyhmYWxzZSk7CiAgICAgICAgc2V0dGluZ3Muc2V0RGlzcGxheVpvb21Db250cm9scyhmYWxzZSk7CiAgICAgICAgd2ViVmlldy5zZXRXZWJWaWV3Q2xpZW50KG5ldyBXZWJWaWV3Q2xpZW50KCkpOwogICAgICAgIHdlYlZpZXcubG9hZFVybCgiZmlsZTovLy9hbmRyb2lkX2Fzc2V0L2luZGV4Lmh0bWwiKTsKICAgICAgICBzZXRDb250ZW50Vmlldyh3ZWJWaWV3KTsKICAgIH0KCiAgICBAT3ZlcnJpZGUKICAgIHB1YmxpYyB2b2lkIG9uQmFja1ByZXNzZWQoKSB7CiAgICAgICAgaWYgKHdlYlZpZXcuY2FuR29CYWNrKCkpIHsKICAgICAgICAgICAgd2ViVmlldy5nb0JhY2soKTsKICAgICAgICB9IGVsc2UgewogICAgICAgICAgICBzdXBlci5vbkJhY2tQcmVzc2VkKCk7CiAgICAgICAgfQogICAgfQp9Cg==' \
+            | base64 -d \
+            | sed "s/__PKG__/$PKG/g" \
+            > "android-app/app/src/main/java/$PKG_PATH/MainActivity.java"
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
-public class MainActivity extends Activity {
-
-    private WebView webView;
-
-    @Override
-    protected void onCreate(Bundle state) {
-
-        super.onCreate(state);
-
-        webView = new WebView(this);
-
-        WebSettings settings = webView.getSettings();
-
-        settings.setJavaScriptEnabled(true);
-
-        settings.setDomStorageEnabled(true);
-
-        settings.setDatabaseEnabled(true);
-
-        settings.setAllowFileAccess(true);
-
-        settings.setAllowContentAccess(true);
-
-        settings.setSupportZoom(false);
-
-        settings.setBuiltInZoomControls(false);
-
-        settings.setDisplayZoomControls(false);
-
-        webView.setWebViewClient(
-            new WebViewClient()
-        );
-
-        webView.loadUrl(
-            "file:///android_asset/index.html"
-        );
-
-        setContentView(webView);
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        if (webView.canGoBack()) {
-
-            webView.goBack();
-
-        } else {
-
-            super.onBackPressed();
-
-        }
-    }
-}
-JAVA
+          echo "Android project created."
 
 
       # ==================================================
@@ -629,6 +454,7 @@ JAVA
       # ==================================================
 
       - name: Build APK
+        id: build
         if: steps.find.outputs.found == 'true'
         shell: bash
         run: |
@@ -658,68 +484,53 @@ JAVA
       # UPLOAD APK TO SUPABASE STORAGE
       # ==================================================
 
-      - name: Upload APK to Supabase
-        if: steps.find.outputs.found == 'true'
+      - name: Upload APK
+        id: upload
+        if: steps.find.outputs.found == 'true' && steps.build.outcome == 'success'
         shell: bash
         run: |
           set -e
 
-          APP="${{ steps.find.outputs.app_id }}"
+          APP_ID="${{ steps.find.outputs.app_id }}"
 
-          ID="${{ steps.find.outputs.build_id }}"
+          BUILD_ID="${{ steps.find.outputs.build_id }}"
 
-          FILE="ASIM-TECH-$ID.apk"
+          APK_PATH="output/app-release.apk"
 
-          STORAGE="$APP/$ID/$FILE"
-
-          cp \
-            output/app-release.apk \
-            "output/$FILE"
+          STORAGE_PATH="$APP_ID/$BUILD_ID.apk"
 
           echo "Uploading APK..."
 
           curl -fsS \
             -X POST \
-            "$SUPABASE_URL/storage/v1/object/android-apks/$STORAGE" \
+            "$SUPABASE_URL/storage/v1/object/android-apks/$STORAGE_PATH" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/vnd.android.package-archive" \
             -H "x-upsert: true" \
-            --data-binary "@output/$FILE"
+            --data-binary "@$APK_PATH"
 
-          echo "FILE_NAME=$FILE" \
-            >> "$GITHUB_ENV"
+          APK_URL="$SUPABASE_URL/storage/v1/object/public/android-apks/$STORAGE_PATH"
 
-          echo "STORAGE_PATH=$STORAGE" \
-            >> "$GITHUB_ENV"
+          echo "APK_URL=$APK_URL" >> "$GITHUB_ENV"
 
           echo "APK uploaded successfully."
 
+          echo "APK URL: $APK_URL"
+
 
       # ==================================================
-      # MARK SUCCESS
+      # MARK BUILD SUCCESS
       # ==================================================
 
-      - name: Mark build as success
-        if: success() && steps.find.outputs.found == 'true'
+      - name: Mark build success
+        id: success
+        if: steps.find.outputs.found == 'true' && steps.build.outcome == 'success' && steps.upload.outcome == 'success'
         shell: bash
         run: |
           set -e
 
           ID="${{ steps.find.outputs.build_id }}"
-
-          SIZE="$(
-            stat -c%s "output/$FILE_NAME"
-          )"
-
-          SHA="$(
-            sha256sum "output/$FILE_NAME" \
-            | awk '{print $1}'
-          )"
-
-          NOW="$(
-            date -u +"%Y-%m-%dT%H:%M:%SZ"
-          )"
 
           curl -fsS \
             -X PATCH \
@@ -727,45 +538,42 @@ JAVA
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/json" \
-            --data "{
-              \"status\":\"success\",
-              \"storage_path\":\"$STORAGE_PATH\",
-              \"file_name\":\"$FILE_NAME\",
-              \"file_size\":$SIZE,
-              \"sha256\":\"$SHA\",
-              \"completed_at\":\"$NOW\"
-            }"
+            --data "{\"status\":\"success\",\"apk_url\":\"$APK_URL\"}"
 
-          echo "======================================"
+          echo "BUILD SUCCESS."
 
-          echo "BUILD SUCCESS"
-
-          echo "APK: $FILE_NAME"
-
-          echo "Size: $SIZE bytes"
-
-          echo "======================================"
+          echo "APK: $APK_URL"
 
 
       # ==================================================
-      # GITHUB ARTIFACT
+      # UPLOAD GITHUB ARTIFACT
       # ==================================================
 
       - name: Upload APK artifact
-        if: success() && steps.find.outputs.found == 'true'
+        if: steps.find.outputs.found == 'true' && steps.build.outcome == 'success' && steps.upload.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: ASIM-TECH-APK
-          path: output/*.apk
+          name: android-apk
+          path: output/app-release.apk
           if-no-files-found: error
 
 
       # ==================================================
-      # MARK FAILED
+      # MARK BUILD FAILED
       # ==================================================
 
-      - name: Mark build as failed
-        if: failure() && steps.find.outputs.found == 'true'
+      - name: Mark build failed
+        if: |
+          always() &&
+          steps.find.outputs.found == 'true' &&
+          (
+            steps.mark_building.outcome == 'failure' ||
+            steps.read.outcome == 'failure' ||
+            steps.prepare.outcome == 'failure' ||
+            steps.project.outcome == 'failure' ||
+            steps.build.outcome == 'failure' ||
+            steps.upload.outcome == 'failure'
+          )
         shell: bash
         run: |
           ID="${{ steps.find.outputs.build_id }}"
@@ -780,3 +588,5 @@ JAVA
             -H "Content-Type: application/json" \
             --data '{"status":"failed"}' \
             || true
+
+          exit 1
