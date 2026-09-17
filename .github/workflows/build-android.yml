@@ -4,250 +4,83 @@ on:
   push:
     branches:
       - main
-
   workflow_dispatch:
-    inputs:
-      app_id:
-        description: App ID
-        required: false
-        type: string
-
-      build_id:
-        description: Build ID
-        required: false
-        type: string
-
-  schedule:
-    - cron: "*/5 * * * *"
-
 
 permissions:
   contents: read
 
-
-concurrency:
-  group: asim-tech-android-build
-  cancel-in-progress: false
-
-
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     env:
-      SUPABASE_URL: "https://lgwaeqgiqrsjprsecwxx.supabase.co"
+      SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
       SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
 
     steps:
 
-      # ==================================================
-      # CHECKOUT
-      # ==================================================
-
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-
-      # ==================================================
-      # JAVA 17
-      # ==================================================
-
-      - name: Setup Java 17
+      - name: Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
-
-      # ==================================================
-      # GRADLE
-      # ==================================================
-
-      - name: Setup Gradle
+      - name: Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.10.2"
-          cache-disabled: true
 
-
-      # ==================================================
-      # ANDROID SDK
-      # ==================================================
-
-      - name: Setup Android SDK
-        shell: bash
+      - name: Android SDK
         run: |
-          set -e
-
           SDK="$HOME/android-sdk"
-
           mkdir -p "$SDK/cmdline-tools"
-
           cd /tmp
-
-          curl -fsSL \
-            -o commandlinetools.zip \
-            "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
-
-          rm -rf "$SDK/cmdline-tools/latest"
-
+          curl -L -o sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q sdk.zip
           mkdir -p "$SDK/cmdline-tools/latest"
-
-          unzip -q \
-            commandlinetools.zip \
-            -d "$SDK/cmdline-tools/latest"
-
-          if [ -d "$SDK/cmdline-tools/latest/cmdline-tools" ]; then
-
-            cp -R \
-              "$SDK/cmdline-tools/latest/cmdline-tools/." \
-              "$SDK/cmdline-tools/latest/"
-
-            rm -rf \
-              "$SDK/cmdline-tools/latest/cmdline-tools"
-
-          fi
-
+          cp -R cmdline-tools/* "$SDK/cmdline-tools/latest/"
           echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
-          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
-
           echo "$SDK/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-          echo "$SDK/platform-tools" >> "$GITHUB_PATH"
-          echo "$SDK/build-tools/35.0.0" >> "$GITHUB_PATH"
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
-          export ANDROID_HOME="$SDK"
-          export ANDROID_SDK_ROOT="$SDK"
-
-          export PATH="$SDK/cmdline-tools/latest/bin:$PATH"
-
-          yes | sdkmanager --licenses \
-            >/dev/null 2>&1 || true
-
-          sdkmanager \
-            "platform-tools" \
-            "platforms;android-35" \
-            "build-tools;35.0.0"
-
-
-      # ==================================================
-      # FIND QUEUED BUILD
-      # ==================================================
-
-      - name: Find queued build
+      - name: Find Build
         id: find
-        shell: bash
         run: |
-          set -e
-
-          if [ -z "$SUPABASE_KEY" ]; then
-            echo "ERROR: SUPABASE_SERVICE_ROLE_KEY is missing."
-            exit 1
-          fi
-
           API="$SUPABASE_URL/rest/v1"
-
-          INPUT_APP="${{ inputs.app_id }}"
-          INPUT_BUILD="${{ inputs.build_id }}"
-
-          if [ -n "$INPUT_BUILD" ]; then
-
-            QUERY="$API/app_builds?id=eq.$INPUT_BUILD&select=*"
-
-          elif [ -n "$INPUT_APP" ]; then
-
-            QUERY="$API/app_builds?app_id=eq.$INPUT_APP&status=eq.queued&order=created_at.asc&limit=1"
-
-          else
-
-            QUERY="$API/app_builds?status=eq.queued&order=created_at.asc&limit=1"
-
-          fi
-
-          echo "Checking for queued build..."
-
-          DATA="$(curl -fsS \
+          DATA=$(curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
-            "$QUERY")"
+            "$API/app_builds?status=eq.queued&order=created_at.asc&limit=1")
 
-          COUNT="$(echo "$DATA" | jq 'length')"
-
-          if [ "$COUNT" = "0" ]; then
-
-            echo "No queued build found."
-
+          if [ "$(echo "$DATA" | jq length)" = "0" ]; then
             echo "found=false" >> "$GITHUB_OUTPUT"
-
             exit 0
-
           fi
 
-          APP_ID_VALUE="$(echo "$DATA" | jq -r '.[0].app_id')"
-
-          BUILD_ID_VALUE="$(echo "$DATA" | jq -r '.[0].id')"
-
-          echo "Build found."
-
-          echo "App ID: $APP_ID_VALUE"
-
-          echo "Build ID: $BUILD_ID_VALUE"
-
           echo "found=true" >> "$GITHUB_OUTPUT"
+          echo "app_id=$(echo "$DATA" | jq -r '.[0].app_id')" >> "$GITHUB_OUTPUT"
+          echo "build_id=$(echo "$DATA" | jq -r '.[0].id')" >> "$GITHUB_OUTPUT"
 
-          echo "app_id=$APP_ID_VALUE" >> "$GITHUB_OUTPUT"
-
-          echo "build_id=$BUILD_ID_VALUE" >> "$GITHUB_OUTPUT"
-
-
-      # ==================================================
-      # MARK BUILDING
-      # ==================================================
-
-      - name: Mark build as building
-        id: mark_building
+      - name: Mark Building
         if: steps.find.outputs.found == 'true'
-        shell: bash
         run: |
-          set -e
-
           ID="${{ steps.find.outputs.build_id }}"
-
-          curl -fsS \
-            -X PATCH \
+          curl -fsS -X PATCH \
             "$SUPABASE_URL/rest/v1/app_builds?id=eq.$ID" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/json" \
             --data '{"status":"building"}'
 
-          echo "Build status changed to BUILDING."
-
-
-      # ==================================================
-      # READ APPLICATION DATA
-      # ==================================================
-
-      - name: Read application data
-        id: read
+      - name: Get App
         if: steps.find.outputs.found == 'true'
-        shell: bash
         run: |
-          set -e
-
           APP="${{ steps.find.outputs.app_id }}"
-
           API="$SUPABASE_URL/rest/v1"
-
-          echo "Reading application settings..."
-
-          curl -fsS \
-            -H "apikey: $SUPABASE_KEY" \
-            -H "Authorization: Bearer $SUPABASE_KEY" \
-            "$API/app_files?app_id=eq.$APP&file_path=eq.android-settings.json&select=content" \
-            > settings.json
 
           curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
@@ -258,335 +91,146 @@ jobs:
           curl -fsS \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
-            "$API/app_files?app_id=eq.$APP&file_path=eq.webapp-url.txt&select=content" \
-            > url.json
+            "$API/app_files?app_id=eq.$APP&file_path=eq.android-settings.json&select=content" \
+            > settings.json
 
-          SETTINGS_CONTENT="$(jq -r '.[0].content // "{}"' settings.json)"
-
-          echo "$SETTINGS_CONTENT" > settings-content.json
-
-          APP_NAME_VALUE="$(jq -r '.appName // "ASIM TECH App"' settings-content.json)"
-
-          PACKAGE_VALUE="$(jq -r '.packageName // "com.asimtech.generatedapp"' settings-content.json)"
-
-          VERSION_NAME_VALUE="$(jq -r '.versionName // "1.0.0"' settings-content.json)"
-
-          VERSION_CODE_VALUE="$(jq -r '.versionCode // 1' settings-content.json)"
-
-          echo "APP_NAME=$APP_NAME_VALUE" >> "$GITHUB_ENV"
-
-          echo "PACKAGE_NAME=$PACKAGE_VALUE" >> "$GITHUB_ENV"
-
-          echo "VERSION_NAME=$VERSION_NAME_VALUE" >> "$GITHUB_ENV"
-
-          echo "VERSION_CODE=$VERSION_CODE_VALUE" >> "$GITHUB_ENV"
-
-          echo "App Name: $APP_NAME_VALUE"
-
-          echo "Package: $PACKAGE_VALUE"
-
-          echo "Version: $VERSION_NAME_VALUE"
-
-
-      # ==================================================
-      # PREPARE WEB APP
-      # ==================================================
-
-      - name: Prepare Web App
-        id: prepare
+      - name: Create Android Project
         if: steps.find.outputs.found == 'true'
-        shell: bash
         run: |
-          set -e
-
-          APP="${{ steps.find.outputs.app_id }}"
-
           mkdir -p android-app/app/src/main/assets
+          mkdir -p android-app/app/src/main/res/values
+          mkdir -p android-app/app/src/main/java/com/asimtech/app
 
-          HTML_CONTENT="$(jq -r '.[0].content // empty' html.json)"
+          jq -r '.[0].content // "<html><body><h1>ASIM TECH</h1></body></html>"' html.json > android-app/app/src/main/assets/index.html
 
-          URL_CONTENT="$(jq -r '.[0].content // empty' url.json)"
+          APP_NAME=$(jq -r '.[0].content | fromjson | .appName // "ASIM TECH App"' settings.json 2>/dev/null || echo "ASIM TECH App")
+          PACKAGE=$(jq -r '.[0].content | fromjson | .packageName // "com.asimtech.app"' settings.json 2>/dev/null || echo "com.asimtech.app")
+          VERSION=$(jq -r '.[0].content | fromjson | .versionName // "1.0"' settings.json 2>/dev/null || echo "1.0")
 
+          mkdir -p "android-app/app/src/main/java/${PACKAGE//./\/}"
 
-          # ------------------------------------------------
-          # SPECIAL ASIM TECH PLATFORM APP
-          # ------------------------------------------------
-
-          if [ "$APP" = "6b305668-ffb5-4e2d-94ff-0bda17978ac2" ]; then
-
-            printf '%s' 'PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLGluaXRpYWwtc2NhbGU9MSI+CjxzdHlsZT4KaHRtbCwKYm9keSwKaWZyYW1lIHsKICBtYXJnaW46IDA7CiAgd2lkdGg6IDEwMCU7CiAgaGVpZ2h0OiAxMDAlOwogIGJvcmRlcjogMDsKICBvdmVyZmxvdzogaGlkZGVuOwp9Cjwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxpZnJhbWUKICBzcmM9Imh0dHBzOi8vYXNpbTc1NzcyLmdpdGh1Yi5pby9hc2ltLXRlY2gtcGxhdGZvcm0vIgo+PC9pZnJhbWU+CjwvYm9keT4KPC9odG1sPgo=' \
-              | base64 -d \
-              > android-app/app/src/main/assets/index.html
-
-            echo "Special ASIM TECH platform app prepared."
-
-          elif [ -n "$HTML_CONTENT" ]; then
-
-            printf '%s' "$HTML_CONTENT" \
-              > android-app/app/src/main/assets/index.html
-
-            echo "HTML source prepared."
-
-          elif [ -n "$URL_CONTENT" ]; then
-
-            URL_CONTENT="$URL_CONTENT" \
-            python3 -c 'import os; from pathlib import Path; u=os.environ["URL_CONTENT"]; p=Path("android-app/app/src/main/assets/index.html"); p.write_text("<!doctype html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<style>html,body,iframe{margin:0;width:100%;height:100%;border:0;overflow:hidden}</style>\n</head>\n<body>\n<iframe src=\"" + u.replace("&","&amp;").replace("\"","&quot;") + "\" style=\"width:100%;height:100%;border:0\"></iframe>\n</body>\n</html>\n", encoding="utf-8")'
-
-            echo "URL source prepared."
-
-          else
-
-            APP_NAME="$APP_NAME" \
-            python3 -c 'import os; from pathlib import Path; n=os.environ.get("APP_NAME","ASIM TECH App"); Path("android-app/app/src/main/assets/index.html").write_text("<!doctype html>\n<html>\n<head><meta charset=\"UTF-8\"></head>\n<body style=\"font-family:Arial;text-align:center;padding:40px\"><h1>"+n+"</h1><p>No Web App source saved.</p></body>\n</html>\n",encoding="utf-8")'
-
-            echo "No source found. Placeholder page prepared."
-
-          fi
-
-
-      # ==================================================
-      # CREATE ANDROID PROJECT
-      # ==================================================
-
-      - name: Create Android project
-        id: project
-        if: steps.find.outputs.found == 'true'
-        shell: bash
-        run: |
-          set -e
-
-          PKG="$PACKAGE_NAME"
-
-          PKG_PATH="${PKG//./\/}"
-
-          mkdir -p \
-            "android-app/app/src/main/java/$PKG_PATH"
-
-          mkdir -p \
-            android-app/app/src/main/res/values
-
-
-          # ------------------------------------------------
-          # SETTINGS.GRADLE
-          # ------------------------------------------------
-
-          printf '%s' 'cGx1Z2luTWFuYWdlbWVudCB7CiAgICByZXBvc2l0b3JpZXMgewogICAgICAgIGdvb2dsZSgpCiAgICAgICAgbWF2ZW5DZW50cmFsKCkKICAgICAgICBncmFkbGVQbHVnaW5Qb3J0YWwoKQogICAgfQp9CgpkZXBlbmRlbmN5UmVzb2x1dGlvbk1hbmFnZW1lbnQgewogICAgcmVwb3NpdG9yaWVzTW9kZS5zZXQoCiAgICAgICAgb3JnLmdyYWRsZS5hcGkuaW5pdGlhbGl6YXRpb24ucmVzb2x2ZS5SZXBvc2l0b3JpZXNNb2RlLkZBSUxfT05fUFJPSkVDVF9SRVBPUwogICAgKQogICAgcmVwb3NpdG9yaWVzIHsKICAgICAgICBnb29nbGUoKQogICAgICAgIG1hdmVuQ2VudHJhbCgpCiAgICB9Cn0KCnJvb3RQcm9qZWN0Lm5hbWUgPSAiQVNJTVRFQ0giCmluY2x1ZGUoIjphcHAiKQo=' \
-            | base64 -d \
+          printf '%s\n' \
+            'pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }' \
+            'dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral() } }' \
+            'rootProject.name="ASIMTECH"' \
+            'include(":app")' \
             > android-app/settings.gradle
 
-
-          # ------------------------------------------------
-          # ROOT BUILD.GRADLE
-          # ------------------------------------------------
-
-          printf '%s' 'cGx1Z2lucyB7CiAgICBpZCAiY29tLmFuZHJvaWQuYXBwbGljYXRpb24iIHZlcnNpb24gIjguNy4zIiBhcHBseSBmYWxzZQp9Cg==' \
-            | base64 -d \
+          printf '%s\n' \
+            'plugins {' \
+            '    id "com.android.application" version "8.7.3" apply false' \
+            '}' \
             > android-app/build.gradle
 
+          printf '%s\n' \
+            'plugins {' \
+            '    id "com.android.application"' \
+            '}' \
+            'android {' \
+            "    namespace \"$PACKAGE\"" \
+            '    compileSdk 35' \
+            '    defaultConfig {' \
+            "        applicationId \"$PACKAGE\"" \
+            '        minSdk 23' \
+            '        targetSdk 35' \
+            '        versionCode 1' \
+            "        versionName \"$VERSION\"" \
+            '    }' \
+            '}' \
+            > android-app/app/build.gradle
 
-          # ------------------------------------------------
-          # APP BUILD.GRADLE
-          # ------------------------------------------------
+          printf '%s\n' \
+            '<resources>' \
+            "  <string name=\"app_name\">$APP_NAME</string>" \
+            '</resources>' \
+            > android-app/app/src/main/res/values/strings.xml
 
-          PKG="$PKG" \
-          VERSION_CODE="$VERSION_CODE" \
-          VERSION_NAME="$VERSION_NAME" \
-          python3 -c 'import os; from pathlib import Path; p=Path("android-app/app/build.gradle"); p.write_text("""plugins {
-    id "com.android.application"
-}
-
-android {
-    namespace "%s"
-    compileSdk 35
-
-    defaultConfig {
-        applicationId "%s"
-        minSdk 23
-        targetSdk 35
-        versionCode %s
-        versionName "%s"
-    }
-}
-""" % (os.environ["PKG"],os.environ["PKG"],os.environ["VERSION_CODE"],os.environ["VERSION_NAME"]),encoding="utf-8")'
-
-
-          # ------------------------------------------------
-          # STRINGS.XML
-          # ------------------------------------------------
-
-          APP_NAME="$APP_NAME" \
-          python3 -c 'import os,html; from pathlib import Path; n=html.escape(os.environ.get("APP_NAME","ASIM TECH App")); Path("android-app/app/src/main/res/values/strings.xml").write_text("<resources>\n    <string name=\"app_name\">"+n+"</string>\n</resources>\n",encoding="utf-8")'
-
-
-          # ------------------------------------------------
-          # STYLES.XML
-          # ------------------------------------------------
-
-          printf '%s' 'PHJlc291cmNlcz4KICAgIDxzdHlsZSBuYW1lPSJBcHBUaGVtZSIgcGFyZW50PSJhbmRyb2lkOnN0eWxlL1RoZW1lLk1hdGVyaWFsLkxpZ2h0Lk5vQWN0aW9uQmFyIj4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOmZvbnRGYW1pbHkiPnNhbnM8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iYW5kcm9pZDp3aW5kb3dBY3Rpb25Nb2RlT3ZlcmxheSI+dHJ1ZTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOmNvbG9yQWNjZW50Ij4jMTU2NUMwPC9pdGVtPgogICAgPC9zdHlsZT4KPC9yZXNvdXJjZXM+Cg==' \
-            | base64 -d \
+          printf '%s\n' \
+            '<resources>' \
+            '  <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar"/>' \
+            '</resources>' \
             > android-app/app/src/main/res/values/styles.xml
 
-
-          # ------------------------------------------------
-          # ANDROID MANIFEST
-          # ------------------------------------------------
-
-          printf '%s' 'PG1hbmlmZXN0IHhtbG5zOmFuZHJvaWQ9Imh0dHA6Ly9zY2hlbWFzLmFuZHJvaWQuY29tL2Fway9yZXMvYW5kcm9pZCI+CiAgICA8dXNlcy1wZXJtaXNzaW9uIGFuZHJvaWQ6bmFtZT0iYW5kcm9pZC5wZXJtaXNzaW9uLklOVEVSTkVUIiAvPgogICAgPGFwcGxpY2F0aW9uCiAgICAgICAgYW5kcm9pZDphbGxvd0JhY2t1cD0idHJ1ZSIKICAgICAgICBhbmRyb2lkOnVzZXNDbGVhcnRleFRyYWZmaWM9InRydWUiCiAgICAgICAgYW5kcm9pZDpsYWJlbD0iQHN0cmluZy9hcHBfbmFtZSIKICAgICAgICBhbmRyb2lkOnRoZW1lPSJAc3R5bGUvQXBwVGhlbWUiPgogICAgICAgIDxhY3Rpdml0eQogICAgICAgICAgICBhbmRyb2lkOm5hbWU9Ii5NYWluQWN0aXZpdHkiCiAgICAgICAgICAgIGFuZHJvaWQ6ZXhwb3J0ZWQ9InRydWUiPgogICAgICAgICAgICA8aW50ZW50LWZpbHRlcj4KICAgICAgICAgICAgICAgIDxhY3Rpb24gYW5kcm9pZDpuYW1lPSJhbmRyb2lkLmludGVudC5hY3Rpb24uTUFJTiIgLz4KICAgICAgICAgICAgICAgIDxjYXRlZ29yeSBhbmRyb2lkOm5hbWU9ImFuZHJvaWQuaW50ZW50LmNhdGVnb3J5LkxBVU5DSEVSIiAvPgogICAgICAgICAgICA8L2ludGVudC1maWx0ZXI+CiAgICAgICAgPC9hY3Rpdml0eT4KICAgIDwvYXBwbGljYXRpb24+Cjwv bWFuaWZlc3Q+Cg==' \
-            | tr -d ' ' \
-            | base64 -d \
+          printf '%s\n' \
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' \
+            '  <uses-permission android:name="android.permission.INTERNET"/>' \
+            '  <application android:theme="@style/AppTheme" android:label="@string/app_name">' \
+            '    <activity android:name=".MainActivity" android:exported="true">' \
+            '      <intent-filter>' \
+            '        <action android:name="android.intent.action.MAIN"/>' \
+            '        <category android:name="android.intent.category.LAUNCHER"/>' \
+            '      </intent-filter>' \
+            '    </activity>' \
+            '  </application>' \
+            '</manifest>' \
             > android-app/app/src/main/AndroidManifest.xml
 
-
-          # ------------------------------------------------
-          # MAIN ACTIVITY
-          # ------------------------------------------------
-
-          printf '%s' 'cGFja2FnZSBfX1BLR19fOwoKaW1wb3J0IGFuZHJvaWQuYXBwLkFjdGl2aXR5OwppbXBvcnQgYW5kcm9pZC5vcy5CdW5kbGU7CmltcG9ydCBhbmRyb2lkLndlYmtpdC5XZWJTZXR0aW5nczsKaW1wb3J0IGFuZHJvaWQud2Via2l0LldlYlZpZXc7CmltcG9ydCBhbmRyb2lkLndlYmtpdC5XZWJWaWV3Q2xpZW50OwoKcHVibGljIGNsYXNzIE1haW5BY3Rpdml0eSBleHRlbmRzIEFjdGl2aXR5IHsKICAgIHByaXZhdGUgV2ViVmlldyB3ZWJWaWV3OwoKICAgIEBPdmVycmlkZQogICAgcHJvdGVjdGVkIHZvaWQgb25DcmVhdGUoQnVuZGxlIHN0YXRlKSB7CiAgICAgICAgc3VwZXIub25DcmVhdGUoc3RhdGUpOwogICAgICAgIHdlYlZpZXcgPSBuZXcgV2ViVmlldyh0aGlzKTsKICAgICAgICBXZWJTZXR0aW5ncyBzZXR0aW5ncyA9IHdlYlZpZXcuZ2V0U2V0dGluZ3MoKTsKICAgICAgICBzZXR0aW5ncy5zZXRKYXZhU2NyaXB0RW5hYmxlZCh0cnVlKTsKICAgICAgICBzZXR0aW5ncy5zZXREb21TdG9yYWdlRW5hYmxlZCh0cnVlKTsKICAgICAgICBzZXR0aW5ncy5zZXREYXRhYmFzZUVuYWJsZWQodHJ1ZSk7CiAgICAgICAgc2V0dGluZ3Muc2V0QWxsb3dGaWxlQWNjZXNzKHRydWUpOwogICAgICAgIHNldHRpbmdzLnNldEFsbG93Q29udGVudEFjY2Vzcyh0cnVlKTsKICAgICAgICBzZXR0aW5ncy5zZXRTdXBwb3J0Wm9vbShmYWxzZSk7CiAgICAgICAgc2V0dGluZ3Muc2V0QnVpbHRJblpvb21Db250cm9scyhmYWxzZSk7CiAgICAgICAgc2V0dGluZ3Muc2V0RGlzcGxheVpvb21Db250cm9scyhmYWxzZSk7CiAgICAgICAgd2ViVmlldy5zZXRXZWJWaWV3Q2xpZW50KG5ldyBXZWJWaWV3Q2xpZW50KCkpOwogICAgICAgIHdlYlZpZXcubG9hZFVybCgiZmlsZTovLy9hbmRyb2lkX2Fzc2V0L2luZGV4Lmh0bWwiKTsKICAgICAgICBzZXRDb250ZW50Vmlldyh3ZWJWaWV3KTsKICAgIH0KCiAgICBAT3ZlcnJpZGUKICAgIHB1YmxpYyB2b2lkIG9uQmFja1ByZXNzZWQoKSB7CiAgICAgICAgaWYgKHdlYlZpZXcuY2FuR29CYWNrKCkpIHsKICAgICAgICAgICAgd2ViVmlldy5nb0JhY2soKTsKICAgICAgICB9IGVsc2UgewogICAgICAgICAgICBzdXBlci5vbkJhY2tQcmVzc2VkKCk7CiAgICAgICAgfQogICAgfQp9Cg==' \
-            | base64 -d \
-            | sed "s/__PKG__/$PKG/g" \
-            > "android-app/app/src/main/java/$PKG_PATH/MainActivity.java"
-
-          echo "Android project created."
-
-
-      # ==================================================
-      # BUILD APK
-      # ==================================================
+          printf '%s\n' \
+            "package $PACKAGE;" \
+            'import android.app.Activity;' \
+            'import android.os.Bundle;' \
+            'import android.webkit.WebView;' \
+            'import android.webkit.WebSettings;' \
+            'public class MainActivity extends Activity {' \
+            '  public void onCreate(Bundle b) {' \
+            '    super.onCreate(b);' \
+            '    WebView w=new WebView(this);' \
+            '    WebSettings s=w.getSettings();' \
+            '    s.setJavaScriptEnabled(true);' \
+            '    s.setDomStorageEnabled(true);' \
+            '    w.setWebViewClient(new android.webkit.WebViewClient());' \
+            '    w.loadUrl("file:///android_asset/index.html");' \
+            '    setContentView(w);' \
+            '  }' \
+            '}' \
+            > "android-app/app/src/main/java/${PACKAGE//./\/}/MainActivity.java"
 
       - name: Build APK
-        id: build
+        id: apk
         if: steps.find.outputs.found == 'true'
-        shell: bash
         run: |
-          set -e
-
           cd android-app
-
-          echo "Starting Gradle build..."
-
-          gradle \
-            --no-daemon \
-            --stacktrace \
-            assembleDebug
-
+          gradle --no-daemon assembleDebug
           cd ..
-
           mkdir -p output
-
-          cp \
-            android-app/app/build/outputs/apk/debug/app-debug.apk \
-            output/app-release.apk
-
-          echo "APK build completed."
-
-
-      # ==================================================
-      # UPLOAD APK TO SUPABASE STORAGE
-      # ==================================================
+          cp android-app/app/build/outputs/apk/debug/app-debug.apk output/app.apk
 
       - name: Upload APK
         id: upload
-        if: steps.find.outputs.found == 'true' && steps.build.outcome == 'success'
-        shell: bash
+        if: steps.find.outputs.found == 'true' && steps.apk.outcome == 'success'
         run: |
-          set -e
+          APP="${{ steps.find.outputs.app_id }}"
+          BUILD="${{ steps.find.outputs.build_id }}"
+          PATHNAME="$APP/$BUILD.apk"
 
-          APP_ID="${{ steps.find.outputs.app_id }}"
-
-          BUILD_ID="${{ steps.find.outputs.build_id }}"
-
-          APK_PATH="output/app-release.apk"
-
-          STORAGE_PATH="$APP_ID/$BUILD_ID.apk"
-
-          echo "Uploading APK..."
-
-          curl -fsS \
-            -X POST \
-            "$SUPABASE_URL/storage/v1/object/android-apks/$STORAGE_PATH" \
+          curl -fsS -X POST \
+            "$SUPABASE_URL/storage/v1/object/android-apks/$PATHNAME" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/vnd.android.package-archive" \
             -H "x-upsert: true" \
-            --data-binary "@$APK_PATH"
+            --data-binary "@output/app.apk"
 
-          APK_URL="$SUPABASE_URL/storage/v1/object/public/android-apks/$STORAGE_PATH"
+          URL="$SUPABASE_URL/storage/v1/object/public/android-apks/$PATHNAME"
 
-          echo "APK_URL=$APK_URL" >> "$GITHUB_ENV"
-
-          echo "APK uploaded successfully."
-
-          echo "APK URL: $APK_URL"
-
-
-      # ==================================================
-      # MARK BUILD SUCCESS
-      # ==================================================
-
-      - name: Mark build success
-        id: success
-        if: steps.find.outputs.found == 'true' && steps.build.outcome == 'success' && steps.upload.outcome == 'success'
-        shell: bash
-        run: |
-          set -e
-
-          ID="${{ steps.find.outputs.build_id }}"
-
-          curl -fsS \
-            -X PATCH \
-            "$SUPABASE_URL/rest/v1/app_builds?id=eq.$ID" \
+          curl -fsS -X PATCH \
+            "$SUPABASE_URL/rest/v1/app_builds?id=eq.$BUILD" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/json" \
-            --data "{\"status\":\"success\",\"apk_url\":\"$APK_URL\"}"
+            --data "{\"status\":\"success\",\"apk_url\":\"$URL\"}"
 
-          echo "BUILD SUCCESS."
-
-          echo "APK: $APK_URL"
-
-
-      # ==================================================
-      # UPLOAD GITHUB ARTIFACT
-      # ==================================================
-
-      - name: Upload APK artifact
-        if: steps.find.outputs.found == 'true' && steps.build.outcome == 'success' && steps.upload.outcome == 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: output/app-release.apk
-          if-no-files-found: error
-
-
-      # ==================================================
-      # MARK BUILD FAILED
-      # ==================================================
-
-      - name: Mark build failed
+      - name: Mark Failed
         if: |
           always() &&
           steps.find.outputs.found == 'true' &&
-          (
-            steps.mark_building.outcome == 'failure' ||
-            steps.read.outcome == 'failure' ||
-            steps.prepare.outcome == 'failure' ||
-            steps.project.outcome == 'failure' ||
-            steps.build.outcome == 'failure' ||
-            steps.upload.outcome == 'failure'
-          )
-        shell: bash
+          (steps.apk.outcome == 'failure' || steps.upload.outcome == 'failure')
         run: |
           ID="${{ steps.find.outputs.build_id }}"
-
-          echo "Build failed."
-
-          curl -sS \
-            -X PATCH \
+          curl -sS -X PATCH \
             "$SUPABASE_URL/rest/v1/app_builds?id=eq.$ID" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/json" \
-            --data '{"status":"failed"}' \
-            || true
-
+            --data '{"status":"failed"}' || true
           exit 1
