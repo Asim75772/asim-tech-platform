@@ -20,21 +20,22 @@ concurrency:
 jobs:
 
   build-apk:
+
     runs-on: ubuntu-latest
 
     steps:
 
-      # --------------------------------------------------
-      # 1. Checkout
-      # --------------------------------------------------
+      # ==================================================
+      # 1. CHECKOUT
+      # ==================================================
 
       - name: Checkout repository
         uses: actions/checkout@v4
 
 
-      # --------------------------------------------------
-      # 2. Setup Java
-      # --------------------------------------------------
+      # ==================================================
+      # 2. JAVA 17
+      # ==================================================
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
@@ -43,46 +44,94 @@ jobs:
           java-version: "17"
 
 
-      # --------------------------------------------------
-      # 3. Install Android SDK
-      # --------------------------------------------------
+      # ==================================================
+      # 3. ANDROID SDK
+      # ==================================================
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-
-      - name: Install Android SDK packages
         run: |
-          yes | sdkmanager --licenses || true
 
-          sdkmanager \
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
+
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+
+          echo "Android SDK:"
+          echo "$ANDROID_HOME"
+
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+
+          if [ ! -x "$SDKMANAGER" ]; then
+
+            SDKMANAGER=$(find \
+              "$ANDROID_HOME/cmdline-tools" \
+              -type f \
+              -name sdkmanager \
+              | head -1)
+
+          fi
+
+          if [ -z "$SDKMANAGER" ]; then
+
+            echo "ERROR: sdkmanager not found."
+
+            find "$ANDROID_HOME" \
+              -maxdepth 5 \
+              -type f \
+              -name sdkmanager \
+              -print || true
+
+            exit 1
+
+          fi
+
+          echo "Using sdkmanager:"
+          echo "$SDKMANAGER"
+
+          "$SDKMANAGER" --version
+
+          echo "Accepting Android SDK licenses..."
+
+          yes | "$SDKMANAGER" --licenses || true
+
+          echo "Installing Android SDK packages..."
+
+          "$SDKMANAGER" \
             "platform-tools" \
             "platforms;android-35" \
             "build-tools;35.0.0"
 
+          echo "Android SDK setup completed."
 
-      # --------------------------------------------------
-      # 4. Install tools
-      # --------------------------------------------------
+
+      # ==================================================
+      # 4. INSTALL DEPENDENCIES
+      # ==================================================
 
       - name: Install dependencies
         run: |
+
           sudo apt-get update
-          sudo apt-get install -y jq unzip
+
+          sudo apt-get install -y \
+            jq \
+            unzip
 
 
-      # --------------------------------------------------
-      # 5. Find queued build
-      # --------------------------------------------------
+      # ==================================================
+      # 5. FIND QUEUED BUILD
+      # ==================================================
 
       - name: Find queued build
         id: queue
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
         run: |
 
-          echo "Checking build queue..."
+          echo "Checking Supabase build queue..."
 
           RESPONSE=$(curl -sS \
             "${SUPABASE_URL}/rest/v1/app_builds?status=eq.queued&order=created_at.asc&limit=1" \
@@ -93,36 +142,48 @@ jobs:
           echo "$RESPONSE"
 
           BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
+
           APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
 
           if [ -z "$BUILD_ID" ]; then
+
             echo "No queued build found."
+
             echo "found=false" >> "$GITHUB_OUTPUT"
+
             exit 0
+
           fi
 
-          echo "Build ID: $BUILD_ID"
-          echo "App ID: $APP_ID"
+          echo "Queued Build ID:"
+          echo "$BUILD_ID"
+
+          echo "App ID:"
+          echo "$APP_ID"
 
           echo "found=true" >> "$GITHUB_OUTPUT"
+
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
+
           echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
 
 
-      # --------------------------------------------------
-      # 6. Stop if queue is empty
-      # --------------------------------------------------
+      # ==================================================
+      # 6. STOP IF NO QUEUE
+      # ==================================================
 
       - name: Stop when queue is empty
         if: steps.queue.outputs.found != 'true'
         run: |
-          echo "Nothing to build."
+
+          echo "No queued APK build."
+
           exit 0
 
 
-      # --------------------------------------------------
-      # 7. Mark build as building
-      # --------------------------------------------------
+      # ==================================================
+      # 7. MARK BUILDING
+      # ==================================================
 
       - name: Mark build as building
         if: steps.queue.outputs.found == 'true'
@@ -130,7 +191,10 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
+
+          echo "Marking build as building..."
 
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
@@ -145,10 +209,12 @@ jobs:
           }
           EOF
 
+          echo "Build status = building"
 
-      # --------------------------------------------------
-      # 8. Download app files from Supabase
-      # --------------------------------------------------
+
+      # ==================================================
+      # 8. DOWNLOAD APP FILES
+      # ==================================================
 
       - name: Download app files
         if: steps.queue.outputs.found == 'true'
@@ -156,6 +222,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           APP_ID: ${{ steps.queue.outputs.app_id }}
+
         run: |
 
           mkdir -p source
@@ -168,22 +235,27 @@ jobs:
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
             > source/files.json
 
+          echo "App files response:"
+
           cat source/files.json | jq .
 
           COUNT=$(jq 'length' source/files.json)
 
-          echo "Files found: $COUNT"
+          echo "Number of files: $COUNT"
 
           if [ "$COUNT" -eq 0 ]; then
-            echo "No app files found."
-            exit 1
-          fi
 
+            echo "ERROR: No app files found."
+
+            exit 1
+
+          fi
 
           jq -c '.[]' source/files.json | while read -r ITEM
           do
 
             FILE_PATH=$(echo "$ITEM" | jq -r '.file_path')
+
             CONTENT=$(echo "$ITEM" | jq -r '.content')
 
             mkdir -p "source/$(dirname "$FILE_PATH")"
@@ -195,84 +267,109 @@ jobs:
           done
 
 
-      # --------------------------------------------------
-      # 9. Read Android settings
-      # --------------------------------------------------
+      # ==================================================
+      # 9. READ ANDROID SETTINGS
+      # ==================================================
 
       - name: Read Android settings
         if: steps.queue.outputs.found == 'true'
         run: |
 
           if [ ! -f source/android-settings.json ]; then
-            echo "android-settings.json not found."
+
+            echo "ERROR: android-settings.json not found."
+
             exit 1
+
           fi
+
+          echo "Android settings:"
 
           cat source/android-settings.json
 
-          APP_NAME=$(jq -r '.appName // "ASIM TECH App"' source/android-settings.json)
+          APP_NAME=$(jq -r \
+            '.appName // "ASIM TECH App"' \
+            source/android-settings.json)
 
-          PACKAGE_NAME=$(jq -r '.packageName // "com.asimtech.app"' source/android-settings.json)
+          PACKAGE_NAME=$(jq -r \
+            '.packageName // "com.asimtech.app"' \
+            source/android-settings.json)
 
-          VERSION_NAME=$(jq -r '.versionName // "1.0.0"' source/android-settings.json)
+          VERSION_NAME=$(jq -r \
+            '.versionName // "1.0.0"' \
+            source/android-settings.json)
 
-          VERSION_CODE=$(jq -r '.versionCode // 1' source/android-settings.json)
+          VERSION_CODE=$(jq -r \
+            '.versionCode // 1' \
+            source/android-settings.json)
 
           echo "APP_NAME=$APP_NAME" >> "$GITHUB_ENV"
+
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> "$GITHUB_ENV"
+
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+
           echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
 
-          echo "App Name: $APP_NAME"
-          echo "Package: $PACKAGE_NAME"
-          echo "Version: $VERSION_NAME"
-          echo "Version Code: $VERSION_CODE"
+          echo ""
+          echo "App Name      : $APP_NAME"
+          echo "Package Name  : $PACKAGE_NAME"
+          echo "Version Name  : $VERSION_NAME"
+          echo "Version Code  : $VERSION_CODE"
 
 
-      # --------------------------------------------------
-      # 10. Validate package
-      # --------------------------------------------------
+      # ==================================================
+      # 10. VALIDATE PACKAGE
+      # ==================================================
 
       - name: Validate package name
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          if ! echo "$PACKAGE_NAME" | grep -Eq '^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$'
+          echo "Validating package name..."
+
+          if ! echo "$PACKAGE_NAME" | grep -Eq \
+            '^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$'
           then
-            echo "Invalid package name:"
+
+            echo "ERROR: Invalid package name:"
             echo "$PACKAGE_NAME"
+
             exit 1
+
           fi
 
-          echo "Package name valid."
+          echo "Package name is valid."
 
 
-      # --------------------------------------------------
-      # 11. Create Android project
-      # --------------------------------------------------
+      # ==================================================
+      # 11. CREATE ANDROID PROJECT
+      # ==================================================
 
       - name: Create Android project
         if: steps.queue.outputs.found == 'true'
         run: |
 
+          mkdir -p android
+
+          mkdir -p android/app
+
+          mkdir -p android/app/src/main
+
           mkdir -p android/app/src/main/java
 
-          mkdir -p android/app/src/main/res/drawable
+          mkdir -p android/app/src/main/res
 
-          mkdir -p android/app/src/main/res/mipmap-hdpi
+          mkdir -p android/app/src/main/res/values
 
-          mkdir -p android/app/src/main/res/mipmap-mdpi
+          mkdir -p android/app/src/main/assets
 
-          mkdir -p android/app/src/main/res/mipmap-xhdpi
-
-          mkdir -p android/app/src/main/res/mipmap-xxhdpi
-
-          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          echo "Android project directories created."
 
 
-      # --------------------------------------------------
-      # 12. Create Gradle settings
-      # --------------------------------------------------
+      # ==================================================
+      # 12. CREATE SETTINGS.GRADLE
+      # ==================================================
 
       - name: Create Gradle settings
         if: steps.queue.outputs.found == 'true'
@@ -301,10 +398,12 @@ jobs:
           include(":app")
           EOF
 
+          echo "settings.gradle created."
 
-      # --------------------------------------------------
-      # 13. Create root Gradle
-      # --------------------------------------------------
+
+      # ==================================================
+      # 13. CREATE ROOT BUILD.GRADLE
+      # ==================================================
 
       - name: Create root Gradle
         if: steps.queue.outputs.found == 'true'
@@ -316,10 +415,12 @@ jobs:
           }
           EOF
 
+          echo "Root build.gradle created."
 
-      # --------------------------------------------------
-      # 14. Create Gradle properties
-      # --------------------------------------------------
+
+      # ==================================================
+      # 14. CREATE GRADLE PROPERTIES
+      # ==================================================
 
       - name: Create Gradle properties
         if: steps.queue.outputs.found == 'true'
@@ -331,10 +432,12 @@ jobs:
           android.nonTransitiveRClass=true
           EOF
 
+          echo "gradle.properties created."
 
-      # --------------------------------------------------
-      # 15. Generate Java package path
-      # --------------------------------------------------
+
+      # ==================================================
+      # 15. GENERATE PACKAGE PATH
+      # ==================================================
 
       - name: Generate package path
         if: steps.queue.outputs.found == 'true'
@@ -344,21 +447,25 @@ jobs:
 
           echo "PACKAGE_PATH=$PACKAGE_PATH" >> "$GITHUB_ENV"
 
-          mkdir -p "android/app/src/main/java/$PACKAGE_PATH"
+          mkdir -p \
+            "android/app/src/main/java/$PACKAGE_PATH"
 
-          echo "Package path:"
+          echo "Java package path:"
           echo "$PACKAGE_PATH"
 
 
-      # --------------------------------------------------
-      # 16. Create MainActivity
-      # --------------------------------------------------
+      # ==================================================
+      # 16. CREATE MAIN ACTIVITY
+      # ==================================================
 
       - name: Create MainActivity
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          cat > "android/app/src/main/java/$PACKAGE_PATH/MainActivity.java" <<EOF
+          cat > \
+            "android/app/src/main/java/$PACKAGE_PATH/MainActivity.java" \
+            <<EOF
+
           package $PACKAGE_NAME;
 
           import android.app.Activity;
@@ -376,37 +483,49 @@ jobs:
 
                   WebView webView = new WebView(this);
 
-                  WebSettings settings = webView.getSettings();
+                  WebSettings settings =
+                      webView.getSettings();
 
                   settings.setJavaScriptEnabled(true);
+
                   settings.setDomStorageEnabled(true);
+
                   settings.setAllowFileAccess(true);
+
                   settings.setAllowContentAccess(true);
 
-                  webView.setWebViewClient(new WebViewClient());
+                  webView.setWebViewClient(
+                      new WebViewClient()
+                  );
 
                   setContentView(webView);
 
-                  webView.loadUrl("file:///android_asset/index.html");
+                  webView.loadUrl(
+                      "file:///android_asset/index.html"
+                  );
               }
           }
+
           EOF
 
+          echo "MainActivity.java created."
 
-      # --------------------------------------------------
-      # 17. Create AndroidManifest
-      # --------------------------------------------------
+
+      # ==================================================
+      # 17. CREATE MANIFEST
+      # ==================================================
 
       - name: Create AndroidManifest
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          mkdir -p android/app/src/main
-
           cat > android/app/src/main/AndroidManifest.xml <<EOF
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-              <uses-permission android:name="android.permission.INTERNET"/>
+          <manifest
+              xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission
+                  android:name="android.permission.INTERNET"/>
 
               <application
                   android:allowBackup="true"
@@ -420,9 +539,11 @@ jobs:
 
                       <intent-filter>
 
-                          <action android:name="android.intent.action.MAIN"/>
+                          <action
+                              android:name="android.intent.action.MAIN"/>
 
-                          <category android:name="android.intent.category.LAUNCHER"/>
+                          <category
+                              android:name="android.intent.category.LAUNCHER"/>
 
                       </intent-filter>
 
@@ -431,40 +552,48 @@ jobs:
               </application>
 
           </manifest>
+
           EOF
 
+          echo "AndroidManifest.xml created."
 
-      # --------------------------------------------------
-      # 18. Create styles
-      # --------------------------------------------------
+
+      # ==================================================
+      # 18. CREATE APP THEME
+      # ==================================================
 
       - name: Create Android styles
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          mkdir -p android/app/src/main/res/values
-
           cat > android/app/src/main/res/values/styles.xml <<'EOF'
           <resources>
 
-              <style name="AppTheme"
+              <style
+                  name="AppTheme"
                   parent="android:style/Theme.Material.Light.NoActionBar">
 
                   <item name="android:fontFamily">sans</item>
 
-                  <item name="android:windowActionModeOverlay">true</item>
+                  <item name="android:windowActionModeOverlay">
+                      true
+                  </item>
 
-                  <item name="android:colorAccent">#238636</item>
+                  <item name="android:colorAccent">
+                      #238636
+                  </item>
 
               </style>
 
           </resources>
           EOF
 
+          echo "styles.xml created."
 
-      # --------------------------------------------------
-      # 19. Copy HTML into assets
-      # --------------------------------------------------
+
+      # ==================================================
+      # 19. PREPARE HTML
+      # ==================================================
 
       - name: Prepare HTML assets
         if: steps.queue.outputs.found == 'true'
@@ -474,66 +603,89 @@ jobs:
 
           if [ -f source/index.html ]; then
 
-            cp source/index.html \
+            echo "Using index.html"
+
+            cp \
+              source/index.html \
               android/app/src/main/assets/index.html
 
           elif [ -f source/webapp-url.txt ]; then
 
+            echo "Using webapp URL"
+
             URL=$(cat source/webapp-url.txt)
 
             cat > android/app/src/main/assets/index.html <<EOF
+
           <!doctype html>
+
           <html>
+
           <head>
 
-          <meta charset="utf-8">
+              <meta charset="utf-8">
 
-          <meta
-            name="viewport"
-            content="width=device-width,initial-scale=1">
+              <meta
+                  name="viewport"
+                  content="width=device-width,initial-scale=1">
 
-          <style>
+              <style>
 
-          html,body,iframe{
-              margin:0;
-              width:100%;
-              height:100%;
-              border:0;
-          }
+                  html,
+                  body,
+                  iframe {
 
-          </style>
+                      margin:0;
+
+                      padding:0;
+
+                      width:100%;
+
+                      height:100%;
+
+                      border:0;
+
+                  }
+
+              </style>
 
           </head>
 
           <body>
 
-          <iframe
-            src="$URL"
-            style="width:100%;height:100%;border:0;">
-          </iframe>
+              <iframe
+                  src="$URL"
+                  style="width:100%;height:100%;border:0;">
+              </iframe>
 
           </body>
+
           </html>
+
           EOF
 
           else
 
-            echo "No index.html or webapp-url.txt found."
+            echo "ERROR:"
+            echo "Neither index.html nor webapp-url.txt exists."
 
             exit 1
 
           fi
 
+          echo "HTML assets prepared."
 
-      # --------------------------------------------------
-      # 20. Create app Gradle
-      # --------------------------------------------------
+
+      # ==================================================
+      # 20. CREATE APP BUILD.GRADLE
+      # ==================================================
 
       - name: Create app Gradle
         if: steps.queue.outputs.found == 'true'
         run: |
 
           cat > android/app/build.gradle <<EOF
+
           plugins {
               id "com.android.application"
           }
@@ -562,10 +714,12 @@ jobs:
 
           EOF
 
+          echo "app/build.gradle created."
 
-      # --------------------------------------------------
-      # 21. Setup Gradle
-      # --------------------------------------------------
+
+      # ==================================================
+      # 21. SETUP GRADLE
+      # ==================================================
 
       - name: Setup Gradle
         if: steps.queue.outputs.found == 'true'
@@ -574,31 +728,46 @@ jobs:
           gradle-version: "8.10.2"
 
 
-      # --------------------------------------------------
-      # 22. Build APK
-      # --------------------------------------------------
+      # ==================================================
+      # 22. BUILD APK
+      # ==================================================
 
       - name: Build APK
         if: steps.queue.outputs.found == 'true'
         working-directory: android
         run: |
 
-          gradle assembleDebug --no-daemon --stacktrace
+          echo "Starting Android APK build..."
+
+          gradle assembleDebug \
+            --no-daemon \
+            --stacktrace
+
+          echo "APK build completed."
 
 
-      # --------------------------------------------------
-      # 23. Locate APK
-      # --------------------------------------------------
+      # ==================================================
+      # 23. LOCATE APK
+      # ==================================================
 
       - name: Locate APK
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          APK=$(find android/app/build/outputs/apk -type f -name "*.apk" | head -1)
+          APK=$(find \
+            android/app/build/outputs/apk \
+            -type f \
+            -name "*.apk" \
+            | head -1)
 
           if [ -z "$APK" ]; then
 
-            echo "APK not found."
+            echo "ERROR: APK not found."
+
+            find android/app/build \
+              -type f \
+              -name "*.apk" \
+              -print || true
 
             exit 1
 
@@ -610,9 +779,9 @@ jobs:
           echo "$APK"
 
 
-      # --------------------------------------------------
-      # 24. Calculate SHA256
-      # --------------------------------------------------
+      # ==================================================
+      # 24. SHA256 AND FILE SIZE
+      # ==================================================
 
       - name: Calculate SHA256
         if: steps.queue.outputs.found == 'true'
@@ -626,13 +795,16 @@ jobs:
 
           echo "FILE_SIZE=$FILE_SIZE" >> "$GITHUB_ENV"
 
-          echo "SHA256: $SHA256"
-          echo "Size: $FILE_SIZE"
+          echo "APK SHA256:"
+          echo "$SHA256"
+
+          echo "APK file size:"
+          echo "$FILE_SIZE bytes"
 
 
-      # --------------------------------------------------
-      # 25. Upload APK to Supabase Storage
-      # --------------------------------------------------
+      # ==================================================
+      # 25. UPLOAD APK TO SUPABASE
+      # ==================================================
 
       - name: Upload APK to Supabase
         if: steps.queue.outputs.found == 'true'
@@ -641,11 +813,12 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           APP_ID: ${{ steps.queue.outputs.app_id }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
 
           STORAGE_PATH="${APP_ID}/${BUILD_ID}/ASIM-TECH-${BUILD_ID}.apk"
 
-          echo "Uploading to:"
+          echo "Supabase storage path:"
           echo "$STORAGE_PATH"
 
           curl -f -sS -X POST \
@@ -658,10 +831,12 @@ jobs:
 
           echo "STORAGE_PATH=$STORAGE_PATH" >> "$GITHUB_ENV"
 
+          echo "APK uploaded successfully."
 
-      # --------------------------------------------------
-      # 26. Update build record SUCCESS
-      # --------------------------------------------------
+
+      # ==================================================
+      # 26. MARK BUILD SUCCESS
+      # ==================================================
 
       - name: Mark build successful
         if: steps.queue.outputs.found == 'true'
@@ -669,7 +844,10 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
+
+          echo "Updating build record..."
 
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
@@ -678,6 +856,7 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             --data-binary @- <<EOF
+
           {
             "status": "success",
             "storage_path": "$STORAGE_PATH",
@@ -688,14 +867,15 @@ jobs:
             "completed_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
             "build_log": "APK build completed successfully."
           }
+
           EOF
 
-          echo "Build marked SUCCESS."
+          echo "Build status updated to SUCCESS."
 
 
-      # --------------------------------------------------
-      # 27. Upload GitHub artifact
-      # --------------------------------------------------
+      # ==================================================
+      # 27. UPLOAD GITHUB ARTIFACT
+      # ==================================================
 
       - name: Upload APK artifact
         if: steps.queue.outputs.found == 'true'
@@ -705,9 +885,9 @@ jobs:
           path: ${{ env.APK }}
 
 
-      # --------------------------------------------------
-      # 28. Mark failure
-      # --------------------------------------------------
+      # ==================================================
+      # 28. MARK BUILD FAILED
+      # ==================================================
 
       - name: Mark build failed
         if: failure() && steps.queue.outputs.found == 'true'
@@ -715,7 +895,10 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
+
+          echo "Build failed."
 
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
@@ -724,11 +907,13 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             --data-binary @- <<EOF
+
           {
             "status": "failed",
             "completed_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
             "build_log": "Android APK build failed. Check GitHub Actions logs."
           }
+
           EOF
 
-          echo "Build marked FAILED."
+          echo "Build status updated to FAILED."
