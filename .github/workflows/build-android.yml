@@ -353,6 +353,9 @@ jobs:
 
           FILE="$APP/$BUILD.apk"
 
+          echo "Uploading APK..."
+          echo "Storage path: $FILE"
+
           curl -fsS \
             -X POST \
             "$SUPABASE_URL/storage/v1/object/android-apks/$FILE" \
@@ -362,19 +365,44 @@ jobs:
             -H "x-upsert: true" \
             --data-binary "@output/app.apk"
 
-          APK_URL="$SUPABASE_URL/storage/v1/object/public/android-apks/$FILE"
+          echo "APK uploaded to Supabase Storage."
 
-          echo "APK URL: $APK_URL"
+          FILE_SIZE=$(stat -c%s output/app.apk)
+          SHA256=$(sha256sum output/app.apk | awk '{print $1}')
+          FILE_NAME="$BUILD.apk"
+
+          echo "File size: $FILE_SIZE"
+          echo "SHA256: $SHA256"
+
+          API="$SUPABASE_URL/rest/v1"
 
           curl -fsS \
             -X PATCH \
-            "$SUPABASE_URL/rest/v1/app_builds?id=eq.$BUILD" \
+            "$API/app_builds?id=eq.$BUILD" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/json" \
-            --data "{\"status\":\"success\",\"apk_url\":\"$APK_URL\"}"
+            --data "$(jq -n \
+              --arg status "success" \
+              --arg storage_path "$FILE" \
+              --arg file_name "$FILE_NAME" \
+              --arg mime_type "application/vnd.android.package-archive" \
+              --argjson file_size "$FILE_SIZE" \
+              --arg sha256 "$SHA256" \
+              '{
+                status: $status,
+                storage_path: $storage_path,
+                file_name: $file_name,
+                mime_type: $mime_type,
+                file_size: $file_size,
+                sha256: $sha256,
+                completed_at: (now | todate)
+              }'
+            )"
 
           echo "Build marked SUCCESS."
+          echo "APK URL:"
+          echo "$SUPABASE_URL/storage/v1/object/public/android-apks/$FILE"
 
 
       - name: Upload GitHub Artifact
