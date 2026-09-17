@@ -1,14 +1,22 @@
 <!doctype html>
 <html lang="en">
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1,viewport-fit=cover">
+
 <title>ASIM TECH — Android Builder</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+box-sizing:border-box
+}
 
 body{
 margin:0;
@@ -237,6 +245,13 @@ cursor:pointer
 background:#b42318
 }
 
+.image-url{
+margin-top:10px;
+word-break:break-all;
+font-size:12px;
+color:#9fb0bf
+}
+
 @media(max-width:700px){
 
 .wrap{
@@ -279,20 +294,33 @@ font-size:14px
 }
 
 }
+
 </style>
+
 </head>
 
 <body>
 
+
 <nav>
 
 <div class="logo">
-<span class="green">⚡ ASIM</span> TECH — Android Builder
+
+<span class="green">⚡ ASIM</span>
+TECH — Android Builder
+
 </div>
 
 <div>
-<a href="android-apps.html">My Apps</a>
-<a href="dashboard.html">Dashboard</a>
+
+<a href="android-apps.html">
+My Apps
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
 </div>
 
 </nav>
@@ -307,35 +335,52 @@ font-size:14px
 class="btn greenbtn"
 type="button"
 onclick="save()">
+
 💾 Save
+
 </button>
 
 <button
 class="btn orange"
 type="button"
 onclick="requestBuild()">
+
 🏗️ Build APK
+
 </button>
 
 </div>
 
 
-<div id="status" class="status">
+<div
+id="status"
+class="status">
+
 Loading…
+
 </div>
 
 
-<!-- APP SETTINGS -->
+
+<!-- ================================
+     APP SETTINGS
+================================ -->
 
 <section class="card">
 
-<h2>App Settings</h2>
+<h2>
+App Settings
+</h2>
+
 
 <div class="row">
 
+
 <div>
 
-<label>App Name</label>
+<label>
+App Name
+</label>
 
 <input
 id="appName"
@@ -346,7 +391,9 @@ placeholder="ASIM TECH Calculator">
 
 <div>
 
-<label>Package Name</label>
+<label>
+Package Name
+</label>
 
 <input
 id="packageName"
@@ -354,14 +401,19 @@ placeholder="com.asimtech.calculator">
 
 </div>
 
+
 </div>
+
 
 
 <div class="row">
 
+
 <div>
 
-<label>Version Name</label>
+<label>
+Version Name
+</label>
 
 <input
 id="versionName"
@@ -372,7 +424,9 @@ value="1.0.0">
 
 <div>
 
-<label>Version Code</label>
+<label>
+Version Code
+</label>
 
 <input
 id="versionCode"
@@ -381,20 +435,31 @@ value="1">
 
 </div>
 
+
 </div>
 
 </section>
 
 
-<!-- APP IMAGE -->
+
+<!-- ================================
+     APP IMAGE
+================================ -->
 
 <section class="card">
 
-<h2>🖼️ App Image / PNG</h2>
+<h2>
+🖼️ App Image / PNG
+</h2>
+
 
 <div class="imagebox">
 
-<label>Select PNG / Image</label>
+
+<label>
+Select PNG / Image
+</label>
+
 
 <input
 id="appImageFile"
@@ -417,7 +482,13 @@ onclick="chooseImage()">
 class="small"
 style="margin-top:8px">
 
-PNG, JPG or WebP — <b>Maximum 10 MB.</b>
+PNG, JPG or WebP —
+<b>Maximum 10 MB.</b>
+
+<br>
+
+Image will be uploaded to
+Supabase Storage automatically.
 
 </div>
 
@@ -427,7 +498,9 @@ id="imagePreview"
 class="image-preview">
 
 <span class="small">
+
 No image selected.
+
 </span>
 
 </div>
@@ -436,6 +509,7 @@ No image selected.
 <div
 class="topactions"
 style="margin-top:10px;margin-bottom:0">
+
 
 <button
 type="button"
@@ -446,15 +520,27 @@ onclick="clearImage()">
 
 </button>
 
+
 </div>
 
 
 <div
 id="imageStatus"
 class="status">
-</div>
 
 </div>
+
+
+<div
+id="imageUrlBox"
+class="image-url"
+style="display:none">
+
+</div>
+
+
+</div>
+
 
 
 <div
@@ -475,64 +561,96 @@ Example:
 &lt;img src="ASIM_APP_IMAGE"&gt;
 </span>
 
+<br><br>
+
+The builder will automatically replace
+<b>ASIM_APP_IMAGE</b>
+with the uploaded image URL.
+
 </div>
 
 </section>
 
 
-<!-- CODE / URL -->
+
+<!-- ================================
+     CODE / URL
+================================ -->
 
 <section class="card">
 
-<h2>🚀 Code / URL Mode</h2>
+<h2>
+🚀 Code / URL Mode
+</h2>
 
-<label>Source Type</label>
+
+<label>
+Source Type
+</label>
+
 
 <select
 id="sourceMode"
 onchange="changeSourceMode()">
 
+
 <option value="code">
+
 💻 HTML / CSS / JavaScript Code
+
 </option>
 
+
 <option value="url">
+
 🌐 Web App URL
+
 </option>
+
 
 </select>
 
 
+
 <div id="codeSource">
+
 
 <label>
 Paste Complete HTML Code
 </label>
 
+
 <textarea
 id="webAppCode"
 placeholder="Paste your complete HTML file including CSS and JavaScript..."></textarea>
 
+
 </div>
+
 
 
 <div
 id="urlSource"
 style="display:none">
 
+
 <label>
 Web App URL
 </label>
+
 
 <input
 id="webAppUrl"
 type="url"
 placeholder="https://example.com">
 
+
 </div>
 
 
+
 <div class="topactions">
+
 
 <button
 class="btn blue"
@@ -553,22 +671,30 @@ onclick="saveWebAppSource()">
 
 </button>
 
+
 </div>
 
 
 <div
 id="webAppStatus"
 class="status">
+
 </div>
 
 </section>
 
 
-<!-- PREVIEW -->
+
+<!-- ================================
+     PREVIEW
+================================ -->
 
 <section class="card">
 
-<h2>📱 Preview</h2>
+<h2>
+📱 Preview
+</h2>
+
 
 <div
 class="preview"
@@ -581,11 +707,17 @@ Paste code and press Preview.
 </section>
 
 
-<!-- BUILD HISTORY -->
+
+<!-- ================================
+     BUILD HISTORY
+================================ -->
 
 <section class="card">
 
-<h2>📦 Build History</h2>
+<h2>
+📦 Build History
+</h2>
+
 
 <button
 class="btn refresh-btn"
@@ -596,8 +728,11 @@ onclick="loadBuilds()">
 
 </button>
 
+
 <div id="builds">
+
 Loading…
+
 </div>
 
 </section>
@@ -606,16 +741,21 @@ Loading…
 </main>
 
 
+
 <script>
 
 
-/* SUPABASE */
+/* =================================
+   SUPABASE
+================================= */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
+
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
 
 const sb =
 supabase.createClient(
@@ -624,61 +764,113 @@ SUPABASE_KEY
 );
 
 
+
+/* =================================
+   CONSTANTS
+================================= */
+
+const IMAGE_BUCKET =
+"website-images";
+
+
+const MAX_IMAGE_SIZE =
+10 * 1024 * 1024;
+
+
+
+/* =================================
+   APP ID
+================================= */
+
 const appId =
 new URLSearchParams(
 location.search
 ).get("id");
 
 
-let user=null;
-let app=null;
-let appImageData="";
 
+/* =================================
+   GLOBAL VARIABLES
+================================= */
+
+let user = null;
+
+let app = null;
+
+
+/*
+   appImageData is retained only
+   for backward compatibility with
+   old Base64 images.
+
+   New images use URL instead.
+*/
+
+let appImageData = "";
+
+let appImagePath = "";
+
+let appImageUrl = "";
+
+
+
+/* =================================
+   HELPER
+================================= */
 
 const $ =
-id => document.getElementById(id);
+id =>
+document.getElementById(id);
 
 
-/* STATUS */
+
+/* =================================
+   STATUS
+================================= */
 
 function status(t,c=""){
 
-$("status").textContent=t;
+$("status").textContent = t;
 
-$("status").className=
-"status "+c;
+$("status").className =
+"status " + c;
 
 }
+
 
 
 function sourceStatus(t,c=""){
 
-$("webAppStatus").textContent=t;
+$("webAppStatus").textContent = t;
 
-$("webAppStatus").className=
-"status "+c;
+$("webAppStatus").className =
+"status " + c;
 
 }
+
 
 
 function imageStatus(t,c=""){
 
-$("imageStatus").textContent=t;
+$("imageStatus").textContent = t;
 
-$("imageStatus").className=
-"status "+c;
+$("imageStatus").className =
+"status " + c;
 
 }
 
 
-/* ESCAPE */
+
+/* =================================
+   ESCAPE HTML
+================================= */
 
 function esc(s){
 
-return String(s??"")
+return String(s ?? "")
 .replace(
 /[&<>"']/g,
-m=>({
+m => ({
 "&":"&amp;",
 "<":"&lt;",
 ">":"&gt;",
@@ -690,22 +882,26 @@ m=>({
 }
 
 
-/* PACKAGE */
+
+/* =================================
+   PACKAGE
+================================= */
 
 function makePackage(n){
 
-let x=
-String(n||"myapp")
+let x =
+String(n || "myapp")
 .toLowerCase()
 .replace(
 /[^a-z0-9]+/g,
 ""
 );
 
-return "com.asimtech."+
-(x||"myapp");
+return "com.asimtech." +
+(x || "myapp");
 
 }
+
 
 
 function validPackage(x){
@@ -716,28 +912,37 @@ return /^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$/
 }
 
 
-/* SOURCE MODE */
+
+/* =================================
+   SOURCE MODE
+================================= */
 
 function changeSourceMode(){
 
-let c=
-$("sourceMode").value==="code";
+let c =
+$("sourceMode").value === "code";
 
-$("codeSource").style.display=
-c?"block":"none";
 
-$("urlSource").style.display=
-c?"none":"block";
+$("codeSource").style.display =
+c ? "block" : "none";
+
+
+$("urlSource").style.display =
+c ? "none" : "block";
 
 }
 
 
-/* CHOOSE IMAGE */
+
+/* =================================
+   CHOOSE IMAGE
+================================= */
 
 function chooseImage(){
 
-const input=
+const input =
 $("appImageFile");
+
 
 if(input){
 
@@ -748,36 +953,114 @@ input.click();
 }
 
 
-/* RENDER IMAGE */
+
+/* =================================
+   RENDER IMAGE
+================================= */
 
 function renderImage(){
 
-if(appImageData){
+const preview =
+$("imagePreview");
 
-$("imagePreview").innerHTML=
-'<img src="'+
-appImageData+
+
+if(!preview){
+
+return;
+
+}
+
+
+/*
+   New Storage URL
+*/
+
+if(appImageUrl){
+
+preview.innerHTML =
+'<img src="' +
+esc(appImageUrl) +
 '" alt="App image preview">';
 
-}else{
 
-$("imagePreview").innerHTML=
-'<span class="small">No image selected.</span>';
+$("imageUrlBox").style.display =
+"block";
+
+
+$("imageUrlBox").textContent =
+"Storage URL: " +
+appImageUrl;
+
+
+return;
 
 }
 
+
+/*
+   Old Base64 image
+*/
+
+if(appImageData){
+
+preview.innerHTML =
+'<img src="' +
+esc(appImageData) +
+'" alt="App image preview">';
+
+
+$("imageUrlBox").style.display =
+"none";
+
+
+return;
+
 }
 
 
-/* CLEAR IMAGE */
+/*
+   No image
+*/
+
+preview.innerHTML =
+'<span class="small">' +
+'No image selected.' +
+'</span>';
+
+
+$("imageUrlBox").style.display =
+"none";
+
+}
+
+
+
+/* =================================
+   CLEAR IMAGE
+================================= */
 
 function clearImage(){
 
-appImageData="";
+appImageData = "";
 
-$("appImageFile").value="";
+appImagePath = "";
+
+appImageUrl = "";
+
+
+const input =
+$("appImageFile");
+
+
+if(input){
+
+input.value = "";
+
+}
+
 
 renderImage();
+
 
 imageStatus(
 "Image removed. Press Save to save the change.",
@@ -787,48 +1070,265 @@ imageStatus(
 }
 
 
-/* IMAGE UPLOAD */
+
+/* =================================
+   UPLOAD IMAGE
+================================= */
+
+async function uploadAppImage(file){
+
+if(!file){
+
+throw new Error(
+"No image selected."
+);
+
+}
+
+
+
+/*
+   SIZE CHECK
+*/
+
+if(file.size > MAX_IMAGE_SIZE){
+
+throw new Error(
+"Image is larger than 10 MB."
+);
+
+}
+
+
+
+/*
+   TYPE CHECK
+*/
+
+if(
+!/^image\/(png|jpeg|webp)$/
+.test(file.type)
+){
+
+throw new Error(
+"Please select PNG, JPG or WebP."
+);
+
+}
+
+
+
+/*
+   APP ID CHECK
+*/
+
+if(!appId){
+
+throw new Error(
+"App ID is missing."
+);
+
+}
+
+
+
+imageStatus(
+"Uploading image to Supabase Storage…",
+"warn"
+);
+
+
+
+/*
+   Extension
+*/
+
+let extension = "jpg";
+
+
+if(file.type === "image/png"){
+
+extension = "png";
+
+}
+
+
+if(file.type === "image/webp"){
+
+extension = "webp";
+
+}
+
+
+
+/*
+   Unique path
+
+   Example:
+
+   app-id/images/1234567890-app-image.png
+*/
+
+const filePath =
+appId +
+"/images/" +
+Date.now() +
+"-app-image." +
+extension;
+
+
+
+/*
+   Upload
+*/
+
+const upload =
+await sb.storage
+.from(IMAGE_BUCKET)
+.upload(
+filePath,
+file,
+{
+cacheControl:"3600",
+upsert:false,
+contentType:file.type
+}
+);
+
+
+
+if(upload.error){
+
+console.error(
+"Image upload error:",
+upload.error
+);
+
+throw new Error(
+upload.error.message ||
+"Image upload failed."
+);
+
+}
+
+
+
+/*
+   Public URL
+*/
+
+const publicResult =
+sb.storage
+.from(IMAGE_BUCKET)
+.getPublicUrl(
+filePath
+);
+
+
+const publicUrl =
+publicResult.data &&
+publicResult.data.publicUrl;
+
+
+
+if(!publicUrl){
+
+throw new Error(
+"Could not create image URL."
+);
+
+}
+
+
+
+/*
+   Save global values
+*/
+
+appImagePath =
+filePath;
+
+
+appImageUrl =
+publicUrl;
+
+
+/*
+   Important:
+
+   New Storage image does not
+   need Base64 anymore.
+*/
+
+appImageData = "";
+
+
+
+renderImage();
+
+
+imageStatus(
+"Image uploaded successfully ✓",
+"success"
+);
+
+
+return {
+
+path:filePath,
+
+url:publicUrl
+
+};
+
+}
+
+
+
+/* =================================
+   FILE SELECT
+================================= */
 
 $("appImageFile")
 .addEventListener(
 "change",
-function(e){
+async function(e){
 
-const f=
+
+const file =
 e.target.files &&
 e.target.files[0];
 
-if(!f){
+
+if(!file){
 
 return;
 
 }
 
 
-/* MAXIMUM 10 MB */
 
-if(
-f.size >
-10*1024*1024
-){
+/*
+   Validate before upload
+*/
+
+if(file.size > MAX_IMAGE_SIZE){
 
 imageStatus(
 "Image is larger than 10 MB.",
 "error"
 );
 
-e.target.value="";
+e.target.value = "";
 
 return;
 
 }
 
 
-/* FILE TYPE */
-
 if(
 !/^image\/(png|jpeg|webp)$/
-.test(f.type)
+.test(file.type)
 ){
 
 imageStatus(
@@ -836,58 +1336,80 @@ imageStatus(
 "error"
 );
 
-e.target.value="";
+e.target.value = "";
 
 return;
 
 }
 
 
-/* READ IMAGE */
 
-const reader=
+/*
+   Temporary local preview
+*/
+
+const reader =
 new FileReader();
 
 
-reader.onload=
+reader.onload =
 function(){
 
-appImageData=
+appImageData =
 String(
-reader.result||""
+reader.result || ""
 );
+
 
 renderImage();
 
-imageStatus(
-"Image selected successfully ✓ Press Save.",
-"success"
-);
-
 };
 
 
-reader.onerror=
-function(){
+
+reader.readAsDataURL(file);
+
+
+
+/*
+   Upload
+*/
+
+try{
+
+await uploadAppImage(file);
+
+
+}catch(error){
+
+console.error(
+"Image upload error:",
+error
+);
+
 
 imageStatus(
-"Unable to read the image.",
+error.message ||
+"Image upload failed.",
 "error"
 );
 
-};
 
+e.target.value = "";
 
-reader.readAsDataURL(f);
+}
 
 });
 
 
-/* GET SETTINGS */
+
+/* =================================
+   GET SETTINGS
+================================= */
 
 async function getSettings(){
 
-const r=
+const r =
 await sb
 .from("app_files")
 .select("content")
@@ -900,7 +1422,7 @@ await sb
 
 
 if(
-r.error||
+r.error ||
 !r.data?.content
 ){
 
@@ -913,7 +1435,7 @@ try{
 
 return JSON.parse(
 r.data.content
-)||{};
+) || {};
 
 }catch{
 
@@ -924,11 +1446,15 @@ return {};
 }
 
 
-/* LOAD SOURCE */
+
+/* =================================
+   LOAD SOURCE
+================================= */
 
 async function loadSource(){
 
-let r=
+
+let r =
 await sb
 .from("app_files")
 .select("content")
@@ -940,25 +1466,34 @@ await sb
 .maybeSingle();
 
 
+
 if(
 !r.error &&
 r.data?.content
 ){
 
-$("sourceMode").value=
+$("sourceMode").value =
 "code";
 
-$("webAppCode").value=
+
+$("webAppCode").value =
 r.data.content;
 
+
 changeSourceMode();
+
 
 return;
 
 }
 
 
-r=
+
+/*
+   Fallback index.html
+*/
+
+r =
 await sb
 .from("app_files")
 .select("content")
@@ -970,25 +1505,34 @@ await sb
 .maybeSingle();
 
 
+
 if(
 !r.error &&
 r.data?.content
 ){
 
-$("sourceMode").value=
+$("sourceMode").value =
 "code";
 
-$("webAppCode").value=
+
+$("webAppCode").value =
 r.data.content;
 
+
 changeSourceMode();
+
 
 return;
 
 }
 
 
-r=
+
+/*
+   URL mode
+*/
+
+r =
 await sb
 .from("app_files")
 .select("content")
@@ -1000,16 +1544,19 @@ await sb
 .maybeSingle();
 
 
+
 if(
 !r.error &&
 r.data?.content
 ){
 
-$("sourceMode").value=
+$("sourceMode").value =
 "url";
 
-$("webAppUrl").value=
+
+$("webAppUrl").value =
 r.data.content;
+
 
 changeSourceMode();
 
@@ -1018,15 +1565,37 @@ changeSourceMode();
 }
 
 
-/* IMAGE REPLACEMENT */
+
+/* =================================
+   IMAGE REPLACEMENT
+================================= */
 
 function imageFor(code){
 
-if(!appImageData){
+/*
+   New Storage URL
+*/
 
-return code;
+if(appImageUrl){
+
+return code.replace(
+/ASIM_APP_IMAGE/g,
+function(){
+
+return appImageUrl;
 
 }
+);
+
+}
+
+
+/*
+   Backward compatibility
+   with old Base64 image
+*/
+
+if(appImageData){
 
 return code.replace(
 /ASIM_APP_IMAGE/g,
@@ -1034,25 +1603,51 @@ function(){
 
 return appImageData;
 
-});
+}
+);
 
 }
 
 
-/* PREVIEW */
+/*
+   No image
+
+   Replace token with empty
+   string so broken token does
+   not remain in final APK.
+*/
+
+return code.replace(
+/ASIM_APP_IMAGE/g,
+""
+);
+
+}
+
+
+
+/* =================================
+   PREVIEW
+================================= */
 
 function previewWebApp(){
 
-const mode=
+const mode =
 $("sourceMode").value;
 
 
-if(mode==="code"){
 
-const raw=
+/*
+   CODE
+*/
+
+if(mode === "code"){
+
+const raw =
 $("webAppCode")
 .value
 .trim();
+
 
 
 if(!raw){
@@ -1067,41 +1662,63 @@ return;
 }
 
 
-const finalCode=
+
+const finalCode =
 imageFor(raw);
 
 
-const blob=
+
+const blob =
 new Blob(
 [finalCode],
-{type:"text/html"}
+{
+type:"text/html"
+}
 );
 
 
-const u=
+
+const u =
 URL.createObjectURL(blob);
 
 
-$("previewBox").innerHTML=
-'<iframe src="'+
-u+
+
+$("previewBox").innerHTML =
+'<iframe src="' +
+u +
 '"></iframe>';
 
 
+
 sourceStatus(
+(
+appImageUrl ||
 appImageData
-?"Preview loaded with selected image ✓"
-:"Code preview loaded ✓",
+)
+?
+"Preview loaded with image ✓"
+:
+"Code preview loaded ✓",
 "success"
 );
 
 
-}else{
 
-const url=
+return;
+
+}
+
+
+
+/*
+   URL
+*/
+
+const url =
 $("webAppUrl")
 .value
 .trim();
+
 
 
 if(!url){
@@ -1114,6 +1731,7 @@ sourceStatus(
 return;
 
 }
+
 
 
 try{
@@ -1132,10 +1750,12 @@ return;
 }
 
 
-$("previewBox").innerHTML=
-'<iframe src="'+
-esc(url)+
+
+$("previewBox").innerHTML =
+'<iframe src="' +
+esc(url) +
 '"></iframe>';
+
 
 
 sourceStatus(
@@ -1145,27 +1765,32 @@ sourceStatus(
 
 }
 
-}
 
 
-/* SAVE SETTINGS */
+/* =================================
+   SAVE SETTINGS
+================================= */
 
 async function saveSettings(){
 
-const s={
+
+const s = {
 
 appName:
-$("appName").value.trim()||
-app?.name||
+$("appName").value.trim() ||
+app?.name ||
 "ASIM TECH App",
 
+
 packageName:
-$("packageName").value.trim()||
+$("packageName").value.trim() ||
 makePackage(app?.name),
 
+
 versionName:
-$("versionName").value.trim()||
+$("versionName").value.trim() ||
 "1.0.0",
+
 
 versionCode:
 Math.max(
@@ -1173,14 +1798,28 @@ Math.max(
 parseInt(
 $("versionCode").value,
 10
-)||1
+) || 1
 ),
 
-appImage:
-appImageData||null
+
+/*
+   NEW STORAGE FIELDS
+*/
+
+appImagePath:
+appImagePath || null,
+
+
+appImageUrl:
+appImageUrl || null
 
 };
 
+
+
+/*
+   Package validation
+*/
 
 if(
 !validPackage(
@@ -1195,17 +1834,26 @@ throw new Error(
 }
 
 
-let r=
+
+/*
+   Save settings
+*/
+
+let r =
 await sb
 .from("app_files")
 .upsert(
 {
 app_id:appId,
+
 file_path:
 "android-settings.json",
+
 content:
 JSON.stringify(s),
+
 language:"json",
+
 updated_at:
 new Date().toISOString()
 },
@@ -1216,16 +1864,26 @@ onConflict:
 );
 
 
-if(r.error)
+
+if(r.error){
+
 throw r.error;
 
+}
 
-r=
+
+
+/*
+   Update app name
+*/
+
+r =
 await sb
 .from("apps")
 .update(
 {
 name:s.appName,
+
 updated_at:
 new Date().toISOString()
 }
@@ -1234,12 +1892,22 @@ new Date().toISOString()
 .eq("owner_id",user.id);
 
 
-if(r.error)
+
+if(r.error){
+
 throw r.error;
 
+}
 
-app.name=
+
+
+if(app){
+
+app.name =
 s.appName;
+
+}
+
 
 
 return s;
@@ -1247,21 +1915,29 @@ return s;
 }
 
 
-/* SAVE SOURCE */
+
+/* =================================
+   SAVE SOURCE
+================================= */
 
 async function saveWebAppSource(){
 
-const mode=
+
+const mode =
 $("sourceMode").value;
 
 
-const raw=
+
+const raw =
 (
-mode==="code"
-?$("webAppCode").value
-:$("webAppUrl").value
+mode === "code"
+?
+$("webAppCode").value
+:
+$("webAppUrl").value
 )
 .trim();
+
 
 
 if(!raw){
@@ -1276,7 +1952,12 @@ return false;
 }
 
 
-if(mode==="url"){
+
+/*
+   URL validation
+*/
+
+if(mode === "url"){
 
 try{
 
@@ -1296,18 +1977,33 @@ return false;
 }
 
 
-if(mode==="code"){
 
-let r=
+/*
+   CODE
+*/
+
+if(mode === "code"){
+
+
+/*
+   Save original source
+   without replacing token
+*/
+
+let r =
 await sb
 .from("app_files")
 .upsert(
 {
 app_id:appId,
+
 file_path:
 "android-source.html",
+
 content:raw,
+
 language:"HTML",
+
 updated_at:
 new Date().toISOString()
 },
@@ -1318,19 +2014,41 @@ onConflict:
 );
 
 
-if(r.error)
+
+if(r.error){
+
 throw r.error;
 
+}
 
-r=
+
+
+/*
+   Build-ready index.html
+
+   Here ASIM_APP_IMAGE is replaced
+   with Supabase Storage URL.
+*/
+
+const finalCode =
+imageFor(raw);
+
+
+
+r =
 await sb
 .from("app_files")
 .upsert(
 {
 app_id:appId,
-file_path:"index.html",
-content:imageFor(raw),
+
+file_path:
+"index.html",
+
+content:finalCode,
+
 language:"HTML",
+
 updated_at:
 new Date().toISOString()
 },
@@ -1341,9 +2059,18 @@ onConflict:
 );
 
 
-if(r.error)
+
+if(r.error){
+
 throw r.error;
 
+}
+
+
+
+/*
+   Remove old URL file
+*/
 
 await sb
 .from("app_files")
@@ -1355,18 +2082,28 @@ await sb
 );
 
 
+
 }else{
 
-let r=
+
+/*
+   URL MODE
+*/
+
+let r =
 await sb
 .from("app_files")
 .upsert(
 {
 app_id:appId,
+
 file_path:
 "webapp-url.txt",
+
 content:raw,
+
 language:"URL",
+
 updated_at:
 new Date().toISOString()
 },
@@ -1377,9 +2114,18 @@ onConflict:
 );
 
 
-if(r.error)
+
+if(r.error){
+
 throw r.error;
 
+}
+
+
+
+/*
+   Remove code files
+*/
 
 await sb
 .from("app_files")
@@ -1403,37 +2149,69 @@ await sb
 }
 
 
+
 sourceStatus(
 "Source saved successfully ✓",
 "success"
 );
+
 
 return true;
 
 }
 
 
-/* SAVE */
+
+/* =================================
+   SAVE
+================================= */
 
 async function save(){
 
 try{
 
+
+/*
+   Save settings
+*/
+
 await saveSettings();
 
+
+
+/*
+   Save source
+*/
+
+const ok =
 await saveWebAppSource();
+
+
+
+if(!ok){
+
+throw new Error(
+"Please provide a valid source."
+);
+
+}
+
+
 
 status(
 "Project saved successfully ✓",
 "success"
 );
 
+
+
 }catch(e){
 
 console.error(e);
 
+
 status(
-"Save failed: "+
+"Save failed: " +
 e.message,
 "error"
 );
@@ -1443,18 +2221,32 @@ e.message,
 }
 
 
-/* BUILD */
+
+/* =================================
+   BUILD
+================================= */
 
 async function requestBuild(){
 
 try{
 
-const s=
+
+/*
+   Save settings
+*/
+
+const s =
 await saveSettings();
 
 
-const ok=
+
+/*
+   Save source
+*/
+
+const ok =
 await saveWebAppSource();
+
 
 
 if(!ok){
@@ -1466,21 +2258,32 @@ throw new Error(
 }
 
 
-const r=
+
+/*
+   Create build request
+*/
+
+const r =
 await sb
 .from("app_builds")
 .insert(
 {
 app_id:appId,
+
 version_name:
 s.versionName,
+
 version_code:
 s.versionCode,
+
 status:"queued",
+
 created_by:
 user.id,
+
 queued_at:
 new Date().toISOString(),
+
 source_file_count:1
 }
 )
@@ -1488,8 +2291,13 @@ source_file_count:1
 .single();
 
 
-if(r.error)
+
+if(r.error){
+
 throw r.error;
+
+}
+
 
 
 status(
@@ -1498,15 +2306,18 @@ status(
 );
 
 
+
 await loadBuilds();
+
 
 
 }catch(e){
 
 console.error(e);
 
+
 status(
-"Build request failed: "+
+"Build request failed: " +
 e.message,
 "error"
 );
@@ -1516,9 +2327,13 @@ e.message,
 }
 
 
-/* DOWNLOAD APK */
+
+/* =================================
+   DOWNLOAD APK
+================================= */
 
 async function downloadAPK(storagePath){
+
 
 if(!storagePath){
 
@@ -1531,23 +2346,29 @@ return;
 }
 
 
+
 status(
 "Preparing APK download…",
 "warn"
 );
 
 
+
 try{
 
-/* SIGNED URL */
 
-const signed=
+/*
+   Signed URL
+*/
+
+const signed =
 await sb.storage
 .from("android-apks")
 .createSignedUrl(
 storagePath,
 3600
 );
+
 
 
 if(
@@ -1561,21 +2382,28 @@ signed.data.signedUrl,
 "_blank"
 );
 
+
+
 status(
 "APK download link opened ✓",
 "success"
 );
+
+
 
 return;
 
 }
 
 
-/* PUBLIC URL FALLBACK */
 
-const publicUrl=
-SUPABASE_URL+
-"/storage/v1/object/public/android-apks/"+
+/*
+   Public URL fallback
+*/
+
+const publicUrl =
+SUPABASE_URL +
+"/storage/v1/object/public/android-apks/" +
 storagePath
 .split("/")
 .map(
@@ -1584,16 +2412,19 @@ encodeURIComponent
 .join("/");
 
 
+
 window.open(
 publicUrl,
 "_blank"
 );
 
 
+
 status(
 "APK download link opened ✓",
 "success"
 );
+
 
 
 }catch(e){
@@ -1604,13 +2435,16 @@ e
 );
 
 
-/* FINAL FALLBACK */
+
+/*
+   Final fallback
+*/
 
 try{
 
-const publicUrl=
-SUPABASE_URL+
-"/storage/v1/object/public/android-apks/"+
+const publicUrl =
+SUPABASE_URL +
+"/storage/v1/object/public/android-apks/" +
 storagePath
 .split("/")
 .map(
@@ -1619,28 +2453,33 @@ encodeURIComponent
 .join("/");
 
 
+
 window.open(
 publicUrl,
 "_blank"
 );
 
 
+
 status(
-"APK download link opened ✓",
+"Download link opened ✓",
 "success"
 );
+
 
 
 }catch(err){
 
 status(
-"Download failed: "+
+"Download failed: " +
 err.message,
 "error"
 );
 
+
+
 alert(
-"APK download failed:\n\n"+
+"APK download failed:\n\n" +
 err.message
 );
 
@@ -1651,14 +2490,18 @@ err.message
 }
 
 
-/* FILE SIZE */
+
+/* =================================
+   FILE SIZE
+================================= */
 
 function formatBytes(bytes){
 
+
 if(
-bytes===null||
-bytes===undefined||
-bytes===""
+bytes === null ||
+bytes === undefined ||
+bytes === ""
 ){
 
 return "";
@@ -1666,65 +2509,80 @@ return "";
 }
 
 
-const n=
+
+const n =
 Number(bytes);
 
 
-if(!Number.isFinite(n))
+
+if(!Number.isFinite(n)){
+
 return "";
-
-
-if(n<1024){
-
-return n+" B";
 
 }
 
 
+
+if(n < 1024){
+
+return n + " B";
+
+}
+
+
+
 if(
-n<1024*1024
+n < 1024 * 1024
 ){
 
 return (
-n/1024
-).toFixed(1)+
+n / 1024
+).toFixed(1) +
 " KB";
 
 }
 
 
+
 return (
-n/
-(1024*1024)
+n /
+(1024 * 1024)
 )
-.toFixed(2)+
+.toFixed(2) +
 " MB";
 
 }
 
 
-/* BUILD HISTORY */
+
+/* =================================
+   BUILD HISTORY
+================================= */
 
 async function loadBuilds(){
 
-const r=
+
+const r =
 await sb
 .from("app_builds")
 .select("*")
 .eq("app_id",appId)
 .order(
 "created_at",
-{ascending:false}
+{
+ascending:false
+}
 )
 .limit(10);
 
 
+
 if(r.error){
 
-$("builds").innerHTML=
-'<span class="error">'+
-"Unable to load builds: "+
-esc(r.error.message)+
+$("builds").innerHTML =
+'<span class="error">' +
+"Unable to load builds: " +
+esc(r.error.message) +
 "</span>";
 
 return;
@@ -1732,14 +2590,15 @@ return;
 }
 
 
+
 if(
-!r.data||
+!r.data ||
 !r.data.length
 ){
 
-$("builds").innerHTML=
-'<span class="small">'+
-"No build requested yet."+
+$("builds").innerHTML =
+'<span class="small">' +
+"No build requested yet." +
 "</span>";
 
 return;
@@ -1747,28 +2606,37 @@ return;
 }
 
 
-$("builds").innerHTML=
+
+$("builds").innerHTML =
 r.data
 .map(
-b=>{
-
-let c=
-b.status==="success"
-?"success"
-:b.status==="failed"
-?"error"
-:"warn";
+b => {
 
 
-let downloadButton="";
+let c =
+b.status === "success"
+?
+"success"
+:
+b.status === "failed"
+?
+"error"
+:
+"warn";
+
+
+
+let downloadButton = "";
+
 
 
 if(
-b.status==="success" &&
+b.status === "success" &&
 b.storage_path
 ){
 
-const safePath=
+
+const safePath =
 String(
 b.storage_path
 )
@@ -1782,43 +2650,48 @@ b.storage_path
 );
 
 
-downloadButton=
-'<br>'+
-'<button '+
-'type="button" '+
-'class="download-btn" '+
-'onclick="downloadAPK(\''+
-safePath+
-'\')">'+
-'⬇️ Download APK'+
-'</button>';
+
+downloadButton =
+"<br>" +
+"<button " +
+'type="button" ' +
+'class="download-btn" ' +
+'onclick="downloadAPK(\'' +
+safePath +
+"')\">" +
+"⬇️ Download APK" +
+"</button>";
 
 }
 
 
+
 return (
 
-'<div class="build-item">'+
+'<div class="build-item">' +
 
-'<b>Version '+
+"<b>Version " +
+
 esc(
-b.version_name||
+b.version_name ||
 "1.0.0"
-)+
-'</b> — '+
+) +
 
-'<span class="'+
-c+
-'">'+
+"</b> — " +
+
+'<span class="' +
+c +
+'">' +
 
 esc(
-b.status||
+b.status ||
 "queued"
-)+
+) +
 
-'</span><br>'+
+"</span><br>" +
 
 (
+
 b.created_at
 ?
 new Date(
@@ -1826,31 +2699,36 @@ b.created_at
 ).toLocaleString()
 :
 ""
-)+
+
+) +
 
 (
+
 b.file_name
 ?
-'<br>📦 '+
+"<br>📦 " +
 esc(b.file_name)
 :
 ""
-)+
+
+) +
 
 (
+
 b.file_size
 ?
-'<br>📏 '+
+"<br>📏 " +
 formatBytes(
 b.file_size
 )
 :
 ""
-)+
 
-downloadButton+
+) +
 
-'</div>'
+downloadButton +
+
+"</div>"
 
 );
 
@@ -1861,11 +2739,19 @@ downloadButton+
 }
 
 
-/* INITIALIZE */
+
+/* =================================
+   INITIALIZE
+================================= */
 
 async function init(){
 
 try{
+
+
+/*
+   App ID
+*/
 
 if(!appId){
 
@@ -1879,19 +2765,27 @@ return;
 }
 
 
-/* AUTH */
 
-const g=
+/*
+   Authentication
+*/
+
+const g =
 await sb.auth.getUser();
 
 
-if(g.error)
+
+if(g.error){
+
 throw g.error;
+
+}
+
 
 
 if(!g.data.user){
 
-location.href=
+location.href =
 "login.html";
 
 return;
@@ -1899,13 +2793,17 @@ return;
 }
 
 
-user=
+
+user =
 g.data.user;
 
 
-/* APP */
 
-const r=
+/*
+   Load App
+*/
+
+const r =
 await sb
 .from("apps")
 .select("*")
@@ -1917,65 +2815,124 @@ user.id
 .single();
 
 
-if(r.error)
+
+if(r.error){
+
 throw r.error;
-
-
-app=
-r.data;
-
-
-$("appName").value=
-app.name||"";
-
-
-/* SETTINGS */
-
-const s=
-await getSettings();
-
-
-$("packageName").value=
-s.packageName||
-makePackage(app.name);
-
-
-$("versionName").value=
-s.versionName||
-"1.0.0";
-
-
-$("versionCode").value=
-s.versionCode||
-1;
-
-
-/* IMAGE */
-
-if(s.appImage){
-
-appImageData=
-s.appImage;
-
-renderImage();
-
-imageStatus(
-"Saved image loaded ✓",
-"success"
-);
 
 }
 
 
-/* SOURCE */
+
+app =
+r.data;
+
+
+
+$("appName").value =
+app.name || "";
+
+
+
+/*
+   Load settings
+*/
+
+const s =
+await getSettings();
+
+
+
+$("packageName").value =
+s.packageName ||
+makePackage(app.name);
+
+
+
+$("versionName").value =
+s.versionName ||
+"1.0.0";
+
+
+
+$("versionCode").value =
+s.versionCode ||
+1;
+
+
+
+/*
+   Load Storage image
+*/
+
+appImagePath =
+s.appImagePath ||
+"";
+
+
+appImageUrl =
+s.appImageUrl ||
+"";
+
+
+/*
+   Backward compatibility
+   for old Base64 image
+*/
+
+appImageData =
+s.appImage ||
+"";
+
+
+
+if(appImageUrl){
+
+renderImage();
+
+
+imageStatus(
+"Saved Storage image loaded ✓",
+"success"
+);
+
+}else if(appImageData){
+
+renderImage();
+
+
+imageStatus(
+"Old saved image loaded. Select a new image to move it to Storage.",
+"warn"
+);
+
+}else{
+
+renderImage();
+
+}
+
+
+
+/*
+   Load source
+*/
 
 await loadSource();
 
 
-/* BUILD HISTORY */
+
+/*
+   Build history
+*/
 
 await loadBuilds();
 
+
+
+/*
+   Ready
+*/
 
 status(
 "Android project loaded.",
@@ -1983,12 +2940,14 @@ status(
 );
 
 
+
 }catch(e){
 
 console.error(e);
 
+
 status(
-e.message||
+e.message ||
 "Unable to load app.",
 "error"
 );
@@ -1998,7 +2957,10 @@ e.message||
 }
 
 
-/* START */
+
+/* =================================
+   START
+================================= */
 
 init();
 
