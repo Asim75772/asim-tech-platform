@@ -1,15 +1,22 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="viewport"
+      content="width=device-width,initial-scale=1">
 
 <title>ASIM TECH — Android Builder</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
+/* =====================================================
+   GLOBAL
+===================================================== */
 
 *{
   box-sizing:border-box;
@@ -22,15 +29,28 @@ body{
   color:#fff;
 }
 
+
+/* =====================================================
+   NAV
+===================================================== */
+
 nav{
   min-height:62px;
+
   background:#050c16;
+
   border-bottom:1px solid #263646;
+
   display:flex;
+
   align-items:center;
+
   justify-content:space-between;
+
   padding:10px 18px;
+
   gap:10px;
+
   flex-wrap:wrap;
 }
 
@@ -49,38 +69,75 @@ nav a{
   margin-left:14px;
 }
 
+
+/* =====================================================
+   WRAPPER
+===================================================== */
+
 .wrap{
   max-width:1000px;
   margin:auto;
   padding:16px;
 }
 
+
+/* =====================================================
+   CARD
+===================================================== */
+
 .card{
   background:#0d1d2b;
+
   border:1px solid #263646;
+
   border-radius:12px;
+
   padding:16px;
+
   margin-bottom:16px;
 }
 
+
+/* =====================================================
+   TOP ACTIONS
+===================================================== */
+
 .topactions{
   display:flex;
+
   gap:10px;
+
   flex-wrap:wrap;
+
   position:sticky;
+
   top:0;
+
   z-index:5;
+
   background:#07111f;
+
   padding:8px 0;
 }
 
+
+/* =====================================================
+   BUTTON
+===================================================== */
+
 .btn{
   border:0;
+
   border-radius:9px;
+
   padding:13px 18px;
+
   font-weight:700;
+
   font-size:16px;
+
   cursor:pointer;
+
   color:#fff;
 }
 
@@ -109,42 +166,73 @@ nav a{
   background:#475569;
 }
 
+
+/* =====================================================
+   FORM
+===================================================== */
+
 label{
   display:block;
+
   font-size:15px;
+
   color:#9fb0bf;
+
   margin:12px 0 6px;
 }
 
 input,
 select,
 textarea{
+
   width:100%;
+
   background:#07111f;
+
   color:#fff;
+
   border:1px solid #304354;
+
   border-radius:9px;
+
   padding:12px;
+
   font-size:16px;
 }
 
 textarea{
+
   min-height:320px;
+
   resize:vertical;
+
   font-family:monospace;
+
   font-size:14px;
+
   line-height:1.5;
 }
 
 .row{
+
   display:grid;
+
   grid-template-columns:1fr 1fr;
+
   gap:12px;
 }
 
+
+/* =====================================================
+   STATUS
+===================================================== */
+
 .status{
+
   margin-top:10px;
+
   font-size:14px;
+
   line-height:1.5;
 }
 
@@ -160,44 +248,82 @@ textarea{
   color:#fbbf24;
 }
 
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
 .preview{
+
   background:#050c16;
+
   border:1px solid #304354;
+
   border-radius:10px;
+
   padding:12px;
 }
 
 .preview iframe{
+
   width:100%;
+
   height:650px;
+
   border:0;
+
   border-radius:8px;
+
   background:#fff;
 }
 
+
+/* =====================================================
+   BUILD HISTORY
+===================================================== */
+
 .build-item{
+
   padding:14px 0;
+
   border-bottom:1px solid #263646;
 }
 
 .build-item:last-child{
+
   border-bottom:0;
 }
 
+
+/* =====================================================
+   DOWNLOAD
+===================================================== */
+
 .download-area{
+
   display:flex;
+
   gap:10px;
+
   flex-wrap:wrap;
+
   margin-top:12px;
 }
 
 .download-btn{
+
   display:inline-block;
+
   color:#fff;
+
   padding:13px 20px;
+
   border-radius:9px;
+
   text-decoration:none;
+
   font-weight:700;
+
   font-size:16px;
 }
 
@@ -210,9 +336,47 @@ textarea{
 }
 
 .small{
+
   font-size:13px;
+
   color:#9fb0bf;
 }
+
+
+/* =====================================================
+   URL BOX
+===================================================== */
+
+.url-help{
+
+  margin-top:7px;
+
+  color:#9fb0bf;
+
+  font-size:13px;
+}
+
+.url-box{
+
+  width:100%;
+
+  background:#07111f;
+
+  color:#fff;
+
+  border:1px solid #304354;
+
+  border-radius:9px;
+
+  padding:14px;
+
+  font-size:16px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
 
 @media(max-width:700px){
 
@@ -256,233 +420,373 @@ textarea{
 
 </head>
 
+
 <body>
+
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
 
 <nav>
 
   <div class="logo">
-    <span class="green">⚡ ASIM</span> TECH — Android Builder
+
+    <span class="green">
+      ⚡ ASIM
+    </span>
+
+    TECH — Android Builder
+
   </div>
 
+
   <div>
-    <a href="android-apps.html">My Apps</a>
-    <a href="dashboard.html">Dashboard</a>
+
+    <a href="android-apps.html">
+      My Apps
+    </a>
+
+    <a href="dashboard.html">
+      Dashboard
+    </a>
+
   </div>
 
 </nav>
 
 
+
 <main class="wrap">
 
 
-  <!-- TOP BUTTONS -->
+<!-- =====================================================
+     TOP BUTTONS
+===================================================== -->
 
-  <div class="topactions">
+<div class="topactions">
 
-    <button
-      id="saveBtn"
-      class="btn greenbtn"
-      onclick="save()">
-      💾 Save
-    </button>
+  <button
+    id="saveBtn"
+    class="btn greenbtn"
+    onclick="save()">
 
-    <button
-      id="buildBtn"
-      class="btn orange"
-      onclick="requestBuild()">
-      🏗️ Build APK
-    </button>
+    💾 Save
 
-    <button
-      class="btn blue"
-      onclick="loadBuilds()">
-      🔄 Refresh
-    </button>
-
-  </div>
+  </button>
 
 
-  <div id="status" class="status">
-    Loading…
-  </div>
+  <button
+    id="buildBtn"
+    class="btn orange"
+    onclick="requestBuild()">
+
+    🏗️ Build APK
+
+  </button>
 
 
-  <!-- APP SETTINGS -->
+  <button
+    class="btn blue"
+    onclick="loadBuilds()">
 
-  <section class="card">
+    🔄 Refresh
 
-    <h2>App Settings</h2>
+  </button>
 
-    <div class="row">
-
-      <div>
-
-        <label>App Name</label>
-
-        <input
-          id="appName"
-          placeholder="ASIM TECH Calculator">
-
-      </div>
+</div>
 
 
-      <div>
 
-        <label>Package Name</label>
+<!-- =====================================================
+     MAIN STATUS
+===================================================== -->
 
-        <input
-          id="packageName"
-          placeholder="com.asimtech.calculator">
+<div
+  id="status"
+  class="status">
 
-      </div>
+  Loading…
 
-    </div>
-
-
-    <div class="row">
-
-      <div>
-
-        <label>Version Name</label>
-
-        <input
-          id="versionName"
-          value="1.0.0">
-
-      </div>
+</div>
 
 
-      <div>
 
-        <label>Version Code</label>
+<!-- =====================================================
+     APP SETTINGS
+===================================================== -->
 
-        <input
-          id="versionCode"
-          type="number"
-          value="1">
+<section class="card">
 
-      </div>
-
-    </div>
-
-  </section>
+  <h2>
+    App Settings
+  </h2>
 
 
-  <!-- SOURCE -->
-
-  <section class="card">
-
-    <h2>🚀 Code / URL Mode</h2>
+  <div class="row">
 
 
-    <label>Source Type</label>
-
-    <select
-      id="sourceMode"
-      onchange="changeSourceMode()">
-
-      <option value="code">
-        💻 HTML / CSS / JavaScript Code
-      </option>
-
-      <option value="url">
-        🌐 Web App URL
-      </option>
-
-    </select>
-
-
-    <!-- CODE -->
-
-    <div id="codeSource">
+    <div>
 
       <label>
-        Paste Complete HTML Code
-      </label>
-
-      <textarea
-        id="webAppCode"
-        placeholder="Paste your complete HTML file including CSS and JavaScript..."></textarea>
-
-    </div>
-
-
-    <!-- URL -->
-
-    <div
-      id="urlSource"
-      style="display:none">
-
-      <label>
-        Web App URL
+        App Name
       </label>
 
       <input
-        id="webAppUrl"
-        type="url"
-        placeholder="https://example.com">
+        id="appName"
+        placeholder="ASIM TECH Calculator">
 
     </div>
 
 
-    <div
-      class="topactions"
-      style="position:static">
 
-      <button
-        class="btn blue"
-        onclick="previewWebApp()">
-        👁 Preview
-      </button>
+    <div>
 
-      <button
-        class="btn greenbtn"
-        onclick="saveWebAppSource()">
-        💾 Save Source
-      </button>
+      <label>
+        Package Name
+      </label>
+
+      <input
+        id="packageName"
+        placeholder="com.asimtech.calculator">
 
     </div>
 
 
-    <div
-      id="webAppStatus"
-      class="status">
-    </div>
-
-  </section>
+  </div>
 
 
-  <!-- PREVIEW -->
 
-  <section class="card">
+  <div class="row">
 
-    <h2>📱 Preview</h2>
 
-    <div
-      class="preview"
-      id="previewBox">
+    <div>
 
-      Paste code and press Preview.
+      <label>
+        Version Name
+      </label>
+
+      <input
+        id="versionName"
+        value="1.0.0">
 
     </div>
 
-  </section>
 
 
-  <!-- BUILD HISTORY -->
+    <div>
 
-  <section class="card">
+      <label>
+        Version Code
+      </label>
 
-    <h2>Build History</h2>
+      <input
+        id="versionCode"
+        type="number"
+        value="1">
 
-    <div id="builds">
-      Loading…
     </div>
 
-  </section>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     CODE / URL MODE
+===================================================== -->
+
+<section class="card">
+
+
+  <h2>
+    🚀 Code / URL Mode
+  </h2>
+
+
+  <label>
+    Source Type
+  </label>
+
+
+  <select
+    id="sourceMode"
+    onchange="changeSourceMode()">
+
+
+    <option value="code">
+
+      💻 HTML / CSS / JavaScript Code
+
+    </option>
+
+
+    <option value="url">
+
+      🌐 Web App URL
+
+    </option>
+
+
+  </select>
+
+
+
+  <!-- =================================================
+       CODE MODE
+  ================================================== -->
+
+  <div
+    id="codeSource">
+
+
+    <label>
+
+      Paste Complete HTML Code
+
+    </label>
+
+
+    <textarea
+      id="webAppCode"
+      placeholder="Paste your complete HTML file including CSS and JavaScript..."></textarea>
+
+
+  </div>
+
+
+
+  <!-- =================================================
+       URL MODE
+  ================================================== -->
+
+  <div
+    id="urlSource"
+    style="display:none;">
+
+
+    <label>
+
+      🌐 Web App URL
+
+    </label>
+
+
+    <input
+      id="webAppUrl"
+      class="url-box"
+      type="url"
+      autocomplete="url"
+      placeholder="https://example.com">
+
+
+    <div class="url-help">
+
+      Enter the complete website URL,
+      including <b>https://</b>
+
+    </div>
+
+
+  </div>
+
+
+
+  <!-- =================================================
+       SOURCE BUTTONS
+  ================================================== -->
+
+  <div
+    class="topactions"
+    style="position:static;">
+
+
+    <button
+      type="button"
+      class="btn blue"
+      onclick="previewWebApp()">
+
+      👁 Preview
+
+    </button>
+
+
+    <button
+      type="button"
+      class="btn greenbtn"
+      onclick="saveWebAppSource()">
+
+      💾 Save Source
+
+    </button>
+
+
+  </div>
+
+
+
+  <div
+    id="webAppStatus"
+    class="status">
+  </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     PREVIEW
+===================================================== -->
+
+<section class="card">
+
+
+  <h2>
+    📱 Preview
+  </h2>
+
+
+  <div
+    class="preview"
+    id="previewBox">
+
+    Select Code or URL and press Preview.
+
+  </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     BUILD HISTORY
+===================================================== -->
+
+<section class="card">
+
+
+  <h2>
+    Build History
+  </h2>
+
+
+  <div id="builds">
+
+    Loading…
+
+  </div>
+
+
+</section>
+
 
 
 </main>
+
 
 
 <script>
@@ -495,6 +799,7 @@ textarea{
 const SUPABASE_URL =
   "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
+
 const SUPABASE_KEY =
   "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
@@ -504,6 +809,7 @@ const sb =
     SUPABASE_URL,
     SUPABASE_KEY
   );
+
 
 
 /* =====================================================
@@ -516,16 +822,23 @@ const appId =
   ).get("id");
 
 
+
 let user = null;
+
 let app = null;
+
+let pollingTimer = null;
+
 
 
 /* =====================================================
    SHORTCUT
 ===================================================== */
 
-const $ = id =>
-  document.getElementById(id);
+const $ =
+  id =>
+    document.getElementById(id);
+
 
 
 /* =====================================================
@@ -537,7 +850,8 @@ function setStatus(
   cls = ""
 ){
 
-  $("status").textContent = text;
+  $("status").textContent =
+    text;
 
   $("status").className =
     "status " + cls;
@@ -545,17 +859,20 @@ function setStatus(
 }
 
 
+
 function sourceStatus(
   text,
   cls = ""
 ){
 
-  $("webAppStatus").textContent = text;
+  $("webAppStatus").textContent =
+    text;
 
   $("webAppStatus").className =
     "status " + cls;
 
 }
+
 
 
 /* =====================================================
@@ -564,19 +881,26 @@ function sourceStatus(
 
 function esc(value){
 
-  return String(value ?? "")
-    .replace(
-      /[&<>"']/g,
-      m => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
-      }[m])
-    );
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /[&<>"']/g,
+
+    m => ({
+
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+
+    }[m])
+
+  );
 
 }
+
 
 
 /* =====================================================
@@ -595,8 +919,14 @@ function makePackage(name){
       ""
     );
 
-  if(!x)
-    x = "myapp";
+
+  if(!x){
+
+    x =
+      "myapp";
+
+  }
+
 
   return (
     "com.asimtech." +
@@ -604,6 +934,7 @@ function makePackage(name){
   );
 
 }
+
 
 
 function validPackage(x){
@@ -614,26 +945,37 @@ function validPackage(x){
 }
 
 
+
 /* =====================================================
    SOURCE MODE
 ===================================================== */
 
 function changeSourceMode(){
 
-  const isCode =
-    $("sourceMode").value === "code";
+  const mode =
+    $("sourceMode").value;
 
-  $("codeSource").style.display =
-    isCode
-      ? "block"
-      : "none";
 
-  $("urlSource").style.display =
-    isCode
-      ? "none"
-      : "block";
+  if(mode === "url"){
+
+    $("codeSource").style.display =
+      "none";
+
+    $("urlSource").style.display =
+      "block";
+
+  }else{
+
+    $("codeSource").style.display =
+      "block";
+
+    $("urlSource").style.display =
+      "none";
+
+  }
 
 }
+
 
 
 /* =====================================================
@@ -646,14 +988,17 @@ function previewWebApp(){
     $("sourceMode").value;
 
 
-  /* CODE */
+
+  /* =================================================
+     CODE PREVIEW
+  ================================================== */
 
   if(mode === "code"){
 
     const code =
       $("webAppCode")
-      .value
-      .trim();
+        .value
+        .trim();
 
 
     if(!code){
@@ -682,7 +1027,10 @@ function previewWebApp(){
 
 
     $("previewBox").innerHTML =
-      `<iframe src="${url}"></iframe>`;
+
+      `<iframe
+        src="${url}">
+       </iframe>`;
 
 
     sourceStatus(
@@ -690,17 +1038,21 @@ function previewWebApp(){
       "success"
     );
 
+
     return;
 
   }
 
 
-  /* URL */
+
+  /* =================================================
+     URL PREVIEW
+  ================================================== */
 
   const url =
     $("webAppUrl")
-    .value
-    .trim();
+      .value
+      .trim();
 
 
   if(!url){
@@ -717,12 +1069,23 @@ function previewWebApp(){
 
   try{
 
-    new URL(url);
+    const parsed =
+      new URL(url);
+
+
+    if(
+      parsed.protocol !== "http:" &&
+      parsed.protocol !== "https:"
+    ){
+
+      throw new Error();
+
+    }
 
   }catch{
 
     sourceStatus(
-      "Please enter a valid URL.",
+      "Please enter a valid HTTP/HTTPS URL.",
       "error"
     );
 
@@ -732,7 +1095,10 @@ function previewWebApp(){
 
 
   $("previewBox").innerHTML =
-    `<iframe src="${esc(url)}"></iframe>`;
+
+    `<iframe
+      src="${esc(url)}">
+     </iframe>`;
 
 
   sourceStatus(
@@ -741,6 +1107,7 @@ function previewWebApp(){
   );
 
 }
+
 
 
 /* =====================================================
@@ -781,6 +1148,7 @@ async function loadSetting(key){
         r.data.content
       );
 
+
     return (
       json[key] ??
       null
@@ -795,94 +1163,22 @@ async function loadSetting(key){
 }
 
 
+
 /* =====================================================
    LOAD SOURCE
 ===================================================== */
 
 async function loadSource(){
 
-  let r =
-    await sb
-      .from("app_files")
-      .select("content")
-      .eq(
-        "app_id",
-        appId
-      )
-      .eq(
-        "file_path",
-        "index.html"
-      )
-      .maybeSingle();
-
-
-  if(
-    !r.error &&
-    r.data?.content
-  ){
-
-    /*
-       If index.html exists, it is normally
-       Code Mode.
-
-       However, URL Mode also creates an
-       automatic index.html wrapper.
-
-       Check webapp-url.txt first to determine
-       whether this is URL Mode.
-    */
-
-    const urlResult =
-      await sb
-        .from("app_files")
-        .select("content")
-        .eq(
-          "app_id",
-          appId
-        )
-        .eq(
-          "file_path",
-          "webapp-url.txt"
-        )
-        .maybeSingle();
-
-
-    if(
-      !urlResult.error &&
-      urlResult.data?.content
-    ){
-
-      $("sourceMode").value =
-        "url";
-
-      $("webAppUrl").value =
-        urlResult.data.content.trim();
-
-      changeSourceMode();
-
-      return;
-
-    }
-
-
-    $("sourceMode").value =
-      "code";
-
-    $("webAppCode").value =
-      r.data.content;
-
-    changeSourceMode();
-
-    return;
-
-  }
-
 
   /*
-     If no index.html exists, try URL source.
+     First check URL source.
+
+     URL Mode intentionally stores
+     BOTH webapp-url.txt and index.html.
   */
 
-  r =
+  let r =
     await sb
       .from("app_files")
       .select("content")
@@ -905,14 +1201,65 @@ async function loadSource(){
     $("sourceMode").value =
       "url";
 
+
     $("webAppUrl").value =
       r.data.content.trim();
 
+
     changeSourceMode();
+
+
+    return;
 
   }
 
+
+
+  /*
+     Otherwise load Code Mode.
+  */
+
+  r =
+    await sb
+      .from("app_files")
+      .select("content")
+      .eq(
+        "app_id",
+        appId
+      )
+      .eq(
+        "file_path",
+        "index.html"
+      )
+      .maybeSingle();
+
+
+  if(
+    !r.error &&
+    r.data?.content
+  ){
+
+    $("sourceMode").value =
+      "code";
+
+
+    $("webAppCode").value =
+      r.data.content;
+
+
+    changeSourceMode();
+
+
+    return;
+
+  }
+
+
+
+  changeSourceMode();
+
 }
+
 
 
 /* =====================================================
@@ -964,6 +1311,7 @@ async function saveSettings(){
   };
 
 
+
   if(
     !validPackage(
       settings.packageName
@@ -977,11 +1325,13 @@ async function saveSettings(){
   }
 
 
+
   let r =
     await sb
       .from("app_files")
       .upsert(
         {
+
           app_id:
             appId,
 
@@ -1001,16 +1351,23 @@ async function saveSettings(){
           updated_at:
             new Date()
               .toISOString()
+
         },
         {
+
           onConflict:
             "app_id,file_path"
+
         }
       );
 
 
-  if(r.error)
+  if(r.error){
+
     throw r.error;
+
+  }
+
 
 
   r =
@@ -1018,12 +1375,14 @@ async function saveSettings(){
       .from("apps")
       .update(
         {
+
           name:
             settings.appName,
 
           updated_at:
             new Date()
               .toISOString()
+
         }
       )
       .eq(
@@ -1036,8 +1395,12 @@ async function saveSettings(){
       );
 
 
-  if(r.error)
+  if(r.error){
+
     throw r.error;
+
+  }
+
 
 
   app.name =
@@ -1049,16 +1412,26 @@ async function saveSettings(){
 }
 
 
+
 /* =====================================================
-   AUTOMATIC URL WRAPPER
+   AUTOMATIC URL INDEX.HTML WRAPPER
 ===================================================== */
+
+/*
+   IMPORTANT:
+
+   There is NO JavaScript <script> tag here.
+
+   This prevents the outer android-builder.html
+   from being broken by a nested script tag.
+
+   The generated index.html uses a normal
+   meta refresh to open the Web App URL.
+*/
 
 function makeUrlWrapper(url){
 
   const safeUrl =
-    JSON.stringify(url);
-
-  const safeAttr =
     esc(url);
 
 
@@ -1077,7 +1450,7 @@ function makeUrlWrapper(url){
 
 <meta
   http-equiv="refresh"
-  content="0;url=${safeAttr}">
+  content="0;url=${safeUrl}">
 
 <style>
 
@@ -1091,6 +1464,7 @@ body{
   height:100%;
 
   background:#07111f;
+
   color:#fff;
 
   font-family:Arial,sans-serif;
@@ -1137,16 +1511,20 @@ a{
 
 <body>
 
+
 <div class="loading">
 
-  <h2>⚡ ASIM TECH</h2>
+  <h2>
+    ⚡ ASIM TECH
+  </h2>
 
-  <p>Loading application…</p>
+  <p>
+    Loading application…
+  </p>
 
   <p>
 
-    <a
-      href="${safeAttr}">
+    <a href="${safeUrl}">
       Open App
     </a>
 
@@ -1155,29 +1533,6 @@ a{
 </div>
 
 
-<script>
-
-(function(){
-
-  const url =
-    ${safeUrl};
-
-
-  try{
-
-    window.location.replace(url);
-
-  }catch(e){
-
-    window.location.href =
-      url;
-
-  }
-
-})();
-
-</script>
-
 </body>
 
 </html>`;
@@ -1185,8 +1540,9 @@ a{
 }
 
 
+
 /* =====================================================
-   SAVE SOURCE
+   SAVE WEB APP SOURCE
 ===================================================== */
 
 async function saveWebAppSource(){
@@ -1206,6 +1562,7 @@ async function saveWebAppSource(){
     .trim();
 
 
+
   if(!content){
 
     sourceStatus(
@@ -1218,9 +1575,10 @@ async function saveWebAppSource(){
   }
 
 
+
   /* =================================================
      CODE MODE
-  ================================================= */
+  ================================================== */
 
   if(mode === "code"){
 
@@ -1229,6 +1587,7 @@ async function saveWebAppSource(){
         .from("app_files")
         .upsert(
           {
+
             app_id:
               appId,
 
@@ -1244,34 +1603,53 @@ async function saveWebAppSource(){
             updated_at:
               new Date()
                 .toISOString()
+
           },
           {
+
             onConflict:
               "app_id,file_path"
+
           }
         );
 
 
-    if(r.error)
+    if(r.error){
+
       throw r.error;
+
+    }
+
 
 
     /*
-       Code Mode does not need
-       webapp-url.txt.
+       Remove URL source when switching
+       back to Code Mode.
     */
 
-    await sb
-      .from("app_files")
-      .delete()
-      .eq(
-        "app_id",
-        appId
-      )
-      .eq(
-        "file_path",
-        "webapp-url.txt"
+    const del =
+      await sb
+        .from("app_files")
+        .delete()
+        .eq(
+          "app_id",
+          appId
+        )
+        .eq(
+          "file_path",
+          "webapp-url.txt"
+        );
+
+
+    if(del.error){
+
+      console.warn(
+        "Unable to remove old URL source:",
+        del.error
       );
+
+    }
+
 
 
     sourceStatus(
@@ -1285,9 +1663,10 @@ async function saveWebAppSource(){
   }
 
 
+
   /* =================================================
      URL MODE
-  ================================================= */
+  ================================================== */
 
   let parsedUrl;
 
@@ -1300,7 +1679,7 @@ async function saveWebAppSource(){
   }catch{
 
     sourceStatus(
-      "Invalid URL. Please use a complete URL such as https://example.com",
+      "Invalid URL. Example: https://example.com",
       "error"
     );
 
@@ -1309,8 +1688,9 @@ async function saveWebAppSource(){
   }
 
 
+
   /*
-     Only HTTP and HTTPS are allowed.
+     Only HTTP and HTTPS.
   */
 
   if(
@@ -1328,19 +1708,22 @@ async function saveWebAppSource(){
   }
 
 
+
   const cleanUrl =
     parsedUrl.href;
 
 
+
   /* =================================================
-     1. SAVE ORIGINAL URL
-  ================================================= */
+     SAVE ORIGINAL URL
+  ================================================== */
 
   let r =
     await sb
       .from("app_files")
       .upsert(
         {
+
           app_id:
             appId,
 
@@ -1356,24 +1739,33 @@ async function saveWebAppSource(){
           updated_at:
             new Date()
               .toISOString()
+
         },
         {
+
           onConflict:
             "app_id,file_path"
+
         }
       );
 
 
-  if(r.error)
+  if(r.error){
+
     throw r.error;
+
+  }
+
 
 
   /* =================================================
-     2. CREATE AUTOMATIC INDEX.HTML
-  ================================================= */
+     CREATE AUTOMATIC INDEX.HTML
+  ================================================== */
 
   const wrapper =
-    makeUrlWrapper(cleanUrl);
+    makeUrlWrapper(
+      cleanUrl
+    );
 
 
   r =
@@ -1381,6 +1773,7 @@ async function saveWebAppSource(){
       .from("app_files")
       .upsert(
         {
+
           app_id:
             appId,
 
@@ -1396,16 +1789,23 @@ async function saveWebAppSource(){
           updated_at:
             new Date()
               .toISOString()
+
         },
         {
+
           onConflict:
             "app_id,file_path"
+
         }
       );
 
 
-  if(r.error)
+  if(r.error){
+
     throw r.error;
+
+  }
+
 
 
   /*
@@ -1413,13 +1813,14 @@ async function saveWebAppSource(){
 
      DO NOT DELETE index.html.
 
-     URL Mode intentionally keeps:
+     URL Mode keeps BOTH:
 
        webapp-url.txt
        index.html
 
-     This satisfies the existing
-     request-apk-build function.
+     Therefore the existing
+     request-apk-build function
+     will find index.html.
   */
 
 
@@ -1434,6 +1835,7 @@ async function saveWebAppSource(){
 }
 
 
+
 /* =====================================================
    SAVE PROJECT
 ===================================================== */
@@ -1442,17 +1844,23 @@ async function save(){
 
   try{
 
-    if(!user)
+    if(!user){
+
       throw new Error(
         "Login session not available."
       );
+
+    }
+
 
 
     await saveSettings();
 
 
+
     const saved =
       await saveWebAppSource();
+
 
 
     if(!saved){
@@ -1462,6 +1870,7 @@ async function save(){
       );
 
     }
+
 
 
     setStatus(
@@ -1489,6 +1898,7 @@ async function save(){
 }
 
 
+
 /* =====================================================
    AUTOMATIC APK BUILD
 ===================================================== */
@@ -1501,6 +1911,7 @@ async function requestBuild(){
 
   try{
 
+
     if(!user){
 
       throw new Error(
@@ -1510,15 +1921,25 @@ async function requestBuild(){
     }
 
 
-    /* Save settings */
+
+    /*
+       Save settings first.
+    */
 
     await saveSettings();
 
 
-    /* Save source */
+
+    /*
+       Save source.
+
+       In URL Mode this creates
+       index.html automatically.
+    */
 
     const saved =
       await saveWebAppSource();
+
 
 
     if(!saved){
@@ -1528,6 +1949,7 @@ async function requestBuild(){
       );
 
     }
+
 
 
     buildBtn.disabled =
@@ -1544,10 +1966,14 @@ async function requestBuild(){
     );
 
 
-    /* Get current login session */
+
+    /* =================================================
+       GET LOGIN SESSION
+    ================================================== */
 
     const sessionResult =
       await sb.auth.getSession();
+
 
 
     if(
@@ -1559,10 +1985,12 @@ async function requestBuild(){
     }
 
 
+
     const session =
       sessionResult
         .data
         ?.session;
+
 
 
     if(
@@ -1577,20 +2005,17 @@ async function requestBuild(){
     }
 
 
-    /*
-       IMPORTANT:
 
-       Do NOT insert directly into app_builds.
-
-       request-apk-build Edge Function
-       creates the build record and
-       triggers GitHub Actions.
-    */
+    /* =================================================
+       REQUEST APK BUILD
+    ================================================== */
 
     const response =
       await fetch(
+
         SUPABASE_URL +
         "/functions/v1/request-apk-build",
+
         {
 
           method:"POST",
@@ -1625,10 +2050,13 @@ async function requestBuild(){
             )
 
         }
+
       );
 
 
+
     let result = {};
+
 
 
     try{
@@ -1643,16 +2071,20 @@ async function requestBuild(){
     }
 
 
+
     if(!response.ok){
 
       throw new Error(
+
         result.error ||
         result.message ||
         result.detail ||
         "Automatic APK build could not be started."
+
       );
 
     }
+
 
 
     setStatus(
@@ -1661,14 +2093,17 @@ async function requestBuild(){
     );
 
 
+
     await loadBuilds();
 
 
+
     /*
-       Automatically refresh build status.
+       Poll every 10 seconds.
     */
 
     startBuildPolling();
+
 
 
   }catch(e){
@@ -1685,6 +2120,7 @@ async function requestBuild(){
       "error"
     );
 
+
   }finally{
 
     buildBtn.disabled =
@@ -1699,13 +2135,10 @@ async function requestBuild(){
 }
 
 
+
 /* =====================================================
    BUILD POLLING
 ===================================================== */
-
-let pollingTimer =
-  null;
-
 
 function startBuildPolling(){
 
@@ -1718,11 +2151,14 @@ function startBuildPolling(){
   }
 
 
+
   let count = 0;
+
 
 
   pollingTimer =
     setInterval(
+
       async () => {
 
         count++;
@@ -1731,11 +2167,13 @@ function startBuildPolling(){
         await loadBuilds();
 
 
+
         if(count >= 30){
 
           clearInterval(
             pollingTimer
           );
+
 
           pollingTimer =
             null;
@@ -1743,10 +2181,13 @@ function startBuildPolling(){
         }
 
       },
+
       10000
+
     );
 
 }
+
 
 
 /* =====================================================
@@ -1765,21 +2206,32 @@ function getDownloadUrl(build){
   }
 
 
+
   return (
+
     SUPABASE_URL +
+
     "/functions/v1/download-apk" +
+
     "?path=" +
+
     encodeURIComponent(
       build.storage_path
     ) +
+
     "&name=" +
+
     encodeURIComponent(
+
       build.file_name ||
       "ASIM-TECH-App.apk"
+
     )
+
   );
 
 }
+
 
 
 /* =====================================================
@@ -1805,16 +2257,21 @@ async function loadBuilds(){
       .limit(10);
 
 
+
   if(r.error){
 
     $("builds").innerHTML =
+
       `<div class="error">
+
         Unable to load builds.
+
       </div>`;
 
     return;
 
   }
+
 
 
   if(
@@ -1830,13 +2287,19 @@ async function loadBuilds(){
   }
 
 
+
   $("builds").innerHTML =
+
     r.data
+
       .map(
+
         build => {
+
 
           let cls =
             "warn";
+
 
 
           if(
@@ -1850,6 +2313,7 @@ async function loadBuilds(){
           }
 
 
+
           if(
             build.status ===
             "failed"
@@ -1861,22 +2325,30 @@ async function loadBuilds(){
           }
 
 
+
           let buttons =
             "";
 
 
-          /* DOWNLOAD BUTTONS */
+
+          /* =================================================
+             DOWNLOAD BUTTONS
+          ================================================== */
 
           if(
+
             build.status ===
               "success" &&
+
             build.storage_path
+
           ){
 
             const url =
               getDownloadUrl(
                 build
               );
+
 
 
             buttons = `
@@ -1888,7 +2360,9 @@ async function loadBuilds(){
                   href="${url}"
                   target="_blank"
                   rel="noopener">
+
                   📥 Download APK
+
                 </a>
 
 
@@ -1897,7 +2371,9 @@ async function loadBuilds(){
                   href="${url}"
                   target="_blank"
                   rel="noopener">
+
                   📱 Open APK
+
                 </a>
 
               </div>
@@ -1907,10 +2383,14 @@ async function loadBuilds(){
           }
 
 
-          /* BUILD LOG */
+
+          /* =================================================
+             BUILD LOG
+          ================================================== */
 
           let log =
             "";
+
 
 
           if(
@@ -1922,9 +2402,11 @@ async function loadBuilds(){
               <br><br>
 
               <span class="small">
+
                 ${esc(
                   build.build_log
                 )}
+
               </span>
 
             `;
@@ -1932,25 +2414,33 @@ async function loadBuilds(){
           }
 
 
+
           return `
 
             <div class="build-item">
 
+
               <b>
+
                 v${esc(
                   build.version_name ||
                   "1.0.0"
                 )}
+
               </b>
+
 
               —
 
+
               <span
                 class="${cls}">
+
                 ${esc(
                   build.status ||
                   "queued"
                 )}
+
               </span>
 
 
@@ -1959,44 +2449,59 @@ async function loadBuilds(){
 
               ${
                 build.created_at
+
                 ?
+
                 new Date(
                   build.created_at
                 ).toLocaleString()
+
                 :
+
                 ""
+
               }
 
 
               ${
                 build.file_name
+
                 ?
+
                 `
-                <br>
-                📦
-                ${esc(
-                  build.file_name
-                )}
+                  <br>
+                  📦
+                  ${esc(
+                    build.file_name
+                  )}
                 `
+
                 :
+
                 ""
+
               }
 
 
               ${
                 build.file_size
+
                 ?
+
                 `
-                <br>
-                📏
-                ${(
-                  build.file_size /
-                  1024
-                ).toFixed(2)}
-                KB
+                  <br>
+                  📏
+                  ${(
+                    build.file_size /
+                    1024
+                  ).toFixed(2)}
+                  KB
                 `
+
                 :
+
                 ""
+
               }
 
 
@@ -2005,15 +2510,19 @@ async function loadBuilds(){
 
               ${buttons}
 
+
             </div>
 
           `;
 
         }
+
       )
+
       .join("");
 
 }
+
 
 
 /* =====================================================
@@ -2023,6 +2532,7 @@ async function loadBuilds(){
 async function init(){
 
   try{
+
 
     if(!appId){
 
@@ -2036,19 +2546,30 @@ async function init(){
     }
 
 
-    /* Get logged in user */
+
+    /* =================================================
+       GET LOGGED IN USER
+    ================================================== */
 
     const {
+
       data:{
         user:u
       },
+
       error:userError
+
     } =
       await sb.auth.getUser();
 
 
-    if(userError)
+
+    if(userError){
+
       throw userError;
+
+    }
+
 
 
     if(!u){
@@ -2061,11 +2582,15 @@ async function init(){
     }
 
 
+
     user =
       u;
 
 
-    /* Load app */
+
+    /* =================================================
+       LOAD APP
+    ================================================== */
 
     const r =
       await sb
@@ -2082,22 +2607,33 @@ async function init(){
         .single();
 
 
-    if(r.error)
+
+    if(r.error){
+
       throw r.error;
+
+    }
+
 
 
     app =
       r.data;
 
 
-    /* App name */
+
+    /* =================================================
+       APP NAME
+    ================================================== */
 
     $("appName").value =
       app.name ||
       "";
 
 
-    /* Package */
+
+    /* =================================================
+       PACKAGE
+    ================================================== */
 
     $("packageName").value =
       await loadSetting(
@@ -2109,7 +2645,10 @@ async function init(){
       );
 
 
-    /* Version name */
+
+    /* =================================================
+       VERSION NAME
+    ================================================== */
 
     $("versionName").value =
       await loadSetting(
@@ -2119,7 +2658,10 @@ async function init(){
       "1.0.0";
 
 
-    /* Version code */
+
+    /* =================================================
+       VERSION CODE
+    ================================================== */
 
     $("versionCode").value =
       await loadSetting(
@@ -2129,20 +2671,28 @@ async function init(){
       1;
 
 
-    /* Load source */
+
+    /* =================================================
+       LOAD SOURCE
+    ================================================== */
 
     await loadSource();
 
 
-    /* Build history */
+
+    /* =================================================
+       LOAD BUILD HISTORY
+    ================================================== */
 
     await loadBuilds();
+
 
 
     setStatus(
       "Builder ready ✓",
       "success"
     );
+
 
   }catch(e){
 
@@ -2163,13 +2713,18 @@ async function init(){
 }
 
 
+
 /* =====================================================
    START
 ===================================================== */
 
+changeSourceMode();
+
 init();
+
 
 </script>
 
 </body>
+
 </html>
