@@ -1,14 +1,19 @@
 <!doctype html>
 <html lang="en">
 <head>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>ASIM TECH — Android Builder</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -77,6 +82,11 @@ nav a{
   font-size:16px;
   cursor:pointer;
   color:#fff;
+}
+
+.btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
 }
 
 .greenbtn{
@@ -170,6 +180,10 @@ textarea{
   border-bottom:1px solid #263646;
 }
 
+.build-item:last-child{
+  border-bottom:0;
+}
+
 .download-area{
   display:flex;
   gap:10px;
@@ -193,6 +207,11 @@ textarea{
 
 .open{
   background:#1f6feb;
+}
+
+.small{
+  font-size:13px;
+  color:#9fb0bf;
 }
 
 @media(max-width:700px){
@@ -230,8 +249,11 @@ textarea{
     width:100%;
     text-align:center;
   }
+
 }
+
 </style>
+
 </head>
 
 <body>
@@ -252,17 +274,20 @@ textarea{
 
 <main class="wrap">
 
+
   <!-- TOP BUTTONS -->
 
   <div class="topactions">
 
     <button
+      id="saveBtn"
       class="btn greenbtn"
       onclick="save()">
       💾 Save
     </button>
 
     <button
+      id="buildBtn"
       class="btn orange"
       onclick="requestBuild()">
       🏗️ Build APK
@@ -343,7 +368,7 @@ textarea{
   </section>
 
 
-  <!-- CODE / URL -->
+  <!-- SOURCE -->
 
   <section class="card">
 
@@ -456,16 +481,23 @@ textarea{
 
   </section>
 
+
 </main>
 
 
 <script>
+
+
+/* =====================================================
+   SUPABASE CONFIG
+===================================================== */
 
 const SUPABASE_URL =
   "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
 const SUPABASE_KEY =
   "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
 
 const sb =
   supabase.createClient(
@@ -474,49 +506,65 @@ const sb =
   );
 
 
+/* =====================================================
+   APP ID
+===================================================== */
+
 const appId =
-  new URLSearchParams(location.search).get("id");
+  new URLSearchParams(
+    location.search
+  ).get("id");
 
 
 let user = null;
 let app = null;
 
 
+/* =====================================================
+   SHORTCUT
+===================================================== */
+
 const $ = id =>
   document.getElementById(id);
 
 
-/* ================================
+/* =====================================================
    STATUS
-================================ */
+===================================================== */
 
-function setStatus(t,c=""){
+function setStatus(
+  text,
+  cls = ""
+){
 
-  $("status").textContent = t;
+  $("status").textContent = text;
 
   $("status").className =
-    "status " + c;
+    "status " + cls;
 
 }
 
 
-function sourceStatus(t,c=""){
+function sourceStatus(
+  text,
+  cls = ""
+){
 
-  $("webAppStatus").textContent = t;
+  $("webAppStatus").textContent = text;
 
   $("webAppStatus").className =
-    "status " + c;
+    "status " + cls;
 
 }
 
 
-/* ================================
+/* =====================================================
    HTML ESCAPE
-================================ */
+===================================================== */
 
-function esc(s){
+function esc(value){
 
-  return String(s ?? "")
+  return String(value ?? "")
     .replace(
       /[&<>"']/g,
       m => ({
@@ -531,21 +579,29 @@ function esc(s){
 }
 
 
-/* ================================
+/* =====================================================
    PACKAGE NAME
-================================ */
+===================================================== */
 
 function makePackage(name){
 
   let x =
-    String(name || "myapp")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g,"");
+    String(
+      name || "myapp"
+    )
+    .toLowerCase()
+    .replace(
+      /[^a-z0-9]+/g,
+      ""
+    );
 
   if(!x)
     x = "myapp";
 
-  return "com.asimtech." + x;
+  return (
+    "com.asimtech." +
+    x
+  );
 
 }
 
@@ -558,27 +614,31 @@ function validPackage(x){
 }
 
 
-/* ================================
+/* =====================================================
    SOURCE MODE
-================================ */
+===================================================== */
 
 function changeSourceMode(){
 
-  const code =
+  const isCode =
     $("sourceMode").value === "code";
 
   $("codeSource").style.display =
-    code ? "block" : "none";
+    isCode
+      ? "block"
+      : "none";
 
   $("urlSource").style.display =
-    code ? "none" : "block";
+    isCode
+      ? "none"
+      : "block";
 
 }
 
 
-/* ================================
+/* =====================================================
    PREVIEW
-================================ */
+===================================================== */
 
 function previewWebApp(){
 
@@ -586,10 +646,14 @@ function previewWebApp(){
     $("sourceMode").value;
 
 
+  /* CODE */
+
   if(mode === "code"){
 
     const code =
-      $("webAppCode").value.trim();
+      $("webAppCode")
+      .value
+      .trim();
 
 
     if(!code){
@@ -600,22 +664,25 @@ function previewWebApp(){
       );
 
       return;
+
     }
 
 
     const blob =
       new Blob(
         [code],
-        {type:"text/html"}
+        {
+          type:"text/html"
+        }
       );
 
 
-    const u =
+    const url =
       URL.createObjectURL(blob);
 
 
     $("previewBox").innerHTML =
-      `<iframe src="${u}"></iframe>`;
+      `<iframe src="${url}"></iframe>`;
 
 
     sourceStatus(
@@ -623,56 +690,62 @@ function previewWebApp(){
       "success"
     );
 
-
-  }else{
-
-    const url =
-      $("webAppUrl").value.trim();
-
-
-    if(!url){
-
-      sourceStatus(
-        "Please enter a Web App URL.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    try{
-
-      new URL(url);
-
-    }catch{
-
-      sourceStatus(
-        "Please enter a valid URL.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    $("previewBox").innerHTML =
-      `<iframe src="${esc(url)}"></iframe>`;
-
-
-    sourceStatus(
-      "URL preview loaded ✓",
-      "success"
-    );
+    return;
 
   }
+
+
+  /* URL */
+
+  const url =
+    $("webAppUrl")
+    .value
+    .trim();
+
+
+  if(!url){
+
+    sourceStatus(
+      "Please enter a Web App URL.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    new URL(url);
+
+  }catch{
+
+    sourceStatus(
+      "Please enter a valid URL.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  $("previewBox").innerHTML =
+    `<iframe src="${esc(url)}"></iframe>`;
+
+
+  sourceStatus(
+    "URL preview loaded ✓",
+    "success"
+  );
 
 }
 
 
-/* ================================
+/* =====================================================
    LOAD SETTING
-================================ */
+===================================================== */
 
 async function loadSetting(key){
 
@@ -680,7 +753,10 @@ async function loadSetting(key){
     await sb
       .from("app_files")
       .select("content")
-      .eq("app_id",appId)
+      .eq(
+        "app_id",
+        appId
+      )
       .eq(
         "file_path",
         "android-settings.json"
@@ -691,15 +767,24 @@ async function loadSetting(key){
   if(
     r.error ||
     !r.data?.content
-  )
+  ){
+
     return null;
+
+  }
 
 
   try{
 
-    return JSON.parse(
-      r.data.content
-    )[key] ?? null;
+    const json =
+      JSON.parse(
+        r.data.content
+      );
+
+    return (
+      json[key] ??
+      null
+    );
 
   }catch{
 
@@ -710,9 +795,9 @@ async function loadSetting(key){
 }
 
 
-/* ================================
+/* =====================================================
    LOAD SOURCE
-================================ */
+===================================================== */
 
 async function loadSource(){
 
@@ -720,7 +805,10 @@ async function loadSource(){
     await sb
       .from("app_files")
       .select("content")
-      .eq("app_id",appId)
+      .eq(
+        "app_id",
+        appId
+      )
       .eq(
         "file_path",
         "index.html"
@@ -750,7 +838,10 @@ async function loadSource(){
     await sb
       .from("app_files")
       .select("content")
-      .eq("app_id",appId)
+      .eq(
+        "app_id",
+        appId
+      )
       .eq(
         "file_path",
         "webapp-url.txt"
@@ -776,36 +867,48 @@ async function loadSource(){
 }
 
 
-/* ================================
+/* =====================================================
    SAVE SETTINGS
-================================ */
+===================================================== */
 
 async function saveSettings(){
 
   const settings = {
 
     appName:
-      $("appName").value.trim()
+      $("appName")
+        .value
+        .trim()
       ||
       app?.name
       ||
       "ASIM TECH App",
 
+
     packageName:
-      $("packageName").value.trim()
+      $("packageName")
+        .value
+        .trim()
       ||
-      makePackage(app?.name),
+      makePackage(
+        app?.name
+      ),
+
 
     versionName:
-      $("versionName").value.trim()
+      $("versionName")
+        .value
+        .trim()
       ||
       "1.0.0",
+
 
     versionCode:
       Math.max(
         1,
         parseInt(
-          $("versionCode").value,
+          $("versionCode")
+            .value,
           10
         ) || 1
       )
@@ -829,29 +932,33 @@ async function saveSettings(){
   let r =
     await sb
       .from("app_files")
-      .upsert({
+      .upsert(
+        {
+          app_id:
+            appId,
 
-        app_id:appId,
+          file_path:
+            "android-settings.json",
 
-        file_path:
-          "android-settings.json",
+          content:
+            JSON.stringify(
+              settings,
+              null,
+              2
+            ),
 
-        content:
-          JSON.stringify(
-            settings,
-            null,
-            2
-          ),
+          language:
+            "json",
 
-        language:"json",
-
-        updated_at:
-          new Date().toISOString()
-
-      },{
-        onConflict:
-          "app_id,file_path"
-      });
+          updated_at:
+            new Date()
+              .toISOString()
+        },
+        {
+          onConflict:
+            "app_id,file_path"
+        }
+      );
 
 
   if(r.error)
@@ -861,17 +968,24 @@ async function saveSettings(){
   r =
     await sb
       .from("apps")
-      .update({
+      .update(
+        {
+          name:
+            settings.appName,
 
-        name:
-          settings.appName,
-
-        updated_at:
-          new Date().toISOString()
-
-      })
-      .eq("id",appId)
-      .eq("owner_id",user.id);
+          updated_at:
+            new Date()
+              .toISOString()
+        }
+      )
+      .eq(
+        "id",
+        appId
+      )
+      .eq(
+        "owner_id",
+        user.id
+      );
 
 
   if(r.error)
@@ -887,9 +1001,9 @@ async function saveSettings(){
 }
 
 
-/* ================================
+/* =====================================================
    SAVE SOURCE
-================================ */
+===================================================== */
 
 async function saveWebAppSource(){
 
@@ -904,7 +1018,8 @@ async function saveWebAppSource(){
       $("webAppCode").value
       :
       $("webAppUrl").value
-    ).trim();
+    )
+    .trim();
 
 
   if(!content){
@@ -918,6 +1033,8 @@ async function saveWebAppSource(){
 
   }
 
+
+  /* Validate URL */
 
   if(mode === "url"){
 
@@ -958,28 +1075,33 @@ async function saveWebAppSource(){
   let r =
     await sb
       .from("app_files")
-      .upsert({
+      .upsert(
+        {
+          app_id:
+            appId,
 
-        app_id:appId,
+          file_path:
+            filePath,
 
-        file_path:filePath,
+          content:
+            content,
 
-        content:content,
+          language:
+            mode === "code"
+            ?
+            "HTML"
+            :
+            "URL",
 
-        language:
-          mode === "code"
-          ?
-          "HTML"
-          :
-          "URL",
-
-        updated_at:
-          new Date().toISOString()
-
-      },{
-        onConflict:
-          "app_id,file_path"
-      });
+          updated_at:
+            new Date()
+              .toISOString()
+        },
+        {
+          onConflict:
+            "app_id,file_path"
+        }
+      );
 
 
   if(r.error)
@@ -989,8 +1111,14 @@ async function saveWebAppSource(){
   await sb
     .from("app_files")
     .delete()
-    .eq("app_id",appId)
-    .eq("file_path",otherPath);
+    .eq(
+      "app_id",
+      appId
+    )
+    .eq(
+      "file_path",
+      otherPath
+    );
 
 
   sourceStatus(
@@ -1004,17 +1132,24 @@ async function saveWebAppSource(){
 }
 
 
-/* ================================
-   SAVE
-================================ */
+/* =====================================================
+   SAVE PROJECT
+===================================================== */
 
 async function save(){
 
   try{
 
+    if(!user)
+      throw new Error(
+        "Login session not available."
+      );
+
+
     await saveSettings();
 
     await saveWebAppSource();
+
 
     setStatus(
       "Project saved ✓",
@@ -1034,17 +1169,33 @@ async function save(){
 }
 
 
-/* ================================
-   REQUEST BUILD
-================================ */
+/* =====================================================
+   AUTOMATIC APK BUILD
+===================================================== */
 
 async function requestBuild(){
 
+  const buildBtn =
+    $("buildBtn");
+
+
   try{
 
-    const settings =
-      await saveSettings();
+    if(!user){
 
+      throw new Error(
+        "Please login first."
+      );
+
+    }
+
+
+    /* Save settings */
+
+    await saveSettings();
+
+
+    /* Save source */
 
     const saved =
       await saveWebAppSource();
@@ -1059,46 +1210,147 @@ async function requestBuild(){
     }
 
 
-    const r =
-      await sb
-        .from("app_builds")
-        .insert({
+    buildBtn.disabled =
+      true;
 
-          app_id:appId,
-
-          version_name:
-            settings.versionName,
-
-          version_code:
-            settings.versionCode,
-
-          status:"queued",
-
-          created_by:user.id,
-
-          queued_at:
-            new Date().toISOString(),
-
-          source_file_count:1
-
-        })
-        .select("*")
-        .single();
-
-
-    if(r.error)
-      throw r.error;
+    buildBtn.textContent =
+      "⏳ Starting Build…";
 
 
     setStatus(
-      "APK build request queued ✓",
+      "Connecting to APK build service…",
+      "warn"
+    );
+
+
+    /* Get current login session */
+
+    const sessionResult =
+      await sb.auth.getSession();
+
+
+    if(
+      sessionResult.error
+    ){
+
+      throw sessionResult.error;
+
+    }
+
+
+    const session =
+      sessionResult
+        .data
+        ?.session;
+
+
+    if(
+      !session ||
+      !session.access_token
+    ){
+
+      throw new Error(
+        "Login session expired. Please login again."
+      );
+
+    }
+
+
+    /*
+       IMPORTANT:
+       Do NOT insert directly into app_builds here.
+
+       request-apk-build Edge Function
+       will create the build record and
+       trigger the GitHub Actions workflow.
+    */
+
+    const response =
+      await fetch(
+        SUPABASE_URL +
+        "/functions/v1/request-apk-build",
+        {
+          method:"POST",
+
+          headers:{
+            "apikey":
+              SUPABASE_KEY,
+
+            "Authorization":
+              "Bearer " +
+              session.access_token,
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              {
+                app_id:
+                  appId,
+
+                version_name:
+                  $("versionName")
+                    .value
+                    .trim()
+              }
+            )
+        }
+      );
+
+
+    let result = {};
+
+
+    try{
+
+      result =
+        await response.json();
+
+    }catch{
+
+      result = {};
+
+    }
+
+
+    if(!response.ok){
+
+      throw new Error(
+        result.error ||
+        result.message ||
+        result.detail ||
+        "Automatic APK build could not be started."
+      );
+
+    }
+
+
+    setStatus(
+      "APK build started automatically ✓",
       "success"
     );
 
 
     await loadBuilds();
 
+
+    /*
+       Refresh automatically for a few minutes
+       so user can see queued/building/success.
+    */
+
+    startBuildPolling();
+
+
   }catch(e){
+
+    console.error(
+      "APK build request error:",
+      e
+    );
+
 
     setStatus(
       "Build request failed: " +
@@ -1106,22 +1358,83 @@ async function requestBuild(){
       "error"
     );
 
+  }finally{
+
+    buildBtn.disabled =
+      false;
+
+    buildBtn.textContent =
+      "🏗️ Build APK";
+
   }
 
 }
 
 
-/* ================================
+/* =====================================================
+   BUILD POLLING
+===================================================== */
+
+let pollingTimer =
+  null;
+
+
+function startBuildPolling(){
+
+  if(pollingTimer){
+
+    clearInterval(
+      pollingTimer
+    );
+
+  }
+
+
+  let count = 0;
+
+
+  pollingTimer =
+    setInterval(
+      async () => {
+
+        count++;
+
+
+        await loadBuilds();
+
+
+        if(count >= 30){
+
+          clearInterval(
+            pollingTimer
+          );
+
+          pollingTimer =
+            null;
+
+        }
+
+      },
+      10000
+    );
+
+}
+
+
+/* =====================================================
    DOWNLOAD URL
-================================ */
+===================================================== */
 
 function getDownloadUrl(build){
 
   if(
     !build ||
     !build.storage_path
-  )
+  ){
+
     return null;
+
+  }
 
 
   return (
@@ -1141,9 +1454,9 @@ function getDownloadUrl(build){
 }
 
 
-/* ================================
+/* =====================================================
    BUILD HISTORY
-================================ */
+===================================================== */
 
 async function loadBuilds(){
 
@@ -1151,10 +1464,15 @@ async function loadBuilds(){
     await sb
       .from("app_builds")
       .select("*")
-      .eq("app_id",appId)
+      .eq(
+        "app_id",
+        appId
+      )
       .order(
         "created_at",
-        {ascending:false}
+        {
+          ascending:false
+        }
       )
       .limit(10);
 
@@ -1171,7 +1489,10 @@ async function loadBuilds(){
   }
 
 
-  if(!r.data?.length){
+  if(
+    !r.data ||
+    !r.data.length
+  ){
 
     $("builds").textContent =
       "No build requested yet.";
@@ -1182,142 +1503,194 @@ async function loadBuilds(){
 
 
   $("builds").innerHTML =
-    r.data.map(b => {
+    r.data
+      .map(
+        build => {
 
-      const cls =
-        b.status === "success"
-        ?
-        "success"
-        :
-        b.status === "failed"
-        ?
-        "error"
-        :
-        "warn";
+          let cls =
+            "warn";
 
 
-      let buttons = "";
+          if(
+            build.status ===
+            "success"
+          ){
 
+            cls =
+              "success";
 
-      /* ==========================
-         DOWNLOAD BUTTON
-      ========================== */
-
-      if(
-        b.status === "success" &&
-        b.storage_path
-      ){
-
-        const downloadUrl =
-          getDownloadUrl(b);
-
-
-        buttons = `
-
-          <div class="download-area">
-
-            <a
-              class="download-btn download"
-              href="${downloadUrl}"
-              target="_blank"
-              rel="noopener">
-              📥 Download APK
-            </a>
-
-
-            <a
-              class="download-btn open"
-              href="${downloadUrl}"
-              target="_blank"
-              rel="noopener">
-              📱 Open APK
-            </a>
-
-          </div>
-
-        `;
-
-      }
-
-
-      return `
-
-        <div class="build-item">
-
-          <b>
-            v${esc(
-              b.version_name ||
-              "1.0.0"
-            )}
-          </b>
-
-          —
-
-          <span class="${cls}">
-            ${esc(
-              b.status ||
-              "queued"
-            )}
-          </span>
-
-          <br>
-
-          ${
-            b.created_at
-            ?
-            new Date(
-              b.created_at
-            ).toLocaleString()
-            :
-            ""
           }
 
 
-          ${
-            b.file_name
-            ?
-            `
-            <br>
-            📦
-            ${esc(
-              b.file_name
-            )}
-            `
-            :
-            ""
+          if(
+            build.status ===
+            "failed"
+          ){
+
+            cls =
+              "error";
+
           }
 
 
-          ${
-            b.file_size
-            ?
-            `
-            <br>
-            📏
-            ${(
-              b.file_size / 1024
-            ).toFixed(2)}
-            KB
-            `
-            :
-            ""
+          let buttons =
+            "";
+
+
+          /* DOWNLOAD BUTTONS */
+
+          if(
+            build.status ===
+              "success" &&
+            build.storage_path
+          ){
+
+            const url =
+              getDownloadUrl(
+                build
+              );
+
+
+            buttons = `
+
+              <div class="download-area">
+
+                <a
+                  class="download-btn download"
+                  href="${url}"
+                  target="_blank"
+                  rel="noopener">
+                  📥 Download APK
+                </a>
+
+
+                <a
+                  class="download-btn open"
+                  href="${url}"
+                  target="_blank"
+                  rel="noopener">
+                  📱 Open APK
+                </a>
+
+              </div>
+
+            `;
+
           }
 
 
-          ${buttons}
+          /* BUILD LOG */
 
-        </div>
+          let log =
+            "";
 
-      `;
 
-    }).join("");
+          if(
+            build.build_log
+          ){
+
+            log = `
+
+              <br><br>
+
+              <span class="small">
+                ${esc(
+                  build.build_log
+                )}
+              </span>
+
+            `;
+
+          }
+
+
+          return `
+
+            <div class="build-item">
+
+              <b>
+                v${esc(
+                  build.version_name ||
+                  "1.0.0"
+                )}
+              </b>
+
+              —
+
+              <span
+                class="${cls}">
+                ${esc(
+                  build.status ||
+                  "queued"
+                )}
+              </span>
+
+
+              <br>
+
+
+              ${
+                build.created_at
+                ?
+                new Date(
+                  build.created_at
+                ).toLocaleString()
+                :
+                ""
+              }
+
+
+              ${
+                build.file_name
+                ?
+                `
+                <br>
+                📦
+                ${esc(
+                  build.file_name
+                )}
+                `
+                :
+                ""
+              }
+
+
+              ${
+                build.file_size
+                ?
+                `
+                <br>
+                📏
+                ${(
+                  build.file_size /
+                  1024
+                ).toFixed(2)}
+                KB
+                `
+                :
+                ""
+              }
+
+
+              ${log}
+
+
+              ${buttons}
+
+            </div>
+
+          `;
+
+        }
+      )
+      .join("");
 
 }
 
 
-/* ================================
+/* =====================================================
    INITIALIZE
-================================ */
+===================================================== */
 
 async function init(){
 
@@ -1335,17 +1708,19 @@ async function init(){
     }
 
 
+    /* Get logged in user */
+
     const {
       data:{
         user:u
       },
-      error:ue
+      error:userError
     } =
       await sb.auth.getUser();
 
 
-    if(ue)
-      throw ue;
+    if(userError)
+      throw userError;
 
 
     if(!u){
@@ -1358,15 +1733,24 @@ async function init(){
     }
 
 
-    user = u;
+    user =
+      u;
 
 
-    let r =
+    /* Load app */
+
+    const r =
       await sb
         .from("apps")
         .select("*")
-        .eq("id",appId)
-        .eq("owner_id",user.id)
+        .eq(
+          "id",
+          appId
+        )
+        .eq(
+          "owner_id",
+          user.id
+        )
         .single();
 
 
@@ -1378,9 +1762,14 @@ async function init(){
       r.data;
 
 
-    $("appName").value =
-      app.name || "";
+    /* App name */
 
+    $("appName").value =
+      app.name ||
+      "";
+
+
+    /* Package */
 
     $("packageName").value =
       await loadSetting(
@@ -1392,6 +1781,8 @@ async function init(){
       );
 
 
+    /* Version name */
+
     $("versionName").value =
       await loadSetting(
         "versionName"
@@ -1399,6 +1790,8 @@ async function init(){
       ||
       "1.0.0";
 
+
+    /* Version code */
 
     $("versionCode").value =
       await loadSetting(
@@ -1408,25 +1801,32 @@ async function init(){
       1;
 
 
+    /* Load source */
+
     await loadSource();
 
+
+    /* Build history */
 
     await loadBuilds();
 
 
     setStatus(
-      "Android project loaded.",
+      "Builder ready ✓",
       "success"
     );
 
-
   }catch(e){
 
-    console.error(e);
+    console.error(
+      "Builder init error:",
+      e
+    );
+
 
     setStatus(
-      e.message ||
-      "Unable to load app.",
+      "Unable to load builder: " +
+      e.message,
       "error"
     );
 
@@ -1434,6 +1834,10 @@ async function init(){
 
 }
 
+
+/* =====================================================
+   START
+===================================================== */
 
 init();
 
