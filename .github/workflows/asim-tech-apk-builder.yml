@@ -31,7 +31,7 @@ jobs:
 
 
       # --------------------------------------------------
-      # 2. Setup Java
+      # 2. Setup Java 17
       # --------------------------------------------------
       - name: Setup Java 17
         uses: actions/setup-java@v4
@@ -66,6 +66,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
         run: |
 
           echo "Checking queued builds..."
@@ -92,11 +93,11 @@ jobs:
 
           echo "has_build=true" >> "$GITHUB_OUTPUT"
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
-          echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
+          echo "app_id=$APP_ID"
 
 
       # --------------------------------------------------
-      # 6. Stop if no build
+      # 6. Stop if queue empty
       # --------------------------------------------------
       - name: Stop if queue empty
         if: steps.queue.outputs.has_build != 'true'
@@ -114,6 +115,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
 
           curl -sS -X PATCH \
@@ -139,6 +141,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           APP_ID: ${{ steps.queue.outputs.app_id }}
+
         run: |
 
           mkdir -p source
@@ -180,14 +183,10 @@ jobs:
 
 
       # --------------------------------------------------
-      # 10. Check index.html / URL fallback
+      # 10. Prepare web application
       # --------------------------------------------------
       - name: Prepare web application
         if: steps.queue.outputs.has_build == 'true'
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          APP_ID: ${{ steps.queue.outputs.app_id }}
         run: |
 
           if [ ! -f "webapp/index.html" ]; then
@@ -276,6 +275,7 @@ EOF
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
         run: |
 
           mkdir -p android-project/app/src/main/res/mipmap-mdpi
@@ -287,7 +287,7 @@ EOF
           ICON_FILE="launcher-icon.png"
 
           # ----------------------------------------------
-          # Try authenticated Supabase Storage download
+          # Download custom icon from Supabase Storage
           # ----------------------------------------------
           if [ -n "$APP_ICON_PATH" ]; then
 
@@ -303,7 +303,7 @@ EOF
 
 
           # ----------------------------------------------
-          # Try public URL if authenticated download failed
+          # Try public URL if needed
           # ----------------------------------------------
           if [ ! -s "$ICON_FILE" ] && [ -n "$APP_ICON_URL" ]; then
 
@@ -327,7 +327,7 @@ EOF
 
             else
 
-              echo "Invalid icon file. Creating default icon."
+              echo "Invalid icon file."
               rm -f "$ICON_FILE"
 
             fi
@@ -347,8 +347,6 @@ EOF
               xc:"#18A558" \
               -gravity center \
               -fill white \
-              -pointsize 250 \
-              -font DejaVu-Sans-Bold \
               -draw "rectangle 160,110 352,402" \
               "$ICON_FILE"
 
@@ -356,7 +354,7 @@ EOF
 
 
           # ----------------------------------------------
-          # Generate Android launcher sizes
+          # Generate launcher icons
           # ----------------------------------------------
           convert "$ICON_FILE" \
             -resize 48x48 \
@@ -380,7 +378,7 @@ EOF
 
 
           # ----------------------------------------------
-          # Round icon
+          # Round icons
           # ----------------------------------------------
           for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
 
@@ -389,7 +387,6 @@ EOF
               "android-project/app/src/main/res/mipmap-${density}/ic_launcher_round.png"
 
           done
-
 
           echo "Launcher icons prepared."
 
@@ -408,7 +405,7 @@ EOF
 
 
       # --------------------------------------------------
-      # 14. Create Gradle settings
+      # 14. Create Gradle files
       # --------------------------------------------------
       - name: Create Gradle files
         if: steps.queue.outputs.has_build == 'true'
@@ -760,6 +757,7 @@ EOF
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
 
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
@@ -781,7 +779,7 @@ EOF
 
 
       # --------------------------------------------------
-      # 22. Update build success
+      # 22. Mark build successful
       # --------------------------------------------------
       - name: Mark build successful
         if: steps.queue.outputs.has_build == 'true'
@@ -789,6 +787,7 @@ EOF
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
 
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
@@ -832,6 +831,7 @@ EOF
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
 
           curl -sS -X PATCH \
