@@ -90,6 +90,11 @@ h1{
     display:inline-block;
 }
 
+.btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
 .primary{
     background:#238636;
     color:#ffffff;
@@ -109,8 +114,18 @@ h1{
     background:#30363d;
 }
 
+.danger{
+    background:#da3633;
+    color:#ffffff;
+}
+
+.danger:hover{
+    background:#f85149;
+}
+
 .grid{
     display:grid;
+
     grid-template-columns:
         repeat(
             auto-fit,
@@ -132,6 +147,7 @@ h1{
 .card h3{
     margin:0 0 8px;
     color:#58a6ff;
+    word-break:break-word;
 }
 
 .card p{
@@ -143,6 +159,19 @@ h1{
     font-size:13px;
     color:#8b949e;
     margin:12px 0;
+}
+
+.card-actions{
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+    margin-top:14px;
+}
+
+.card-actions .btn{
+    flex:1;
+    text-align:center;
+    min-width:120px;
 }
 
 .empty{
@@ -169,18 +198,48 @@ h1{
     grid-column:1 / -1;
 }
 
+.user-bar{
+    margin-top:20px;
+
+    padding:12px 15px;
+
+    background:#161b22;
+
+    border:1px solid #30363d;
+
+    border-radius:8px;
+
+    color:#8b949e;
+
+    font-size:14px;
+}
+
+.user-email{
+    color:#58a6ff;
+    font-weight:bold;
+}
+
+
+/* =====================================================
+   CREATE MODAL
+===================================================== */
+
 .modal{
     display:none;
 
     position:fixed;
+
     inset:0;
 
-    background:rgba(0,0,0,0.65);
+    background:rgba(0,0,0,0.72);
 
     align-items:center;
+
     justify-content:center;
 
     padding:20px;
+
+    z-index:1000;
 }
 
 .modal.show{
@@ -197,6 +256,9 @@ h1{
     border-radius:12px;
 
     padding:22px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.5);
 }
 
 .box h2{
@@ -205,8 +267,11 @@ h1{
 
 label{
     display:block;
+
     margin-top:10px;
+
     margin-bottom:5px;
+
     font-weight:bold;
 }
 
@@ -250,29 +315,81 @@ textarea:focus{
 
 }
 
-.user-bar{
 
-    margin-top:20px;
+/* =====================================================
+   DELETE MODAL
+===================================================== */
 
-    padding:12px 15px;
+.delete-box{
+
+    width:min(480px,100%);
 
     background:#161b22;
+
+    border:1px solid #f85149;
+
+    border-radius:12px;
+
+    padding:24px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.65);
+
+}
+
+.delete-title{
+
+    color:#ff7b72;
+
+    margin-top:0;
+
+}
+
+.delete-warning{
+
+    background:#0d1117;
 
     border:1px solid #30363d;
 
     border-radius:8px;
 
-    color:#8b949e;
+    padding:13px;
 
-    font-size:14px;
+    margin:14px 0;
+
+    color:#c9d1d9;
+
+    line-height:1.5;
 
 }
 
-.user-email{
+.delete-name{
 
     color:#58a6ff;
 
     font-weight:bold;
+
+    word-break:break-word;
+
+}
+
+.delete-actions{
+
+    display:flex;
+
+    gap:10px;
+
+    justify-content:flex-end;
+
+}
+
+.delete-status{
+
+    margin-top:10px;
+
+    font-size:14px;
+
+    color:#ff7b72;
 
 }
 
@@ -321,6 +438,30 @@ textarea:focus{
         width:100%;
 
         text-align:center;
+
+    }
+
+    .card-actions{
+
+        flex-direction:column;
+
+    }
+
+    .card-actions .btn{
+
+        width:100%;
+
+    }
+
+    .delete-actions{
+
+        flex-direction:column;
+
+    }
+
+    .delete-actions .btn{
+
+        width:100%;
 
     }
 
@@ -492,7 +633,97 @@ textarea:focus{
 
 
 
+<!-- =====================================================
+     DELETE APP MODAL
+===================================================== -->
+
+<div
+    id="deleteModal"
+    class="modal"
+>
+
+    <div class="delete-box">
+
+        <h2 class="delete-title">
+            🗑️ Delete Android App
+        </h2>
+
+
+        <div class="delete-warning">
+
+            You are about to permanently delete:
+
+            <br><br>
+
+            <span
+                id="deleteAppName"
+                class="delete-name"
+            ></span>
+
+            <br><br>
+
+            This will delete the app's source files,
+            build records and the app record.
+
+            <br><br>
+
+            <b>
+                This action cannot be undone.
+            </b>
+
+        </div>
+
+
+        <label for="deleteConfirmInput">
+
+            Type the app name to confirm:
+
+        </label>
+
+
+        <input
+            id="deleteConfirmInput"
+            type="text"
+            autocomplete="off"
+            placeholder="Type app name"
+        >
+
+
+        <div
+            id="deleteStatus"
+            class="delete-status"
+        ></div>
+
+
+        <div class="delete-actions">
+
+            <button
+                id="deleteCancelBtn"
+                class="btn secondary"
+                onclick="closeDeleteModal()"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                id="deleteConfirmBtn"
+                class="btn danger"
+                onclick="confirmDeleteApp()"
+            >
+                🗑️ Delete Permanently
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
 <script>
+
 
 /* =====================================================
    SUPABASE CONFIGURATION
@@ -501,11 +732,6 @@ textarea:focus{
 const SUPABASE_URL =
     "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-
-/*
-   IMPORTANT:
-   Correct Publishable Key
-*/
 
 const SUPABASE_KEY =
     "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
@@ -535,6 +761,8 @@ const sb =
 
 let user = null;
 
+let appToDelete = null;
+
 
 /* =====================================================
    DOM ELEMENTS
@@ -546,6 +774,9 @@ const list =
 const modal =
     document.getElementById("modal");
 
+const deleteModal =
+    document.getElementById("deleteModal");
+
 const nameInput =
     document.getElementById("name");
 
@@ -554,6 +785,19 @@ const descriptionInput =
 
 const userBar =
     document.getElementById("userBar");
+
+const deleteAppName =
+    document.getElementById("deleteAppName");
+
+const deleteConfirmInput =
+    document.getElementById("deleteConfirmInput");
+
+const deleteStatus =
+    document.getElementById("deleteStatus");
+
+const deleteConfirmBtn =
+    document.getElementById("deleteConfirmBtn");
+
 
 
 /* =====================================================
@@ -565,7 +809,7 @@ function esc(value){
     return String(
         value ?? ""
     ).replace(
-        /[&<>"']/g,
+        /[&<>\"']/g,
         function(match){
 
             return {
@@ -584,6 +828,7 @@ function esc(value){
 }
 
 
+
 /* =====================================================
    INITIALIZE
 ===================================================== */
@@ -595,11 +840,6 @@ async function init(){
         userBar.textContent =
             "Checking login...";
 
-
-        /*
-           Give Supabase a moment to restore
-           the persisted session.
-        */
 
         const {
             data:sessionData,
@@ -629,11 +869,6 @@ async function init(){
 
         }
 
-
-        /*
-           If session was not immediately available,
-           ask Supabase for the current user.
-        */
 
         if(!user){
 
@@ -667,10 +902,6 @@ async function init(){
         }
 
 
-        /*
-           No logged-in user
-        */
-
         if(!user){
 
             userBar.innerHTML = `
@@ -693,10 +924,6 @@ async function init(){
         }
 
 
-        /*
-           User successfully authenticated
-        */
-
         userBar.innerHTML = `
             Signed in as:
             <span class="user-email">
@@ -704,10 +931,6 @@ async function init(){
             </span>
         `;
 
-
-        /*
-           Load apps
-        */
 
         await load();
 
@@ -748,6 +971,7 @@ async function init(){
 }
 
 
+
 /* =====================================================
    AUTH STATE LISTENER
 ===================================================== */
@@ -780,6 +1004,7 @@ sb.auth.onAuthStateChange(
 
     }
 );
+
 
 
 /* =====================================================
@@ -930,14 +1155,37 @@ async function load(){
                         </div>
 
 
-                        <a
-                            class="btn secondary"
-                            href="android-builder.html?id=${encodeURIComponent(app.id)}"
-                        >
+                        <div class="card-actions">
 
-                            Open Builder →
 
-                        </a>
+                            <!-- OPEN BUILDER -->
+
+                            <a
+                                class="btn secondary"
+                                href="android-builder.html?id=${encodeURIComponent(app.id)}"
+                            >
+
+                                Open Builder →
+
+                            </a>
+
+
+                            <!-- DELETE -->
+
+                            <button
+                                class="btn danger"
+                                onclick='openDeleteModal(
+                                    ${JSON.stringify(app.id)},
+                                    ${JSON.stringify(app.name)}
+                                )'
+                            >
+
+                                🗑️ Delete
+
+                            </button>
+
+
+                        </div>
 
                     </div>
 
@@ -949,8 +1197,9 @@ async function load(){
 }
 
 
+
 /* =====================================================
-   OPEN CREATE MODAL
+   CREATE MODAL
 ===================================================== */
 
 function openModal(){
@@ -971,10 +1220,6 @@ function openModal(){
 }
 
 
-/* =====================================================
-   CLOSE CREATE MODAL
-===================================================== */
-
 function closeModal(){
 
     modal.classList.remove(
@@ -982,6 +1227,7 @@ function closeModal(){
     );
 
 }
+
 
 
 /* =====================================================
@@ -1065,10 +1311,6 @@ async function createApp(){
     }
 
 
-    /*
-       Open Android Builder
-    */
-
     window.location.href =
         "android-builder.html?id=" +
         encodeURIComponent(
@@ -1078,8 +1320,284 @@ async function createApp(){
 }
 
 
+
 /* =====================================================
-   CLOSE MODAL WHEN CLICKING OUTSIDE
+   OPEN DELETE MODAL
+===================================================== */
+
+function openDeleteModal(
+    appId,
+    appName
+){
+
+    appToDelete = {
+
+        id:appId,
+
+        name:appName
+
+    };
+
+
+    deleteAppName.textContent =
+        appName;
+
+
+    deleteConfirmInput.value =
+        "";
+
+
+    deleteStatus.textContent =
+        "";
+
+
+    deleteConfirmBtn.disabled =
+        false;
+
+
+    deleteConfirmBtn.textContent =
+        "🗑️ Delete Permanently";
+
+
+    deleteModal.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        function(){
+
+            deleteConfirmInput.focus();
+
+        },
+        100
+    );
+
+}
+
+
+
+/* =====================================================
+   CLOSE DELETE MODAL
+===================================================== */
+
+function closeDeleteModal(){
+
+    appToDelete =
+        null;
+
+    deleteModal.classList.remove(
+        "show"
+    );
+
+}
+
+
+
+/* =====================================================
+   CONFIRM DELETE
+===================================================== */
+
+async function confirmDeleteApp(){
+
+    if(!appToDelete){
+
+        return;
+
+    }
+
+
+    const typedName =
+        deleteConfirmInput.value.trim();
+
+
+    if(
+        typedName !==
+        appToDelete.name
+    ){
+
+        deleteStatus.textContent =
+            "❌ App name does not match. Please type the exact app name.";
+
+        deleteConfirmInput.focus();
+
+        return;
+
+    }
+
+
+    try{
+
+        deleteConfirmBtn.disabled =
+            true;
+
+        deleteCancelBtn.disabled =
+            true;
+
+        deleteConfirmBtn.textContent =
+            "⏳ Deleting...";
+
+        deleteStatus.textContent =
+            "Deleting app and associated data...";
+
+
+        /* =================================================
+           GET CURRENT SESSION
+        ================================================= */
+
+        const {
+            data:sessionData,
+            error:sessionError
+        } =
+        await sb.auth.getSession();
+
+
+        if(sessionError){
+
+            throw sessionError;
+
+        }
+
+
+        const session =
+            sessionData?.session;
+
+
+        if(
+            !session ||
+            !session.access_token
+        ){
+
+            throw new Error(
+                "Login session expired. Please login again."
+            );
+
+        }
+
+
+        /* =================================================
+           CALL delete-app EDGE FUNCTION
+        ================================================= */
+
+        const response =
+            await fetch(
+
+                SUPABASE_URL +
+                "/functions/v1/delete-app",
+
+                {
+
+                    method:"POST",
+
+                    headers:{
+
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            session.access_token,
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            app_id:
+                                appToDelete.id
+
+                        })
+
+                }
+
+            );
+
+
+        let result = {};
+
+
+        try{
+
+            result =
+                await response.json();
+
+        }catch{
+
+            result = {};
+
+        }
+
+
+        if(!response.ok){
+
+            throw new Error(
+
+                result.error ||
+
+                result.message ||
+
+                result.detail ||
+
+                "Unable to delete app."
+
+            );
+
+        }
+
+
+        /* =================================================
+           SUCCESS
+        ================================================= */
+
+        deleteStatus.textContent =
+            "✅ App deleted successfully.";
+
+
+        setTimeout(
+            async function(){
+
+                closeDeleteModal();
+
+                await load();
+
+            },
+            700
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Delete app error:",
+            error
+        );
+
+
+        deleteStatus.textContent =
+            "❌ Delete failed: " +
+            error.message;
+
+
+        deleteConfirmBtn.disabled =
+            false;
+
+        deleteCancelBtn.disabled =
+            false;
+
+        deleteConfirmBtn.textContent =
+            "🗑️ Delete Permanently";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CLOSE MODALS WHEN CLICKING OUTSIDE
 ===================================================== */
 
 modal.addEventListener(
@@ -1096,6 +1614,23 @@ modal.addEventListener(
 
     }
 );
+
+
+deleteModal.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target === deleteModal
+        ){
+
+            closeDeleteModal();
+
+        }
+
+    }
+);
+
 
 
 /* =====================================================
@@ -1118,6 +1653,25 @@ nameInput.addEventListener(
 
     }
 );
+
+
+deleteConfirmInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "Enter"
+        ){
+
+            event.preventDefault();
+
+            confirmDeleteApp();
+
+        }
+
+    }
+);
+
 
 
 /* =====================================================
