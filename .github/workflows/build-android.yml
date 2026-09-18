@@ -1,4 +1,4 @@
-name: Build Android APK
+name: ASIM TECH Android APK Builder
 
 on:
   push:
