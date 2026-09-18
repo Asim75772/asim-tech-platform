@@ -821,6 +821,50 @@ async function loadSource(){
     r.data?.content
   ){
 
+    /*
+       If index.html exists, it is normally
+       Code Mode.
+
+       However, URL Mode also creates an
+       automatic index.html wrapper.
+
+       Check webapp-url.txt first to determine
+       whether this is URL Mode.
+    */
+
+    const urlResult =
+      await sb
+        .from("app_files")
+        .select("content")
+        .eq(
+          "app_id",
+          appId
+        )
+        .eq(
+          "file_path",
+          "webapp-url.txt"
+        )
+        .maybeSingle();
+
+
+    if(
+      !urlResult.error &&
+      urlResult.data?.content
+    ){
+
+      $("sourceMode").value =
+        "url";
+
+      $("webAppUrl").value =
+        urlResult.data.content.trim();
+
+      changeSourceMode();
+
+      return;
+
+    }
+
+
     $("sourceMode").value =
       "code";
 
@@ -833,6 +877,10 @@ async function loadSource(){
 
   }
 
+
+  /*
+     If no index.html exists, try URL source.
+  */
 
   r =
     await sb
@@ -858,7 +906,7 @@ async function loadSource(){
       "url";
 
     $("webAppUrl").value =
-      r.data.content;
+      r.data.content.trim();
 
     changeSourceMode();
 
@@ -1002,6 +1050,142 @@ async function saveSettings(){
 
 
 /* =====================================================
+   AUTOMATIC URL WRAPPER
+===================================================== */
+
+function makeUrlWrapper(url){
+
+  const safeUrl =
+    JSON.stringify(url);
+
+  const safeAttr =
+    esc(url);
+
+
+  return `<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1">
+
+<title>ASIM TECH App</title>
+
+<meta
+  http-equiv="refresh"
+  content="0;url=${safeAttr}">
+
+<style>
+
+html,
+body{
+
+  margin:0;
+  padding:0;
+
+  width:100%;
+  height:100%;
+
+  background:#07111f;
+  color:#fff;
+
+  font-family:Arial,sans-serif;
+
+}
+
+.loading{
+
+  width:100%;
+  height:100%;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  flex-direction:column;
+
+  text-align:center;
+
+}
+
+.loading h2{
+
+  margin:0 0 10px;
+
+}
+
+.loading p{
+
+  margin:6px 0;
+
+}
+
+a{
+
+  color:#36e0b5;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="loading">
+
+  <h2>⚡ ASIM TECH</h2>
+
+  <p>Loading application…</p>
+
+  <p>
+
+    <a
+      href="${safeAttr}">
+      Open App
+    </a>
+
+  </p>
+
+</div>
+
+
+<script>
+
+(function(){
+
+  const url =
+    ${safeUrl};
+
+
+  try{
+
+    window.location.replace(url);
+
+  }catch(e){
+
+    window.location.href =
+      url;
+
+  }
+
+})();
+
+</script>
+
+</body>
+
+</html>`;
+
+}
+
+
+/* =====================================================
    SAVE SOURCE
 ===================================================== */
 
@@ -1034,43 +1218,123 @@ async function saveWebAppSource(){
   }
 
 
-  /* Validate URL */
+  /* =================================================
+     CODE MODE
+  ================================================= */
 
-  if(mode === "url"){
+  if(mode === "code"){
 
-    try{
+    let r =
+      await sb
+        .from("app_files")
+        .upsert(
+          {
+            app_id:
+              appId,
 
-      new URL(content);
+            file_path:
+              "index.html",
 
-    }catch{
+            content:
+              content,
 
-      sourceStatus(
-        "Invalid URL.",
-        "error"
+            language:
+              "HTML",
+
+            updated_at:
+              new Date()
+                .toISOString()
+          },
+          {
+            onConflict:
+              "app_id,file_path"
+          }
+        );
+
+
+    if(r.error)
+      throw r.error;
+
+
+    /*
+       Code Mode does not need
+       webapp-url.txt.
+    */
+
+    await sb
+      .from("app_files")
+      .delete()
+      .eq(
+        "app_id",
+        appId
+      )
+      .eq(
+        "file_path",
+        "webapp-url.txt"
       );
 
-      return false;
 
-    }
+    sourceStatus(
+      "HTML source saved successfully ✓",
+      "success"
+    );
+
+
+    return true;
 
   }
 
 
-  const filePath =
-    mode === "code"
-    ?
-    "index.html"
-    :
-    "webapp-url.txt";
+  /* =================================================
+     URL MODE
+  ================================================= */
+
+  let parsedUrl;
 
 
-  const otherPath =
-    mode === "code"
-    ?
-    "webapp-url.txt"
-    :
-    "index.html";
+  try{
 
+    parsedUrl =
+      new URL(content);
+
+  }catch{
+
+    sourceStatus(
+      "Invalid URL. Please use a complete URL such as https://example.com",
+      "error"
+    );
+
+    return false;
+
+  }
+
+
+  /*
+     Only HTTP and HTTPS are allowed.
+  */
+
+  if(
+    parsedUrl.protocol !== "http:" &&
+    parsedUrl.protocol !== "https:"
+  ){
+
+    sourceStatus(
+      "Only HTTP/HTTPS URLs are supported.",
+      "error"
+    );
+
+    return false;
+
+  }
+
+
+  const cleanUrl =
+    parsedUrl.href;
+
+
+  /* =================================================
+     1. SAVE ORIGINAL URL
+  ================================================= */
 
   let r =
     await sb
@@ -1081,16 +1345,12 @@ async function saveWebAppSource(){
             appId,
 
           file_path:
-            filePath,
+            "webapp-url.txt",
 
           content:
-            content,
+            cleanUrl,
 
           language:
-            mode === "code"
-            ?
-            "HTML"
-            :
             "URL",
 
           updated_at:
@@ -1108,21 +1368,63 @@ async function saveWebAppSource(){
     throw r.error;
 
 
-  await sb
-    .from("app_files")
-    .delete()
-    .eq(
-      "app_id",
-      appId
-    )
-    .eq(
-      "file_path",
-      otherPath
-    );
+  /* =================================================
+     2. CREATE AUTOMATIC INDEX.HTML
+  ================================================= */
+
+  const wrapper =
+    makeUrlWrapper(cleanUrl);
+
+
+  r =
+    await sb
+      .from("app_files")
+      .upsert(
+        {
+          app_id:
+            appId,
+
+          file_path:
+            "index.html",
+
+          content:
+            wrapper,
+
+          language:
+            "HTML",
+
+          updated_at:
+            new Date()
+              .toISOString()
+        },
+        {
+          onConflict:
+            "app_id,file_path"
+        }
+      );
+
+
+  if(r.error)
+    throw r.error;
+
+
+  /*
+     IMPORTANT:
+
+     DO NOT DELETE index.html.
+
+     URL Mode intentionally keeps:
+
+       webapp-url.txt
+       index.html
+
+     This satisfies the existing
+     request-apk-build function.
+  */
 
 
   sourceStatus(
-    "Source saved successfully ✓",
+    "Web App URL saved and APK wrapper created ✓",
     "success"
   );
 
@@ -1148,7 +1450,18 @@ async function save(){
 
     await saveSettings();
 
-    await saveWebAppSource();
+
+    const saved =
+      await saveWebAppSource();
+
+
+    if(!saved){
+
+      throw new Error(
+        "Please provide a valid source."
+      );
+
+    }
 
 
     setStatus(
@@ -1156,7 +1469,14 @@ async function save(){
       "success"
     );
 
+
   }catch(e){
+
+    console.error(
+      "Save error:",
+      e
+    );
+
 
     setStatus(
       "Save failed: " +
@@ -1213,6 +1533,7 @@ async function requestBuild(){
     buildBtn.disabled =
       true;
 
+
     buildBtn.textContent =
       "⏳ Starting Build…";
 
@@ -1258,11 +1579,12 @@ async function requestBuild(){
 
     /*
        IMPORTANT:
-       Do NOT insert directly into app_builds here.
+
+       Do NOT insert directly into app_builds.
 
        request-apk-build Edge Function
-       will create the build record and
-       trigger the GitHub Actions workflow.
+       creates the build record and
+       triggers GitHub Actions.
     */
 
     const response =
@@ -1270,9 +1592,11 @@ async function requestBuild(){
         SUPABASE_URL +
         "/functions/v1/request-apk-build",
         {
+
           method:"POST",
 
           headers:{
+
             "apikey":
               SUPABASE_KEY,
 
@@ -1282,11 +1606,13 @@ async function requestBuild(){
 
             "Content-Type":
               "application/json"
+
           },
 
           body:
             JSON.stringify(
               {
+
                 app_id:
                   appId,
 
@@ -1294,8 +1620,10 @@ async function requestBuild(){
                   $("versionName")
                     .value
                     .trim()
+
               }
             )
+
         }
       );
 
@@ -1337,8 +1665,7 @@ async function requestBuild(){
 
 
     /*
-       Refresh automatically for a few minutes
-       so user can see queued/building/success.
+       Automatically refresh build status.
     */
 
     startBuildPolling();
@@ -1362,6 +1689,7 @@ async function requestBuild(){
 
     buildBtn.disabled =
       false;
+
 
     buildBtn.textContent =
       "🏗️ Build APK";
