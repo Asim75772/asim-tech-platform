@@ -5,13 +5,30 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>ASIM TECH — Build. Create. Innovate.</title>
+
+<meta name="theme-color" content="#020817">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta
+    name="description"
+    content="ASIM TECH — Build. Create. Innovate. A modern digital platform for creating, managing and publishing digital projects."
+>
+
+
+<!-- =====================================================
+     GOOGLE ANALYTICS
+===================================================== -->
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FE8PQDLLEB"></script>
 
 <script>
+
 window.dataLayer = window.dataLayer || [];
 
 function gtag(){
@@ -19,13 +36,15 @@ function gtag(){
 }
 
 gtag('js', new Date());
+
 gtag('config', 'G-FE8PQDLLEB');
+
 </script>
 
-<meta
-    name="description"
-    content="ASIM TECH — Build. Create. Innovate. A modern digital platform for creating, managing and publishing digital projects."
->
+
+<!-- =====================================================
+     SUPABASE
+===================================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -47,6 +66,7 @@ html{
 }
 
 body{
+
     font-family:
         Inter,
         -apple-system,
@@ -60,16 +80,19 @@ body{
     min-height:100vh;
 
     background:
+
         radial-gradient(
             circle at 82% 12%,
             rgba(86,45,255,.28),
             transparent 27%
         ),
+
         radial-gradient(
             circle at 12% 65%,
             rgba(0,170,255,.15),
             transparent 30%
         ),
+
         linear-gradient(
             135deg,
             #010611 0%,
@@ -78,6 +101,7 @@ body{
         );
 
     overflow-x:hidden;
+
 }
 
 
@@ -86,6 +110,7 @@ body{
 ===================================================== */
 
 body::before{
+
     content:"";
 
     position:fixed;
@@ -95,10 +120,12 @@ body::before{
     pointer-events:none;
 
     background:
+
         linear-gradient(
             rgba(255,255,255,.018) 1px,
             transparent 1px
         ),
+
         linear-gradient(
             90deg,
             rgba(255,255,255,.018) 1px,
@@ -115,6 +142,259 @@ body::before{
         );
 
     z-index:-2;
+
+}
+
+
+/* =====================================================
+   SPLASH SCREEN
+===================================================== */
+
+#appSplash{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:99999;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(42,108,255,.25),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            135deg,
+            #010611,
+            #031326,
+            #020817
+        );
+
+    transition:
+        opacity .6s ease,
+        visibility .6s ease;
+
+}
+
+
+#appSplash.hide{
+
+    opacity:0;
+
+    visibility:hidden;
+
+    pointer-events:none;
+
+}
+
+
+.splash-logo{
+
+    width:105px;
+
+    height:105px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:28px;
+
+    font-size:72px;
+
+    font-weight:900;
+
+    color:#21c8ff;
+
+    border:
+        1px solid rgba(33,200,255,.6);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(20,100,200,.22),
+            rgba(80,45,200,.18)
+        );
+
+    box-shadow:
+
+        0 0 45px rgba(33,200,255,.35),
+
+        inset 0 0 30px rgba(100,100,255,.12);
+
+    animation:
+        splashLogo 1.8s ease-in-out infinite;
+
+}
+
+
+@keyframes splashLogo{
+
+    0%,100%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.06);
+    }
+
+}
+
+
+.splash-title{
+
+    margin-top:25px;
+
+    font-size:34px;
+
+    font-weight:900;
+
+    letter-spacing:2px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            #ffffff,
+            #27c8ff,
+            #8b7cff
+        );
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+
+}
+
+
+.splash-tagline{
+
+    margin-top:8px;
+
+    color:#a9c0dd;
+
+    font-size:14px;
+
+    letter-spacing:1px;
+
+}
+
+
+.splash-loader{
+
+    width:170px;
+
+    height:4px;
+
+    margin-top:28px;
+
+    overflow:hidden;
+
+    border-radius:10px;
+
+    background:
+        rgba(255,255,255,.12);
+
+}
+
+
+.splash-loader div{
+
+    width:55%;
+
+    height:100%;
+
+    border-radius:10px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            #7b36ff,
+            #287dff,
+            #16c8ff
+        );
+
+    animation:
+        splashLoader 1.2s ease-in-out infinite;
+
+}
+
+
+@keyframes splashLoader{
+
+    0%{
+        transform:translateX(-120%);
+    }
+
+    100%{
+        transform:translateX(310%);
+    }
+
+}
+
+
+/* =====================================================
+   CONNECTION STATUS
+===================================================== */
+
+#connectionStatus{
+
+    position:fixed;
+
+    right:15px;
+
+    bottom:15px;
+
+    z-index:8000;
+
+    padding:8px 13px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    color:#8affc5;
+
+    background:
+        rgba(0,50,40,.85);
+
+    border:
+        1px solid rgba(0,230,150,.35);
+
+    backdrop-filter:blur(10px);
+
+    transition:.3s;
+
+}
+
+
+#connectionStatus.offline{
+
+    color:#ffb3b3;
+
+    background:
+        rgba(80,15,15,.9);
+
+    border-color:
+        rgba(255,80,80,.4);
+
 }
 
 
@@ -123,9 +403,11 @@ body::before{
 ===================================================== */
 
 .header{
+
     height:82px;
 
     position:sticky;
+
     top:0;
 
     z-index:1000;
@@ -137,9 +419,12 @@ body::before{
         rgba(2,10,25,.78);
 
     backdrop-filter:blur(18px);
+
 }
 
+
 .header-inner{
+
     max-width:1450px;
 
     height:100%;
@@ -153,6 +438,7 @@ body::before{
     align-items:center;
 
     justify-content:space-between;
+
 }
 
 
@@ -161,6 +447,7 @@ body::before{
 ===================================================== */
 
 .brand{
+
     display:flex;
 
     align-items:center;
@@ -170,15 +457,20 @@ body::before{
     text-decoration:none;
 
     color:white;
+
 }
 
+
 .brand-logo{
+
     width:58px;
+
     height:58px;
 
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
     font-size:45px;
@@ -189,13 +481,19 @@ body::before{
 
     text-shadow:
         0 0 16px rgba(33,200,255,.65);
+
 }
+
 
 .brand-info{
+
     line-height:1;
+
 }
 
+
 .brand-name{
+
     font-size:29px;
 
     font-weight:850;
@@ -203,6 +501,7 @@ body::before{
     letter-spacing:1px;
 
     background:
+
         linear-gradient(
             90deg,
             #ffffff,
@@ -211,10 +510,14 @@ body::before{
         );
 
     -webkit-background-clip:text;
+
     -webkit-text-fill-color:transparent;
+
 }
 
+
 .brand-tagline{
+
     margin-top:6px;
 
     font-size:13px;
@@ -222,6 +525,7 @@ body::before{
     color:#b7c9e5;
 
     letter-spacing:.4px;
+
 }
 
 
@@ -230,20 +534,26 @@ body::before{
 ===================================================== */
 
 .header-right{
+
     display:flex;
 
     align-items:center;
 
     gap:18px;
+
 }
 
+
 .header-icon{
+
     width:40px;
+
     height:40px;
 
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
     border-radius:50%;
@@ -255,16 +565,24 @@ body::before{
     cursor:pointer;
 
     transition:.25s;
+
 }
+
 
 .header-icon:hover{
-    background:rgba(255,255,255,.07);
+
+    background:
+        rgba(255,255,255,.07);
 
     transform:translateY(-2px);
+
 }
 
+
 .avatar{
+
     width:46px;
+
     height:46px;
 
     border-radius:50%;
@@ -272,11 +590,13 @@ body::before{
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
     font-weight:800;
 
     background:
+
         linear-gradient(
             135deg,
             #168dff,
@@ -285,14 +605,16 @@ body::before{
 
     box-shadow:
         0 0 28px rgba(30,130,255,.32);
+
 }
 
 
 /* =====================================================
-   MAIN HERO
+   HERO
 ===================================================== */
 
 .hero{
+
     max-width:1450px;
 
     margin:auto;
@@ -308,18 +630,19 @@ body::before{
     gap:55px;
 
     align-items:center;
+
 }
 
-
-/* =====================================================
-   HERO LEFT
-===================================================== */
 
 .hero-left{
+
     padding-top:4px;
+
 }
 
+
 .hero-breadcrumb{
+
     display:inline-flex;
 
     align-items:center;
@@ -342,13 +665,19 @@ body::before{
     font-size:16px;
 
     margin-bottom:27px;
+
 }
+
 
 .hero-breadcrumb span{
+
     color:#53caff;
+
 }
 
+
 .hero-title{
+
     font-size:65px;
 
     line-height:1.06;
@@ -358,10 +687,14 @@ body::before{
     font-weight:850;
 
     max-width:780px;
+
 }
 
+
 .gradient-title{
+
     background:
+
         linear-gradient(
             90deg,
             #14c8ff,
@@ -373,9 +706,12 @@ body::before{
     -webkit-background-clip:text;
 
     -webkit-text-fill-color:transparent;
+
 }
 
+
 .hero-description{
+
     margin-top:26px;
 
     max-width:690px;
@@ -385,6 +721,7 @@ body::before{
     font-size:20px;
 
     line-height:1.65;
+
 }
 
 
@@ -393,6 +730,7 @@ body::before{
 ===================================================== */
 
 .hero-buttons{
+
     display:flex;
 
     gap:20px;
@@ -400,9 +738,12 @@ body::before{
     margin-top:31px;
 
     flex-wrap:wrap;
+
 }
 
+
 .hero-button{
+
     min-width:230px;
 
     padding:
@@ -419,12 +760,16 @@ body::before{
     font-weight:750;
 
     transition:.3s;
+
 }
 
+
 .primary-button{
+
     color:white;
 
     background:
+
         linear-gradient(
             100deg,
             #7b36ff,
@@ -434,16 +779,22 @@ body::before{
 
     box-shadow:
         0 12px 35px rgba(61,90,255,.28);
+
 }
 
+
 .primary-button:hover{
+
     transform:translateY(-4px);
 
     box-shadow:
         0 17px 45px rgba(50,120,255,.40);
+
 }
 
+
 .secondary-button{
+
     color:white;
 
     border:
@@ -451,13 +802,17 @@ body::before{
 
     background:
         rgba(4,18,39,.52);
+
 }
 
+
 .secondary-button:hover{
+
     transform:translateY(-4px);
 
     background:
         rgba(35,72,125,.30);
+
 }
 
 
@@ -466,6 +821,7 @@ body::before{
 ===================================================== */
 
 .benefits{
+
     display:flex;
 
     align-items:center;
@@ -475,9 +831,12 @@ body::before{
     gap:45px;
 
     margin-top:34px;
+
 }
 
+
 .benefit{
+
     display:flex;
 
     align-items:center;
@@ -487,10 +846,14 @@ body::before{
     color:#c7d8ef;
 
     font-size:16px;
+
 }
 
+
 .benefit-icon{
+
     font-size:21px;
+
 }
 
 
@@ -499,6 +862,7 @@ body::before{
 ===================================================== */
 
 .ai-card{
+
     min-height:455px;
 
     position:relative;
@@ -513,11 +877,13 @@ body::before{
         1px solid rgba(34,205,255,.78);
 
     background:
+
         radial-gradient(
             circle at 70% 42%,
             rgba(63,72,255,.28),
             transparent 37%
         ),
+
         linear-gradient(
             145deg,
             rgba(7,29,62,.97),
@@ -525,11 +891,16 @@ body::before{
         );
 
     box-shadow:
+
         0 0 38px rgba(25,165,255,.18),
+
         inset 0 0 50px rgba(68,74,255,.07);
+
 }
 
+
 .ai-card::after{
+
     content:"";
 
     position:absolute;
@@ -545,28 +916,35 @@ body::before{
 
     animation:
         aiGlow 4s ease-in-out infinite;
+
 }
+
 
 @keyframes aiGlow{
 
     0%,100%{
+
         box-shadow:
             inset 0 0 30px rgba(30,200,255,.05);
+
     }
 
     50%{
+
         box-shadow:
             inset 0 0 55px rgba(132,65,255,.12);
+
     }
 
 }
 
 
 /* =====================================================
-   COMING SOON BADGE
+   COMING SOON
 ===================================================== */
 
 .coming-badge{
+
     display:inline-flex;
 
     align-items:center;
@@ -585,6 +963,7 @@ body::before{
     font-weight:750;
 
     background:
+
         linear-gradient(
             100deg,
             #8b31ff,
@@ -596,18 +975,24 @@ body::before{
 
     animation:
         badgeGlow 3s ease-in-out infinite;
+
 }
+
 
 @keyframes badgeGlow{
 
     0%,100%{
+
         box-shadow:
             0 8px 27px rgba(125,48,255,.30);
+
     }
 
     50%{
+
         box-shadow:
             0 8px 38px rgba(165,65,255,.52);
+
     }
 
 }
@@ -618,6 +1003,7 @@ body::before{
 ===================================================== */
 
 .ai-title{
+
     margin-top:25px;
 
     font-size:40px;
@@ -625,10 +1011,14 @@ body::before{
     line-height:1.08;
 
     max-width:420px;
+
 }
 
+
 .ai-title-gradient{
+
     background:
+
         linear-gradient(
             90deg,
             #bf61ff,
@@ -638,9 +1028,12 @@ body::before{
     -webkit-background-clip:text;
 
     -webkit-text-fill-color:transparent;
+
 }
 
+
 .ai-description{
+
     margin-top:17px;
 
     color:#c2d4ed;
@@ -650,14 +1043,16 @@ body::before{
     line-height:1.55;
 
     max-width:410px;
+
 }
 
 
 /* =====================================================
-   AI ROBOT
+   ROBOT
 ===================================================== */
 
 .ai-robot{
+
     position:absolute;
 
     right:45px;
@@ -673,11 +1068,13 @@ body::before{
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
     font-size:102px;
 
     background:
+
         radial-gradient(
             circle,
             rgba(35,204,255,.27),
@@ -692,7 +1089,9 @@ body::before{
 
     animation:
         robotFloat 4s ease-in-out infinite;
+
 }
+
 
 @keyframes robotFloat{
 
@@ -712,6 +1111,7 @@ body::before{
 ===================================================== */
 
 .ai-points{
+
     position:absolute;
 
     left:38px;
@@ -727,28 +1127,32 @@ body::before{
     color:#c9daf3;
 
     font-size:16px;
+
 }
 
+
 .ai-point{
+
     display:flex;
 
     align-items:center;
 
     gap:10px;
+
 }
 
+
 .ai-point-icon{
+
     color:#26aaff;
 
     font-size:18px;
+
 }
 
 
-/* =====================================================
-   AI BOTTOM BADGE
-===================================================== */
-
 .ai-bottom-badge{
+
     position:absolute;
 
     right:27px;
@@ -769,37 +1173,40 @@ body::before{
 
     background:
         rgba(70,31,130,.48);
+
 }
 
 
 /* =====================================================
-   PLATFORM SECTION
+   PLATFORM
 ===================================================== */
 
 .platform{
+
     max-width:1450px;
 
     margin:auto;
 
     padding:
         15px 55px 48px;
+
 }
 
+
 .platform-grid{
+
     display:grid;
 
     grid-template-columns:
         repeat(5,1fr);
 
     gap:18px;
+
 }
 
 
-/* =====================================================
-   PLATFORM CARD
-===================================================== */
-
 .platform-card{
+
     min-height:220px;
 
     position:relative;
@@ -812,6 +1219,7 @@ body::before{
         1px solid rgba(65,140,240,.27);
 
     background:
+
         linear-gradient(
             145deg,
             rgba(6,28,56,.84),
@@ -825,9 +1233,12 @@ body::before{
     color:white;
 
     overflow:hidden;
+
 }
 
+
 .platform-card:hover{
+
     transform:translateY(-7px);
 
     border-color:
@@ -835,17 +1246,22 @@ body::before{
 
     box-shadow:
         0 16px 40px rgba(0,95,190,.18);
+
 }
 
+
 .platform-card::after{
+
     content:"";
 
     position:absolute;
 
     width:120px;
+
     height:120px;
 
     right:-55px;
+
     top:-55px;
 
     border-radius:50%;
@@ -854,6 +1270,7 @@ body::before{
         rgba(30,150,255,.09);
 
     filter:blur(15px);
+
 }
 
 
@@ -862,41 +1279,53 @@ body::before{
 ===================================================== */
 
 .android-card{
+
     border:
         1px solid rgba(0,230,150,.38);
 
     background:
+
         linear-gradient(
             145deg,
             rgba(0,75,58,.72),
             rgba(3,28,48,.78)
         );
+
 }
 
+
 .android-card:hover{
+
     border-color:
         rgba(0,240,170,.80);
 
     box-shadow:
         0 16px 45px rgba(0,220,160,.20);
+
 }
 
+
 .android-icon{
+
     background:
+
         linear-gradient(
             135deg,
             #00d084,
             #009e75
         );
+
 }
 
 
 /* =====================================================
-   CARD ICON
+   CARD ICONS
 ===================================================== */
 
 .card-icon{
+
     width:52px;
+
     height:52px;
 
     border-radius:13px;
@@ -904,56 +1333,73 @@ body::before{
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
     font-size:27px;
 
     margin-bottom:17px;
+
 }
 
+
 .actions-icon{
+
     background:
         linear-gradient(
             135deg,
             #12b995,
             #078d89
         );
+
 }
 
+
 .projects-icon{
+
     background:
         linear-gradient(
             135deg,
             #168fff,
             #2455e8
         );
+
 }
 
+
 .wiki-icon{
+
     background:
         linear-gradient(
             135deg,
             #9139e9,
             #6031bc
         );
+
 }
 
+
 .security-icon{
+
     background:
         linear-gradient(
             135deg,
             #e8325b,
             #b51c3e
         );
+
 }
 
+
 .insights-icon{
+
     background:
         linear-gradient(
             135deg,
             #e4a31e,
             #b96d0b
         );
+
 }
 
 
@@ -962,12 +1408,16 @@ body::before{
 ===================================================== */
 
 .platform-card h3{
+
     font-size:22px;
 
     margin-bottom:12px;
+
 }
 
+
 .platform-card p{
+
     color:#afc4df;
 
     font-size:15px;
@@ -975,6 +1425,7 @@ body::before{
     line-height:1.55;
 
     max-width:220px;
+
 }
 
 
@@ -983,6 +1434,7 @@ body::before{
 ===================================================== */
 
 .card-action{
+
     position:absolute;
 
     left:23px;
@@ -1009,19 +1461,26 @@ body::before{
         rgba(20,70,130,.18);
 
     transition:.25s;
+
 }
+
 
 .platform-card:hover .card-action{
+
     background:
         rgba(30,100,180,.30);
+
 }
 
+
 .android-card .card-action{
+
     border-color:
         rgba(0,230,150,.45);
 
     background:
         rgba(0,150,100,.15);
+
 }
 
 
@@ -1030,6 +1489,7 @@ body::before{
 ===================================================== */
 
 .footer{
+
     max-width:1450px;
 
     margin:auto;
@@ -1047,13 +1507,19 @@ body::before{
     color:#849ab9;
 
     font-size:14px;
+
 }
+
 
 .footer-center{
+
     text-align:center;
+
 }
 
+
 .footer-brand{
+
     color:#25bfff;
 
     font-size:18px;
@@ -1063,27 +1529,36 @@ body::before{
     letter-spacing:4px;
 
     margin-bottom:11px;
+
 }
 
+
 .footer-slogan{
+
     color:#a8bdd9;
 
     letter-spacing:4px;
+
 }
 
+
 .footer-right{
+
     text-align:right;
+
 }
 
 
 /* =====================================================
-   SMALL POPUP
+   POPUP
 ===================================================== */
 
 .popup{
+
     position:fixed;
 
     left:50%;
+
     bottom:30px;
 
     transform:
@@ -1118,46 +1593,70 @@ body::before{
     color:#d8e8fb;
 
     transition:.35s;
+
 }
 
+
 .popup.show{
+
     transform:
         translate(-50%,0);
 
     opacity:1;
+
 }
 
 
 /* =====================================================
-   RESPONSIVE
+   MOBILE BOTTOM NAV
 ===================================================== */
+
+.mobile-nav{
+
+    display:none;
+
+}
+
 
 @media(max-width:1150px){
 
     .header-inner{
+
         padding:0 30px;
+
     }
 
     .hero{
+
         grid-template-columns:1fr;
 
         padding-left:30px;
+
         padding-right:30px;
+
     }
 
     .platform{
+
         padding-left:30px;
+
         padding-right:30px;
+
     }
 
     .platform-grid{
+
         grid-template-columns:
             repeat(3,1fr);
+
     }
 
     .footer{
+
         padding-left:30px;
+
         padding-right:30px;
+
     }
 
 }
@@ -1165,122 +1664,204 @@ body::before{
 
 @media(max-width:800px){
 
-    .header{
-        height:70px;
+    body{
+
+        padding-bottom:
+            calc(72px + env(safe-area-inset-bottom));
+
     }
+
+
+    .header{
+
+        height:
+            calc(70px + env(safe-area-inset-top));
+
+        padding-top:
+            env(safe-area-inset-top);
+
+    }
+
 
     .header-inner{
+
         padding:0 17px;
+
     }
+
 
     .brand-logo{
+
         width:43px;
+
         font-size:34px;
+
     }
+
 
     .brand-name{
+
         font-size:21px;
+
     }
+
 
     .brand-tagline{
+
         font-size:10px;
+
     }
+
 
     .header-icon{
+
         display:none;
+
     }
+
 
     .avatar{
+
         width:40px;
+
         height:40px;
+
     }
 
+
     .hero{
+
         padding:
             40px 20px 25px;
 
         gap:35px;
+
     }
 
+
     .hero-title{
+
         font-size:43px;
 
         letter-spacing:-1.5px;
+
     }
+
 
     .hero-description{
+
         font-size:17px;
+
     }
 
+
     .hero-buttons{
+
         flex-direction:column;
 
         gap:14px;
+
     }
+
 
     .hero-button{
+
         width:100%;
+
     }
+
 
     .benefits{
+
         gap:18px;
+
     }
 
+
     .ai-card{
+
         min-height:555px;
 
         padding:27px;
+
     }
 
+
     .ai-title{
+
         font-size:32px;
 
         max-width:260px;
+
     }
+
 
     .ai-description{
+
         max-width:260px;
+
     }
 
+
     .ai-robot{
+
         right:18px;
 
         top:190px;
 
         width:150px;
+
         height:150px;
 
         font-size:80px;
 
         opacity:.88;
+
     }
 
+
     .ai-points{
+
         left:27px;
 
         bottom:86px;
+
     }
 
+
     .ai-bottom-badge{
+
         right:20px;
 
         bottom:22px;
+
     }
+
 
     .platform{
+
         padding:
             0 20px 35px;
+
     }
+
 
     .platform-grid{
+
         grid-template-columns:1fr;
+
     }
+
 
     .platform-card{
+
         min-height:190px;
+
     }
 
+
     .footer{
+
         padding:
             15px 20px 25px;
 
@@ -1289,14 +1870,110 @@ body::before{
         gap:18px;
 
         text-align:center;
+
     }
+
 
     .footer-right{
+
         text-align:center;
+
     }
 
+
     .footer-center{
+
         order:-1;
+
+    }
+
+
+    /* ================================================
+       MOBILE NAVIGATION
+    ================================================ */
+
+    .mobile-nav{
+
+        position:fixed;
+
+        left:0;
+
+        right:0;
+
+        bottom:0;
+
+        height:
+            calc(68px + env(safe-area-inset-bottom));
+
+        padding-bottom:
+            env(safe-area-inset-bottom);
+
+        z-index:7000;
+
+        display:flex;
+
+        align-items:flex-start;
+
+        justify-content:space-around;
+
+        background:
+            rgba(3,12,28,.97);
+
+        border-top:
+            1px solid rgba(80,150,255,.20);
+
+        box-shadow:
+            0 -8px 30px rgba(0,0,0,.35);
+
+        backdrop-filter:blur(18px);
+
+    }
+
+
+    .mobile-nav-item{
+
+        width:25%;
+
+        padding-top:9px;
+
+        text-align:center;
+
+        color:#7f94b1;
+
+        font-size:11px;
+
+        cursor:pointer;
+
+        transition:.25s;
+
+    }
+
+
+    .mobile-nav-item span{
+
+        display:block;
+
+        font-size:21px;
+
+        margin-bottom:4px;
+
+    }
+
+
+    .mobile-nav-item.active{
+
+        color:#32c7ff;
+
+    }
+
+
+    #connectionStatus{
+
+        bottom:
+            calc(78px + env(safe-area-inset-bottom));
+
+        right:12px;
+
     }
 
 }
@@ -1305,24 +1982,58 @@ body::before{
 @media(max-width:430px){
 
     .hero-title{
+
         font-size:37px;
+
     }
+
 
     .hero-breadcrumb{
+
         font-size:13px;
+
     }
 
+
     .ai-robot{
+
         right:3px;
 
         opacity:.70;
+
     }
 
+
     .ai-title{
+
         max-width:235px;
+
     }
 
 }
+
+
+/* =====================================================
+   TOUCH OPTIMIZATION
+===================================================== */
+
+@media(hover:none){
+
+    .platform-card:hover{
+
+        transform:none;
+
+    }
+
+    .primary-button:hover,
+    .secondary-button:hover{
+
+        transform:none;
+
+    }
+
+}
+
 
 </style>
 
@@ -1333,12 +2044,47 @@ body::before{
 
 
 <!-- =====================================================
+     SPLASH SCREEN
+===================================================== -->
+
+<div id="appSplash">
+
+    <div class="splash-logo">
+        △
+    </div>
+
+    <div class="splash-title">
+        ASIM TECH
+    </div>
+
+    <div class="splash-tagline">
+        Build. Create. Innovate.
+    </div>
+
+    <div class="splash-loader">
+        <div></div>
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CONNECTION STATUS
+===================================================== -->
+
+<div id="connectionStatus">
+    ● Online
+</div>
+
+
+<!-- =====================================================
      HEADER
 ===================================================== -->
 
 <header class="header">
 
 <div class="header-inner">
+
 
     <a
         href="index.html"
@@ -1366,6 +2112,7 @@ body::before{
 
     <div class="header-right">
 
+
         <div
             class="header-icon"
             title="Search"
@@ -1387,6 +2134,7 @@ body::before{
         <div class="avatar">
             AT
         </div>
+
 
     </div>
 
@@ -1517,10 +2265,10 @@ body::before{
 
         </div>
 
+
     </div>
 
 </div>
-
 
 
 <!-- =====================================================
@@ -1602,6 +2350,7 @@ body::before{
 
         </div>
 
+
     </div>
 
 
@@ -1611,10 +2360,10 @@ body::before{
 
     </div>
 
+
 </div>
 
 </section>
-
 
 
 <!-- =====================================================
@@ -1623,12 +2372,11 @@ body::before{
 
 <section class="platform">
 
+
 <div class="platform-grid">
 
 
-    <!-- =================================================
-         ACTIONS
-    ================================================== -->
+    <!-- ACTIONS -->
 
     <a
         href="repositories.html"
@@ -1655,10 +2403,7 @@ body::before{
     </a>
 
 
-
-    <!-- =================================================
-         PROJECTS
-    ================================================== -->
+    <!-- PROJECTS -->
 
     <div
         class="platform-card"
@@ -1686,10 +2431,7 @@ body::before{
     </div>
 
 
-
-    <!-- =================================================
-         WIKI
-    ================================================== -->
+    <!-- WIKI -->
 
     <div
         class="platform-card"
@@ -1717,10 +2459,7 @@ body::before{
     </div>
 
 
-
-    <!-- =================================================
-         SECURITY
-    ================================================== -->
+    <!-- SECURITY -->
 
     <div
         class="platform-card"
@@ -1748,10 +2487,7 @@ body::before{
     </div>
 
 
-
-    <!-- =================================================
-         INSIGHTS
-    ================================================== -->
+    <!-- INSIGHTS -->
 
     <div
         class="platform-card"
@@ -1779,10 +2515,7 @@ body::before{
     </div>
 
 
-
-    <!-- =================================================
-         ANDROID APPS
-    ================================================== -->
+    <!-- ANDROID APPS -->
 
     <a
         href="published-website.html?id=bd47ed1e-130c-4341-a0a3-8416317cefb4"
@@ -1812,7 +2545,6 @@ body::before{
 </div>
 
 </section>
-
 
 
 <!-- =====================================================
@@ -1853,8 +2585,8 @@ body::before{
 
 </div>
 
-</footer>
 
+</footer>
 
 
 <!-- =====================================================
@@ -1868,6 +2600,71 @@ body::before{
 </div>
 
 
+<!-- =====================================================
+     MOBILE BOTTOM NAVIGATION
+===================================================== -->
+
+<nav class="mobile-nav">
+
+
+    <div
+        class="mobile-nav-item active"
+        onclick="goHome(this)"
+    >
+
+        <span>
+            ⌂
+        </span>
+
+        Home
+
+    </div>
+
+
+    <div
+        class="mobile-nav-item"
+        onclick="goExplore(this)"
+    >
+
+        <span>
+            ▦
+        </span>
+
+        Explore
+
+    </div>
+
+
+    <div
+        class="mobile-nav-item"
+        onclick="goDashboard(this)"
+    >
+
+        <span>
+            ▣
+        </span>
+
+        Dashboard
+
+    </div>
+
+
+    <div
+        class="mobile-nav-item"
+        onclick="showProfile(this)"
+    >
+
+        <span>
+            ◉
+        </span>
+
+        Profile
+
+    </div>
+
+
+</nav>
+
 
 <script>
 
@@ -1879,14 +2676,105 @@ body::before{
 const SUPABASE_URL =
     "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
+
 const SUPABASE_KEY =
     "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
 
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
+
+
+/* =====================================================
+   SPLASH SCREEN
+===================================================== */
+
+window.addEventListener(
+    "load",
+    function(){
+
+        setTimeout(
+            function(){
+
+                const splash =
+                    document.getElementById(
+                        "appSplash"
+                    );
+
+                if(splash){
+
+                    splash.classList.add(
+                        "hide"
+                    );
+
+                }
+
+            },
+            1400
+        );
+
+    }
+);
+
+
+/* =====================================================
+   ONLINE / OFFLINE
+===================================================== */
+
+function updateConnectionStatus(){
+
+    const status =
+        document.getElementById(
+            "connectionStatus"
+        );
+
+
+    if(!status){
+
+        return;
+
+    }
+
+
+    if(navigator.onLine){
+
+        status.textContent =
+            "● Online";
+
+        status.classList.remove(
+            "offline"
+        );
+
+    }else{
+
+        status.textContent =
+            "● Offline";
+
+        status.classList.add(
+            "offline"
+        );
+
+    }
+
+}
+
+
+window.addEventListener(
+    "online",
+    updateConnectionStatus
+);
+
+
+window.addEventListener(
+    "offline",
+    updateConnectionStatus
+);
+
+
+updateConnectionStatus();
 
 
 /* =====================================================
@@ -1897,10 +2785,11 @@ async function handleGetStarted(event){
 
     event.preventDefault();
 
+
     try{
 
         const {
-            data: {
+            data:{
                 session
             },
             error
@@ -1919,6 +2808,7 @@ async function handleGetStarted(event){
                 "login.html";
 
             return;
+
         }
 
 
@@ -1956,21 +2846,32 @@ async function handleGetStarted(event){
 
 let popupTimer = null;
 
+
 function showMessage(message){
 
     const popup =
-        document.getElementById("popup");
+        document.getElementById(
+            "popup"
+        );
+
 
     popup.textContent =
         message;
 
-    popup.classList.add("show");
 
-    clearTimeout(popupTimer);
+    popup.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        popupTimer
+    );
+
 
     popupTimer =
         setTimeout(
-            () => {
+            function(){
 
                 popup.classList.remove(
                     "show"
@@ -1984,7 +2885,7 @@ function showMessage(message){
 
 
 /* =====================================================
-   THEME BUTTON
+   THEME
 ===================================================== */
 
 function toggleTheme(){
@@ -2001,7 +2902,10 @@ function toggleTheme(){
 ===================================================== */
 
 const aiCard =
-    document.querySelector(".ai-card");
+    document.querySelector(
+        ".ai-card"
+    );
+
 
 if(aiCard){
 
@@ -2012,13 +2916,16 @@ if(aiCard){
             const rect =
                 aiCard.getBoundingClientRect();
 
+
             const x =
                 event.clientX -
                 rect.left;
 
+
             const y =
                 event.clientY -
                 rect.top;
+
 
             aiCard.style.background =
                 `
@@ -2063,13 +2970,106 @@ if(aiCard){
 
 
 /* =====================================================
-   PREVENT DOUBLE CLICK ISSUES
+   MOBILE NAVIGATION
+===================================================== */
+
+function setActiveNav(element){
+
+    document
+        .querySelectorAll(
+            ".mobile-nav-item"
+        )
+        .forEach(
+            function(item){
+
+                item.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    if(element){
+
+        element.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+function goHome(element){
+
+    setActiveNav(element);
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+}
+
+
+function goExplore(element){
+
+    setActiveNav(element);
+
+    const platform =
+        document.querySelector(
+            ".platform"
+        );
+
+
+    if(platform){
+
+        platform.scrollIntoView({
+
+            behavior:"smooth",
+
+            block:"start"
+
+        });
+
+    }
+
+}
+
+
+function goDashboard(element){
+
+    setActiveNav(element);
+
+    window.location.href =
+        "dashboard.html";
+
+}
+
+
+function showProfile(element){
+
+    setActiveNav(element);
+
+    showMessage(
+        "Profile module is being prepared."
+    );
+
+}
+
+
+/* =====================================================
+   PREVENT DOUBLE CLICK VISUAL ISSUE
 ===================================================== */
 
 document
     .querySelectorAll("a")
     .forEach(
-        link => {
+        function(link){
 
             link.addEventListener(
                 "click",
@@ -2078,10 +3078,11 @@ document
                     this.style.opacity =
                         ".88";
 
-                    setTimeout(
-                        () => {
 
-                            this.style.opacity =
+                    setTimeout(
+                        function(){
+
+                            link.style.opacity =
                                 "";
 
                         },
@@ -2095,7 +3096,28 @@ document
     );
 
 
+/* =====================================================
+   PAGE VISIBILITY
+===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    function(){
+
+        if(document.hidden){
+
+            return;
+
+        }
+
+        updateConnectionStatus();
+
+    }
+);
+
+
 </script>
+
 
 </body>
 
