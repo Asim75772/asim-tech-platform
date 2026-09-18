@@ -60,21 +60,16 @@ jobs:
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
 
           if [ ! -x "$SDKMANAGER" ]; then
-
             SDKMANAGER=$(find \
               "$ANDROID_HOME/cmdline-tools" \
               -type f \
               -name sdkmanager \
               | head -1)
-
           fi
 
           if [ -z "$SDKMANAGER" ]; then
-
             echo "ERROR: sdkmanager not found."
-
             exit 1
-
           fi
 
           echo "Using sdkmanager:"
@@ -83,7 +78,6 @@ jobs:
           "$SDKMANAGER" --version
 
           echo "Accepting licenses..."
-
           yes | "$SDKMANAGER" --licenses || true
 
           echo "Installing Android SDK packages..."
@@ -117,9 +111,7 @@ jobs:
       - name: Find queued build
         id: queue
         env:
-
           SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
-
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
         run: |
@@ -129,11 +121,8 @@ jobs:
           echo "======================================"
 
           if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-
             echo "ERROR: SUPABASE_SERVICE_ROLE_KEY is missing."
-
             exit 1
-
           fi
 
           RESPONSE=$(curl -f -sS \
@@ -149,31 +138,20 @@ jobs:
           echo "Queue response:"
           echo "$RESPONSE"
 
-          if ! echo "$RESPONSE" | jq -e 'type == "array"' >/dev/null
-          then
-
+          if ! echo "$RESPONSE" | jq -e 'type == "array"' >/dev/null; then
             echo "ERROR: Supabase returned invalid JSON."
-
             exit 1
-
           fi
 
           BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
-
           APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
-
           VERSION_NAME=$(echo "$RESPONSE" | jq -r '.[0].version_name // "1.0.0"')
-
           VERSION_CODE=$(echo "$RESPONSE" | jq -r '.[0].version_code // 1')
 
           if [ -z "$BUILD_ID" ]; then
-
             echo "No queued build found."
-
             echo "found=false" >> "$GITHUB_OUTPUT"
-
             exit 0
-
           fi
 
           echo "--------------------------------------"
@@ -183,35 +161,22 @@ jobs:
           echo "VERSION CODE  : $VERSION_CODE"
           echo "--------------------------------------"
 
-          # Strict UUID validation
           if ! echo "$BUILD_ID" | grep -Eq \
-            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
-          then
-
+            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'; then
             echo "ERROR: Invalid BUILD_ID:"
             printf '<%s>\n' "$BUILD_ID"
-
             exit 1
-
           fi
 
           if ! echo "$APP_ID" | grep -Eq \
-            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
-          then
-
+            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'; then
             echo "ERROR: Invalid APP_ID:"
             printf '<%s>\n' "$APP_ID"
-
-            echo "The queued build contains an invalid app_id."
-
             exit 1
-
           fi
 
           echo "found=true" >> "$GITHUB_OUTPUT"
-
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
-
           echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
 
 
@@ -222,9 +187,7 @@ jobs:
       - name: Stop when queue is empty
         if: steps.queue.outputs.found != 'true'
         run: |
-
           echo "No queued APK build."
-
           exit 0
 
 
@@ -235,11 +198,8 @@ jobs:
       - name: Mark build as building
         if: steps.queue.outputs.found == 'true'
         env:
-
           SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
-
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
 
         run: |
@@ -269,11 +229,8 @@ jobs:
       - name: Download app files
         if: steps.queue.outputs.found == 'true'
         env:
-
           SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
-
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
           APP_ID: ${{ steps.queue.outputs.app_id }}
 
         run: |
@@ -284,23 +241,11 @@ jobs:
 
           mkdir -p source
 
-          echo "APP_ID:"
-          printf '<%s>\n' "$APP_ID"
-
-          # Validate again before REST request
-
           if ! echo "$APP_ID" | grep -Eq \
-            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
-          then
-
+            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'; then
             echo "ERROR: APP_ID is not a valid UUID."
-
             exit 1
-
           fi
-
-          # IMPORTANT:
-          # Use --data-urlencode so UUID/filter is safely encoded.
 
           curl -f -sS \
             --get \
@@ -312,26 +257,16 @@ jobs:
             > source/files.json
 
           echo "Supabase app_files response:"
+          jq . source/files.json
 
-          cat source/files.json | jq .
-
-          # Detect Supabase error object
-
-          if echo "$RESPONSE" | jq -e '.code' >/dev/null 2>&1; then
-
+          if jq -e 'type == "object" and has("code")' source/files.json >/dev/null 2>&1; then
             echo "Supabase returned an error."
-
             exit 1
-
           fi
 
-          if ! jq -e 'type == "array"' source/files.json >/dev/null
-          then
-
+          if ! jq -e 'type == "array"' source/files.json >/dev/null; then
             echo "ERROR: app_files response is not an array."
-
             exit 1
-
           fi
 
           COUNT=$(jq 'length' source/files.json)
@@ -339,14 +274,9 @@ jobs:
           echo "Files found: $COUNT"
 
           if [ "$COUNT" -eq 0 ]; then
-
             echo "ERROR: No app files found for this app."
-
             exit 1
-
           fi
-
-          # Safely process only objects
 
           jq -c '.[] | select(type == "object" and has("file_path"))' \
             source/files.json |
@@ -354,15 +284,11 @@ jobs:
           do
 
             FILE_PATH=$(echo "$ITEM" | jq -r '.file_path')
-
             CONTENT=$(echo "$ITEM" | jq -r '.content // ""')
 
             if [ -z "$FILE_PATH" ]; then
-
               echo "Skipping empty file path."
-
               continue
-
             fi
 
             mkdir -p "source/$(dirname "$FILE_PATH")"
@@ -384,43 +310,23 @@ jobs:
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          echo "Reading Android settings..."
-
           if [ ! -f source/android-settings.json ]; then
-
             echo "ERROR: android-settings.json not found."
-
             exit 1
-
           fi
 
           cat source/android-settings.json
 
-          APP_NAME=$(jq -r \
-            '.appName // "ASIM TECH App"' \
-            source/android-settings.json)
-
-          PACKAGE_NAME=$(jq -r \
-            '.packageName // "com.asimtech.app"' \
-            source/android-settings.json)
-
-          VERSION_NAME=$(jq -r \
-            '.versionName // "1.0.0"' \
-            source/android-settings.json)
-
-          VERSION_CODE=$(jq -r \
-            '.versionCode // 1' \
-            source/android-settings.json)
+          APP_NAME=$(jq -r '.appName // "ASIM TECH App"' source/android-settings.json)
+          PACKAGE_NAME=$(jq -r '.packageName // "com.asimtech.app"' source/android-settings.json)
+          VERSION_NAME=$(jq -r '.versionName // "1.0.0"' source/android-settings.json)
+          VERSION_CODE=$(jq -r '.versionCode // 1' source/android-settings.json)
 
           echo "APP_NAME=$APP_NAME" >> "$GITHUB_ENV"
-
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> "$GITHUB_ENV"
-
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
-
           echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
 
-          echo ""
           echo "App Name     : $APP_NAME"
           echo "Package Name : $PACKAGE_NAME"
           echo "Version Name : $VERSION_NAME"
@@ -436,14 +342,10 @@ jobs:
         run: |
 
           if ! echo "$PACKAGE_NAME" | grep -Eq \
-            '^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$'
-          then
-
+            '^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$'; then
             echo "ERROR: Invalid package name:"
             echo "$PACKAGE_NAME"
-
             exit 1
-
           fi
 
           echo "Package name valid."
@@ -457,14 +359,9 @@ jobs:
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          mkdir -p \
-            android/app/src/main/java
-
-          mkdir -p \
-            android/app/src/main/res/values
-
-          mkdir -p \
-            android/app/src/main/assets
+          mkdir -p android/app/src/main/java
+          mkdir -p android/app/src/main/res/values
+          mkdir -p android/app/src/main/assets
 
           echo "Android project created."
 
@@ -543,66 +440,355 @@ jobs:
 
           echo "PACKAGE_PATH=$PACKAGE_PATH" >> "$GITHUB_ENV"
 
-          mkdir -p \
-            "android/app/src/main/java/$PACKAGE_PATH"
+          mkdir -p "android/app/src/main/java/$PACKAGE_PATH"
 
           echo "Package path:"
           echo "$PACKAGE_PATH"
 
 
       # ==================================================
-      # 16. MAIN ACTIVITY
+      # 16. MAIN ACTIVITY WITH NATIVE TEXT TO SPEECH
       # ==================================================
 
       - name: Create MainActivity
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          cat > \
-            "android/app/src/main/java/$PACKAGE_PATH/MainActivity.java" \
-            <<EOF
-
-          package $PACKAGE_NAME;
+          cat > "android/app/src/main/java/$PACKAGE_PATH/MainActivity.java" <<'JAVA'
+          __PACKAGE_PLACEHOLDER__
 
           import android.app.Activity;
           import android.os.Bundle;
-          import android.webkit.WebView;
+          import android.speech.tts.TextToSpeech;
+          import android.speech.tts.UtteranceProgressListener;
+          import android.webkit.JavascriptInterface;
+          import android.webkit.WebChromeClient;
           import android.webkit.WebSettings;
+          import android.webkit.WebView;
           import android.webkit.WebViewClient;
 
+          import java.util.HashMap;
+          import java.util.Locale;
+
           public class MainActivity extends Activity {
+
+              private WebView webView;
+              private TextToSpeech textToSpeech;
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
 
                   super.onCreate(savedInstanceState);
 
-                  WebView webView = new WebView(this);
+                  webView = new WebView(this);
 
-                  WebSettings settings =
-                      webView.getSettings();
+                  WebSettings settings = webView.getSettings();
 
                   settings.setJavaScriptEnabled(true);
-
                   settings.setDomStorageEnabled(true);
-
                   settings.setAllowFileAccess(true);
-
                   settings.setAllowContentAccess(true);
+                  settings.setMediaPlaybackRequiresUserGesture(false);
 
-                  webView.setWebViewClient(
-                      new WebViewClient()
+                  webView.setWebViewClient(new WebViewClient() {
+
+                      @Override
+                      public void onPageFinished(
+                              WebView view,
+                              String url) {
+
+                          super.onPageFinished(view, url);
+
+                          injectSpeechBridge(view);
+                      }
+                  });
+
+                  webView.setWebChromeClient(
+                          new WebChromeClient()
+                  );
+
+                  webView.addJavascriptInterface(
+                          new AndroidTTS(),
+                          "AndroidTTS"
                   );
 
                   setContentView(webView);
 
+                  initializeTTS();
+
                   webView.loadUrl(
-                      "file:///android_asset/index.html"
+                          "file:///android_asset/index.html"
                   );
               }
-          }
 
-          EOF
+
+              private void initializeTTS() {
+
+                  textToSpeech =
+                          new TextToSpeech(
+                                  this,
+                                  new TextToSpeech.OnInitListener() {
+
+                                      @Override
+                                      public void onInit(int status) {
+
+                                          if (status ==
+                                                  TextToSpeech.SUCCESS) {
+
+                                              int result =
+                                                      textToSpeech.setLanguage(
+                                                              new Locale(
+                                                                      "bn",
+                                                                      "IN"
+                                                              )
+                                                      );
+
+                                              if (result ==
+                                                      TextToSpeech.LANG_MISSING_DATA ||
+                                                  result ==
+                                                      TextToSpeech.LANG_NOT_SUPPORTED) {
+
+                                                  textToSpeech.setLanguage(
+                                                          Locale.ENGLISH
+                                                  );
+                                              }
+                                          }
+                                      }
+                                  }
+                          );
+
+                  textToSpeech.setOnUtteranceProgressListener(
+                          new UtteranceProgressListener() {
+
+                              @Override
+                              public void onStart(String utteranceId) {
+                              }
+
+                              @Override
+                              public void onDone(String utteranceId) {
+                              }
+
+                              @Override
+                              public void onError(String utteranceId) {
+                              }
+                          }
+                  );
+              }
+
+
+              private void injectSpeechBridge(WebView view) {
+
+                  String js =
+                          "javascript:(function(){" +
+
+                          "if(window.__asimTTSInstalled)return;" +
+
+                          "if(!window.AndroidTTS)return;" +
+
+                          "window.__asimTTSInstalled=true;" +
+
+                          "window.SpeechSynthesisUtterance=function(text){" +
+                          "this.text=text||'';" +
+                          "this.lang='bn-IN';" +
+                          "this.rate=1;" +
+                          "this.pitch=1;" +
+                          "this.volume=1;" +
+                          "};" +
+
+                          "window.speechSynthesis={" +
+
+                          "speak:function(u){" +
+                          "try{" +
+                          "window.AndroidTTS.speak(" +
+                          "String(u.text||'')," +
+                          "String(u.lang||'bn-IN')," +
+                          "Number(u.rate||1)," +
+                          "Number(u.pitch||1)" +
+                          ");" +
+                          "}catch(e){}" +
+                          "}," +
+
+                          "cancel:function(){" +
+                          "try{window.AndroidTTS.cancel();}catch(e){}" +
+                          "}," +
+
+                          "pause:function(){}," +
+
+                          "resume:function(){}," +
+
+                          "getVoices:function(){return [];}" +
+
+                          "};" +
+
+                          "})();";
+
+                  view.evaluateJavascript(
+                          js,
+                          null
+                  );
+              }
+
+
+              public class AndroidTTS {
+
+                  @JavascriptInterface
+                  public void speak(
+                          String text,
+                          String language,
+                          float rate,
+                          float pitch) {
+
+                      runOnUiThread(
+                              new Runnable() {
+
+                                  @Override
+                                  public void run() {
+
+                                      if (textToSpeech == null)
+                                          return;
+
+                                      if (text == null ||
+                                          text.trim().isEmpty())
+                                          return;
+
+                                      Locale locale =
+                                              new Locale(
+                                                      "bn",
+                                                      "IN"
+                                              );
+
+                                      if (language != null &&
+                                          language.toLowerCase()
+                                                  .startsWith("en")) {
+
+                                          locale =
+                                                  Locale.ENGLISH;
+                                      }
+
+                                      int result =
+                                              textToSpeech.setLanguage(
+                                                      locale
+                                              );
+
+                                      if (result ==
+                                              TextToSpeech.LANG_MISSING_DATA ||
+                                          result ==
+                                              TextToSpeech.LANG_NOT_SUPPORTED) {
+
+                                          locale =
+                                                  Locale.ENGLISH;
+
+                                          textToSpeech.setLanguage(
+                                                  locale
+                                          );
+                                      }
+
+                                      float safeRate =
+                                              Math.max(
+                                                      0.1f,
+                                                      Math.min(
+                                                              2.0f,
+                                                              rate
+                                                      )
+                                              );
+
+                                      float safePitch =
+                                              Math.max(
+                                                      0.5f,
+                                                      Math.min(
+                                                              2.0f,
+                                                              pitch
+                                                      )
+                                              );
+
+                                      textToSpeech.setSpeechRate(
+                                              safeRate
+                                      );
+
+                                      textToSpeech.setPitch(
+                                              safePitch
+                                      );
+
+                                      textToSpeech.speak(
+                                              text,
+                                              TextToSpeech.QUEUE_FLUSH,
+                                              null,
+                                              "asim-tts"
+                                      );
+                                  }
+                              }
+                      );
+                  }
+
+
+                  @JavascriptInterface
+                  public void cancel() {
+
+                      runOnUiThread(
+                              new Runnable() {
+
+                                  @Override
+                                  public void run() {
+
+                                      if (textToSpeech != null) {
+
+                                          textToSpeech.stop();
+                                      }
+                                  }
+                              }
+                      );
+                  }
+              }
+
+
+              @Override
+              protected void onDestroy() {
+
+                  if (textToSpeech != null) {
+
+                      textToSpeech.stop();
+                      textToSpeech.shutdown();
+
+                  }
+
+                  if (webView != null) {
+
+                      webView.removeJavascriptInterface(
+                              "AndroidTTS"
+                      );
+
+                      webView.destroy();
+
+                  }
+
+                  super.onDestroy();
+              }
+
+
+              @Override
+              public void onBackPressed() {
+
+                  if (
+                          webView != null &&
+                          webView.canGoBack()
+                  ) {
+
+                      webView.goBack();
+
+                  } else {
+
+                      super.onBackPressed();
+
+                  }
+              }
+          }
+          JAVA
+
+          PACKAGE_DOT="$PACKAGE_NAME"
+          sed -i "s|__PACKAGE_PLACEHOLDER__|package $PACKAGE_DOT;|" \
+            "android/app/src/main/java/$PACKAGE_PATH/MainActivity.java"
+
+          echo "MainActivity created with native Bengali Text-to-Speech."
 
 
       # ==================================================
@@ -613,10 +799,7 @@ jobs:
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          cat > \
-            android/app/src/main/AndroidManifest.xml \
-            <<EOF
-
+          cat > android/app/src/main/AndroidManifest.xml <<EOF
           <manifest
               xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -625,6 +808,8 @@ jobs:
 
               <application
                   android:allowBackup="true"
+                  android:usesCleartextTraffic="true"
+                  android:hardwareAccelerated="true"
                   android:label="$APP_NAME"
                   android:supportsRtl="true"
                   android:theme="@style/AppTheme">
@@ -648,7 +833,6 @@ jobs:
               </application>
 
           </manifest>
-
           EOF
 
 
@@ -660,10 +844,7 @@ jobs:
         if: steps.queue.outputs.found == 'true'
         run: |
 
-          cat > \
-            android/app/src/main/res/values/styles.xml \
-            <<'EOF'
-
+          cat > android/app/src/main/res/values/styles.xml <<'EOF'
           <resources>
 
               <style
@@ -678,10 +859,13 @@ jobs:
                       #238636
                   </item>
 
+                  <item name="android:windowActionModeOverlay">
+                      true
+                  </item>
+
               </style>
 
           </resources>
-
           EOF
 
 
@@ -707,10 +891,7 @@ jobs:
 
             URL=$(cat source/webapp-url.txt)
 
-            cat > \
-              android/app/src/main/assets/index.html \
-              <<EOF
-
+            cat > android/app/src/main/assets/index.html <<EOF
           <!doctype html>
 
           <html>
@@ -723,35 +904,15 @@ jobs:
                   name="viewport"
                   content="width=device-width,initial-scale=1">
 
-              <style>
-
-                  html,
-                  body,
-                  iframe {
-
-                      margin:0;
-                      padding:0;
-                      width:100%;
-                      height:100%;
-                      border:0;
-
-                  }
-
-              </style>
-
           </head>
 
           <body>
 
-              <iframe
-                  src="$URL"
-                  style="width:100%;height:100%;border:0;">
-              </iframe>
+              <p>Loading application...</p>
 
           </body>
 
           </html>
-
           EOF
 
           else
@@ -803,7 +964,7 @@ jobs:
 
 
       # ==================================================
-      # 21. GRADLE
+      # 21. SETUP GRADLE
       # ==================================================
 
       - name: Setup Gradle
@@ -891,13 +1052,9 @@ jobs:
       - name: Upload APK to Supabase
         if: steps.queue.outputs.found == 'true'
         env:
-
           SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
-
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
           APP_ID: ${{ steps.queue.outputs.app_id }}
-
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
 
         run: |
@@ -905,7 +1062,6 @@ jobs:
           STORAGE_PATH="${APP_ID}/${BUILD_ID}/ASIM-TECH-${BUILD_ID}.apk"
 
           echo "Uploading APK..."
-
           echo "Storage path:"
           echo "$STORAGE_PATH"
 
@@ -929,11 +1085,8 @@ jobs:
       - name: Mark build successful
         if: steps.queue.outputs.found == 'true'
         env:
-
           SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
-
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
 
         run: |
@@ -947,7 +1100,6 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             --data-binary @- <<EOF
-
           {
             "status": "success",
             "storage_path": "$STORAGE_PATH",
@@ -956,9 +1108,8 @@ jobs:
             "file_size": $FILE_SIZE,
             "sha256": "$SHA256",
             "completed_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-            "build_log": "APK build completed successfully."
+            "build_log": "APK build completed successfully with native Text-to-Speech support."
           }
-
           EOF
 
           echo "======================================"
@@ -985,11 +1136,8 @@ jobs:
       - name: Mark build failed
         if: failure() && steps.queue.outputs.found == 'true'
         env:
-
           SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
-
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
 
         run: |
@@ -1005,11 +1153,9 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             --data-binary @- <<EOF
-
           {
             "status": "failed",
             "completed_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
             "build_log": "Android APK build failed. Check GitHub Actions logs."
           }
-
           EOF
