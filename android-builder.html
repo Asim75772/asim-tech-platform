@@ -3,209 +3,368 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASIM TECH Android Builder</title>
+<title>ASIM TECH - Android App Builder</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
   box-sizing:border-box;
 }
 
-body{
+html,body{
   margin:0;
+  padding:0;
   font-family:Arial,Helvetica,sans-serif;
-  background:#f4f6f8;
-  color:#222;
+  background:#f4f7fb;
+  color:#172033;
 }
 
-header{
-  background:#111827;
-  color:white;
-  padding:16px 20px;
+body{
+  min-height:100vh;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#111827,#1e3a8a);
+  color:#fff;
+  padding:18px 24px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  position:sticky;
-  top:0;
-  z-index:10;
+  justify-content:space-between;
+  gap:15px;
+  box-shadow:0 4px 15px rgba(0,0,0,.15);
 }
 
-header h1{
-  margin:0;
-  font-size:21px;
+.logo-area{
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 
-header span{
-  font-size:13px;
-  opacity:.8;
-}
-
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:20px;
-}
-
-.card{
-  background:white;
-  border-radius:14px;
-  padding:18px;
-  margin-bottom:18px;
-  box-shadow:0 3px 15px rgba(0,0,0,.08);
-}
-
-.card h2{
-  margin-top:0;
+.logo{
+  width:45px;
+  height:45px;
+  border-radius:12px;
+  background:#fff;
+  color:#1d4ed8;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
   font-size:18px;
 }
 
-.grid{
+.header-title{
+  font-size:22px;
+  font-weight:800;
+}
+
+.header-subtitle{
+  font-size:12px;
+  opacity:.8;
+  margin-top:3px;
+}
+
+.header-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+/* BUTTONS */
+button{
+  border:0;
+  border-radius:9px;
+  padding:10px 15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+
+button:hover{
+  transform:translateY(-1px);
+}
+
+.btn-primary{
+  background:#2563eb;
+  color:#fff;
+}
+
+.btn-success{
+  background:#16a34a;
+  color:#fff;
+}
+
+.btn-danger{
+  background:#dc2626;
+  color:#fff;
+}
+
+.btn-warning{
+  background:#f59e0b;
+  color:#111827;
+}
+
+.btn-secondary{
+  background:#e5e7eb;
+  color:#111827;
+}
+
+.btn-dark{
+  background:#111827;
+  color:#fff;
+}
+
+/* MAIN */
+.container{
+  max-width:1400px;
+  margin:0 auto;
+  padding:20px;
+}
+
+/* STATUS */
+.status{
+  display:none;
+  margin-bottom:18px;
+  padding:13px 16px;
+  border-radius:10px;
+  font-weight:700;
+  border:1px solid transparent;
+}
+
+.status.show{
+  display:block;
+}
+
+.status.success{
+  background:#dcfce7;
+  color:#166534;
+  border-color:#86efac;
+}
+
+.status.error{
+  background:#fee2e2;
+  color:#991b1b;
+  border-color:#fca5a5;
+}
+
+.status.warn{
+  background:#fef3c7;
+  color:#92400e;
+  border-color:#fcd34d;
+}
+
+.status.info{
+  background:#dbeafe;
+  color:#1e40af;
+  border-color:#93c5fd;
+}
+
+/* CARDS */
+.card{
+  background:#fff;
+  border-radius:15px;
+  padding:20px;
+  margin-bottom:18px;
+  box-shadow:0 3px 14px rgba(15,23,42,.08);
+  border:1px solid #e5e7eb;
+}
+
+.card-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:15px;
+}
+
+/* APP INFO */
+.app-grid{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:14px;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
 }
 
-@media(max-width:700px){
-  .grid{
-    grid-template-columns:1fr;
-  }
+.field{
+  margin-bottom:14px;
 }
 
-label{
+.field label{
   display:block;
   font-size:13px;
-  font-weight:bold;
+  font-weight:800;
   margin-bottom:6px;
+  color:#374151;
 }
 
-input,textarea,select{
+input,
+textarea,
+select{
   width:100%;
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  padding:10px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  padding:11px 12px;
   font-size:14px;
   outline:none;
+  background:#fff;
 }
 
 input:focus,
 textarea:focus,
 select:focus{
   border-color:#2563eb;
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
 }
 
 textarea{
-  min-height:180px;
+  min-height:130px;
   resize:vertical;
-  font-family:monospace;
 }
 
-button{
-  border:0;
-  border-radius:8px;
-  padding:10px 16px;
-  cursor:pointer;
-  font-weight:bold;
-  margin:4px;
+/* SETTINGS */
+.settings-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
 }
 
-.btn-primary{
-  background:#2563eb;
-  color:white;
+.settings-full{
+  grid-column:1 / -1;
 }
 
-.btn-success{
-  background:#16a34a;
-  color:white;
+.help{
+  color:#6b7280;
+  font-size:11px;
+  margin-top:5px;
 }
 
-.btn-warning{
-  background:#f59e0b;
-  color:white;
+/* EDITOR */
+.editor-wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
 }
 
-.btn-danger{
-  background:#dc2626;
-  color:white;
+.editor-box{
+  min-width:0;
 }
 
-.btn-secondary{
-  background:#6b7280;
-  color:white;
-}
-
-.btn-dark{
-  background:#111827;
-  color:white;
-}
-
-button:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.actions{
+.editor-header{
   display:flex;
-  flex-wrap:wrap;
-  gap:5px;
-  margin-top:15px;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:8px;
 }
 
-.status{
-  padding:12px;
-  border-radius:8px;
-  margin-top:12px;
-  font-size:14px;
-  font-weight:bold;
-  display:none;
+.editor-title{
+  font-weight:800;
 }
 
-.status.success{
-  display:block;
-  background:#dcfce7;
-  color:#166534;
-}
-
-.status.error{
-  display:block;
-  background:#fee2e2;
-  color:#991b1b;
-}
-
-.status.warn{
-  display:block;
-  background:#fef3c7;
-  color:#92400e;
-}
-
-.preview{
+.code-editor{
   width:100%;
-  min-height:450px;
-  border:1px solid #ddd;
+  min-height:480px;
+  resize:vertical;
+  background:#0f172a;
+  color:#e5e7eb;
+  border:1px solid #334155;
   border-radius:10px;
-  background:white;
+  padding:15px;
+  font-family:Consolas,Monaco,monospace;
+  font-size:13px;
+  line-height:1.5;
+  tab-size:2;
+}
+
+/* PREVIEW */
+.preview-frame{
+  width:100%;
+  min-height:480px;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  background:#fff;
+}
+
+/* ACTIONS */
+.action-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.action-grid button{
+  min-height:48px;
+}
+
+/* BUILD */
+.build-info{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:15px;
+}
+
+.info-box{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:12px;
+}
+
+.info-label{
+  font-size:11px;
+  color:#64748b;
+  font-weight:700;
+}
+
+.info-value{
+  font-size:15px;
+  font-weight:800;
+  margin-top:4px;
+  word-break:break-word;
+}
+
+/* TABLE */
+.table-wrap{
+  overflow-x:auto;
+  width:100%;
 }
 
 table{
   width:100%;
+  min-width:800px;
   border-collapse:collapse;
+}
+
+th,
+td{
+  padding:11px 10px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
   font-size:13px;
 }
 
-th,td{
-  border-bottom:1px solid #e5e7eb;
-  padding:10px 7px;
-  text-align:left;
-}
-
 th{
-  background:#f3f4f6;
+  background:#f8fafc;
+  font-weight:800;
+  color:#334155;
 }
 
 .badge{
   display:inline-block;
-  padding:4px 8px;
-  border-radius:20px;
+  padding:5px 9px;
+  border-radius:999px;
   font-size:11px;
-  font-weight:bold;
+  font-weight:800;
+}
+
+.badge-queued{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.badge-building{
+  background:#dbeafe;
+  color:#1e40af;
 }
 
 .badge-success{
@@ -213,432 +372,833 @@ th{
   color:#166534;
 }
 
-.badge-building{
-  background:#fef3c7;
-  color:#92400e;
-}
-
-.badge-queued{
-  background:#dbeafe;
-  color:#1d4ed8;
-}
-
 .badge-failed{
   background:#fee2e2;
   color:#991b1b;
 }
 
-.small{
-  font-size:12px;
-  color:#6b7280;
+/* LOADING */
+.loading{
+  text-align:center;
+  padding:25px;
+  color:#64748b;
+  font-weight:700;
 }
 
-.hidden{
-  display:none !important;
+/* MOBILE */
+@media(max-width:900px){
+  .editor-wrap{
+    grid-template-columns:1fr;
+  }
+
+  .build-info{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .action-grid{
+    grid-template-columns:1fr 1fr;
+  }
 }
 
-.url-box{
-  margin-top:12px;
-  padding:12px;
-  background:#f9fafb;
-  border-radius:8px;
-  word-break:break-all;
-  font-size:12px;
+@media(max-width:700px){
+  .header{
+    padding:14px;
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .header-actions{
+    width:100%;
+  }
+
+  .header-actions button{
+    flex:1;
+  }
+
+  .container{
+    padding:12px;
+  }
+
+  .card{
+    padding:15px;
+    border-radius:12px;
+  }
+
+  .app-grid,
+  .settings-grid{
+    grid-template-columns:1fr;
+  }
+
+  .settings-full{
+    grid-column:auto;
+  }
+
+  .build-info{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .code-editor,
+  .preview-frame{
+    min-height:380px;
+  }
 }
 
-.app-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
+@media(max-width:420px){
+  .header-title{
+    font-size:18px;
+  }
 
-.logo{
-  width:45px;
-  height:45px;
-  border-radius:10px;
-  object-fit:cover;
-  background:#e5e7eb;
-}
+  .header-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
 
-.app-info{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+  .action-grid{
+    grid-template-columns:1fr;
+  }
 
-hr{
-  border:0;
-  border-top:1px solid #e5e7eb;
-  margin:18px 0;
+  .build-info{
+    grid-template-columns:1fr;
+  }
+
+  button{
+    padding:10px 11px;
+    font-size:12px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div>
-    <h1>ASIM TECH Android Builder</h1>
-    <span>Build • Preview • Download • Manage Apps</span>
+<header class="header">
+
+  <div class="logo-area">
+    <div class="logo">AT</div>
+
+    <div>
+      <div class="header-title">ASIM TECH</div>
+      <div class="header-subtitle">
+        Android App Builder
+      </div>
+    </div>
   </div>
+
+  <div class="header-actions">
+    <button class="btn-secondary" onclick="goBack()">
+      ← Back
+    </button>
+
+    <button class="btn-success" onclick="saveApp()">
+      💾 Save
+    </button>
+
+    <button class="btn-primary" onclick="buildAPK()">
+      📦 Build APK
+    </button>
+  </div>
+
 </header>
 
-<div class="container">
 
-  <!-- APP SETTINGS -->
-  <div class="card">
-    <div class="app-title">
-      <h2>App Settings</h2>
-      <img id="appLogo" class="logo" src="" alt="">
+<main class="container">
+
+  <div id="status" class="status"></div>
+
+
+  <!-- APP INFORMATION -->
+
+  <section class="card">
+
+    <div class="card-title">
+      📱 App Information
     </div>
 
-    <div class="grid">
+    <div class="app-grid">
 
       <div>
-        <label>App Name</label>
-        <input id="appName" placeholder="My Android App">
+
+        <div class="field">
+          <label>App Name</label>
+          <input
+            id="appName"
+            type="text"
+            placeholder="My Android App"
+          >
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <textarea
+            id="appDescription"
+            placeholder="Describe your application..."
+          ></textarea>
+        </div>
+
       </div>
 
+
       <div>
+
+        <div class="field">
+          <label>App Image / Icon</label>
+
+          <input
+            id="appImage"
+            type="file"
+            accept="image/*"
+          >
+
+          <div class="help">
+            PNG/JPG recommended.
+          </div>
+        </div>
+
+        <div id="imagePreviewBox" style="display:none;text-align:center">
+          <img
+            id="imagePreview"
+            style="
+              max-width:120px;
+              max-height:120px;
+              border-radius:18px;
+              border:1px solid #ddd;
+              margin-top:10px;
+            "
+          >
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ANDROID SETTINGS -->
+
+  <section class="card">
+
+    <div class="card-title">
+      ⚙️ Android Settings
+    </div>
+
+    <div class="settings-grid">
+
+      <div class="field">
         <label>Package Name</label>
-        <input id="packageName" placeholder="com.asimtech.myapp">
+
+        <input
+          id="packageName"
+          type="text"
+          placeholder="com.asimtech.myapp"
+        >
+
+        <div class="help">
+          Example: com.asimtech.expense
+        </div>
       </div>
 
-      <div>
+
+      <div class="field">
         <label>Version Name</label>
-        <input id="versionName" value="1.0.0">
+
+        <input
+          id="versionName"
+          type="text"
+          value="1.0.0"
+          placeholder="1.0.0"
+        >
       </div>
 
-      <div>
+
+      <div class="field">
         <label>Version Code</label>
-        <input id="versionCode" type="number" value="1">
+
+        <input
+          id="versionCode"
+          type="number"
+          min="1"
+          value="1"
+          placeholder="1"
+        >
+
+        <div class="help">
+          Must be a positive integer.
+        </div>
       </div>
 
-      <div>
-        <label>App Description</label>
-        <input id="appDescription" placeholder="My Android application">
-      </div>
 
-      <div>
-        <label>App Image URL</label>
-        <input id="appImageUrl" placeholder="https://...">
-      </div>
-
-    </div>
-
-    <div class="actions">
-      <button class="btn-primary" onclick="saveApp()">💾 Save App</button>
-      <button class="btn-success" onclick="buildAPK()">🏗️ Build APK</button>
-      <button class="btn-secondary" onclick="loadApp()">🔄 Refresh</button>
-      <button class="btn-danger" onclick="deleteCurrentApp()">🗑️ Delete App</button>
-    </div>
-
-    <div id="status" class="status"></div>
-  </div>
-
-
-  <!-- SOURCE CODE -->
-  <div class="card">
-
-    <h2>App Source</h2>
-
-    <div class="grid">
-
-      <div>
+      <div class="field">
         <label>Source Mode</label>
 
         <select id="sourceMode" onchange="sourceModeChanged()">
-          <option value="code">HTML Code</option>
-          <option value="url">Website URL</option>
+          <option value="html">HTML App</option>
         </select>
       </div>
 
-      <div>
-        <label>File Name</label>
-        <input id="fileName" value="index.html">
+    </div>
+
+  </section>
+
+
+  <!-- SOURCE -->
+
+  <section class="card">
+
+    <div class="card-title">
+      💻 App Source & Preview
+    </div>
+
+    <div class="editor-wrap">
+
+      <div class="editor-box">
+
+        <div class="editor-header">
+
+          <div class="editor-title">
+            index.html
+          </div>
+
+          <button
+            class="btn-secondary"
+            onclick="formatSource()"
+          >
+            Format
+          </button>
+
+        </div>
+
+        <textarea
+          id="sourceEditor"
+          class="code-editor"
+          spellcheck="false"
+          placeholder="Write your HTML app here..."
+        ></textarea>
+
+      </div>
+
+
+      <div class="editor-box">
+
+        <div class="editor-header">
+
+          <div class="editor-title">
+            Live Preview
+          </div>
+
+          <button
+            class="btn-secondary"
+            onclick="refreshPreview()"
+          >
+            🔄 Refresh
+          </button>
+
+        </div>
+
+        <iframe
+          id="previewFrame"
+          class="preview-frame"
+          sandbox="allow-scripts allow-forms allow-modals allow-popups"
+        ></iframe>
+
       </div>
 
     </div>
 
-    <div id="codeArea">
-      <label style="margin-top:14px;">HTML Code</label>
+  </section>
 
-      <textarea id="sourceCode" placeholder="Paste your HTML code here..."></textarea>
+
+  <!-- ACTIONS -->
+
+  <section class="card">
+
+    <div class="card-title">
+      🚀 Actions
     </div>
 
-    <div id="urlArea" class="hidden">
+    <div class="action-grid">
 
-      <label style="margin-top:14px;">Website URL</label>
-
-      <input
-        id="websiteUrl"
-        placeholder="https://example.com"
+      <button
+        class="btn-success"
+        onclick="saveApp()"
       >
+        💾 Save App
+      </button>
 
-    </div>
+      <button
+        class="btn-primary"
+        onclick="buildAPK()"
+      >
+        📦 Build APK
+      </button>
 
-    <div class="actions">
-
-      <button class="btn-dark" onclick="previewApp()">
+      <button
+        class="btn-secondary"
+        onclick="refreshPreview()"
+      >
         👁️ Preview
       </button>
 
-      <button class="btn-primary" onclick="saveApp()">
-        💾 Save
+      <button
+        class="btn-danger"
+        onclick="deleteCurrentApp()"
+      >
+        🗑️ Delete App
       </button>
 
     </div>
 
-  </div>
+  </section>
 
 
-  <!-- PREVIEW -->
-  <div class="card">
+  <!-- BUILD STATUS -->
 
-    <h2>Preview</h2>
+  <section class="card">
 
-    <iframe
-      id="previewFrame"
-      class="preview"
-      sandbox="allow-scripts allow-forms allow-modals allow-popups"
-    ></iframe>
+    <div class="card-title">
+      🔨 Latest Build
+    </div>
 
-  </div>
+    <div class="build-info">
 
+      <div class="info-box">
+        <div class="info-label">STATUS</div>
+        <div id="latestStatus" class="info-value">
+          —
+        </div>
+      </div>
 
-  <!-- BUILD HISTORY -->
-  <div class="card">
+      <div class="info-box">
+        <div class="info-label">VERSION</div>
+        <div id="latestVersion" class="info-value">
+          —
+        </div>
+      </div>
 
-    <h2>Build History</h2>
+      <div class="info-box">
+        <div class="info-label">BUILD</div>
+        <div id="latestBuild" class="info-value">
+          —
+        </div>
+      </div>
 
-    <div style="overflow-x:auto;">
-
-      <table>
-
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Version</th>
-            <th>Status</th>
-            <th>File</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody id="buildHistory">
-          <tr>
-            <td colspan="5" class="small">
-              No builds found.
-            </td>
-          </tr>
-        </tbody>
-
-      </table>
+      <div class="info-box">
+        <div class="info-label">FILE</div>
+        <div id="latestFile" class="info-value">
+          —
+        </div>
+      </div>
 
     </div>
 
-  </div>
+    <div
+      id="latestBuildActions"
+      style="display:none;gap:10px;flex-wrap:wrap"
+    ></div>
 
-</div>
+  </section>
 
 
-<script type="module">
+  <!-- BUILD HISTORY -->
 
-/* ============================================================
-   SUPABASE
-============================================================ */
+  <section class="card">
 
-import {
-  createClient
-} from "https://esm.sh/@supabase/supabase-js@2";
+    <div class="card-title">
+      📋 Build History
+    </div>
 
+    <div id="buildHistory" class="loading">
+      Loading...
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE CONFIG
+========================================================= */
 
 const SUPABASE_URL =
   "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
-
-const SUPABASE_ANON_KEY =
+const SUPABASE_KEY =
   "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
+const supabase =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-const sb = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
 
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
 
-/* ============================================================
-   GLOBAL
-============================================================ */
-
+let currentUser = null;
 let currentAppId = null;
-
+let currentBuildId = null;
 let pollTimer = null;
+let currentImagePath = null;
 
 
-/* ============================================================
-   DOM HELPERS
-============================================================ */
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function $(id){
   return document.getElementById(id);
 }
 
 
-function setStatus(message,type="success"){
+function setStatus(message,type="info"){
 
   const box = $("status");
 
+  box.textContent = message;
+
   box.className =
-    "status " + type;
-
-  box.textContent =
-    message;
-
+    "status show " + type;
 }
 
 
-/* ============================================================
-   SOURCE MODE
-============================================================ */
+function clearStatus(){
 
-window.sourceModeChanged = function(){
+  $("status").className =
+    "status";
+}
 
-  const mode =
-    $("sourceMode").value;
 
-  if(mode === "url"){
+function escapeHtml(value){
 
-    $("codeArea")
-      .classList
-      .add("hidden");
-
-    $("urlArea")
-      .classList
-      .remove("hidden");
-
-  }else{
-
-    $("codeArea")
-      .classList
-      .remove("hidden");
-
-    $("urlArea")
-      .classList
-      .add("hidden");
-
+  if(value === null || value === undefined){
+    return "";
   }
 
-};
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 
 
-/* ============================================================
-   LOAD APP
-============================================================ */
+/* =========================================================
+   ERROR DETAIL
+========================================================= */
 
-window.loadApp = async function(){
+async function getFunctionError(error){
+
+  let detail =
+    error?.message ||
+    "Edge Function returned an error.";
 
   try{
 
-    const params =
-      new URLSearchParams(
-        window.location.search
-      );
+    if(error?.context){
 
-    const appId =
-      params.get("id");
+      const response =
+        error.context;
 
-    if(!appId){
+      if(typeof response.json === "function"){
 
-      setStatus(
-        "No app selected.",
-        "warn"
-      );
+        const body =
+          await response.json();
 
-      return;
+        if(body?.error){
+          detail += ": " + body.error;
+        }
+
+        if(body?.detail){
+          detail += " — " + body.detail;
+        }
+
+      }
 
     }
 
-    currentAppId =
-      appId;
+  }catch(e){
+    // Ignore JSON parsing errors.
+  }
+
+  return detail;
+}
+
+
+/* =========================================================
+   PACKAGE VALIDATION
+========================================================= */
+
+function safePackage(value){
+
+  return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/
+    .test(value);
+}
+
+
+function safeVersionName(value){
+
+  return /^[0-9A-Za-z][0-9A-Za-z._-]*$/
+    .test(value);
+}
+
+
+/* =========================================================
+   GET CURRENT USER
+========================================================= */
+
+async function getCurrentUser(){
+
+  const {
+    data,
+    error
+  } = await supabase.auth.getUser();
+
+  if(error){
+    throw error;
+  }
+
+  if(!data?.user){
+
+    setStatus(
+      "Please login first.",
+      "error"
+    );
+
+    throw new Error(
+      "User is not authenticated."
+    );
+  }
+
+  currentUser =
+    data.user;
+
+  return currentUser;
+}
+
+
+/* =========================================================
+   GET APP ID
+========================================================= */
+
+function getAppIdFromURL(){
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  return (
+    params.get("id") ||
+    params.get("app_id") ||
+    params.get("appId")
+  );
+}
+
+
+/* =========================================================
+   LOAD APP
+========================================================= */
+
+async function loadApp(){
+
+  currentAppId =
+    getAppIdFromURL();
+
+  if(!currentAppId){
+
+    setStatus(
+      "App ID not found in URL.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  setStatus(
+    "Loading app...",
+    "info"
+  );
+
+
+  try{
+
+    await getCurrentUser();
+
+
+    /* APP */
 
     const {
-      data,
-      error
-    } = await sb
+      data:app,
+      error:appError
+    } = await supabase
       .from("apps")
       .select("*")
-      .eq("id",appId)
+      .eq("id",currentAppId)
       .single();
 
-    if(error)
-      throw error;
+
+    if(appError){
+      throw appError;
+    }
+
+
+    if(!app){
+
+      throw new Error(
+        "App not found."
+      );
+    }
+
+
+    if(
+      app.owner_id &&
+      currentUser.id !== app.owner_id
+    ){
+
+      throw new Error(
+        "You are not the owner of this app."
+      );
+    }
 
 
     $("appName").value =
-      data.name || "";
+      app.name || "";
 
     $("appDescription").value =
-      data.description || "";
+      app.description || "";
 
-    $("appImageUrl").value =
-      data.app_image_url || "";
+    currentImagePath =
+      app.app_image_path || null;
 
 
-    if(data.app_image_url){
+    if(app.app_image_url){
 
-      $("appLogo").src =
-        data.app_image_url;
+      showImagePreview(
+        app.app_image_url
+      );
 
     }
 
 
-    /* LOAD FILE */
+    /* FILES */
 
     const {
       data:files,
       error:fileError
-    } = await sb
+    } = await supabase
       .from("app_files")
       .select("*")
-      .eq("app_id",appId)
-      .order("file_path");
+      .eq("app_id",currentAppId);
 
 
-    if(fileError)
+    if(fileError){
       throw fileError;
+    }
 
 
-    if(files && files.length){
+    const htmlFile =
+      files?.find(
+        f =>
+          f.file_path === "index.html" ||
+          f.file_path === "/index.html"
+      );
 
-      const htmlFile =
-        files.find(
-          f =>
-          f.file_path === "index.html"
-        ) || files[0];
 
+    if(htmlFile){
 
-      $("sourceCode").value =
+      $("sourceEditor").value =
         htmlFile.content || "";
-
-      $("fileName").value =
-        htmlFile.file_path ||
-        "index.html";
-
-      $("sourceMode").value =
-        "code";
-
-      sourceModeChanged();
 
     }
 
 
+    /* ANDROID SETTINGS */
+
+    const settingsFile =
+      files?.find(
+        f =>
+          f.file_path === "android-settings.json"
+      );
+
+
+    if(settingsFile){
+
+      try{
+
+        const settings =
+          JSON.parse(
+            settingsFile.content || "{}"
+          );
+
+
+        if(settings.packageName){
+
+          $("packageName").value =
+            settings.packageName;
+
+        }
+
+
+        if(settings.versionName){
+
+          $("versionName").value =
+            settings.versionName;
+
+        }
+
+
+        if(settings.versionCode){
+
+          $("versionCode").value =
+            settings.versionCode;
+
+        }
+
+      }catch(e){
+
+        console.warn(
+          "Invalid android-settings.json",
+          e
+        );
+
+      }
+
+    }
+
+
+    /* DEFAULT PACKAGE */
+
+    if(!$("packageName").value){
+
+      const generated =
+        generatePackageName(
+          $("appName").value
+        );
+
+      $("packageName").value =
+        generated;
+    }
+
+
+    refreshPreview();
+
     await loadBuildHistory();
 
     setStatus(
-      "App loaded ✓",
+      "App loaded successfully.",
       "success"
+    );
+
+    setTimeout(
+      clearStatus,
+      2500
     );
 
   }catch(error){
@@ -650,249 +1210,228 @@ window.loadApp = async function(){
       error.message,
       "error"
     );
+  }
+}
 
+
+/* =========================================================
+   GENERATE PACKAGE
+========================================================= */
+
+function generatePackageName(name){
+
+  let value =
+    String(name || "myapp")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g,"")
+      .replace(/^[^a-z]+/,"");
+
+  if(!value){
+    value = "myapp";
   }
 
-};
+  return "com.asimtech." + value;
+}
 
 
-/* ============================================================
+/* =========================================================
+   UPSERT FILE
+========================================================= */
+
+async function upsertFile(
+  filePath,
+  content,
+  language
+){
+
+  const {
+    error
+  } = await supabase
+    .from("app_files")
+    .upsert(
+      {
+        app_id:currentAppId,
+        file_path:filePath,
+        content:content,
+        language:language || "text"
+      },
+      {
+        onConflict:
+          "app_id,file_path"
+      }
+    );
+
+  if(error){
+    throw error;
+  }
+}
+
+
+/* =========================================================
    SAVE APP
-============================================================ */
+========================================================= */
 
-window.saveApp = async function(){
+async function saveApp(
+  showMessage = true
+){
 
   try{
 
     if(!currentAppId){
 
-      setStatus(
-        "App ID not found.",
-        "error"
+      throw new Error(
+        "App ID not found."
       );
-
-      return;
-
     }
 
 
-    const name =
+    await getCurrentUser();
+
+
+    const appName =
       $("appName").value.trim();
 
     const description =
       $("appDescription").value.trim();
 
-    const imageUrl =
-      $("appImageUrl").value.trim();
+    const packageName =
+      $("packageName").value.trim();
 
+    const versionName =
+      $("versionName").value.trim();
 
-    if(!name){
-
-      setStatus(
-        "Please enter App Name.",
-        "error"
+    const versionCode =
+      parseInt(
+        $("versionCode").value,
+        10
       );
 
-      return;
 
+    /* VALIDATION */
+
+    if(!appName){
+
+      throw new Error(
+        "Please enter App Name."
+      );
     }
 
 
-    setStatus(
-      "Saving app…",
-      "warn"
-    );
+    if(!packageName){
 
+      throw new Error(
+        "Please enter Package Name."
+      );
+    }
+
+
+    if(!safePackage(packageName)){
+
+      throw new Error(
+        "Invalid package name. Example: com.asimtech.myapp"
+      );
+    }
+
+
+    if(
+      !versionName ||
+      !safeVersionName(versionName)
+    ){
+
+      throw new Error(
+        "Invalid Version Name."
+      );
+    }
+
+
+    if(
+      !Number.isInteger(versionCode) ||
+      versionCode < 1
+    ){
+
+      throw new Error(
+        "Version Code must be a positive integer."
+      );
+    }
+
+
+    /* APP UPDATE */
 
     const {
-      error
-    } = await sb
+      error:appError
+    } = await supabase
       .from("apps")
-      .update({
-
-        name:name,
-
-        description:
-          description,
-
-        app_image_url:
-          imageUrl || null,
-
-        updated_at:
-          new Date().toISOString()
-
-      })
+      .update(
+        {
+          name:appName,
+          description:description,
+          updated_at:new Date().toISOString()
+        }
+      )
       .eq(
         "id",
         currentAppId
+      )
+      .eq(
+        "owner_id",
+        currentUser.id
       );
 
 
-    if(error)
-      throw error;
-
-
-    if(imageUrl){
-
-      $("appLogo").src =
-        imageUrl;
-
+    if(appError){
+      throw appError;
     }
 
 
-    /* SAVE SOURCE */
+    /* HTML */
 
-    const mode =
-      $("sourceMode").value;
-
-
-    let filePath =
-      $("fileName").value.trim();
-
-    if(!filePath)
-      filePath = "index.html";
-
-
-    let content = "";
-
-
-    if(mode === "url"){
-
-      const website =
-        $("websiteUrl")
-          .value
-          .trim();
-
-      if(!website){
-
-        setStatus(
-          "Please enter Website URL.",
-          "error"
-        );
-
-        return;
-
-      }
-
-
-      content = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(name)}</title>
-<style>
-html,body{
-margin:0;
-padding:0;
-width:100%;
-height:100%;
-overflow:hidden;
-}
-iframe{
-width:100%;
-height:100%;
-border:0;
-}
-</style>
-</head>
-<body>
-<iframe src="${escapeAttribute(website)}"></iframe>
-</body>
-</html>`;
-
-    }else{
-
-      content =
-        $("sourceCode").value;
-
-      if(!content.trim()){
-
-        setStatus(
-          "Please enter HTML code.",
-          "error"
-        );
-
-        return;
-
-      }
-
-    }
-
-
-    const {
-      data:existing
-    } = await sb
-      .from("app_files")
-      .select("id")
-      .eq(
-        "app_id",
-        currentAppId
-      )
-      .eq(
-        "file_path",
-        filePath
-      )
-      .maybeSingle();
-
-
-    if(existing){
-
-      const {
-        error:updateError
-      } = await sb
-        .from("app_files")
-        .update({
-
-          content:content,
-
-          language:"html",
-
-          updated_at:
-            new Date().toISOString()
-
-        })
-        .eq(
-          "id",
-          existing.id
-        );
-
-      if(updateError)
-        throw updateError;
-
-    }else{
-
-      const {
-        error:insertError
-      } = await sb
-        .from("app_files")
-        .insert({
-
-          app_id:
-            currentAppId,
-
-          file_path:
-            filePath,
-
-          content:
-            content,
-
-          language:
-            "html"
-
-        });
-
-      if(insertError)
-        throw insertError;
-
-    }
-
-
-    setStatus(
-      "App saved successfully ✓",
-      "success"
+    await upsertFile(
+      "index.html",
+      $("sourceEditor").value,
+      "html"
     );
 
+
+    /* ANDROID SETTINGS */
+
+    const androidSettings = {
+
+      appName:appName,
+
+      packageName:packageName,
+
+      versionName:versionName,
+
+      versionCode:versionCode
+    };
+
+
+    await upsertFile(
+      "android-settings.json",
+      JSON.stringify(
+        androidSettings,
+        null,
+        2
+      ),
+      "json"
+    );
+
+
+    if(showMessage){
+
+      setStatus(
+        "App saved successfully.",
+        "success"
+      );
+
+      setTimeout(
+        clearStatus,
+        2500
+      );
+    }
+
+
+    return true;
 
   }catch(error){
 
@@ -904,77 +1443,104 @@ border:0;
       "error"
     );
 
+    return false;
   }
+}
 
-};
 
-
-/* ============================================================
+/* =========================================================
    BUILD APK
-============================================================ */
+========================================================= */
 
-window.buildAPK = async function(){
+async function buildAPK(){
 
   try{
 
     if(!currentAppId){
 
-      setStatus(
-        "App ID not found.",
-        "error"
+      throw new Error(
+        "App ID not found."
       );
-
-      return;
-
     }
 
 
-    /* SAVE FIRST */
+    /* VERY IMPORTANT:
+       SAVE SETTINGS BEFORE BUILD
+    */
 
-    await saveApp();
+    setStatus(
+      "Saving app before build...",
+      "info"
+    );
+
+
+    const saved =
+      await saveApp(false);
+
+
+    if(!saved){
+
+      return;
+    }
+
+
+    const versionName =
+      $("versionName").value.trim();
+
+    const versionCode =
+      parseInt(
+        $("versionCode").value,
+        10
+      );
 
 
     setStatus(
-      "Requesting APK build…",
-      "warn"
+      "Submitting APK build...",
+      "info"
     );
 
 
     const {
       data,
       error
-    } = await sb.functions.invoke(
+    } = await supabase.functions.invoke(
       "request-apk-build",
       {
         body:{
-          appId:
-            currentAppId,
-
-          versionName:
-            $("versionName")
-              .value
-              .trim() ||
-            "1.0.0",
-
-          versionCode:
-            parseInt(
-              $("versionCode").value
-            ) || 1
+          appId:currentAppId,
+          versionName:versionName,
+          versionCode:versionCode
         }
       }
     );
 
 
-    if(error)
-      throw error;
+    if(error){
+
+      const detail =
+        await getFunctionError(error);
+
+      throw new Error(detail);
+    }
 
 
-    if(data && data.error)
-      throw new Error(data.error);
+    if(data?.error){
+
+      throw new Error(
+        data.error
+      );
+    }
+
+
+    currentBuildId =
+      data?.buildId ||
+      data?.id ||
+      data?.build_id ||
+      null;
 
 
     setStatus(
-      "APK build queued ✓",
+      "APK build queued successfully.",
       "success"
     );
 
@@ -982,253 +1548,572 @@ window.buildAPK = async function(){
     await loadBuildHistory();
 
 
-    startBuildPolling();
+    if(currentBuildId){
 
+      startBuildPolling(
+        currentBuildId
+      );
 
-  }catch(error){
+    }else{
 
-    console.error(error);
-
-    setStatus(
-      "Build request failed: " +
-      error.message,
-      "error"
-    );
-
-  }
-
-};
-
-
-/* ============================================================
-   BUILD POLLING
-============================================================ */
-
-function startBuildPolling(){
-
-  if(pollTimer)
-    clearInterval(pollTimer);
-
-
-  pollTimer =
-    setInterval(
-      async ()=>{
-        await loadBuildHistory();
-      },
-      5000
-    );
-
-
-  setTimeout(
-    ()=>{
-      if(pollTimer){
-
-        clearInterval(
-          pollTimer
-        );
-
-        pollTimer =
-          null;
-
-      }
-    },
-    15 * 60 * 1000
-  );
-
-}
-
-
-/* ============================================================
-   BUILD HISTORY
-============================================================ */
-
-async function loadBuildHistory(){
-
-  if(!currentAppId)
-    return;
-
-
-  try{
-
-    const {
-      data,
-      error
-    } = await sb
-      .from("app_builds")
-      .select("*")
-      .eq(
-        "app_id",
-        currentAppId
-      )
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      )
-      .limit(20);
-
-
-    if(error)
-      throw error;
-
-
-    const tbody =
-      $("buildHistory");
-
-
-    if(!data || !data.length){
-
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="5"
-              class="small">
-            No builds found.
-          </td>
-        </tr>
-      `;
-
-      return;
-
+      await loadBuildHistory();
     }
-
-
-    tbody.innerHTML =
-      data.map(
-        build =>
-          buildRow(build)
-      ).join("");
 
 
   }catch(error){
 
     console.error(
-      "History error:",
+      "BUILD ERROR:",
       error
     );
 
+    setStatus(
+      "Build failed: " +
+      error.message,
+      "error"
+    );
   }
-
 }
 
 
-/* ============================================================
-   BUILD ROW
-============================================================ */
+/* =========================================================
+   POLLING
+========================================================= */
 
-function buildRow(build){
+function startBuildPolling(buildId){
 
-  const date =
-    build.created_at
-      ? new Date(
-          build.created_at
-        ).toLocaleString()
-      : "-";
+  if(pollTimer){
 
-
-  let badgeClass =
-    "badge-queued";
+    clearInterval(
+      pollTimer
+    );
+  }
 
 
-  if(build.status === "success")
-    badgeClass =
-      "badge-success";
+  let count = 0;
 
-  if(build.status === "building")
-    badgeClass =
-      "badge-building";
+  pollTimer =
+    setInterval(
+      async () => {
 
-  if(build.status === "failed")
-    badgeClass =
-      "badge-failed";
+        count++;
+
+        try{
+
+          const finished =
+            await checkBuildStatus(
+              buildId
+            );
 
 
-  let action = "-";
+          if(finished || count >= 120){
+
+            clearInterval(
+              pollTimer
+            );
+
+            pollTimer = null;
+
+            await loadBuildHistory();
+          }
+
+        }catch(error){
+
+          console.error(
+            "Polling error:",
+            error
+          );
+
+        }
+
+      },
+      5000
+    );
+}
+
+
+/* =========================================================
+   CHECK BUILD STATUS
+========================================================= */
+
+async function checkBuildStatus(
+  buildId
+){
+
+  const {
+    data,
+    error
+  } = await supabase.functions.invoke(
+    "apk-build-status",
+    {
+      body:{
+        buildId:buildId
+      }
+    }
+  );
+
+
+  if(error){
+
+    console.error(
+      "Status error:",
+      error
+    );
+
+    return false;
+  }
+
+
+  const build =
+    data?.build ||
+    data;
+
+
+  if(!build){
+    return false;
+  }
+
+
+  updateLatestBuild(
+    build
+  );
+
+
+  const status =
+    String(
+      build.status || ""
+    ).toLowerCase();
 
 
   if(
-    build.status === "success" &&
-    build.storage_path
+    status === "success" ||
+    status === "completed" ||
+    status === "failed"
   ){
 
-    const storagePath =
-      build.storage_path
-        .replace(/\\/g,"\\\\")
-        .replace(/'/g,"\\'");
+    if(status === "success" ||
+       status === "completed"){
 
-    const fileName =
-      (
-        build.file_name ||
-        "ASIM-TECH-App.apk"
-      )
-        .replace(/\\/g,"\\\\")
-        .replace(/'/g,"\\'");
+      setStatus(
+        "APK build completed successfully.",
+        "success"
+      );
+
+    }else{
+
+      setStatus(
+        "APK build failed.",
+        "error"
+      );
+    }
 
 
-    action = `
+    return true;
+  }
 
-      <button
-        class="btn-success"
-        onclick="downloadAPK('${storagePath}','${fileName}')">
-        ⬇️ Download
-      </button>
 
-      <button
-        class="btn-dark"
-        onclick="openAPK('${storagePath}','${fileName}')">
-        📂 Open
-      </button>
+  setStatus(
+    "APK build status: " +
+    status,
+    "info"
+  );
 
-    `;
 
+  return false;
+}
+
+
+/* =========================================================
+   LOAD BUILD HISTORY
+========================================================= */
+
+async function loadBuildHistory(){
+
+  if(!currentAppId){
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } = await supabase
+    .from("app_builds")
+    .select("*")
+    .eq(
+      "app_id",
+      currentAppId
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
+
+  if(error){
+
+    console.error(
+      "Build history error:",
+      error
+    );
+
+    $("buildHistory").innerHTML =
+      "<div style='color:#991b1b'>Unable to load build history.</div>";
+
+    return;
+  }
+
+
+  renderBuildHistory(
+    data || []
+  );
+
+
+  if(data?.length){
+
+    updateLatestBuild(
+      data[0]
+    );
+  }
+}
+
+
+/* =========================================================
+   UPDATE LATEST BUILD
+========================================================= */
+
+function updateLatestBuild(build){
+
+  if(!build){
+    return;
+  }
+
+
+  const status =
+    String(
+      build.status || "unknown"
+    ).toLowerCase();
+
+
+  $("latestStatus").innerHTML =
+    statusBadge(status);
+
+
+  $("latestVersion").textContent =
+    build.version_name || "—";
+
+
+  $("latestBuild").textContent =
+    build.version_code || "—";
+
+
+  $("latestFile").textContent =
+    build.file_name ||
+    "—";
+
+
+  const actions =
+    $("latestBuildActions");
+
+  actions.innerHTML = "";
+
+  actions.style.display =
+    "flex";
+
+
+  if(
+    build.storage_path &&
+    (
+      status === "success" ||
+      status === "completed"
+    )
+  ){
+
+    const downloadButton =
+      document.createElement(
+        "button"
+      );
+
+    downloadButton.className =
+      "btn-success";
+
+    downloadButton.textContent =
+      "⬇️ Download APK";
+
+    downloadButton.onclick =
+      function(){
+
+        downloadAPK(
+          build.storage_path,
+          build.file_name
+        );
+
+      };
+
+
+    actions.appendChild(
+      downloadButton
+    );
+
+
+    const openButton =
+      document.createElement(
+        "button"
+      );
+
+    openButton.className =
+      "btn-secondary";
+
+    openButton.textContent =
+      "🔗 APK Link";
+
+    openButton.onclick =
+      function(){
+
+        openAPK(
+          build.storage_path,
+          build.file_name
+        );
+
+      };
+
+
+    actions.appendChild(
+      openButton
+    );
+  }
+}
+
+
+/* =========================================================
+   BUILD BADGE
+========================================================= */
+
+function statusBadge(status){
+
+  let cls =
+    "badge";
+
+  if(status === "queued"){
+    cls += " badge-queued";
+  }
+  else if(
+    status === "building" ||
+    status === "running"
+  ){
+    cls += " badge-building";
+  }
+  else if(
+    status === "success" ||
+    status === "completed"
+  ){
+    cls += " badge-success";
+  }
+  else if(
+    status === "failed" ||
+    status === "error"
+  ){
+    cls += " badge-failed";
   }
 
 
   return `
-
-    <tr>
-
-      <td>${escapeHtml(date)}</td>
-
-      <td>
-        ${escapeHtml(
-          build.version_name ||
-          "-"
-        )}
-      </td>
-
-      <td>
-        <span class="badge ${badgeClass}">
-          ${escapeHtml(
-            build.status ||
-            "-"
-          )}
-        </span>
-      </td>
-
-      <td>
-        ${escapeHtml(
-          build.file_name ||
-          "-"
-        )}
-      </td>
-
-      <td>
-        ${action}
-      </td>
-
-    </tr>
-
+    <span class="${cls}">
+      ${escapeHtml(status.toUpperCase())}
+    </span>
   `;
-
 }
 
 
-/* ============================================================
-   ⭐ FIXED APK DOWNLOAD
-============================================================ */
+/* =========================================================
+   RENDER BUILD HISTORY
+========================================================= */
 
-window.downloadAPK = function(
+function renderBuildHistory(builds){
+
+  if(!builds.length){
+
+    $("buildHistory").innerHTML =
+      "<div style='color:#64748b'>No builds yet.</div>";
+
+    return;
+  }
+
+
+  let html = `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Date</th>
+            <th>Version</th>
+            <th>Code</th>
+            <th>Status</th>
+            <th>File</th>
+            <th>Size</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+  `;
+
+
+  for(const build of builds){
+
+    const date =
+      build.created_at
+        ? new Date(
+            build.created_at
+          ).toLocaleString()
+        : "—";
+
+
+    const size =
+      build.file_size
+        ? formatBytes(
+            build.file_size
+          )
+        : "—";
+
+
+    const status =
+      String(
+        build.status || "unknown"
+      ).toLowerCase();
+
+
+    let action = "—";
+
+
+    if(
+      build.storage_path &&
+      (
+        status === "success" ||
+        status === "completed"
+      )
+    ){
+
+      action = `
+
+        <button
+          class="btn-success"
+          style="padding:7px 10px"
+          onclick='downloadAPK(
+            ${JSON.stringify(build.storage_path)},
+            ${JSON.stringify(build.file_name || "ASIM-TECH-App.apk")}
+          )'
+        >
+          Download
+        </button>
+      `;
+    }
+
+
+    html += `
+
+      <tr>
+
+        <td>
+          ${escapeHtml(date)}
+        </td>
+
+        <td>
+          ${escapeHtml(build.version_name || "—")}
+        </td>
+
+        <td>
+          ${escapeHtml(build.version_code || "—")}
+        </td>
+
+        <td>
+          ${statusBadge(status)}
+        </td>
+
+        <td>
+          ${escapeHtml(build.file_name || "—")}
+        </td>
+
+        <td>
+          ${escapeHtml(size)}
+        </td>
+
+        <td>
+          ${action}
+        </td>
+
+      </tr>
+
+    `;
+  }
+
+
+  html += `
+
+        </tbody>
+
+      </table>
+
+    </div>
+  `;
+
+
+  $("buildHistory").innerHTML =
+    html;
+}
+
+
+/* =========================================================
+   FORMAT BYTES
+========================================================= */
+
+function formatBytes(bytes){
+
+  if(!bytes){
+    return "0 B";
+  }
+
+
+  const units =
+    [
+      "B",
+      "KB",
+      "MB",
+      "GB"
+    ];
+
+
+  const i =
+    Math.floor(
+      Math.log(bytes) /
+      Math.log(1024)
+    );
+
+
+  return (
+    bytes /
+    Math.pow(1024,i)
+  ).toFixed(
+    i ? 2 : 0
+  ) +
+  " " +
+  units[i];
+}
+
+
+/* =========================================================
+   DOWNLOAD APK
+========================================================= */
+
+window.downloadAPK =
+function(
   storagePath,
   fileName
 ){
@@ -1240,7 +2125,6 @@ window.downloadAPK = function(
     );
 
     return;
-
   }
 
 
@@ -1263,44 +2147,29 @@ window.downloadAPK = function(
 
 
   setStatus(
-    "Downloading APK…",
+    "Starting APK download…",
     "warn"
   );
 
 
   /*
-   * IMPORTANT:
-   * Do NOT use the HTML download attribute here.
-   * The Edge Function sends:
-   *
-   * Content-Disposition:
-   * attachment
-   *
-   * so Chrome will handle the APK as a real download.
-   */
+     IMPORTANT:
+     Use Edge Function URL directly.
+     This avoids the Chrome cross-origin
+     download problem of <a download>.
+  */
 
   window.location.href =
     url;
-
-
-  setTimeout(
-    ()=>{
-      setStatus(
-        "APK download started ✓",
-        "success"
-      );
-    },
-    1200
-  );
-
 };
 
 
-/* ============================================================
+/* =========================================================
    OPEN APK
-============================================================ */
+========================================================= */
 
-window.openAPK = function(
+window.openAPK =
+function(
   storagePath,
   fileName
 ){
@@ -1312,7 +2181,6 @@ window.openAPK = function(
     );
 
     return;
-
   }
 
 
@@ -1338,119 +2206,52 @@ window.openAPK = function(
     url,
     "_blank"
   );
-
 };
 
 
-/* ============================================================
-   PREVIEW
-============================================================ */
-
-window.previewApp = function(){
-
-  const mode =
-    $("sourceMode").value;
-
-
-  if(mode === "url"){
-
-    const url =
-      $("websiteUrl")
-        .value
-        .trim();
-
-
-    if(!url){
-
-      setStatus(
-        "Please enter Website URL.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    $("previewFrame").src =
-      url;
-
-    return;
-
-  }
-
-
-  const code =
-    $("sourceCode").value;
-
-
-  if(!code.trim()){
-
-    setStatus(
-      "No HTML code to preview.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  const blob =
-    new Blob(
-      [code],
-      {
-        type:
-          "text/html"
-      }
-    );
-
-
-  const url =
-    URL.createObjectURL(
-      blob
-    );
-
-
-  $("previewFrame").src =
-    url;
-
-};
-
-
-/* ============================================================
+/* =========================================================
    DELETE APP
-============================================================ */
+========================================================= */
 
-window.deleteCurrentApp =
-  async function(){
+async function deleteCurrentApp(){
 
   if(!currentAppId){
 
     setStatus(
-      "No app selected.",
+      "App ID not found.",
       "error"
     );
 
     return;
-
   }
 
 
-  const ok =
+  const appName =
+    $("appName").value ||
+    "this app";
+
+
+  const confirmed =
     confirm(
-      "Are you sure you want to delete this app and its builds?"
+      "Are you sure you want to permanently delete \"" +
+      appName +
+      "\"?\n\n" +
+      "This will delete the app, source files and APK build records."
     );
 
 
-  if(!ok)
+  if(!confirmed){
     return;
+  }
 
 
   try{
 
+    await getCurrentUser();
+
+
     setStatus(
-      "Deleting app…",
+      "Deleting app...",
       "warn"
     );
 
@@ -1458,125 +2259,455 @@ window.deleteCurrentApp =
     const {
       data,
       error
-    } = await sb.functions.invoke(
+    } = await supabase.functions.invoke(
       "delete-app",
       {
         body:{
-          appId:
-            currentAppId
+          appId:currentAppId
         }
       }
     );
 
 
-    if(error)
-      throw error;
+    if(error){
+
+      const detail =
+        await getFunctionError(
+          error
+        );
+
+      throw new Error(
+        detail
+      );
+    }
 
 
-    if(data && data.error)
+    if(data?.error){
+
       throw new Error(
         data.error
       );
+    }
 
 
     setStatus(
-      "App deleted successfully ✓",
+      "App deleted successfully.",
       "success"
     );
 
 
     setTimeout(
-      ()=>{
+      function(){
+
+        /*
+          Change this URL if your
+          main app dashboard uses
+          another filename.
+        */
+
         window.location.href =
-          "android-builder.html";
+          "index.html";
+
       },
-      1000
+      1200
     );
 
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "DELETE ERROR:",
+      error
+    );
+
 
     setStatus(
       "Delete failed: " +
       error.message,
       "error"
     );
+  }
+}
 
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+function showImagePreview(url){
+
+  if(!url){
+    return;
   }
 
-};
+
+  $("imagePreview").src =
+    url;
 
 
-/* ============================================================
-   ESCAPE HTML
-============================================================ */
-
-function escapeHtml(value){
-
-  return String(
-    value ?? ""
-  )
-  .replace(
-    /&/g,
-    "&amp;"
-  )
-  .replace(
-    /</g,
-    "&lt;"
-  )
-  .replace(
-    />/g,
-    "&gt;"
-  )
-  .replace(
-    /"/g,
-    "&quot;"
-  )
-  .replace(
-    /'/g,
-    "&#039;"
-  );
-
+  $("imagePreviewBox").style.display =
+    "block";
 }
 
 
-function escapeAttribute(value){
+$("appImage").addEventListener(
+  "change",
+  function(event){
 
-  return String(
-    value ?? ""
-  )
-  .replace(
-    /&/g,
-    "&amp;"
-  )
-  .replace(
-    /"/g,
-    "&quot;"
-  )
-  .replace(
-    /</g,
-    "&lt;"
-  )
-  .replace(
-    />/g,
-    "&gt;"
-  );
-
-}
+    const file =
+      event.target.files?.[0];
 
 
-/* ============================================================
-   INITIAL LOAD
-============================================================ */
+    if(!file){
+      return;
+    }
 
-window.addEventListener(
-  "DOMContentLoaded",
-  ()=>{
-    loadApp();
+
+    const url =
+      URL.createObjectURL(
+        file
+      );
+
+
+    showImagePreview(
+      url
+    );
   }
 );
+
+
+/* =========================================================
+   UPLOAD IMAGE
+========================================================= */
+
+async function uploadAppImage(){
+
+  const file =
+    $("appImage").files?.[0];
+
+
+  if(!file){
+    return null;
+  }
+
+
+  if(!currentAppId){
+
+    throw new Error(
+      "App ID not found."
+    );
+  }
+
+
+  const extension =
+    (
+      file.name.split(".").pop() ||
+      "png"
+    ).toLowerCase();
+
+
+  const path =
+    currentAppId +
+    "/icon-" +
+    Date.now() +
+    "." +
+    extension;
+
+
+  const {
+    error
+  } = await supabase.storage
+    .from("website-images")
+    .upload(
+      path,
+      file,
+      {
+        upsert:true,
+        contentType:file.type
+      }
+    );
+
+
+  if(error){
+    throw error;
+  }
+
+
+  const {
+    data
+  } = supabase.storage
+    .from("website-images")
+    .getPublicUrl(
+      path
+    );
+
+
+  if(data?.publicUrl){
+
+    await supabase
+      .from("apps")
+      .update(
+        {
+          app_image_path:path,
+          app_image_url:data.publicUrl,
+          updated_at:new Date().toISOString()
+        }
+      )
+      .eq(
+        "id",
+        currentAppId
+      );
+
+
+    currentImagePath =
+      path;
+
+
+    showImagePreview(
+      data.publicUrl
+    );
+
+
+    return path;
+  }
+
+
+  return null;
+}
+
+
+/* =========================================================
+   SOURCE MODE
+========================================================= */
+
+function sourceModeChanged(){
+
+  const mode =
+    $("sourceMode").value;
+
+
+  if(mode === "html"){
+
+    setStatus(
+      "HTML source mode selected.",
+      "info"
+    );
+
+  }
+}
+
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+
+function refreshPreview(){
+
+  const source =
+    $("sourceEditor").value;
+
+
+  const frame =
+    $("previewFrame");
+
+
+  const doc =
+    frame.contentDocument ||
+    frame.contentWindow.document;
+
+
+  doc.open();
+
+  doc.write(source);
+
+  doc.close();
+}
+
+
+/* =========================================================
+   FORMAT SOURCE
+========================================================= */
+
+function formatSource(){
+
+  const editor =
+    $("sourceEditor");
+
+
+  let html =
+    editor.value;
+
+
+  /*
+     Simple formatting only.
+     It intentionally does not modify
+     JavaScript logic.
+  */
+
+  html =
+    html
+      .replace(/>\s*</g, ">\n<")
+      .replace(/\n\s*\n/g,"\n");
+
+
+  editor.value =
+    html;
+
+
+  refreshPreview();
+}
+
+
+/* =========================================================
+   EDITOR TAB SUPPORT
+========================================================= */
+
+$("sourceEditor").addEventListener(
+  "keydown",
+  function(event){
+
+    if(event.key === "Tab"){
+
+      event.preventDefault();
+
+
+      const start =
+        this.selectionStart;
+
+      const end =
+        this.selectionEnd;
+
+
+      this.value =
+        this.value.substring(
+          0,
+          start
+        ) +
+        "  " +
+        this.value.substring(
+          end
+        );
+
+
+      this.selectionStart =
+        this.selectionEnd =
+          start + 2;
+    }
+
+
+    /*
+       Ctrl + S
+    */
+
+    if(
+      (event.ctrlKey ||
+       event.metaKey) &&
+      event.key.toLowerCase() === "s"
+    ){
+
+      event.preventDefault();
+
+      saveApp();
+    }
+  }
+);
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+function goBack(){
+
+  if(
+    document.referrer &&
+    document.referrer.includes(
+      window.location.host
+    )
+  ){
+
+    history.back();
+
+  }else{
+
+    window.location.href =
+      "index.html";
+  }
+}
+
+
+/* =========================================================
+   AUTO PREVIEW
+========================================================= */
+
+let previewTimer = null;
+
+
+$("sourceEditor").addEventListener(
+  "input",
+  function(){
+
+    clearTimeout(
+      previewTimer
+    );
+
+
+    previewTimer =
+      setTimeout(
+        refreshPreview,
+        500
+      );
+  }
+);
+
+
+/* =========================================================
+   AUTO PACKAGE NAME
+========================================================= */
+
+$("appName").addEventListener(
+  "blur",
+  function(){
+
+    const packageInput =
+      $("packageName");
+
+
+    if(!packageInput.value.trim()){
+
+      packageInput.value =
+        generatePackageName(
+          this.value
+        );
+    }
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+(async function(){
+
+  try{
+
+    await loadApp();
+
+  }catch(error){
+
+    console.error(
+      "INITIALIZATION ERROR:",
+      error
+    );
+
+    setStatus(
+      error.message,
+      "error"
+    );
+  }
+
+})();
 
 </script>
 
