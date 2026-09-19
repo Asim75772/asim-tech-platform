@@ -78,19 +78,14 @@ jobs:
 
           echo "Checking queued builds..."
 
-          echo "Supabase URL:"
-          echo "$SUPABASE_URL"
-
           RESPONSE=$(curl -sS \
             "${SUPABASE_URL}/rest/v1/app_builds?status=eq.queued&order=queued_at.asc&limit=1" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
 
-          echo "Supabase response:"
           echo "$RESPONSE"
 
           BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
-
           APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
 
           if [ -z "$BUILD_ID" ] || [ -z "$APP_ID" ]; then
@@ -104,13 +99,10 @@ jobs:
           fi
 
           echo "Build ID: $BUILD_ID"
-
           echo "App ID: $APP_ID"
 
           echo "has_build=true" >> "$GITHUB_OUTPUT"
-
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
-
           echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
 
 
@@ -121,9 +113,7 @@ jobs:
       - name: Stop if queue empty
         if: steps.queue.outputs.has_build != 'true'
         run: |
-
           echo "No queued APK build."
-
           exit 0
 
 
@@ -149,8 +139,6 @@ jobs:
               "status": "building",
               "started_at": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"
             }'
-
-          echo "Build marked as building."
 
 
       # ==================================================
@@ -192,7 +180,6 @@ jobs:
           do
 
             FILE_PATH=$(echo "$item" | jq -r '.file_path')
-
             CONTENT=$(echo "$item" | jq -r '.content')
 
             mkdir -p "webapp/$(dirname "$FILE_PATH")"
@@ -225,23 +212,50 @@ jobs:
               cat > webapp/index.html <<EOF
           <!DOCTYPE html>
           <html>
+
           <head>
+
           <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+          <meta name="viewport"
+                content="width=device-width,
+                         initial-scale=1.0,
+                         maximum-scale=1.0,
+                         user-scalable=no">
+
           <title>ASIM TECH App</title>
+
+          <style>
+
+          html,
+          body {
+              margin: 0;
+              padding: 0;
+              width: 100%;
+              min-height: 100%;
+              overflow-x: hidden;
+          }
+
+          </style>
+
           </head>
+
           <body>
+
           <script>
+
           window.location.replace("$URL");
+
           </script>
+
           </body>
+
           </html>
           EOF
 
             else
 
               echo "ERROR: index.html is required."
-
               exit 1
 
             fi
@@ -277,8 +291,6 @@ jobs:
           EOF
 
           fi
-
-          echo "Android settings:"
 
           cat android-settings.json
 
@@ -319,13 +331,9 @@ jobs:
         run: |
 
           mkdir -p android-project/app/src/main/res/mipmap-mdpi
-
           mkdir -p android-project/app/src/main/res/mipmap-hdpi
-
           mkdir -p android-project/app/src/main/res/mipmap-xhdpi
-
           mkdir -p android-project/app/src/main/res/mipmap-xxhdpi
-
           mkdir -p android-project/app/src/main/res/mipmap-xxxhdpi
 
           ICON_FILE="launcher-icon.png"
@@ -429,7 +437,6 @@ jobs:
         run: |
 
           mkdir -p android-project/app/src/main/java
-
           mkdir -p android-project/app/src/main/assets
 
           cp -r webapp/* \
@@ -518,7 +525,8 @@ jobs:
           cat > android-project/app/src/main/AndroidManifest.xml <<EOF
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission
+                  android:name="android.permission.INTERNET" />
 
               <application
                   android:allowBackup="true"
@@ -534,9 +542,11 @@ jobs:
 
                       <intent-filter>
 
-                          <action android:name="android.intent.action.MAIN" />
+                          <action
+                              android:name="android.intent.action.MAIN" />
 
-                          <category android:name="android.intent.category.LAUNCHER" />
+                          <category
+                              android:name="android.intent.category.LAUNCHER" />
 
                       </intent-filter>
 
@@ -549,7 +559,8 @@ jobs:
 
 
       # ==================================================
-      # 16. MAIN ACTIVITY + BENGALI TTS
+      # 16. MAIN ACTIVITY
+      # WEBVIEW DISPLAY FIX + BENGALI TTS
       # ==================================================
 
       - name: Create MainActivity
@@ -565,15 +576,19 @@ jobs:
 
           import android.app.Activity;
           import android.os.Bundle;
+
           import android.webkit.WebView;
           import android.webkit.WebSettings;
           import android.webkit.WebViewClient;
           import android.webkit.JavascriptInterface;
+
           import android.speech.tts.TextToSpeech;
 
           import java.util.Locale;
 
+
           public class MainActivity extends Activity {
+
 
               private WebView webView;
 
@@ -585,25 +600,84 @@ jobs:
 
                   super.onCreate(savedInstanceState);
 
+
+                  // ==========================================
+                  // CREATE WEBVIEW
+                  // ==========================================
+
                   webView = new WebView(this);
+
 
                   WebSettings settings =
                       webView.getSettings();
 
+
+                  // ==========================================
+                  // JAVASCRIPT
+                  // ==========================================
+
                   settings.setJavaScriptEnabled(true);
 
+
+                  // ==========================================
+                  // STORAGE
+                  // ==========================================
+
                   settings.setDomStorageEnabled(true);
+
+
+                  // ==========================================
+                  // FILE ACCESS
+                  // ==========================================
 
                   settings.setAllowFileAccess(true);
 
                   settings.setAllowContentAccess(true);
 
+
+                  // ==========================================
+                  // DISPLAY / VIEWPORT FIX
+                  // ==========================================
+
+                  // Fit web page to device screen width.
+                  settings.setUseWideViewPort(true);
+
+
+                  // Automatically scale web page to fit.
+                  settings.setLoadWithOverviewMode(true);
+
+
+                  // Disable user zoom.
+                  settings.setSupportZoom(false);
+
+                  settings.setBuiltInZoomControls(false);
+
+                  settings.setDisplayZoomControls(false);
+
+
+                  // Keep normal text size.
+                  settings.setTextZoom(100);
+
+
+                  // ==========================================
+                  // MEDIA
+                  // ==========================================
+
                   settings.setMediaPlaybackRequiresUserGesture(false);
+
+
+                  // ==========================================
+                  // WEBVIEW CLIENT
+                  // ==========================================
 
                   webView.setWebViewClient(
                       new WebViewClient()
                   );
 
+
+                  // ==========================================
+                  // BENGALI TEXT TO SPEECH
+                  // ==========================================
 
                   textToSpeech =
                       new TextToSpeech(
@@ -613,24 +687,39 @@ jobs:
                               if (status ==
                                   TextToSpeech.SUCCESS) {
 
+
                                   int result =
                                       textToSpeech.setLanguage(
-                                          new Locale("bn", "IN")
+                                          new Locale(
+                                              "bn",
+                                              "IN"
+                                          )
                                       );
 
-                                  if (result ==
-                                      TextToSpeech.LANG_MISSING_DATA ||
+
+                                  if (
                                       result ==
-                                      TextToSpeech.LANG_NOT_SUPPORTED) {
+                                      TextToSpeech.LANG_MISSING_DATA
+                                      ||
+                                      result ==
+                                      TextToSpeech.LANG_NOT_SUPPORTED
+                                  ) {
 
                                       textToSpeech.setLanguage(
                                           Locale.US
                                       );
+
                                   }
+
                               }
+
                           }
                       );
 
+
+                  // ==========================================
+                  // JAVASCRIPT TTS BRIDGE
+                  // ==========================================
 
                   webView.addJavascriptInterface(
                       new AndroidTTS(),
@@ -638,14 +727,27 @@ jobs:
                   );
 
 
+                  // ==========================================
+                  // LOAD WEB APP
+                  // ==========================================
+
                   webView.loadUrl(
                       "file:///android_asset/index.html"
                   );
 
 
+                  // ==========================================
+                  // DISPLAY
+                  // ==========================================
+
                   setContentView(webView);
+
               }
 
+
+              // ==========================================
+              // ANDROID TTS CLASS
+              // ==========================================
 
               public class AndroidTTS {
 
@@ -658,41 +760,66 @@ jobs:
                       float pitch
                   ) {
 
+
                       if (textToSpeech == null) {
                           return;
                       }
 
+
                       Locale locale;
 
-                      if (language != null &&
+
+                      if (
+                          language != null
+                          &&
                           language.toLowerCase()
-                          .startsWith("bn")) {
+                          .startsWith("bn")
+                      ) {
 
                           locale =
-                              new Locale("bn", "IN");
+                              new Locale(
+                                  "bn",
+                                  "IN"
+                              );
 
                       } else {
 
                           locale =
                               Locale.US;
+
                       }
 
-                      int result =
-                          textToSpeech.setLanguage(locale);
 
-                      if (result ==
-                          TextToSpeech.LANG_MISSING_DATA ||
+                      int result =
+                          textToSpeech.setLanguage(
+                              locale
+                          );
+
+
+                      if (
                           result ==
-                          TextToSpeech.LANG_NOT_SUPPORTED) {
+                          TextToSpeech.LANG_MISSING_DATA
+                          ||
+                          result ==
+                          TextToSpeech.LANG_NOT_SUPPORTED
+                      ) {
 
                           textToSpeech.setLanguage(
                               Locale.US
                           );
+
                       }
 
-                      textToSpeech.setSpeechRate(rate);
 
-                      textToSpeech.setPitch(pitch);
+                      textToSpeech.setSpeechRate(
+                          rate
+                      );
+
+
+                      textToSpeech.setPitch(
+                          pitch
+                      );
+
 
                       textToSpeech.speak(
                           text,
@@ -700,51 +827,82 @@ jobs:
                           null,
                           "ASIM_TTS"
                       );
+
                   }
 
 
                   @JavascriptInterface
                   public void cancel() {
 
-                      if (textToSpeech != null) {
+
+                      if (
+                          textToSpeech != null
+                      ) {
 
                           textToSpeech.stop();
+
                       }
+
                   }
+
               }
 
+
+              // ==========================================
+              // BACK BUTTON
+              // ==========================================
 
               @Override
               public void onBackPressed() {
 
-                  if (webView.canGoBack()) {
+
+                  if (
+                      webView.canGoBack()
+                  ) {
 
                       webView.goBack();
 
                   } else {
 
                       super.onBackPressed();
+
                   }
+
               }
 
+
+              // ==========================================
+              // DESTROY
+              // ==========================================
 
               @Override
               protected void onDestroy() {
 
-                  if (textToSpeech != null) {
+
+                  if (
+                      textToSpeech != null
+                  ) {
 
                       textToSpeech.stop();
 
                       textToSpeech.shutdown();
+
                   }
 
-                  if (webView != null) {
+
+                  if (
+                      webView != null
+                  ) {
 
                       webView.destroy();
+
                   }
 
+
                   super.onDestroy();
+
               }
+
           }
           EOF
 
@@ -766,7 +924,9 @@ jobs:
                   name="AppTheme"
                   parent="android:style/Theme.Material.Light.NoActionBar">
 
-                  <item name="android:fontFamily">sans</item>
+                  <item name="android:fontFamily">
+                      sans
+                  </item>
 
                   <item name="android:colorAccent">
                       #18A558
