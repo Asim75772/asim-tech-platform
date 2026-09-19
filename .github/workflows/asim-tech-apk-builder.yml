@@ -18,7 +18,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+
   build:
+
     runs-on: ubuntu-latest
 
     env:
@@ -83,9 +85,11 @@ jobs:
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
 
+          echo "Supabase response:"
           echo "$RESPONSE"
 
           BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
+
           APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
 
           if [ -z "$BUILD_ID" ] || [ -z "$APP_ID" ]; then
@@ -99,10 +103,13 @@ jobs:
           fi
 
           echo "Build ID: $BUILD_ID"
+
           echo "App ID: $APP_ID"
 
           echo "has_build=true" >> "$GITHUB_OUTPUT"
+
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
+
           echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
 
 
@@ -113,7 +120,9 @@ jobs:
       - name: Stop if queue empty
         if: steps.queue.outputs.has_build != 'true'
         run: |
+
           echo "No queued APK build."
+
           exit 0
 
 
@@ -139,6 +148,8 @@ jobs:
               "status": "building",
               "started_at": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"
             }'
+
+          echo "Build marked as building."
 
 
       # ==================================================
@@ -180,6 +191,7 @@ jobs:
           do
 
             FILE_PATH=$(echo "$item" | jq -r '.file_path')
+
             CONTENT=$(echo "$item" | jq -r '.content')
 
             mkdir -p "webapp/$(dirname "$FILE_PATH")"
@@ -256,6 +268,7 @@ jobs:
             else
 
               echo "ERROR: index.html is required."
+
               exit 1
 
             fi
@@ -291,6 +304,8 @@ jobs:
           EOF
 
           fi
+
+          echo "Android settings:"
 
           cat android-settings.json
 
@@ -331,9 +346,13 @@ jobs:
         run: |
 
           mkdir -p android-project/app/src/main/res/mipmap-mdpi
+
           mkdir -p android-project/app/src/main/res/mipmap-hdpi
+
           mkdir -p android-project/app/src/main/res/mipmap-xhdpi
+
           mkdir -p android-project/app/src/main/res/mipmap-xxhdpi
+
           mkdir -p android-project/app/src/main/res/mipmap-xxxhdpi
 
           ICON_FILE="launcher-icon.png"
@@ -437,6 +456,7 @@ jobs:
         run: |
 
           mkdir -p android-project/app/src/main/java
+
           mkdir -p android-project/app/src/main/assets
 
           cp -r webapp/* \
@@ -560,7 +580,7 @@ jobs:
 
       # ==================================================
       # 16. MAIN ACTIVITY
-      # WEBVIEW DISPLAY FIX + BENGALI TTS
+      # DISPLAY + FOOTER INSET FIX + BENGALI TTS
       # ==================================================
 
       - name: Create MainActivity
@@ -576,6 +596,11 @@ jobs:
 
           import android.app.Activity;
           import android.os.Bundle;
+
+          import android.graphics.Color;
+          import android.graphics.Insets;
+
+          import android.view.WindowInsets;
 
           import android.webkit.WebView;
           import android.webkit.WebSettings;
@@ -602,7 +627,20 @@ jobs:
 
 
                   // ==========================================
-                  // CREATE WEBVIEW
+                  // SYSTEM BAR COLORS
+                  // ==========================================
+
+                  getWindow().setStatusBarColor(
+                      Color.rgb(180, 35, 0)
+                  );
+
+                  getWindow().setNavigationBarColor(
+                      Color.BLACK
+                  );
+
+
+                  // ==========================================
+                  // WEBVIEW
                   // ==========================================
 
                   webView = new WebView(this);
@@ -620,7 +658,7 @@ jobs:
 
 
                   // ==========================================
-                  // STORAGE
+                  // DOM STORAGE
                   // ==========================================
 
                   settings.setDomStorageEnabled(true);
@@ -639,23 +677,16 @@ jobs:
                   // DISPLAY / VIEWPORT FIX
                   // ==========================================
 
-                  // Fit web page to device screen width.
                   settings.setUseWideViewPort(true);
 
-
-                  // Automatically scale web page to fit.
                   settings.setLoadWithOverviewMode(true);
 
-
-                  // Disable user zoom.
                   settings.setSupportZoom(false);
 
                   settings.setBuiltInZoomControls(false);
 
                   settings.setDisplayZoomControls(false);
 
-
-                  // Keep normal text size.
                   settings.setTextZoom(100);
 
 
@@ -676,6 +707,59 @@ jobs:
 
 
                   // ==========================================
+                  // SYSTEM WINDOW INSETS
+                  // FOOTER / BOTTOM PLAYER FIX
+                  // ==========================================
+
+                  webView.setOnApplyWindowInsetsListener(
+                      (view, insets) -> {
+
+                          int top = 0;
+
+                          int bottom = 0;
+
+
+                          if (
+                              android.os.Build.VERSION.SDK_INT >= 30
+                          ) {
+
+                              Insets systemInsets =
+                                  insets.getInsets(
+                                      WindowInsets.Type.systemBars()
+                                  );
+
+                              top =
+                                  systemInsets.top;
+
+                              bottom =
+                                  systemInsets.bottom;
+
+                          } else {
+
+                              top =
+                                  insets.getSystemWindowInsetTop();
+
+                              bottom =
+                                  insets.getSystemWindowInsetBottom();
+
+                          }
+
+
+                          view.setPadding(
+                              0,
+                              top,
+                              0,
+                              bottom
+                          );
+
+
+                          return insets;
+
+                      }
+                  );
+
+
+                  // ==========================================
                   // BENGALI TEXT TO SPEECH
                   // ==========================================
 
@@ -684,9 +768,10 @@ jobs:
                           this,
                           status -> {
 
-                              if (status ==
-                                  TextToSpeech.SUCCESS) {
-
+                              if (
+                                  status ==
+                                  TextToSpeech.SUCCESS
+                              ) {
 
                                   int result =
                                       textToSpeech.setLanguage(
@@ -746,7 +831,7 @@ jobs:
 
 
               // ==========================================
-              // ANDROID TTS CLASS
+              // ANDROID TTS
               // ==========================================
 
               public class AndroidTTS {
@@ -761,8 +846,12 @@ jobs:
                   ) {
 
 
-                      if (textToSpeech == null) {
+                      if (
+                          textToSpeech == null
+                      ) {
+
                           return;
+
                       }
 
 
@@ -772,8 +861,9 @@ jobs:
                       if (
                           language != null
                           &&
-                          language.toLowerCase()
-                          .startsWith("bn")
+                          language
+                              .toLowerCase()
+                              .startsWith("bn")
                       ) {
 
                           locale =
@@ -872,7 +962,7 @@ jobs:
 
 
               // ==========================================
-              // DESTROY
+              // CLEANUP
               // ==========================================
 
               @Override
@@ -933,15 +1023,19 @@ jobs:
                   </item>
 
                   <item name="android:windowLightStatusBar">
-                      true
+                      false
+                  </item>
+
+                  <item name="android:windowLightNavigationBar">
+                      false
                   </item>
 
                   <item name="android:statusBarColor">
-                      #FFFFFF
+                      #B42300
                   </item>
 
                   <item name="android:navigationBarColor">
-                      #FFFFFF
+                      #000000
                   </item>
 
               </style>
@@ -1083,8 +1177,10 @@ jobs:
       - name: Upload APK artifact
         if: steps.queue.outputs.has_build == 'true'
         uses: actions/upload-artifact@v4
+
         with:
           name: ASIM-TECH-${{ steps.queue.outputs.build_id }}
+
           path: ASIM-TECH-${{ steps.queue.outputs.build_id }}.apk
 
 
