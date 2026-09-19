@@ -21,18 +21,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
+
     steps:
 
-      # --------------------------------------------------
-      # 1. Checkout repository
-      # --------------------------------------------------
+      # ==================================================
+      # 1. CHECKOUT
+      # ==================================================
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
 
-      # --------------------------------------------------
-      # 2. Setup Java 17
-      # --------------------------------------------------
+      # ==================================================
+      # 2. JAVA 17
+      # ==================================================
+
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
@@ -40,80 +45,100 @@ jobs:
           java-version: "17"
 
 
-      # --------------------------------------------------
-      # 3. Install required packages
-      # --------------------------------------------------
+      # ==================================================
+      # 3. INSTALL DEPENDENCIES
+      # ==================================================
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y curl jq imagemagick
 
 
-      # --------------------------------------------------
-      # 4. Setup Gradle
-      # --------------------------------------------------
+      # ==================================================
+      # 4. GRADLE
+      # ==================================================
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.10.2"
 
 
-      # --------------------------------------------------
-      # 5. Get oldest queued build
-      # --------------------------------------------------
+      # ==================================================
+      # 5. GET QUEUED BUILD
+      # ==================================================
+
       - name: Get queued build
         id: queue
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
         run: |
+
           echo "Checking queued builds..."
+
+          echo "Supabase URL:"
+          echo "$SUPABASE_URL"
 
           RESPONSE=$(curl -sS \
             "${SUPABASE_URL}/rest/v1/app_builds?status=eq.queued&order=queued_at.asc&limit=1" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
 
-          echo "Response:"
+          echo "Supabase response:"
           echo "$RESPONSE"
 
           BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
+
           APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
 
           if [ -z "$BUILD_ID" ] || [ -z "$APP_ID" ]; then
+
             echo "No queued build found."
+
             echo "has_build=false" >> "$GITHUB_OUTPUT"
+
             exit 0
+
           fi
 
           echo "Build ID: $BUILD_ID"
+
           echo "App ID: $APP_ID"
 
           echo "has_build=true" >> "$GITHUB_OUTPUT"
+
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
+
           echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
 
 
-      # --------------------------------------------------
-      # 6. Stop if queue empty
-      # --------------------------------------------------
+      # ==================================================
+      # 6. STOP IF QUEUE EMPTY
+      # ==================================================
+
       - name: Stop if queue empty
         if: steps.queue.outputs.has_build != 'true'
         run: |
-          echo "Nothing to build."
+
+          echo "No queued APK build."
+
           exit 0
 
 
-      # --------------------------------------------------
-      # 7. Mark build as building
-      # --------------------------------------------------
+      # ==================================================
+      # 7. MARK BUILDING
+      # ==================================================
+
       - name: Mark build as building
         if: steps.queue.outputs.has_build == 'true'
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
+
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
@@ -128,16 +153,18 @@ jobs:
           echo "Build marked as building."
 
 
-      # --------------------------------------------------
-      # 8. Download app files
-      # --------------------------------------------------
+      # ==================================================
+      # 8. DOWNLOAD APP FILES
+      # ==================================================
+
       - name: Download app files
         if: steps.queue.outputs.has_build == 'true'
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           APP_ID: ${{ steps.queue.outputs.app_id }}
+
         run: |
+
           mkdir -p source
 
           curl -sS \
@@ -151,17 +178,21 @@ jobs:
           jq 'length' source/files.json
 
 
-      # --------------------------------------------------
-      # 9. Create source files
-      # --------------------------------------------------
+      # ==================================================
+      # 9. CREATE SOURCE FILES
+      # ==================================================
+
       - name: Create source files
         if: steps.queue.outputs.has_build == 'true'
         run: |
+
           mkdir -p webapp
 
-          jq -c '.[]' source/files.json | while read -r item; do
+          jq -c '.[]' source/files.json | while read -r item
+          do
 
             FILE_PATH=$(echo "$item" | jq -r '.file_path')
+
             CONTENT=$(echo "$item" | jq -r '.content')
 
             mkdir -p "webapp/$(dirname "$FILE_PATH")"
@@ -175,20 +206,21 @@ jobs:
           find webapp -type f -print
 
 
-      # --------------------------------------------------
-      # 10. Prepare web application
-      # --------------------------------------------------
+      # ==================================================
+      # 10. PREPARE WEB APPLICATION
+      # ==================================================
+
       - name: Prepare web application
         if: steps.queue.outputs.has_build == 'true'
         run: |
+
           if [ ! -f "webapp/index.html" ]; then
 
             if [ -f "webapp/webapp-url.txt" ]; then
 
               URL=$(cat "webapp/webapp-url.txt" | tr -d '\r\n')
 
-              echo "Creating URL wrapper for:"
-              echo "$URL"
+              echo "Creating URL wrapper."
 
               cat > webapp/index.html <<EOF
           <!DOCTYPE html>
@@ -196,8 +228,7 @@ jobs:
           <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <meta http-equiv="refresh" content="0;url=$URL">
-          <title>App</title>
+          <title>ASIM TECH App</title>
           </head>
           <body>
           <script>
@@ -210,23 +241,32 @@ jobs:
             else
 
               echo "ERROR: index.html is required."
+
               exit 1
 
             fi
+
           fi
 
           echo "index.html ready."
 
 
-      # --------------------------------------------------
-      # 11. Read Android settings
-      # --------------------------------------------------
+      # ==================================================
+      # 11. READ ANDROID SETTINGS
+      # ==================================================
+
       - name: Read Android settings
         if: steps.queue.outputs.has_build == 'true'
         run: |
+
           if [ -f "webapp/android-settings.json" ]; then
-            cp "webapp/android-settings.json" android-settings.json
+
+            cp \
+              "webapp/android-settings.json" \
+              android-settings.json
+
           else
+
             cat > android-settings.json <<EOF
           {
             "appName": "ASIM TECH APP",
@@ -235,47 +275,65 @@ jobs:
             "versionCode": 1
           }
           EOF
+
           fi
 
           echo "Android settings:"
+
           cat android-settings.json
 
           APP_NAME=$(jq -r '.appName // "ASIM TECH APP"' android-settings.json)
+
           PACKAGE_NAME=$(jq -r '.packageName // "com.asimtech.app"' android-settings.json)
+
           VERSION_NAME=$(jq -r '.versionName // "1.0.0"' android-settings.json)
+
           VERSION_CODE=$(jq -r '.versionCode // 1' android-settings.json)
 
           APP_ICON_URL=$(jq -r '.appIconUrl // empty' android-settings.json)
+
           APP_ICON_PATH=$(jq -r '.appIconPath // empty' android-settings.json)
 
           echo "APP_NAME=$APP_NAME" >> "$GITHUB_ENV"
+
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> "$GITHUB_ENV"
+
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+
           echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
+
           echo "APP_ICON_URL=$APP_ICON_URL" >> "$GITHUB_ENV"
+
           echo "APP_ICON_PATH=$APP_ICON_PATH" >> "$GITHUB_ENV"
 
 
-      # --------------------------------------------------
-      # 12. Prepare launcher icon
-      # --------------------------------------------------
+      # ==================================================
+      # 12. PREPARE LAUNCHER ICON
+      # ==================================================
+
       - name: Prepare launcher icon
         if: steps.queue.outputs.has_build == 'true'
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
         run: |
+
           mkdir -p android-project/app/src/main/res/mipmap-mdpi
+
           mkdir -p android-project/app/src/main/res/mipmap-hdpi
+
           mkdir -p android-project/app/src/main/res/mipmap-xhdpi
+
           mkdir -p android-project/app/src/main/res/mipmap-xxhdpi
+
           mkdir -p android-project/app/src/main/res/mipmap-xxxhdpi
 
           ICON_FILE="launcher-icon.png"
 
+
           if [ -n "$APP_ICON_PATH" ]; then
 
-            echo "Downloading custom icon from Supabase Storage..."
+            echo "Downloading custom icon..."
 
             curl -fL \
               "${SUPABASE_URL}/storage/v1/object/website-images/${APP_ICON_PATH}" \
@@ -285,9 +343,10 @@ jobs:
 
           fi
 
+
           if [ ! -s "$ICON_FILE" ] && [ -n "$APP_ICON_URL" ]; then
 
-            echo "Trying appIconUrl..."
+            echo "Trying public icon URL..."
 
             curl -fL \
               "$APP_ICON_URL" \
@@ -295,20 +354,27 @@ jobs:
 
           fi
 
+
           if [ -s "$ICON_FILE" ]; then
 
             if identify "$ICON_FILE" >/dev/null 2>&1; then
+
               echo "Custom launcher icon found."
+
             else
-              echo "Invalid icon file."
+
+              echo "Invalid icon."
+
               rm -f "$ICON_FILE"
+
             fi
 
           fi
 
+
           if [ ! -s "$ICON_FILE" ]; then
 
-            echo "Creating default launcher icon."
+            echo "Creating default icon."
 
             convert \
               -size 512x512 \
@@ -319,6 +385,7 @@ jobs:
               "$ICON_FILE"
 
           fi
+
 
           convert "$ICON_FILE" \
             -resize 48x48 \
@@ -340,7 +407,9 @@ jobs:
             -resize 192x192 \
             android-project/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
-          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+
+          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi
+          do
 
             cp \
               "android-project/app/src/main/res/mipmap-${density}/ic_launcher.png" \
@@ -351,24 +420,30 @@ jobs:
           echo "Launcher icons prepared."
 
 
-      # --------------------------------------------------
-      # 13. Create Android project
-      # --------------------------------------------------
+      # ==================================================
+      # 13. CREATE ANDROID PROJECT
+      # ==================================================
+
       - name: Create Android project
         if: steps.queue.outputs.has_build == 'true'
         run: |
+
           mkdir -p android-project/app/src/main/java
+
           mkdir -p android-project/app/src/main/assets
 
-          cp -r webapp/* android-project/app/src/main/assets/
+          cp -r webapp/* \
+            android-project/app/src/main/assets/
 
 
-      # --------------------------------------------------
-      # 14. Create Gradle files
-      # --------------------------------------------------
+      # ==================================================
+      # 14. CREATE GRADLE FILES
+      # ==================================================
+
       - name: Create Gradle files
         if: steps.queue.outputs.has_build == 'true'
         run: |
+
           cat > android-project/settings.gradle <<EOF
           pluginManagement {
               repositories {
@@ -406,29 +481,38 @@ jobs:
           }
 
           android {
+
               namespace '${PACKAGE_NAME}'
+
               compileSdk 35
 
               defaultConfig {
+
                   applicationId '${PACKAGE_NAME}'
+
                   minSdk 23
+
                   targetSdk 35
+
                   versionCode ${VERSION_CODE}
+
                   versionName '${VERSION_NAME}'
               }
-          }
 
-          dependencies {
+              dependencies {
+              }
           }
           EOF
 
 
-      # --------------------------------------------------
-      # 15. Create Android Manifest
-      # --------------------------------------------------
+      # ==================================================
+      # 15. ANDROID MANIFEST
+      # ==================================================
+
       - name: Create Android Manifest
         if: steps.queue.outputs.has_build == 'true'
         run: |
+
           mkdir -p android-project/app/src/main
 
           cat > android-project/app/src/main/AndroidManifest.xml <<EOF
@@ -449,8 +533,11 @@ jobs:
                       android:exported="true">
 
                       <intent-filter>
+
                           <action android:name="android.intent.action.MAIN" />
+
                           <category android:name="android.intent.category.LAUNCHER" />
+
                       </intent-filter>
 
                   </activity>
@@ -461,12 +548,14 @@ jobs:
           EOF
 
 
-      # --------------------------------------------------
-      # 16. Create MainActivity
-      # --------------------------------------------------
+      # ==================================================
+      # 16. MAIN ACTIVITY + BENGALI TTS
+      # ==================================================
+
       - name: Create MainActivity
         if: steps.queue.outputs.has_build == 'true'
         run: |
+
           JAVA_PATH="android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')"
 
           mkdir -p "$JAVA_PATH"
@@ -487,7 +576,9 @@ jobs:
           public class MainActivity extends Activity {
 
               private WebView webView;
+
               private TextToSpeech textToSpeech;
+
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
@@ -496,45 +587,68 @@ jobs:
 
                   webView = new WebView(this);
 
-                  WebSettings settings = webView.getSettings();
+                  WebSettings settings =
+                      webView.getSettings();
 
                   settings.setJavaScriptEnabled(true);
+
                   settings.setDomStorageEnabled(true);
+
                   settings.setAllowFileAccess(true);
+
                   settings.setAllowContentAccess(true);
+
                   settings.setMediaPlaybackRequiresUserGesture(false);
 
-                  webView.setWebViewClient(new WebViewClient());
+                  webView.setWebViewClient(
+                      new WebViewClient()
+                  );
 
-                  textToSpeech = new TextToSpeech(this, status -> {
 
-                      if (status == TextToSpeech.SUCCESS) {
+                  textToSpeech =
+                      new TextToSpeech(
+                          this,
+                          status -> {
 
-                          int result = textToSpeech.setLanguage(
-                              new Locale("bn", "IN")
-                          );
+                              if (status ==
+                                  TextToSpeech.SUCCESS) {
 
-                          if (result == TextToSpeech.LANG_MISSING_DATA ||
-                              result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                                  int result =
+                                      textToSpeech.setLanguage(
+                                          new Locale("bn", "IN")
+                                      );
 
-                              textToSpeech.setLanguage(Locale.US);
+                                  if (result ==
+                                      TextToSpeech.LANG_MISSING_DATA ||
+                                      result ==
+                                      TextToSpeech.LANG_NOT_SUPPORTED) {
+
+                                      textToSpeech.setLanguage(
+                                          Locale.US
+                                      );
+                                  }
+                              }
                           }
-                      }
-                  });
+                      );
+
 
                   webView.addJavascriptInterface(
                       new AndroidTTS(),
                       "AndroidTTS"
                   );
 
+
                   webView.loadUrl(
                       "file:///android_asset/index.html"
                   );
 
+
                   setContentView(webView);
               }
 
+
               public class AndroidTTS {
+
 
                   @JavascriptInterface
                   public void speak(
@@ -551,25 +665,33 @@ jobs:
                       Locale locale;
 
                       if (language != null &&
-                          language.toLowerCase().startsWith("bn")) {
+                          language.toLowerCase()
+                          .startsWith("bn")) {
 
-                          locale = new Locale("bn", "IN");
+                          locale =
+                              new Locale("bn", "IN");
 
                       } else {
 
-                          locale = Locale.US;
+                          locale =
+                              Locale.US;
                       }
 
                       int result =
                           textToSpeech.setLanguage(locale);
 
-                      if (result == TextToSpeech.LANG_MISSING_DATA ||
-                          result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                      if (result ==
+                          TextToSpeech.LANG_MISSING_DATA ||
+                          result ==
+                          TextToSpeech.LANG_NOT_SUPPORTED) {
 
-                          textToSpeech.setLanguage(Locale.US);
+                          textToSpeech.setLanguage(
+                              Locale.US
+                          );
                       }
 
                       textToSpeech.setSpeechRate(rate);
+
                       textToSpeech.setPitch(pitch);
 
                       textToSpeech.speak(
@@ -580,34 +702,44 @@ jobs:
                       );
                   }
 
+
                   @JavascriptInterface
                   public void cancel() {
 
                       if (textToSpeech != null) {
+
                           textToSpeech.stop();
                       }
                   }
               }
 
+
               @Override
               public void onBackPressed() {
 
                   if (webView.canGoBack()) {
+
                       webView.goBack();
+
                   } else {
+
                       super.onBackPressed();
                   }
               }
+
 
               @Override
               protected void onDestroy() {
 
                   if (textToSpeech != null) {
+
                       textToSpeech.stop();
+
                       textToSpeech.shutdown();
                   }
 
                   if (webView != null) {
+
                       webView.destroy();
                   }
 
@@ -617,12 +749,14 @@ jobs:
           EOF
 
 
-      # --------------------------------------------------
-      # 17. Create styles
-      # --------------------------------------------------
+      # ==================================================
+      # 17. STYLES
+      # ==================================================
+
       - name: Create styles
         if: steps.queue.outputs.has_build == 'true'
         run: |
+
           mkdir -p android-project/app/src/main/res/values
 
           cat > android-project/app/src/main/res/values/styles.xml <<EOF
@@ -656,13 +790,15 @@ jobs:
           EOF
 
 
-      # --------------------------------------------------
-      # 18. Build APK
-      # --------------------------------------------------
+      # ==================================================
+      # 18. BUILD APK
+      # ==================================================
+
       - name: Build APK
         if: steps.queue.outputs.has_build == 'true'
         working-directory: android-project
         run: |
+
           gradle assembleDebug \
             --no-daemon \
             --stacktrace
@@ -672,12 +808,14 @@ jobs:
           ls -lh app/build/outputs/apk/debug/
 
 
-      # --------------------------------------------------
-      # 19. Rename APK
-      # --------------------------------------------------
+      # ==================================================
+      # 19. RENAME APK
+      # ==================================================
+
       - name: Rename APK
         if: steps.queue.outputs.has_build == 'true'
         run: |
+
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
           cp \
@@ -687,41 +825,50 @@ jobs:
           ls -lh "ASIM-TECH-${BUILD_ID}.apk"
 
 
-      # --------------------------------------------------
-      # 20. Calculate SHA256
-      # --------------------------------------------------
+      # ==================================================
+      # 20. SHA256
+      # ==================================================
+
       - name: Calculate SHA256
         if: steps.queue.outputs.has_build == 'true'
         id: sha
         run: |
+
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
-          SHA=$(sha256sum "ASIM-TECH-${BUILD_ID}.apk" | awk '{print $1}')
+          SHA=$(sha256sum \
+            "ASIM-TECH-${BUILD_ID}.apk" |
+            awk '{print $1}')
 
-          SIZE=$(stat -c%s "ASIM-TECH-${BUILD_ID}.apk")
+          SIZE=$(stat -c%s \
+            "ASIM-TECH-${BUILD_ID}.apk")
 
           echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
+
           echo "size=$SIZE" >> "$GITHUB_OUTPUT"
 
           echo "SHA256: $SHA"
+
           echo "SIZE: $SIZE"
 
 
-      # --------------------------------------------------
-      # 21. Upload APK
-      # --------------------------------------------------
+      # ==================================================
+      # 21. UPLOAD APK
+      # ==================================================
+
       - name: Upload APK
         if: steps.queue.outputs.has_build == 'true'
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
+
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
+
           STORAGE_PATH="${BUILD_ID}/${FILE_NAME}"
 
-          echo "Uploading:"
-          echo "$STORAGE_PATH"
+          echo "Uploading APK..."
 
           curl -fL -X POST \
             "${SUPABASE_URL}/storage/v1/object/android-apks/${STORAGE_PATH}" \
@@ -730,21 +877,24 @@ jobs:
             -H "Content-Type: application/vnd.android.package-archive" \
             --data-binary "@${FILE_NAME}"
 
-          echo "STORAGE_PATH=${STORAGE_PATH}" >> "$GITHUB_ENV"
+          echo "STORAGE_PATH=${STORAGE_PATH}" \
+            >> "$GITHUB_ENV"
 
           echo "APK uploaded successfully."
 
 
-      # --------------------------------------------------
-      # 22. Mark build successful
-      # --------------------------------------------------
+      # ==================================================
+      # 22. MARK BUILD SUCCESSFUL
+      # ==================================================
+
       - name: Mark build successful
         if: steps.queue.outputs.has_build == 'true'
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
+
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
 
           curl -sS -X PATCH \
@@ -766,9 +916,10 @@ jobs:
           echo "Build marked SUCCESS."
 
 
-      # --------------------------------------------------
-      # 23. Upload GitHub artifact
-      # --------------------------------------------------
+      # ==================================================
+      # 23. GITHUB ARTIFACT
+      # ==================================================
+
       - name: Upload APK artifact
         if: steps.queue.outputs.has_build == 'true'
         uses: actions/upload-artifact@v4
@@ -777,16 +928,18 @@ jobs:
           path: ASIM-TECH-${{ steps.queue.outputs.build_id }}.apk
 
 
-      # --------------------------------------------------
-      # 24. Mark build failed
-      # --------------------------------------------------
+      # ==================================================
+      # 24. MARK BUILD FAILED
+      # ==================================================
+
       - name: Mark build failed
         if: failure() && steps.queue.outputs.has_build == 'true'
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
+
         run: |
+
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
