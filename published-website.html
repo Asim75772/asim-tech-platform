@@ -6,114 +6,137 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+      content="width=device-width, initial-scale=1.0">
 
-<title>Published Website — ASIM TECH</title>
+<title>Published Website</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
+/* ================================
+   RESET
+================================ */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
+
+
+/* ================================
+   FULL PAGE
+================================ */
 
 html,
-body{
-width:100%;
-height:100%;
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
-body{
-font-family:Arial,Helvetica,sans-serif;
-background:#ffffff;
-color:#1f2937;
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    color: #1f2937;
 }
+
 
 /* ================================
    LOADING
 ================================ */
 
-#loading{
-position:fixed;
-inset:0;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#ffffff;
-font-size:20px;
-color:#64748b;
+#loading {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #ffffff;
+
+    font-size: 20px;
+
+    color: #64748b;
+
+    z-index: 9999;
 }
+
 
 /* ================================
    ERROR
 ================================ */
 
-#error{
-display:none;
-max-width:700px;
-margin:80px auto;
-padding:25px;
-background:#fee2e2;
-color:#991b1b;
-border-radius:14px;
-text-align:center;
+#error {
+
+    display: none;
+
+    max-width: 700px;
+
+    margin: 80px auto;
+
+    padding: 25px;
+
+    background: #fee2e2;
+
+    color: #991b1b;
+
+    border-radius: 14px;
+
+    text-align: center;
 }
 
-#error h2{
-margin-bottom:10px;
+#error h2 {
+
+    margin-bottom: 10px;
 }
+
 
 /* ================================
    WEBSITE
 ================================ */
 
-#website{
-display:none;
-width:100%;
-min-height:100vh;
+#website {
+
+    display: none;
+
+    width: 100%;
+
+    height: 100vh;
+
+    min-height: 100vh;
+
+    background: #ffffff;
 }
 
-/* ================================
-   TOP BAR
-================================ */
-
-.topbar{
-background:#0f172a;
-color:white;
-padding:12px 20px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:15px;
-}
-
-.brand{
-font-weight:bold;
-font-size:18px;
-}
-
-.status{
-background:#166534;
-padding:6px 12px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
-}
 
 /* ================================
    WEBSITE FRAME
 ================================ */
 
-.website-frame{
-width:100%;
-height:calc(100vh - 55px);
-min-height:500px;
-border:0;
-background:white;
-display:block;
+.website-frame {
+
+    width: 100%;
+
+    height: 100vh;
+
+    min-height: 100vh;
+
+    border: 0;
+
+    margin: 0;
+
+    padding: 0;
+
+    background: #ffffff;
+
+    display: block;
 }
 
 </style>
@@ -124,81 +147,72 @@ display:block;
 <body>
 
 
-<!-- ================================
+<!-- =====================================
      LOADING
-================================ -->
+===================================== -->
 
 <div id="loading">
 
-🚀 Loading repository...
+    🚀 Loading website...
 
 </div>
 
 
-<!-- ================================
+<!-- =====================================
      ERROR
-================================ -->
+===================================== -->
 
 <div id="error">
 
-<h2>
-Website unavailable
-</h2>
+    <h2>
+        Website unavailable
+    </h2>
 
-<p id="errorText">
-Unable to load this website.
-</p>
+    <p id="errorText">
+        Unable to load this website.
+    </p>
 
 </div>
 
 
-<!-- ================================
+<!-- =====================================
      WEBSITE
-================================ -->
+===================================== -->
 
 <div id="website">
 
-<div class="topbar">
-
-<div class="brand">
-⚡ ASIM TECH
-</div>
-
-<div class="status">
-● Published
-</div>
+    <iframe
+        id="websiteFrame"
+        class="website-frame"
+        sandbox="allow-scripts allow-forms allow-modals allow-popups allow-same-origin allow-presentation">
+    </iframe>
 
 </div>
-
-
-<iframe
-id="websiteFrame"
-class="website-frame"
-sandbox="allow-scripts allow-forms allow-modals allow-popups">
-</iframe>
-
-</div>
-
 
 
 <script>
 
+
 /* =====================================================
-   SUPABASE CONFIG
+   SUPABASE CONFIGURATION
 ===================================================== */
 
 const SUPABASE_URL =
-"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
+
+/* =====================================================
+   SUPABASE CLIENT
+===================================================== */
 
 const supabaseClient =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
 /* =====================================================
@@ -206,344 +220,335 @@ SUPABASE_KEY
 ===================================================== */
 
 const params =
-new URLSearchParams(
-window.location.search
-);
+    new URLSearchParams(
+        window.location.search
+    );
 
 
 /*
-Accept both:
+   Accept both:
 
-?id=REPOSITORY_ID
+   ?id=REPOSITORY_ID
 
-and
+   and
 
-?repository_id=REPOSITORY_ID
+   ?repository_id=REPOSITORY_ID
 */
 
 const repositoryId =
-params.get("repository_id") ||
-params.get("id");
+    params.get("repository_id") ||
+    params.get("id");
 
 
 /* =====================================================
-   SHOW ERROR
+   ERROR HANDLER
 ===================================================== */
 
-function showError(message){
+function showError(message) {
 
-document.getElementById("loading")
-.style.display="none";
-
-
-document.getElementById("website")
-.style.display="none";
+    document.getElementById("loading")
+        .style.display = "none";
 
 
-const errorBox =
-document.getElementById("error");
+    document.getElementById("website")
+        .style.display = "none";
 
 
-document.getElementById("errorText")
-.textContent =
-message;
+    const errorBox =
+        document.getElementById("error");
 
 
-errorBox.style.display="block";
+    document.getElementById("errorText")
+        .textContent = message;
 
+
+    errorBox.style.display = "block";
 }
 
 
 /* =====================================================
-   LOAD PUBLISHED REPOSITORY
+   LOAD PUBLISHED WEBSITE
 ===================================================== */
 
-async function loadPublishedWebsite(){
+async function loadPublishedWebsite() {
 
-try{
+    try {
 
 
-/* -----------------------------------------------
-   CHECK REPOSITORY ID
------------------------------------------------- */
+        /* ---------------------------------------------
+           CHECK REPOSITORY ID
+        --------------------------------------------- */
 
-if(!repositoryId){
+        if (!repositoryId) {
 
-showError(
-"Repository ID is missing."
-);
+            showError(
+                "Repository ID is missing."
+            );
 
-return;
+            return;
+        }
 
-}
 
+        /* ---------------------------------------------
+           LOAD REPOSITORY
+        --------------------------------------------- */
 
-/* -----------------------------------------------
-   LOAD REPOSITORY
------------------------------------------------- */
+        const {
+            data: repository,
+            error: repositoryError
+        } =
+        await supabaseClient
 
-const {
-data:repository,
-error:repositoryError
-} =
-await supabaseClient
+            .from("repositories")
 
-.from("repositories")
+            .select(`
+                id,
+                name,
+                description,
+                is_private,
+                is_published,
+                default_branch
+            `)
 
-.select(`
-id,
-name,
-description,
-is_private,
-is_published,
-default_branch
-`)
+            .eq(
+                "id",
+                repositoryId
+            )
 
-.eq(
-"id",
-repositoryId
-)
+            .single();
 
-.single();
 
+        if (repositoryError) {
 
-if(repositoryError){
+            console.error(
+                "Repository error:",
+                repositoryError
+            );
 
-console.error(
-"Repository error:",
-repositoryError
-);
+            showError(
+                "Unable to load repository."
+            );
 
-showError(
-"Unable to load repository."
-);
+            return;
+        }
 
-return;
 
-}
+        /* ---------------------------------------------
+           CHECK PUBLISHED STATUS
+        --------------------------------------------- */
 
+        if (!repository.is_published) {
 
-/* -----------------------------------------------
-   CHECK PUBLISHED STATUS
------------------------------------------------- */
+            showError(
+                "This repository has not been published yet."
+            );
 
-if(!repository.is_published){
+            return;
+        }
 
-showError(
-"This repository has not been published yet."
-);
 
-return;
+        /* ---------------------------------------------
+           PRIVATE REPOSITORY CHECK
+        --------------------------------------------- */
 
-}
+        if (repository.is_private) {
 
+            showError(
+                "This website is private and cannot be viewed publicly."
+            );
 
-/* -----------------------------------------------
-   PRIVATE REPOSITORY CHECK
------------------------------------------------- */
+            return;
+        }
 
-if(repository.is_private){
 
-showError(
-"This website is private and cannot be viewed publicly."
-);
+        /* ---------------------------------------------
+           DEFAULT BRANCH
+        --------------------------------------------- */
 
-return;
+        const defaultBranchName =
+            repository.default_branch ||
+            "main";
 
-}
 
+        /* ---------------------------------------------
+           LOAD BRANCH
+        --------------------------------------------- */
 
-/* =================================================
-   LOAD DEFAULT BRANCH
-================================================= */
+        const {
+            data: branch,
+            error: branchError
+        } =
+        await supabaseClient
 
-const defaultBranchName =
-repository.default_branch ||
-"main";
+            .from("repository_branches")
 
+            .select(`
+                id,
+                name
+            `)
 
-const {
-data:branch,
-error:branchError
-} =
-await supabaseClient
+            .eq(
+                "repository_id",
+                repositoryId
+            )
 
-.from("repository_branches")
+            .eq(
+                "name",
+                defaultBranchName
+            )
 
-.select(`
-id,
-name
-`)
+            .maybeSingle();
 
-.eq(
-"repository_id",
-repositoryId
-)
 
-.eq(
-"name",
-defaultBranchName
-)
+        if (branchError) {
 
-.maybeSingle();
+            console.error(
+                "Branch error:",
+                branchError
+            );
 
+            showError(
+                "Unable to load the published branch."
+            );
 
-if(branchError){
+            return;
+        }
 
-console.error(
-"Branch error:",
-branchError
-);
 
-showError(
-"Unable to load the published branch."
-);
+        if (!branch) {
 
-return;
+            showError(
+                "Published branch was not found."
+            );
 
-}
+            return;
+        }
 
 
-if(!branch){
+        /* ---------------------------------------------
+           LOAD INDEX.HTML
+        --------------------------------------------- */
 
-showError(
-"Published branch was not found."
-);
+        const {
+            data: file,
+            error: fileError
+        } =
+        await supabaseClient
 
-return;
+            .from("repository_files")
 
-}
+            .select(`
+                file_path,
+                content,
+                language,
+                is_binary,
+                mime_type,
+                branch_id
+            `)
 
+            .eq(
+                "repository_id",
+                repositoryId
+            )
 
-/* -----------------------------------------------
-   LOAD INDEX.HTML FROM DEFAULT BRANCH
------------------------------------------------- */
+            .eq(
+                "branch_id",
+                branch.id
+            )
 
-const {
-data:file,
-error:fileError
-} =
-await supabaseClient
+            .eq(
+                "file_path",
+                "index.html"
+            )
 
-.from("repository_files")
+            .eq(
+                "is_binary",
+                false
+            )
 
-.select(`
-file_path,
-content,
-language,
-is_binary,
-mime_type,
-branch_id
-`)
+            .maybeSingle();
 
-.eq(
-"repository_id",
-repositoryId
-)
 
-.eq(
-"branch_id",
-branch.id
-)
+        if (fileError) {
 
-.eq(
-"file_path",
-"index.html"
-)
+            console.error(
+                "File error:",
+                fileError
+            );
 
-.eq(
-"is_binary",
-false
-)
+            showError(
+                "Unable to load index.html."
+            );
 
-.maybeSingle();
+            return;
+        }
 
 
-if(fileError){
+        /* ---------------------------------------------
+           INDEX.HTML CHECK
+        --------------------------------------------- */
 
-console.error(
-"File error:",
-fileError
-);
+        if (!file) {
 
-showError(
-"Unable to load index.html."
-);
+            showError(
+                "This published repository does not contain an index.html file on the default branch."
+            );
 
-return;
+            return;
+        }
 
-}
 
+        /* ---------------------------------------------
+           GET HTML
+        --------------------------------------------- */
 
-/* -----------------------------------------------
-   INDEX.HTML CHECK
------------------------------------------------- */
+        const html =
+            file.content || "";
 
-if(!file){
 
-showError(
-"This published repository does not contain an index.html file on the default branch."
-);
+        if (!html.trim()) {
 
-return;
+            showError(
+                "The index.html file is empty."
+            );
 
-}
+            return;
+        }
 
 
-/* -----------------------------------------------
-   GET HTML
------------------------------------------------- */
+        /* ---------------------------------------------
+           WEBSITE FRAME
+        --------------------------------------------- */
 
-const html =
-file.content || "";
+        const frame =
+            document.getElementById(
+                "websiteFrame"
+            );
 
 
-if(!html.trim()){
+        /* ---------------------------------------------
+           BUILD COMPLETE HTML
+        --------------------------------------------- */
 
-showError(
-"The index.html file is empty."
-);
+        let completeHtml;
 
-return;
 
-}
+        /*
+           If index.html already contains
+           <html>, <head> or <!DOCTYPE>,
+           use it directly.
+        */
 
+        if (
+            /<html[\s>]/i.test(html) ||
+            /<!DOCTYPE/i.test(html)
+        ) {
 
-/* -----------------------------------------------
-   WEBSITE FRAME
------------------------------------------------- */
+            completeHtml = html;
 
-const frame =
-document.getElementById(
-"websiteFrame"
-);
+        } else {
 
-
-/* -----------------------------------------------
-   BUILD HTML
------------------------------------------------- */
-
-let completeHtml;
-
-
-/*
-If the uploaded index.html already contains
-<html>, <head> or <body>, use it directly.
-
-Otherwise create a complete HTML document.
-*/
-
-if(
-/<html[\s>]/i.test(html) ||
-/<!DOCTYPE/i.test(html)
-){
-
-completeHtml =
-html;
-
-}else{
-
-completeHtml = `
+            completeHtml = `
 
 <!DOCTYPE html>
 
@@ -554,10 +559,10 @@ completeHtml = `
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width,initial-scale=1.0">
+      content="width=device-width,initial-scale=1.0">
 
 <title>
-${escapeHtml(repository.name || "ASIM TECH")}
+${escapeHtml(repository.name || "Website")}
 </title>
 
 </head>
@@ -572,59 +577,59 @@ ${html}
 
 `;
 
-}
+        }
 
 
-/* -----------------------------------------------
-   DISPLAY WEBSITE
------------------------------------------------- */
+        /* ---------------------------------------------
+           LOAD WEBSITE
+        --------------------------------------------- */
 
-frame.srcdoc =
-completeHtml;
-
-
-/* -----------------------------------------------
-   PAGE TITLE
------------------------------------------------- */
-
-document.title =
-(repository.name || "Website") +
-" — ASIM TECH";
+        frame.srcdoc =
+            completeHtml;
 
 
-/* -----------------------------------------------
-   SHOW WEBSITE
------------------------------------------------- */
+        /* ---------------------------------------------
+           PAGE TITLE
+        --------------------------------------------- */
 
-document.getElementById("loading")
-.style.display="none";
-
-
-document.getElementById("website")
-.style.display="block";
+        document.title =
+            repository.name ||
+            "Published Website";
 
 
-console.log(
-"Published website loaded successfully:",
-repository.name,
-"Branch:",
-branch.name
-);
+        /* ---------------------------------------------
+           SHOW WEBSITE
+        --------------------------------------------- */
+
+        document.getElementById("loading")
+            .style.display = "none";
 
 
-}catch(error){
+        document.getElementById("website")
+            .style.display = "block";
 
-console.error(
-"Published website error:",
-error
-);
 
-showError(
-"Unable to load the published website."
-);
+        console.log(
+            "Published website loaded successfully:",
+            repository.name,
+            "Branch:",
+            branch.name
+        );
 
-}
 
+    }
+
+    catch (error) {
+
+        console.error(
+            "Published website error:",
+            error
+        );
+
+        showError(
+            "Unable to load the published website."
+        );
+    }
 }
 
 
@@ -632,20 +637,34 @@ showError(
    HTML ESCAPE
 ===================================================== */
 
-function escapeHtml(value){
+function escapeHtml(value) {
 
-return String(value)
+    return String(value)
 
-.replace(/&/g,"&amp;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-.replace(/</g,"&lt;")
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-.replace(/>/g,"&gt;")
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-.replace(/"/g,"&quot;")
+        .replace(
+            /"/g,
+            "&quot;"
+        )
 
-.replace(/'/g,"&#039;");
-
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
 
 
