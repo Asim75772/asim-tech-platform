@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ASIM TECH — Android Builder</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#07111f;color:#fff}
@@ -21,13 +22,19 @@ label{display:block;font-size:15px;color:#9fb0bf;margin:12px 0 6px}
 input,select,textarea{width:100%;background:#07111f;color:#fff;border:1px solid #304354;border-radius:9px;padding:12px;font-size:16px}
 textarea{min-height:320px;resize:vertical;font-family:monospace;font-size:14px;line-height:1.5}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.status{margin-top:10px;font-size:14px;line-height:1.5}.success{color:#36e0b5}.error{color:#ff7b72}.warn{color:#fbbf24}
+.status{margin-top:10px;font-size:14px;line-height:1.5}
+.success{color:#36e0b5}
+.error{color:#ff7b72}
+.warn{color:#fbbf24}
 .preview{background:#050c16;border:1px solid #304354;border-radius:10px;padding:12px}
 .preview iframe{width:100%;height:650px;border:0;border-radius:8px;background:#fff}
-.build-item{padding:14px 0;border-bottom:1px solid #263646}.build-item:last-child{border-bottom:0}
+.build-item{padding:14px 0;border-bottom:1px solid #263646}
+.build-item:last-child{border-bottom:0}
 .download-area{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .download-btn{display:inline-block;color:#fff;padding:13px 20px;border-radius:9px;text-decoration:none;font-weight:700;font-size:16px}
-.download{background:#238636}.open{background:#1f6feb}.small{font-size:13px;color:#9fb0bf}
+.download{background:#238636}
+.open{background:#1f6feb}
+.small{font-size:13px;color:#9fb0bf}
 .url-help{margin-top:7px;color:#9fb0bf;font-size:13px}
 .url-box{width:100%;background:#07111f;color:#fff;border:1px solid #304354;border-radius:9px;padding:14px;font-size:16px}
 .icon-area{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:8px}
@@ -35,21 +42,37 @@ textarea{min-height:320px;resize:vertical;font-family:monospace;font-size:14px;l
 .icon-preview img{width:100%;height:100%;object-fit:cover}
 .icon-actions{flex:1;min-width:240px}
 .icon-note{color:#9fb0bf;font-size:13px;line-height:1.5;margin-top:7px}
+
 @media(max-width:700px){
-.wrap{padding:10px}.row{grid-template-columns:1fr}.logo{font-size:16px}nav{padding:10px 12px}
-.btn{width:100%}.topactions .btn{width:auto;flex:1}textarea{min-height:360px}
-.download-btn{width:100%;text-align:center}.icon-area{align-items:flex-start}
+.wrap{padding:10px}
+.row{grid-template-columns:1fr}
+.logo{font-size:16px}
+nav{padding:10px 12px}
+.btn{width:100%}
+.topactions .btn{width:auto;flex:1}
+textarea{min-height:360px}
+.download-btn{width:100%;text-align:center}
+.icon-area{align-items:flex-start}
 .icon-preview{width:100px;height:100px;border-radius:20px}
 }
 </style>
 </head>
+
 <body>
+
 <nav>
-<div class="logo"><span class="green">⚡ ASIM</span> TECH — Android Builder</div>
-<div><a href="android-apps.html">My Apps</a><a href="dashboard.html">Dashboard</a></div>
+<div class="logo">
+<span class="green">⚡ ASIM</span> TECH — Android Builder
+</div>
+
+<div>
+<a href="android-apps.html">My Apps</a>
+<a href="dashboard.html">Dashboard</a>
+</div>
 </nav>
 
 <main class="wrap">
+
 <div class="topactions">
 <button id="saveBtn" class="btn greenbtn" onclick="save()">💾 Save</button>
 <button id="buildBtn" class="btn orange" onclick="requestBuild()">🏗️ Build APK</button>
@@ -59,392 +82,1435 @@ textarea{min-height:320px;resize:vertical;font-family:monospace;font-size:14px;l
 <div id="status" class="status">Loading…</div>
 
 <section class="card">
+
 <h2>App Settings</h2>
+
 <div class="row">
-<div><label>App Name</label><input id="appName" placeholder="ASIM TECH Calculator"></div>
-<div><label>Package Name</label><input id="packageName" placeholder="com.asimtech.calculator"></div>
+
+<div>
+<label>App Name</label>
+<input id="appName" placeholder="ASIM TECH Calculator">
 </div>
+
+<div>
+<label>Package Name</label>
+<input id="packageName" placeholder="com.asimtech.calculator">
+</div>
+
+</div>
+
 <div class="row">
-<div><label>Version Name</label><input id="versionName" value="1.0.0"></div>
-<div><label>Version Code</label><input id="versionCode" type="number" value="1"></div>
+
+<div>
+<label>Version Name</label>
+<input id="versionName" value="1.0.0">
+</div>
+
+<div>
+<label>Version Code</label>
+<input id="versionCode" type="number" value="1">
+</div>
+
 </div>
 
 <div style="margin-top:20px;padding-top:16px;border-top:1px solid #263646">
+
 <label>📱 App Icon</label>
+
 <div class="icon-area">
+
 <div class="icon-preview" id="iconPreview">⚡</div>
+
 <div class="icon-actions">
-<input id="appIconFile" type="file" accept="image/png,image/jpeg,image/webp" onchange="previewSelectedIcon(event)">
-<div class="icon-note">PNG, JPG or WebP image ব্যবহার করুন। Square icon ব্যবহার করা recommended. Maximum 5 MB.</div>
+
+<input
+id="appIconFile"
+type="file"
+accept="image/png,image/jpeg,image/webp"
+onchange="previewSelectedIcon(event)"
+>
+
+<div class="icon-note">
+PNG, JPG or WebP image ব্যবহার করুন।
+Square icon ব্যবহার করা recommended.
+Maximum 5 MB.
+</div>
+
 <div class="topactions" style="position:static;margin-top:10px">
-<button type="button" class="btn greenbtn" onclick="uploadAppIcon()">🖼️ Upload Icon</button>
-<button type="button" class="btn red" onclick="removeAppIcon()">🗑️ Remove</button>
+
+<button
+type="button"
+class="btn greenbtn"
+onclick="uploadAppIcon()">
+🖼️ Upload Icon
+</button>
+
+<button
+type="button"
+class="btn red"
+onclick="removeAppIcon()">
+🗑️ Remove
+</button>
+
 </div>
+
 <div id="iconStatus" class="status"></div>
+
 </div>
 </div>
 </div>
+
 </section>
 
 <section class="card">
+
 <h2>🚀 Code / URL Mode</h2>
+
 <label>Source Type</label>
+
 <select id="sourceMode" onchange="changeSourceMode()">
-<option value="code">💻 HTML / CSS / JavaScript Code</option>
-<option value="url">🌐 Web App URL</option>
+
+<option value="code">
+💻 HTML / CSS / JavaScript Code
+</option>
+
+<option value="url">
+🌐 Web App URL
+</option>
+
 </select>
+
 <div id="codeSource">
+
 <label>Paste Complete HTML Code</label>
-<textarea id="webAppCode" placeholder="Paste your complete HTML file including CSS and JavaScript..."></textarea>
+
+<textarea
+id="webAppCode"
+placeholder="Paste your complete HTML file including CSS and JavaScript..."
+></textarea>
+
 </div>
+
 <div id="urlSource" style="display:none">
+
 <label>🌐 Web App URL</label>
-<input id="webAppUrl" class="url-box" type="url" autocomplete="url" placeholder="https://example.com">
-<div class="url-help">Enter the complete website URL, including <b>https://</b></div>
+
+<input
+id="webAppUrl"
+class="url-box"
+type="url"
+autocomplete="url"
+placeholder="https://example.com"
+>
+
+<div class="url-help">
+Enter the complete website URL, including <b>https://</b>
 </div>
+
+</div>
+
 <div class="topactions" style="position:static">
-<button type="button" class="btn blue" onclick="previewWebApp()">👁 Preview</button>
-<button type="button" class="btn greenbtn" onclick="saveWebAppSource()">💾 Save Source</button>
+
+<button
+type="button"
+class="btn blue"
+onclick="previewWebApp()">
+👁 Preview
+</button>
+
+<button
+type="button"
+class="btn greenbtn"
+onclick="saveWebAppSource()">
+💾 Save Source
+</button>
+
 </div>
+
 <div id="webAppStatus" class="status"></div>
+
 </section>
 
 <section class="card">
+
 <h2>📱 Preview</h2>
-<div class="preview" id="previewBox">Select Code or URL and press Preview.</div>
+
+<div class="preview" id="previewBox">
+Select Code or URL and press Preview.
+</div>
+
 </section>
 
 <section class="card">
+
 <h2>Build History</h2>
-<div id="builds">Loading…</div>
+
+<div id="builds">
+Loading…
+</div>
+
 </section>
+
 </main>
 
 <script>
-const SUPABASE_URL="https://lgwaeqgiqrsjprsecwxx.supabase.co";
-const SUPABASE_KEY="sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const appId=new URLSearchParams(location.search).get("id");
 
-let user=null,app=null,pollingTimer=null,appIconPath=null,appIconUrl=null;
+const SUPABASE_URL =
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const sb =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+const appId =
+new URLSearchParams(location.search).get("id");
+
+let user=null;
+let app=null;
+let pollingTimer=null;
+let appIconPath=null;
+let appIconUrl=null;
+
 const $=id=>document.getElementById(id);
 
-function setStatus(text,cls=""){ $("status").textContent=text;$("status").className="status "+cls; }
-function sourceStatus(text,cls=""){ $("webAppStatus").textContent=text;$("webAppStatus").className="status "+cls; }
-function iconStatus(text,cls=""){ $("iconStatus").textContent=text;$("iconStatus").className="status "+cls; }
+function setStatus(text,cls=""){
+$("status").textContent=text;
+$("status").className="status "+cls;
+}
+
+function sourceStatus(text,cls=""){
+$("webAppStatus").textContent=text;
+$("webAppStatus").className="status "+cls;
+}
+
+function iconStatus(text,cls=""){
+$("iconStatus").textContent=text;
+$("iconStatus").className="status "+cls;
+}
 
 function esc(value){
-return String(value??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+
+return String(value??"").replace(
+/[&<>"']/g,
+m=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+}[m])
+);
+
 }
 
 function makePackage(name){
-let x=String(name||"myapp").toLowerCase().replace(/[^a-z0-9]+/g,"");
-if(!x)x="myapp";return "com.asimtech."+x;
+
+let x=String(name||"myapp")
+.toLowerCase()
+.replace(/[^a-z0-9]+/g,"");
+
+if(!x)x="myapp";
+
+return "com.asimtech."+x;
+
 }
-function validPackage(x){return /^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$/.test(x);}
+
+function validPackage(x){
+
+return /^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$/.test(x);
+
+}
 
 function changeSourceMode(){
+
 const mode=$("sourceMode").value;
-$("codeSource").style.display=mode==="url"?"none":"block";
-$("urlSource").style.display=mode==="url"?"block":"none";
+
+$("codeSource").style.display =
+mode==="url"?"none":"block";
+
+$("urlSource").style.display =
+mode==="url"?"block":"none";
+
 }
 
 function previewWebApp(){
+
 const mode=$("sourceMode").value;
+
 if(mode==="code"){
+
 const code=$("webAppCode").value.trim();
-if(!code){sourceStatus("Please paste HTML code first.","error");return;}
-const blob=new Blob([code],{type:"text/html"});
-const url=URL.createObjectURL(blob);
-$("previewBox").innerHTML=`<iframe src="${url}"></iframe>`;
-sourceStatus("Code preview loaded ✓","success");return;
+
+if(!code){
+
+sourceStatus(
+"Please paste HTML code first.",
+"error"
+);
+
+return;
+
 }
+
+const blob=new Blob(
+[code],
+{type:"text/html"}
+);
+
+const url=URL.createObjectURL(blob);
+
+$("previewBox").innerHTML=
+`<iframe src="${url}"></iframe>`;
+
+sourceStatus(
+"Code preview loaded ✓",
+"success"
+);
+
+return;
+
+}
+
 const url=$("webAppUrl").value.trim();
-if(!url){sourceStatus("Please enter a Web App URL.","error");return;}
+
+if(!url){
+
+sourceStatus(
+"Please enter a Web App URL.",
+"error"
+);
+
+return;
+
+}
+
 try{
+
 const parsed=new URL(url);
-if(parsed.protocol!=="http:"&&parsed.protocol!=="https:")throw new Error();
-}catch{sourceStatus("Please enter a valid HTTP/HTTPS URL.","error");return;}
-$("previewBox").innerHTML=`<iframe src="${esc(url)}"></iframe>`;
-sourceStatus("URL preview loaded ✓","success");
+
+if(
+parsed.protocol!=="http:" &&
+parsed.protocol!=="https:"
+)
+throw new Error();
+
+}catch{
+
+sourceStatus(
+"Please enter a valid HTTP/HTTPS URL.",
+"error"
+);
+
+return;
+
+}
+
+$("previewBox").innerHTML=
+`<iframe src="${esc(url)}"></iframe>`;
+
+sourceStatus(
+"URL preview loaded ✓",
+"success"
+);
+
 }
 
 async function loadSetting(key){
-const r=await sb.from("app_files").select("content").eq("app_id",appId).eq("file_path","android-settings.json").maybeSingle();
-if(r.error||!r.data?.content)return null;
-try{return JSON.parse(r.data.content)[key]??null;}catch{return null;}
+
+const r=await sb
+.from("app_files")
+.select("content")
+.eq("app_id",appId)
+.eq("file_path","android-settings.json")
+.maybeSingle();
+
+if(r.error || !r.data?.content)
+return null;
+
+try{
+
+return JSON.parse(r.data.content)[key]??null;
+
+}catch{
+
+return null;
+
+}
+
 }
 
 /* APP ICON */
+
 function showIcon(url){
-$("iconPreview").innerHTML=url?`<img src="${esc(url)}" alt="App Icon">`:"⚡";
+
+$("iconPreview").innerHTML=
+url
+?
+`<img src="${esc(url)}" alt="App Icon">`
+:
+"⚡";
+
 }
 
 function previewSelectedIcon(event){
-const file=event.target.files?.[0];if(!file)return;
-if(!["image/png","image/jpeg","image/webp"].includes(file.type)){
-iconStatus("Only PNG, JPG or WebP files are supported.","error");$("appIconFile").value="";return;
+
+const file=
+event.target.files?.[0];
+
+if(!file)return;
+
+if(
+![
+"image/png",
+"image/jpeg",
+"image/webp"
+].includes(file.type)
+){
+
+iconStatus(
+"Only PNG, JPG or WebP files are supported.",
+"error"
+);
+
+$("appIconFile").value="";
+
+return;
+
 }
+
 if(file.size>5*1024*1024){
-iconStatus("Icon must be 5 MB or smaller.","error");$("appIconFile").value="";return;
+
+iconStatus(
+"Icon must be 5 MB or smaller.",
+"error"
+);
+
+$("appIconFile").value="";
+
+return;
+
 }
+
 const reader=new FileReader();
-reader.onload=()=>{showIcon(reader.result);iconStatus("Icon selected. Click Upload Icon.","warn");};
+
+reader.onload=()=>{
+showIcon(reader.result);
+
+iconStatus(
+"Icon selected. Click Upload Icon.",
+"warn"
+);
+
+};
+
 reader.readAsDataURL(file);
+
 }
 
 async function uploadAppIcon(){
+
 try{
-if(!user)throw new Error("Please login first.");
-const file=$("appIconFile").files?.[0];
-if(!file){iconStatus("Please choose an icon first.","error");return;}
-if(!["image/png","image/jpeg","image/webp"].includes(file.type))throw new Error("Only PNG, JPG or WebP icons are supported.");
-if(file.size>5*1024*1024)throw new Error("Icon must be 5 MB or smaller.");
 
-iconStatus("Uploading icon…","warn");
-const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
-const path=`app-icons/${appId}-${Date.now()}.${ext}`;
+if(!user)
+throw new Error("Please login first.");
 
-const upload=await sb.storage.from("website-images").upload(path,file,{contentType:file.type,upsert:false});
-if(upload.error)throw upload.error;
+const file=
+$("appIconFile").files?.[0];
+
+if(!file){
+
+iconStatus(
+"Please choose an icon first.",
+"error"
+);
+
+return;
+
+}
+
+if(
+![
+"image/png",
+"image/jpeg",
+"image/webp"
+].includes(file.type)
+)
+throw new Error(
+"Only PNG, JPG or WebP icons are supported."
+);
+
+if(file.size>5*1024*1024)
+throw new Error(
+"Icon must be 5 MB or smaller."
+);
+
+iconStatus(
+"Uploading icon…",
+"warn"
+);
+
+const ext=
+file.type==="image/png"
+?"png"
+:file.type==="image/webp"
+?"webp"
+:"jpg";
+
+const path=
+`app-icons/${appId}-${Date.now()}.${ext}`;
+
+const upload=
+await sb.storage
+.from("website-images")
+.upload(
+path,
+file,
+{
+contentType:file.type,
+upsert:false
+}
+);
+
+if(upload.error)
+throw upload.error;
 
 if(appIconPath){
-const old=await sb.storage.from("website-images").remove([appIconPath]);
-if(old.error)console.warn("Old icon cleanup failed:",old.error);
+
+const old=
+await sb.storage
+.from("website-images")
+.remove([appIconPath]);
+
+if(old.error)
+console.warn(
+"Old icon cleanup failed:",
+old.error
+);
+
 }
 
 appIconPath=path;
-appIconUrl=sb.storage.from("website-images").getPublicUrl(path).data.publicUrl;
+
+appIconUrl=
+sb.storage
+.from("website-images")
+.getPublicUrl(path)
+.data.publicUrl;
+
 showIcon(appIconUrl);
+
 await saveSettings();
+
 $("appIconFile").value="";
-iconStatus("App icon uploaded and saved ✓","success");
+
+iconStatus(
+"App icon uploaded and saved ✓",
+"success"
+);
+
 }catch(e){
-console.error("App icon upload error:",e);
-iconStatus("Icon upload failed: "+e.message,"error");
+
+console.error(
+"App icon upload error:",
+e
+);
+
+iconStatus(
+"Icon upload failed: "+e.message,
+"error"
+);
+
 }
+
 }
 
 async function removeAppIcon(){
+
 try{
-if(!user)throw new Error("Please login first.");
+
+if(!user)
+throw new Error("Please login first.");
+
 if(appIconPath){
-const r=await sb.storage.from("website-images").remove([appIconPath]);
-if(r.error)console.warn("Icon removal warning:",r.error);
+
+const r=
+await sb.storage
+.from("website-images")
+.remove([appIconPath]);
+
+if(r.error)
+console.warn(
+"Icon removal warning:",
+r.error
+);
+
 }
-appIconPath=null;appIconUrl=null;showIcon(null);$("appIconFile").value="";
+
+appIconPath=null;
+appIconUrl=null;
+
+showIcon(null);
+
+$("appIconFile").value="";
+
 await saveSettings();
-iconStatus("App icon removed. Default icon will be used.","success");
+
+iconStatus(
+"App icon removed. Default icon will be used.",
+"success"
+);
+
 }catch(e){
-console.error("Remove icon error:",e);
-iconStatus("Unable to remove icon: "+e.message,"error");
+
+console.error(
+"Remove icon error:",
+e
+);
+
+iconStatus(
+"Unable to remove icon: "+e.message,
+"error"
+);
+
 }
+
 }
 
 async function loadAppIcon(){
-appIconPath=await loadSetting("appIconPath");
-appIconUrl=await loadSetting("appIconUrl");
-if(appIconUrl){showIcon(appIconUrl);iconStatus("Saved app icon loaded ✓","success");}
-else showIcon(null);
+
+appIconPath=
+await loadSetting("appIconPath");
+
+appIconUrl=
+await loadSetting("appIconUrl");
+
+if(appIconUrl){
+
+showIcon(appIconUrl);
+
+iconStatus(
+"Saved app icon loaded ✓",
+"success"
+);
+
+}else{
+
+showIcon(null);
+
+}
+
 }
 
 /* SOURCE */
+
 async function loadSource(){
-let r=await sb.from("app_files").select("content").eq("app_id",appId).eq("file_path","webapp-url.txt").maybeSingle();
-if(!r.error&&r.data?.content){
-$("sourceMode").value="url";$("webAppUrl").value=r.data.content.trim();changeSourceMode();return;
-}
-r=await sb.from("app_files").select("content").eq("app_id",appId).eq("file_path","index.html").maybeSingle();
-if(!r.error&&r.data?.content){
-$("sourceMode").value="code";$("webAppCode").value=r.data.content;changeSourceMode();return;
-}
+
+let r=
+await sb
+.from("app_files")
+.select("content")
+.eq("app_id",appId)
+.eq("file_path","webapp-url.txt")
+.maybeSingle();
+
+if(
+!r.error &&
+r.data?.content
+){
+
+$("sourceMode").value="url";
+
+$("webAppUrl").value=
+r.data.content.trim();
+
 changeSourceMode();
+
+return;
+
+}
+
+r=
+await sb
+.from("app_files")
+.select("content")
+.eq("app_id",appId)
+.eq("file_path","index.html")
+.maybeSingle();
+
+if(
+!r.error &&
+r.data?.content
+){
+
+$("sourceMode").value="code";
+
+$("webAppCode").value=
+r.data.content;
+
+changeSourceMode();
+
+return;
+
+}
+
+changeSourceMode();
+
 }
 
 async function saveSettings(){
+
 const settings={
-appName:$("appName").value.trim()||app?.name||"ASIM TECH App",
-packageName:$("packageName").value.trim()||makePackage(app?.name),
-versionName:$("versionName").value.trim()||"1.0.0",
-versionCode:Math.max(1,parseInt($("versionCode").value,10)||1),
-appIconPath:appIconPath||null,
-appIconUrl:appIconUrl||null
+
+appName:
+$("appName").value.trim()
+||
+app?.name
+||
+"ASIM TECH App",
+
+packageName:
+$("packageName").value.trim()
+||
+makePackage(app?.name),
+
+versionName:
+$("versionName").value.trim()
+||
+"1.0.0",
+
+versionCode:
+Math.max(
+1,
+parseInt(
+$("versionCode").value,
+10
+)||1
+),
+
+appIconPath:
+appIconPath||null,
+
+appIconUrl:
+appIconUrl||null
+
 };
-if(!validPackage(settings.packageName))throw new Error("Invalid package name. Example: com.asimtech.myapp");
 
-let r=await sb.from("app_files").upsert({
-app_id:appId,file_path:"android-settings.json",content:JSON.stringify(settings,null,2),language:"json",
-updated_at:new Date().toISOString()
-},{onConflict:"app_id,file_path"});
-if(r.error)throw r.error;
+if(
+!validPackage(
+settings.packageName
+)
+)
+throw new Error(
+"Invalid package name. Example: com.asimtech.myapp"
+);
 
-r=await sb.from("apps").update({name:settings.appName,updated_at:new Date().toISOString()}).eq("id",appId).eq("owner_id",user.id);
-if(r.error)throw r.error;
-app.name=settings.appName;
+let r=
+await sb
+.from("app_files")
+.upsert(
+{
+app_id:appId,
+file_path:"android-settings.json",
+content:JSON.stringify(
+settings,
+null,
+2
+),
+language:"json",
+updated_at:
+new Date().toISOString()
+},
+{
+onConflict:
+"app_id,file_path"
+}
+);
+
+if(r.error)
+throw r.error;
+
+r=
+await sb
+.from("apps")
+.update({
+name:settings.appName,
+updated_at:
+new Date().toISOString()
+})
+.eq("id",appId)
+.eq("owner_id",user.id);
+
+if(r.error)
+throw r.error;
+
+app.name=
+settings.appName;
+
 return settings;
+
 }
 
 function makeUrlWrapper(url){
+
 const safeUrl=esc(url);
+
 return `<!doctype html>
-<html lang="en"><head>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ASIM TECH App</title>
 <meta http-equiv="refresh" content="0;url=${safeUrl}">
 <style>
-html,body{margin:0;padding:0;width:100%;height:100%;background:#07111f;color:#fff;font-family:Arial,sans-serif}
-.loading{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}
-.loading h2{margin:0 0 10px}.loading p{margin:6px 0}a{color:#36e0b5}
-</style></head><body>
-<div class="loading"><h2>⚡ ASIM TECH</h2><p>Loading application…</p><p><a href="${safeUrl}">Open App</a></p></div>
-</body></html>`;
+html,body{
+margin:0;
+padding:0;
+width:100%;
+height:100%;
+background:#07111f;
+color:#fff;
+font-family:Arial,sans-serif
+}
+.loading{
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+text-align:center
+}
+.loading h2{margin:0 0 10px}
+.loading p{margin:6px 0}
+a{color:#36e0b5}
+</style>
+</head>
+<body>
+<div class="loading">
+<h2>⚡ ASIM TECH</h2>
+<p>Loading application…</p>
+<p>
+<a href="${safeUrl}">
+Open App
+</a>
+</p>
+</div>
+</body>
+</html>`;
+
 }
 
 async function saveWebAppSource(){
-const mode=$("sourceMode").value;
-const content=(mode==="code"?$("webAppCode").value:$("webAppUrl").value).trim();
-if(!content){sourceStatus("Nothing to save.","error");return false;}
+
+const mode=
+$("sourceMode").value;
+
+const content=
+(
+mode==="code"
+?
+$("webAppCode").value
+:
+$("webAppUrl").value
+).trim();
+
+if(!content){
+
+sourceStatus(
+"Nothing to save.",
+"error"
+);
+
+return false;
+
+}
 
 if(mode==="code"){
-let r=await sb.from("app_files").upsert({
-app_id:appId,file_path:"index.html",content:content,language:"HTML",updated_at:new Date().toISOString()
-},{onConflict:"app_id,file_path"});
-if(r.error)throw r.error;
-const del=await sb.from("app_files").delete().eq("app_id",appId).eq("file_path","webapp-url.txt");
-if(del.error)console.warn("Unable to remove old URL source:",del.error);
-sourceStatus("HTML source saved successfully ✓","success");return true;
+
+let r=
+await sb
+.from("app_files")
+.upsert(
+{
+app_id:appId,
+file_path:"index.html",
+content:content,
+language:"HTML",
+updated_at:
+new Date().toISOString()
+},
+{
+onConflict:
+"app_id,file_path"
+}
+);
+
+if(r.error)
+throw r.error;
+
+const del=
+await sb
+.from("app_files")
+.delete()
+.eq("app_id",appId)
+.eq("file_path","webapp-url.txt");
+
+if(del.error)
+console.warn(
+"Unable to remove old URL source:",
+del.error
+);
+
+sourceStatus(
+"HTML source saved successfully ✓",
+"success"
+);
+
+return true;
+
 }
 
 let parsedUrl;
-try{parsedUrl=new URL(content);}catch{sourceStatus("Invalid URL. Example: https://example.com","error");return false;}
-if(parsedUrl.protocol!=="http:"&&parsedUrl.protocol!=="https:"){sourceStatus("Only HTTP/HTTPS URLs are supported.","error");return false;}
-const cleanUrl=parsedUrl.href;
 
-let r=await sb.from("app_files").upsert({
-app_id:appId,file_path:"webapp-url.txt",content:cleanUrl,language:"URL",updated_at:new Date().toISOString()
-},{onConflict:"app_id,file_path"});
-if(r.error)throw r.error;
+try{
 
-r=await sb.from("app_files").upsert({
-app_id:appId,file_path:"index.html",content:makeUrlWrapper(cleanUrl),language:"HTML",updated_at:new Date().toISOString()
-},{onConflict:"app_id,file_path"});
-if(r.error)throw r.error;
+parsedUrl=new URL(content);
 
-sourceStatus("Web App URL saved and APK wrapper created ✓","success");return true;
+}catch{
+
+sourceStatus(
+"Invalid URL. Example: https://example.com",
+"error"
+);
+
+return false;
+
+}
+
+if(
+parsedUrl.protocol!=="http:" &&
+parsedUrl.protocol!=="https:"
+){
+
+sourceStatus(
+"Only HTTP/HTTPS URLs are supported.",
+"error"
+);
+
+return false;
+
+}
+
+const cleanUrl=
+parsedUrl.href;
+
+let r=
+await sb
+.from("app_files")
+.upsert(
+{
+app_id:appId,
+file_path:"webapp-url.txt",
+content:cleanUrl,
+language:"URL",
+updated_at:
+new Date().toISOString()
+},
+{
+onConflict:
+"app_id,file_path"
+}
+);
+
+if(r.error)
+throw r.error;
+
+r=
+await sb
+.from("app_files")
+.upsert(
+{
+app_id:appId,
+file_path:"index.html",
+content:
+makeUrlWrapper(cleanUrl),
+language:"HTML",
+updated_at:
+new Date().toISOString()
+},
+{
+onConflict:
+"app_id,file_path"
+}
+);
+
+if(r.error)
+throw r.error;
+
+sourceStatus(
+"Web App URL saved and APK wrapper created ✓",
+"success"
+);
+
+return true;
+
 }
 
 async function save(){
+
 try{
-if(!user)throw new Error("Login session not available.");
+
+if(!user)
+throw new Error(
+"Login session not available."
+);
+
 await saveSettings();
-const saved=await saveWebAppSource();
-if(!saved)throw new Error("Please provide a valid source.");
-setStatus("Project saved ✓","success");
-}catch(e){console.error("Save error:",e);setStatus("Save failed: "+e.message,"error");}
+
+const saved=
+await saveWebAppSource();
+
+if(!saved)
+throw new Error(
+"Please provide a valid source."
+);
+
+setStatus(
+"Project saved ✓",
+"success"
+);
+
+}catch(e){
+
+console.error(
+"Save error:",
+e
+);
+
+setStatus(
+"Save failed: "+e.message,
+"error"
+);
+
+}
+
 }
 
 async function requestBuild(){
-const buildBtn=$("buildBtn");
+
+const buildBtn=
+$("buildBtn");
+
 try{
-if(!user)throw new Error("Please login first.");
+
+if(!user)
+throw new Error(
+"Please login first."
+);
+
 await saveSettings();
-const saved=await saveWebAppSource();
-if(!saved)throw new Error("Please save a valid source first.");
 
-buildBtn.disabled=true;buildBtn.textContent="⏳ Starting Build…";
-setStatus("Connecting to APK build service…","warn");
+const saved=
+await saveWebAppSource();
 
-const sessionResult=await sb.auth.getSession();
-if(sessionResult.error)throw sessionResult.error;
-const session=sessionResult.data?.session;
-if(!session?.access_token)throw new Error("Login session expired. Please login again.");
+if(!saved)
+throw new Error(
+"Please save a valid source first."
+);
 
-const response=await fetch(SUPABASE_URL+"/functions/v1/request-apk-build",{
+buildBtn.disabled=true;
+
+buildBtn.textContent=
+"⏳ Starting Build…";
+
+setStatus(
+"Connecting to APK build service…",
+"warn"
+);
+
+const sessionResult=
+await sb.auth.getSession();
+
+if(sessionResult.error)
+throw sessionResult.error;
+
+const session=
+sessionResult.data?.session;
+
+if(!session?.access_token)
+throw new Error(
+"Login session expired. Please login again."
+);
+
+const response=
+await fetch(
+SUPABASE_URL+
+"/functions/v1/request-apk-build",
+{
 method:"POST",
 headers:{
 "apikey":SUPABASE_KEY,
-"Authorization":"Bearer "+session.access_token,
-"Content-Type":"application/json"
+"Authorization":
+"Bearer "+
+session.access_token,
+"Content-Type":
+"application/json"
 },
-body:JSON.stringify({app_id:appId,version_name:$("versionName").value.trim()})
-});
+body:JSON.stringify({
+app_id:appId,
+version_name:
+$("versionName").value.trim()
+})
+}
+);
 
-let result={};try{result=await response.json();}catch{}
-if(!response.ok)throw new Error(result.error||result.message||result.detail||"Automatic APK build could not be started.");
+let result={};
 
-setStatus("APK build started automatically ✓","success");
-await loadBuilds();startBuildPolling();
+try{
+
+result=
+await response.json();
+
+}catch{}
+
+if(!response.ok)
+
+throw new Error(
+result.error ||
+result.message ||
+result.detail ||
+"Automatic APK build could not be started."
+);
+
+setStatus(
+"APK build started automatically ✓",
+"success"
+);
+
+await loadBuilds();
+
+startBuildPolling();
+
 }catch(e){
-console.error("APK build request error:",e);setStatus("Build request failed: "+e.message,"error");
-}finally{buildBtn.disabled=false;buildBtn.textContent="🏗️ Build APK";}
+
+console.error(
+"APK build request error:",
+e
+);
+
+setStatus(
+"Build request failed: "+e.message,
+"error"
+);
+
+}finally{
+
+buildBtn.disabled=false;
+
+buildBtn.textContent=
+"🏗️ Build APK";
+
+}
+
 }
 
 function startBuildPolling(){
-if(pollingTimer)clearInterval(pollingTimer);
+
+if(pollingTimer)
+clearInterval(pollingTimer);
+
 let count=0;
-pollingTimer=setInterval(async()=>{
-count++;await loadBuilds();
-if(count>=30){clearInterval(pollingTimer);pollingTimer=null;}
-},10000);
+
+pollingTimer=
+setInterval(
+async()=>{
+count++;
+
+await loadBuilds();
+
+if(count>=30){
+
+clearInterval(
+pollingTimer
+);
+
+pollingTimer=null;
+
 }
 
+},
+10000
+);
+
+}
+
+/* =====================================================
+   APK DOWNLOAD URL
+   DIRECT SUPABASE PUBLIC STORAGE
+   ===================================================== */
+
 function getDownloadUrl(build){
-if(!build?.storage_path)return null;
-return SUPABASE_URL+"/functions/v1/download-apk?path="+encodeURIComponent(build.storage_path)+"&name="+encodeURIComponent(build.file_name||"ASIM-TECH-App.apk");
+
+if(!build?.storage_path)
+return null;
+
+const fileName=
+build.file_name ||
+"ASIM-TECH-App.apk";
+
+return (
+SUPABASE_URL +
+"/storage/v1/object/public/android-apks/" +
+build.storage_path +
+"?download=" +
+encodeURIComponent(fileName)
+);
+
 }
 
 async function loadBuilds(){
-const r=await sb.from("app_builds").select("*").eq("app_id",appId).order("created_at",{ascending:false}).limit(10);
-if(r.error){$("builds").innerHTML='<div class="error">Unable to load builds.</div>';return;}
-if(!r.data?.length){$("builds").textContent="No build requested yet.";return;}
 
-$("builds").innerHTML=r.data.map(build=>{
-let cls=build.status==="success"?"success":build.status==="failed"?"error":"warn";
-let buttons="";
-if(build.status==="success"&&build.storage_path){
-const url=getDownloadUrl(build);
-buttons=`<div class="download-area">
-<a class="download-btn download" href="${url}" target="_blank" rel="noopener">📥 Download APK</a>
-<a class="download-btn open" href="${url}" target="_blank" rel="noopener">📱 Open APK</a>
-</div>`;
+const r=
+await sb
+.from("app_builds")
+.select("*")
+.eq("app_id",appId)
+.order(
+"created_at",
+{ascending:false}
+)
+.limit(10);
+
+if(r.error){
+
+$("builds").innerHTML=
+'<div class="error">Unable to load builds.</div>';
+
+return;
+
 }
-let log=build.build_log?`<br><br><span class="small">${esc(build.build_log)}</span>`:"";
-return `<div class="build-item">
-<b>v${esc(build.version_name||"1.0.0")}</b> — <span class="${cls}">${esc(build.status||"queued")}</span><br>
-${build.created_at?new Date(build.created_at).toLocaleString():""}
-${build.file_name?`<br>📦 ${esc(build.file_name)}`:""}
-${build.file_size?`<br>📏 ${(build.file_size/1024).toFixed(2)} KB`:""}
-${log}${buttons}</div>`;
+
+if(!r.data?.length){
+
+$("builds").textContent=
+"No build requested yet.";
+
+return;
+
+}
+
+$("builds").innerHTML=
+r.data.map(build=>{
+
+let cls=
+build.status==="success"
+?
+"success"
+:
+build.status==="failed"
+?
+"error"
+:
+"warn";
+
+let buttons="";
+
+if(
+build.status==="success" &&
+build.storage_path
+){
+
+const url=
+getDownloadUrl(build);
+
+buttons=`
+<div class="download-area">
+
+<a
+class="download-btn download"
+href="${url}"
+download="${esc(build.file_name||"ASIM-TECH-App.apk")}"
+>
+📥 Download APK
+</a>
+
+<a
+class="download-btn open"
+href="${url}"
+target="_blank"
+rel="noopener"
+>
+📱 Open APK
+</a>
+
+</div>
+`;
+
+}
+
+let log=
+build.build_log
+?
+`<br><br>
+<span class="small">
+${esc(build.build_log)}
+</span>`
+:
+"";
+
+return `
+<div class="build-item">
+
+<b>
+v${esc(build.version_name||"1.0.0")}
+</b>
+—
+<span class="${cls}">
+${esc(build.status||"queued")}
+</span>
+
+<br>
+
+${
+build.created_at
+?
+new Date(build.created_at)
+.toLocaleString()
+:
+""
+}
+
+${
+build.file_name
+?
+`<br>📦 ${esc(build.file_name)}`
+:
+""
+}
+
+${
+build.file_size
+?
+`<br>📏 ${(build.file_size/1024).toFixed(2)} KB`
+:
+""
+}
+
+${log}
+
+${buttons}
+
+</div>
+`;
+
 }).join("");
+
 }
 
 async function init(){
+
 try{
-if(!appId){setStatus("Missing app ID.","error");return;}
-const {data:{user:u},error:userError}=await sb.auth.getUser();
-if(userError)throw userError;
-if(!u){location.href="login.html";return;}
+
+if(!appId){
+
+setStatus(
+"Missing app ID.",
+"error"
+);
+
+return;
+
+}
+
+const {
+data:{user:u},
+error:userError
+}=
+await sb.auth.getUser();
+
+if(userError)
+throw userError;
+
+if(!u){
+
+location.href=
+"login.html";
+
+return;
+
+}
+
 user=u;
 
-const r=await sb.from("apps").select("*").eq("id",appId).eq("owner_id",user.id).single();
-if(r.error)throw r.error;
+const r=
+await sb
+.from("apps")
+.select("*")
+.eq("id",appId)
+.eq("owner_id",user.id)
+.single();
+
+if(r.error)
+throw r.error;
+
 app=r.data;
 
-$("appName").value=app.name||"";
-$("packageName").value=await loadSetting("packageName")||makePackage(app.name);
-$("versionName").value=await loadSetting("versionName")||"1.0.0";
-$("versionCode").value=await loadSetting("versionCode")||1;
+$("appName").value=
+app.name||"";
+
+$("packageName").value=
+await loadSetting("packageName")
+||
+makePackage(app.name);
+
+$("versionName").value=
+await loadSetting("versionName")
+||
+"1.0.0";
+
+$("versionCode").value=
+await loadSetting("versionCode")
+||
+1;
 
 await loadAppIcon();
+
 await loadSource();
+
 await loadBuilds();
-setStatus("Builder ready ✓","success");
-}catch(e){console.error("Builder init error:",e);setStatus("Unable to load builder: "+e.message,"error");}
+
+setStatus(
+"Builder ready ✓",
+"success"
+);
+
+}catch(e){
+
+console.error(
+"Builder init error:",
+e
+);
+
+setStatus(
+"Unable to load builder: "+
+e.message,
+"error"
+);
+
+}
+
 }
 
 changeSourceMode();
+
 init();
+
 </script>
+
 </body>
 </html>
