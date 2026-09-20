@@ -103,13 +103,10 @@ jobs:
           fi
 
           echo "Build ID: $BUILD_ID"
-
           echo "App ID: $APP_ID"
 
           echo "has_build=true" >> "$GITHUB_OUTPUT"
-
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
-
           echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
 
 
@@ -322,15 +319,10 @@ jobs:
           APP_ICON_PATH=$(jq -r '.appIconPath // empty' android-settings.json)
 
           echo "APP_NAME=$APP_NAME" >> "$GITHUB_ENV"
-
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> "$GITHUB_ENV"
-
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
-
           echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
-
           echo "APP_ICON_URL=$APP_ICON_URL" >> "$GITHUB_ENV"
-
           echo "APP_ICON_PATH=$APP_ICON_PATH" >> "$GITHUB_ENV"
 
 
@@ -346,17 +338,12 @@ jobs:
         run: |
 
           mkdir -p android-project/app/src/main/res/mipmap-mdpi
-
           mkdir -p android-project/app/src/main/res/mipmap-hdpi
-
           mkdir -p android-project/app/src/main/res/mipmap-xhdpi
-
           mkdir -p android-project/app/src/main/res/mipmap-xxhdpi
-
           mkdir -p android-project/app/src/main/res/mipmap-xxxhdpi
 
           ICON_FILE="launcher-icon.png"
-
 
           if [ -n "$APP_ICON_PATH" ]; then
 
@@ -456,7 +443,6 @@ jobs:
         run: |
 
           mkdir -p android-project/app/src/main/java
-
           mkdir -p android-project/app/src/main/assets
 
           cp -r webapp/* \
@@ -525,15 +511,19 @@ jobs:
 
                   versionName '${VERSION_NAME}'
               }
+          }
 
-              dependencies {
-              }
+          dependencies {
+
+              implementation 'androidx.webkit:webkit:1.12.1'
+
           }
           EOF
 
 
       # ==================================================
       # 15. ANDROID MANIFEST
+      # CAMERA PERMISSION
       # ==================================================
 
       - name: Create Android Manifest
@@ -545,8 +535,18 @@ jobs:
           cat > android-project/app/src/main/AndroidManifest.xml <<EOF
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+              <!-- Internet -->
               <uses-permission
                   android:name="android.permission.INTERNET" />
+
+              <!-- CAMERA PERMISSION -->
+              <uses-permission
+                  android:name="android.permission.CAMERA" />
+
+              <!-- Camera feature -->
+              <uses-feature
+                  android:name="android.hardware.camera"
+                  android:required="false" />
 
               <application
                   android:allowBackup="true"
@@ -580,7 +580,7 @@ jobs:
 
       # ==================================================
       # 16. MAIN ACTIVITY
-      # DISPLAY + FOOTER INSET FIX + BENGALI TTS
+      # WEBVIEW + CAMERA PERMISSION
       # ==================================================
 
       - name: Create MainActivity
@@ -594,20 +594,28 @@ jobs:
           cat > "$JAVA_PATH/MainActivity.java" <<EOF
           package ${PACKAGE_NAME};
 
+          import android.Manifest;
           import android.app.Activity;
-          import android.os.Bundle;
-
+          import android.content.pm.PackageManager;
           import android.graphics.Color;
           import android.graphics.Insets;
-
+          import android.net.Uri;
+          import android.os.Bundle;
           import android.view.WindowInsets;
 
-          import android.webkit.WebView;
+          import android.webkit.PermissionRequest;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebResourceResponse;
           import android.webkit.WebSettings;
-          import android.webkit.WebViewClient;
+          import android.webkit.WebView;
+
           import android.webkit.JavascriptInterface;
 
           import android.speech.tts.TextToSpeech;
+
+          import androidx.webkit.WebViewAssetLoader;
+          import androidx.webkit.WebViewClientCompat;
 
           import java.util.Locale;
 
@@ -618,6 +626,10 @@ jobs:
               private WebView webView;
 
               private TextToSpeech textToSpeech;
+
+              private PermissionRequest pendingPermissionRequest;
+
+              private static final int CAMERA_PERMISSION_REQUEST = 1001;
 
 
               @Override
@@ -644,7 +656,6 @@ jobs:
                   // ==========================================
 
                   webView = new WebView(this);
-
 
                   WebSettings settings =
                       webView.getSettings();
@@ -674,7 +685,7 @@ jobs:
 
 
                   // ==========================================
-                  // DISPLAY / VIEWPORT FIX
+                  // VIEWPORT
                   // ==========================================
 
                   settings.setUseWideViewPort(true);
@@ -698,17 +709,176 @@ jobs:
 
 
                   // ==========================================
+                  // WEBVIEW ASSET LOADER
+                  // ==========================================
+
+                  final WebViewAssetLoader assetLoader =
+                      new WebViewAssetLoader.Builder()
+                          .addPathHandler(
+                              "/assets/",
+                              new WebViewAssetLoader.AssetsPathHandler(
+                                  this
+                              )
+                          )
+                          .build();
+
+
+                  // ==========================================
                   // WEBVIEW CLIENT
                   // ==========================================
 
                   webView.setWebViewClient(
-                      new WebViewClient()
+                      new WebViewClientCompat() {
+
+                          @Override
+                          public WebResourceResponse
+                          shouldInterceptRequest(
+                              WebView view,
+                              WebResourceRequest request
+                          ) {
+
+                              return assetLoader
+                                  .shouldInterceptRequest(
+                                      request.getUrl()
+                                  );
+                          }
+
+                          @Override
+                          public WebResourceResponse
+                          shouldInterceptRequest(
+                              WebView view,
+                              String url
+                          ) {
+
+                              return assetLoader
+                                  .shouldInterceptRequest(
+                                      Uri.parse(url)
+                                  );
+                          }
+                      }
+                  );
+
+
+                  // ==========================================
+                  // CAMERA PERMISSION
+                  // ==========================================
+
+                  webView.setWebChromeClient(
+                      new WebChromeClient() {
+
+                          @Override
+                          public void onPermissionRequest(
+                              final PermissionRequest request
+                          ) {
+
+                              runOnUiThread(() -> {
+
+                                  boolean cameraRequested =
+                                      false;
+
+                                  String[] resources =
+                                      request.getResources();
+
+
+                                  if (resources != null) {
+
+                                      for (
+                                          String resource :
+                                          resources
+                                      ) {
+
+                                          if (
+                                              PermissionRequest
+                                                  .RESOURCE_VIDEO_CAPTURE
+                                                  .equals(resource)
+                                          ) {
+
+                                              cameraRequested = true;
+
+                                              break;
+                                          }
+                                      }
+                                  }
+
+
+                                  if (!cameraRequested) {
+
+                                      request.deny();
+
+                                      return;
+                                  }
+
+
+                                  // ==================================
+                                  // CAMERA ALREADY GRANTED
+                                  // ==================================
+
+                                  if (
+                                      checkSelfPermission(
+                                          Manifest.permission.CAMERA
+                                      ) ==
+                                      PackageManager.PERMISSION_GRANTED
+                                  ) {
+
+                                      request.grant(
+                                          new String[] {
+                                              PermissionRequest
+                                                  .RESOURCE_VIDEO_CAPTURE
+                                          }
+                                      );
+
+                                      return;
+                                  }
+
+
+                                  // ==================================
+                                  // SAVE REQUEST
+                                  // ==================================
+
+                                  pendingPermissionRequest =
+                                      request;
+
+
+                                  // ==================================
+                                  // ASK ANDROID PERMISSION
+                                  // ==================================
+
+                                  requestPermissions(
+                                      new String[] {
+                                          Manifest.permission.CAMERA
+                                      },
+                                      CAMERA_PERMISSION_REQUEST
+                                  );
+
+                              });
+                          }
+
+
+                          @Override
+                          public void onPermissionRequestCanceled(
+                              PermissionRequest request
+                          ) {
+
+                              if (
+                                  pendingPermissionRequest ==
+                                  request
+                              ) {
+
+                                  pendingPermissionRequest =
+                                      null;
+                              }
+
+                              super.onPermissionRequestCanceled(
+                                  request
+                              );
+                          }
+
+                      }
                   );
 
 
                   // ==========================================
                   // SYSTEM WINDOW INSETS
-                  // FOOTER / BOTTOM PLAYER FIX
                   // ==========================================
 
                   webView.setOnApplyWindowInsetsListener(
@@ -813,11 +983,11 @@ jobs:
 
 
                   // ==========================================
-                  // LOAD WEB APP
+                  // LOAD LOCAL APP
                   // ==========================================
 
                   webView.loadUrl(
-                      "file:///android_asset/index.html"
+                      "https://appassets.androidplatform.net/assets/index.html"
                   );
 
 
@@ -827,6 +997,62 @@ jobs:
 
                   setContentView(webView);
 
+              }
+
+
+              // ==========================================
+              // CAMERA PERMISSION RESULT
+              // ==========================================
+
+              @Override
+              public void onRequestPermissionsResult(
+                  int requestCode,
+                  String[] permissions,
+                  int[] grantResults
+              ) {
+
+                  super.onRequestPermissionsResult(
+                      requestCode,
+                      permissions,
+                      grantResults
+                  );
+
+
+                  if (
+                      requestCode ==
+                      CAMERA_PERMISSION_REQUEST
+                  ) {
+
+                      if (
+                          pendingPermissionRequest !=
+                          null
+                      ) {
+
+                          if (
+                              grantResults.length > 0
+                              &&
+                              grantResults[0] ==
+                                  PackageManager.PERMISSION_GRANTED
+                          ) {
+
+                              pendingPermissionRequest.grant(
+                                  new String[] {
+                                      PermissionRequest
+                                          .RESOURCE_VIDEO_CAPTURE
+                                  }
+                              );
+
+                          } else {
+
+                              pendingPermissionRequest.deny();
+
+                          }
+
+
+                          pendingPermissionRequest =
+                              null;
+                      }
+                  }
               }
 
 
@@ -845,13 +1071,11 @@ jobs:
                       float pitch
                   ) {
 
-
                       if (
                           textToSpeech == null
                       ) {
 
                           return;
-
                       }
 
 
@@ -876,7 +1100,6 @@ jobs:
 
                           locale =
                               Locale.US;
-
                       }
 
 
@@ -897,18 +1120,12 @@ jobs:
                           textToSpeech.setLanguage(
                               Locale.US
                           );
-
                       }
 
 
-                      textToSpeech.setSpeechRate(
-                          rate
-                      );
+                      textToSpeech.setSpeechRate(rate);
 
-
-                      textToSpeech.setPitch(
-                          pitch
-                      );
+                      textToSpeech.setPitch(pitch);
 
 
                       textToSpeech.speak(
@@ -923,7 +1140,6 @@ jobs:
 
                   @JavascriptInterface
                   public void cancel() {
-
 
                       if (
                           textToSpeech != null
@@ -944,7 +1160,6 @@ jobs:
 
               @Override
               public void onBackPressed() {
-
 
                   if (
                       webView.canGoBack()
@@ -967,7 +1182,6 @@ jobs:
 
               @Override
               protected void onDestroy() {
-
 
                   if (
                       textToSpeech != null
