@@ -18,7 +18,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+
   build:
+
     runs-on: ubuntu-latest
 
     env:
@@ -35,7 +37,7 @@ jobs:
 
 
       # =========================================================
-      # 2. JAVA
+      # 2. JAVA 17
       # =========================================================
 
       - name: Setup Java 17
@@ -46,7 +48,7 @@ jobs:
 
 
       # =========================================================
-      # 3. TOOLS
+      # 3. INSTALL TOOLS
       # =========================================================
 
       - name: Install dependencies
@@ -56,7 +58,7 @@ jobs:
 
 
       # =========================================================
-      # 4. GRADLE
+      # 4. SETUP GRADLE
       # =========================================================
 
       - name: Setup Gradle
@@ -71,11 +73,16 @@ jobs:
 
       - name: Get queued build
         id: queue
+
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
         run: |
+
+          echo "========================================"
+          echo "ASIM TECH APK BUILDER"
           echo "Checking queued builds..."
+          echo "========================================"
 
           RESPONSE=$(curl -sS \
             "${SUPABASE_URL}/rest/v1/app_builds?status=eq.queued&order=queued_at.asc&limit=1" \
@@ -85,30 +92,44 @@ jobs:
           echo "$RESPONSE"
 
           BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
+
           APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
 
+
           if [ -z "$BUILD_ID" ] || [ -z "$APP_ID" ]; then
+
             echo "No queued build found."
+
             echo "has_build=false" >> "$GITHUB_OUTPUT"
+
             exit 0
+
           fi
 
+
           echo "BUILD_ID=$BUILD_ID"
+
           echo "APP_ID=$APP_ID"
 
+
           echo "has_build=true" >> "$GITHUB_OUTPUT"
+
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
+
           echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
 
 
       # =========================================================
-      # 6. STOP IF NO BUILD
+      # 6. STOP IF QUEUE EMPTY
       # =========================================================
 
       - name: Stop if queue empty
         if: steps.queue.outputs.has_build != 'true'
+
         run: |
+
           echo "No queued APK build."
+
           exit 0
 
 
@@ -118,11 +139,16 @@ jobs:
 
       - name: Mark build as building
         if: steps.queue.outputs.has_build == 'true'
+
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
 
         run: |
+
+          echo "Marking build as building..."
+
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
@@ -143,12 +169,18 @@ jobs:
 
       - name: Download app files
         if: steps.queue.outputs.has_build == 'true'
+
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
           APP_ID: ${{ steps.queue.outputs.app_id }}
 
         run: |
+
+          echo "Downloading application files..."
+
           mkdir -p source
+
 
           curl -sS \
             "${SUPABASE_URL}/rest/v1/app_files?app_id=eq.${APP_ID}&select=file_path,content,language" \
@@ -156,7 +188,10 @@ jobs:
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
             > source/files.json
 
+
           echo "Downloaded app files."
+
+          echo "Number of files:"
 
           jq 'length' source/files.json
 
@@ -167,18 +202,36 @@ jobs:
 
       - name: Create source files
         if: steps.queue.outputs.has_build == 'true'
+
         run: |
+
+          echo "Creating web application files..."
+
           mkdir -p webapp
+
 
           jq -c '.[]' source/files.json | while read -r item
           do
+
             FILE_PATH=$(echo "$item" | jq -r '.file_path')
+
             CONTENT=$(echo "$item" | jq -r '.content')
+
+
+            if [ -z "$FILE_PATH" ] || [ "$FILE_PATH" = "null" ]; then
+
+              continue
+
+            fi
+
 
             mkdir -p "webapp/$(dirname "$FILE_PATH")"
 
+
             printf '%s' "$CONTENT" > "webapp/$FILE_PATH"
+
           done
+
 
           echo "Source files created."
 
@@ -186,46 +239,68 @@ jobs:
 
 
       # =========================================================
-      # 10. CHECK INDEX
+      # 10. PREPARE INDEX
       # =========================================================
 
       - name: Prepare web application
         if: steps.queue.outputs.has_build == 'true'
+
         run: |
+
+          echo "Checking index.html..."
+
+
           if [ ! -f "webapp/index.html" ]; then
+
 
             if [ -f "webapp/webapp-url.txt" ]; then
 
+
               URL=$(cat "webapp/webapp-url.txt" | tr -d '\r\n')
 
+
               cat > webapp/index.html <<EOF
-          <!DOCTYPE html>
-          <html>
-          <head>
-          <meta charset="UTF-8">
-          <meta name="viewport"
-                content="width=device-width,
-                         initial-scale=1.0,
-                         maximum-scale=1.0,
-                         user-scalable=no">
-          <title>ASIM TECH App</title>
-          </head>
-          <body>
-          <script>
-          window.location.replace("$URL");
-          </script>
-          </body>
-          </html>
-          EOF
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>ASIM TECH App</title>
+
+</head>
+
+<body>
+
+<script>
+
+window.location.replace("$URL");
+
+</script>
+
+</body>
+
+</html>
+EOF
+
 
             else
 
               echo "ERROR: index.html not found."
+
               exit 1
 
             fi
 
           fi
+
 
           echo "index.html ready."
 
@@ -236,24 +311,35 @@ jobs:
 
       - name: Read Android settings
         if: steps.queue.outputs.has_build == 'true'
+
         run: |
 
+          echo "Reading Android settings..."
+
+
           if [ -f "webapp/android-settings.json" ]; then
-            cp "webapp/android-settings.json" android-settings.json
+
+            cp \
+              "webapp/android-settings.json" \
+              android-settings.json
+
           else
 
+
             cat > android-settings.json <<EOF
-          {
-            "appName": "ASIM TECH APP",
-            "packageName": "com.asimtech.app",
-            "versionName": "1.0.0",
-            "versionCode": 1
-          }
-          EOF
+{
+  "appName": "ASIM TECH APP",
+  "packageName": "com.asimtech.app",
+  "versionName": "1.0.0",
+  "versionCode": 1
+}
+EOF
 
           fi
 
+
           cat android-settings.json
+
 
           APP_NAME=$(jq -r '.appName // "ASIM TECH APP"' android-settings.json)
 
@@ -267,12 +353,27 @@ jobs:
 
           APP_ICON_PATH=$(jq -r '.appIconPath // empty' android-settings.json)
 
+
           echo "APP_NAME=$APP_NAME" >> "$GITHUB_ENV"
+
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> "$GITHUB_ENV"
+
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+
           echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
+
           echo "APP_ICON_URL=$APP_ICON_URL" >> "$GITHUB_ENV"
+
           echo "APP_ICON_PATH=$APP_ICON_PATH" >> "$GITHUB_ENV"
+
+
+          echo "APP_NAME=$APP_NAME"
+
+          echo "PACKAGE_NAME=$PACKAGE_NAME"
+
+          echo "VERSION_NAME=$VERSION_NAME"
+
+          echo "VERSION_CODE=$VERSION_CODE"
 
 
       # =========================================================
@@ -281,32 +382,57 @@ jobs:
 
       - name: Create Android project
         if: steps.queue.outputs.has_build == 'true'
+
         run: |
 
-          mkdir -p android-project/app/src/main/assets
+          echo "Creating Android project..."
 
-          cp -r webapp/* \
+
+          mkdir -p \
+            android-project/app/src/main/assets
+
+
+          cp -r \
+            webapp/. \
             android-project/app/src/main/assets/
 
 
+          echo "Android project created."
+
+
       # =========================================================
-      # 13. CREATE ICON
+      # 13. PREPARE LAUNCHER ICON
       # =========================================================
 
       - name: Prepare launcher icon
         if: steps.queue.outputs.has_build == 'true'
+
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
         run: |
 
-          mkdir -p android-project/app/src/main/res/mipmap-mdpi
-          mkdir -p android-project/app/src/main/res/mipmap-hdpi
-          mkdir -p android-project/app/src/main/res/mipmap-xhdpi
-          mkdir -p android-project/app/src/main/res/mipmap-xxhdpi
-          mkdir -p android-project/app/src/main/res/mipmap-xxxhdpi
+          echo "Preparing launcher icon..."
+
+
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-mdpi
+
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-hdpi
+
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-xhdpi
+
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-xxhdpi
+
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-xxxhdpi
+
 
           ICON_FILE="launcher-icon.png"
+
 
           if [ -n "$APP_ICON_PATH" ]; then
 
@@ -318,6 +444,7 @@ jobs:
 
           fi
 
+
           if [ ! -s "$ICON_FILE" ] && [ -n "$APP_ICON_URL" ]; then
 
             curl -fL \
@@ -326,7 +453,11 @@ jobs:
 
           fi
 
+
           if [ ! -s "$ICON_FILE" ]; then
+
+            echo "Creating default ASIM TECH icon..."
+
 
             convert \
               -size 512x512 \
@@ -338,25 +469,31 @@ jobs:
 
           fi
 
+
           convert "$ICON_FILE" \
             -resize 48x48 \
             android-project/app/src/main/res/mipmap-mdpi/ic_launcher.png
+
 
           convert "$ICON_FILE" \
             -resize 72x72 \
             android-project/app/src/main/res/mipmap-hdpi/ic_launcher.png
 
+
           convert "$ICON_FILE" \
             -resize 96x96 \
             android-project/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+
 
           convert "$ICON_FILE" \
             -resize 144x144 \
             android-project/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
 
+
           convert "$ICON_FILE" \
             -resize 192x192 \
             android-project/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
 
           for density in mdpi hdpi xhdpi xxhdpi xxxhdpi
           do
@@ -368,547 +505,922 @@ jobs:
           done
 
 
+          echo "Launcher icon ready."
+
+
       # =========================================================
-      # 14. GRADLE FILES
+      # 14. GRADLE PROPERTIES
       # =========================================================
 
-      - name: Create Gradle files
+      - name: Create Gradle properties
         if: steps.queue.outputs.has_build == 'true'
+
         run: |
 
           cat > android-project/gradle.properties <<EOF
-          android.useAndroidX=true
-          android.enableJetifier=true
-          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-          EOF
-
-
-          cat > android-project/settings.gradle <<EOF
-          pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-
-          dependencyResolutionManagement {
-              repositoriesMode.set(
-                  RepositoriesMode.FAIL_ON_PROJECT_REPOS
-              )
-
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-          }
-
-          rootProject.name = "GeneratedApp"
-
-          include(":app")
-          EOF
-
-
-          cat > android-project/build.gradle <<EOF
-          plugins {
-              id 'com.android.application'
-                  version '8.7.3'
-                  apply false
-          }
-          EOF
-
-
-          cat > android-project/app/build.gradle <<EOF
-          plugins {
-              id 'com.android.application'
-          }
-
-          android {
-              namespace '${PACKAGE_NAME}'
-
-              compileSdk 35
-
-              defaultConfig {
-                  applicationId '${PACKAGE_NAME}'
-                  minSdk 23
-                  targetSdk 35
-                  versionCode ${VERSION_CODE}
-                  versionName '${VERSION_NAME}'
-              }
-          }
-
-          dependencies {
-              implementation 'androidx.webkit:webkit:1.12.1'
-          }
-          EOF
+android.useAndroidX=true
+android.enableJetifier=true
+org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+EOF
 
 
       # =========================================================
-      # 15. ANDROID MANIFEST
+      # 15. ROOT SETTINGS.GRADLE
+      # =========================================================
+
+      - name: Create settings.gradle
+        if: steps.queue.outputs.has_build == 'true'
+
+        run: |
+
+          cat > android-project/settings.gradle <<EOF
+pluginManagement {
+
+    repositories {
+
+        google()
+
+        mavenCentral()
+
+        gradlePluginPortal()
+
+    }
+
+}
+
+
+dependencyResolutionManagement {
+
+    repositories {
+
+        google()
+
+        mavenCentral()
+
+    }
+
+}
+
+
+rootProject.name = "GeneratedApp"
+
+
+include(":app")
+EOF
+
+
+      # =========================================================
+      # 16. ROOT BUILD.GRADLE
+      # =========================================================
+
+      - name: Create root build.gradle
+        if: steps.queue.outputs.has_build == 'true'
+
+        run: |
+
+          cat > android-project/build.gradle <<EOF
+plugins {
+
+    id 'com.android.application' version '8.7.3' apply false
+
+}
+EOF
+
+
+          echo "Root build.gradle created."
+
+
+      # =========================================================
+      # 17. APP BUILD.GRADLE
+      # =========================================================
+
+      - name: Create app build.gradle
+        if: steps.queue.outputs.has_build == 'true'
+
+        run: |
+
+          cat > android-project/app/build.gradle <<EOF
+plugins {
+
+    id 'com.android.application'
+
+}
+
+
+android {
+
+    namespace '${PACKAGE_NAME}'
+
+    compileSdk 35
+
+
+    defaultConfig {
+
+        applicationId '${PACKAGE_NAME}'
+
+        minSdk 23
+
+        targetSdk 35
+
+        versionCode ${VERSION_CODE}
+
+        versionName '${VERSION_NAME}'
+
+    }
+
+}
+
+
+dependencies {
+
+    implementation 'androidx.webkit:webkit:1.12.1'
+
+}
+EOF
+
+
+          echo "App build.gradle created."
+
+
+      # =========================================================
+      # 18. ANDROID MANIFEST
       # CAMERA PERMISSION
       # =========================================================
 
       - name: Create Android Manifest
         if: steps.queue.outputs.has_build == 'true'
+
         run: |
 
-          mkdir -p android-project/app/src/main
+          mkdir -p \
+            android-project/app/src/main
+
 
           cat > android-project/app/src/main/AndroidManifest.xml <<EOF
-          <manifest
-              xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-              <uses-permission
-                  android:name="android.permission.INTERNET" />
 
-              <uses-permission
-                  android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.INTERNET" />
 
-              <uses-feature
-                  android:name="android.hardware.camera"
-                  android:required="false" />
 
-              <application
-                  android:allowBackup="true"
-                  android:usesCleartextTraffic="true"
-                  android:theme="@style/AppTheme"
-                  android:label="${APP_NAME}"
-                  android:icon="@mipmap/ic_launcher"
-                  android:roundIcon="@mipmap/ic_launcher_round">
+    <!-- CAMERA PERMISSION -->
 
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true">
+    <uses-permission
+        android:name="android.permission.CAMERA" />
 
-                      <intent-filter>
 
-                          <action
-                              android:name="android.intent.action.MAIN" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
-                          <category
-                              android:name="android.intent.category.LAUNCHER" />
 
-                      </intent-filter>
+    <application
 
-                  </activity>
+        android:allowBackup="true"
 
-              </application>
+        android:usesCleartextTraffic="true"
 
-          </manifest>
-          EOF
+        android:theme="@style/AppTheme"
+
+        android:label="${APP_NAME}"
+
+        android:icon="@mipmap/ic_launcher"
+
+        android:roundIcon="@mipmap/ic_launcher_round">
+
+
+        <activity
+
+            android:name=".MainActivity"
+
+            android:exported="true">
+
+
+            <intent-filter>
+
+                <action
+                    android:name="android.intent.action.MAIN" />
+
+
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
+
+            </intent-filter>
+
+
+        </activity>
+
+
+    </application>
+
+
+</manifest>
+EOF
+
+
+          echo "AndroidManifest.xml created."
 
 
       # =========================================================
-      # 16. MAIN ACTIVITY
-      # WEBVIEW + CAMERA
+      # 19. MAIN ACTIVITY
+      # WEBVIEW + CAMERA PERMISSION
       # =========================================================
 
       - name: Create MainActivity
         if: steps.queue.outputs.has_build == 'true'
+
         run: |
 
           JAVA_PATH="android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')"
 
+
           mkdir -p "$JAVA_PATH"
 
+
           cat > "$JAVA_PATH/MainActivity.java" <<EOF
-          package ${PACKAGE_NAME};
+package ${PACKAGE_NAME};
 
-          import android.Manifest;
-          import android.app.Activity;
-          import android.content.pm.PackageManager;
-          import android.graphics.Color;
-          import android.os.Bundle;
-          import android.webkit.PermissionRequest;
-          import android.webkit.WebChromeClient;
-          import android.webkit.WebResourceRequest;
-          import android.webkit.WebResourceResponse;
-          import android.webkit.WebSettings;
-          import android.webkit.WebView;
 
-          import androidx.webkit.WebViewAssetLoader;
-          import androidx.webkit.WebViewClientCompat;
+import android.Manifest;
 
+import android.app.Activity;
 
-          public class MainActivity extends Activity {
+import android.content.pm.PackageManager;
 
-              private WebView webView;
+import android.graphics.Color;
 
-              private PermissionRequest pendingPermissionRequest;
+import android.os.Bundle;
 
-              private static final int CAMERA_PERMISSION_REQUEST = 1001;
+import android.webkit.PermissionRequest;
 
+import android.webkit.WebChromeClient;
 
-              @Override
-              protected void onCreate(Bundle savedInstanceState) {
+import android.webkit.WebResourceRequest;
 
-                  super.onCreate(savedInstanceState);
+import android.webkit.WebResourceResponse;
 
+import android.webkit.WebSettings;
 
-                  getWindow().setStatusBarColor(
-                      Color.rgb(180, 35, 0)
-                  );
+import android.webkit.WebView;
 
-                  getWindow().setNavigationBarColor(
-                      Color.BLACK
-                  );
 
+import androidx.webkit.WebViewAssetLoader;
 
-                  webView = new WebView(this);
+import androidx.webkit.WebViewClientCompat;
 
-                  WebSettings settings =
-                      webView.getSettings();
 
 
-                  settings.setJavaScriptEnabled(true);
+public class MainActivity extends Activity {
 
-                  settings.setDomStorageEnabled(true);
 
-                  settings.setAllowFileAccess(true);
+    private WebView webView;
 
-                  settings.setAllowContentAccess(true);
 
-                  settings.setMediaPlaybackRequiresUserGesture(false);
+    private PermissionRequest pendingPermissionRequest;
 
-                  settings.setUseWideViewPort(true);
 
-                  settings.setLoadWithOverviewMode(true);
+    private static final int CAMERA_PERMISSION_REQUEST = 1001;
 
-                  settings.setSupportZoom(false);
 
 
-                  final WebViewAssetLoader assetLoader =
-                      new WebViewAssetLoader.Builder()
+    @Override
 
-                          .addPathHandler(
-                              "/assets/",
-                              new WebViewAssetLoader
-                                  .AssetsPathHandler(this)
-                          )
+    protected void onCreate(Bundle savedInstanceState) {
 
-                          .build();
 
+        super.onCreate(savedInstanceState);
 
-                  webView.setWebViewClient(
-                      new WebViewClientCompat() {
 
-                          @Override
-                          public WebResourceResponse
-                          shouldInterceptRequest(
-                              WebView view,
-                              WebResourceRequest request
-                          ) {
 
-                              return assetLoader
-                                  .shouldInterceptRequest(
-                                      request.getUrl()
-                                  );
+        getWindow().setStatusBarColor(
+            Color.rgb(180, 35, 0)
+        );
 
-                          }
 
-                      }
-                  );
+        getWindow().setNavigationBarColor(
+            Color.BLACK
+        );
 
 
-                  webView.setWebChromeClient(
-                      new WebChromeClient() {
 
-                          @Override
-                          public void onPermissionRequest(
-                              final PermissionRequest request
-                          ) {
+        // =====================================================
+        // WEBVIEW
+        // =====================================================
 
-                              runOnUiThread(() -> {
 
-                                  boolean cameraRequested = false;
+        webView = new WebView(this);
 
-                                  String[] resources =
-                                      request.getResources();
 
+        WebSettings settings =
+            webView.getSettings();
 
-                                  if (resources != null) {
 
-                                      for (
-                                          String resource :
-                                          resources
-                                      ) {
 
-                                          if (
-                                              PermissionRequest
-                                                  .RESOURCE_VIDEO_CAPTURE
-                                                  .equals(resource)
-                                          ) {
+        settings.setJavaScriptEnabled(true);
 
-                                              cameraRequested = true;
 
-                                              break;
+        settings.setDomStorageEnabled(true);
 
-                                          }
 
-                                      }
+        settings.setAllowFileAccess(true);
 
-                                  }
 
+        settings.setAllowContentAccess(true);
 
-                                  if (!cameraRequested) {
 
-                                      request.deny();
+        settings.setMediaPlaybackRequiresUserGesture(false);
 
-                                      return;
 
-                                  }
+        settings.setUseWideViewPort(true);
 
 
-                                  if (
-                                      checkSelfPermission(
-                                          Manifest.permission.CAMERA
-                                      )
-                                      ==
-                                      PackageManager.PERMISSION_GRANTED
-                                  ) {
+        settings.setLoadWithOverviewMode(true);
 
-                                      request.grant(
-                                          new String[] {
-                                              PermissionRequest
-                                                  .RESOURCE_VIDEO_CAPTURE
-                                          }
-                                      );
 
-                                      return;
+        settings.setSupportZoom(false);
 
-                                  }
 
 
-                                  pendingPermissionRequest =
-                                      request;
+        // =====================================================
+        // WEBVIEW ASSET LOADER
+        // =====================================================
 
 
-                                  requestPermissions(
-                                      new String[] {
-                                          Manifest.permission.CAMERA
-                                      },
-                                      CAMERA_PERMISSION_REQUEST
-                                  );
+        final WebViewAssetLoader assetLoader =
+            new WebViewAssetLoader.Builder()
 
-                              });
+                .addPathHandler(
+                    "/assets/",
+                    new WebViewAssetLoader
+                        .AssetsPathHandler(this)
+                )
 
-                          }
+                .build();
 
 
-                          @Override
-                          public void onPermissionRequestCanceled(
-                              PermissionRequest request
-                          ) {
 
-                              if (
-                                  pendingPermissionRequest == request
-                              ) {
+        // =====================================================
+        // WEBVIEW CLIENT
+        // =====================================================
 
-                                  pendingPermissionRequest = null;
 
-                              }
+        webView.setWebViewClient(
+            new WebViewClientCompat() {
 
-                              super.onPermissionRequestCanceled(
-                                  request
-                              );
 
-                          }
+                @Override
 
-                      }
-                  );
+                public WebResourceResponse
+                shouldInterceptRequest(
+                    WebView view,
+                    WebResourceRequest request
+                ) {
 
 
-                  webView.loadUrl(
-                      "https://appassets.androidplatform.net/assets/index.html"
-                  );
+                    return assetLoader
+                        .shouldInterceptRequest(
+                            request.getUrl()
+                        );
 
+                }
 
-                  setContentView(webView);
+            }
+        );
 
-              }
 
 
-              @Override
-              public void onRequestPermissionsResult(
-                  int requestCode,
-                  String[] permissions,
-                  int[] grantResults
-              ) {
+        // =====================================================
+        // CAMERA PERMISSION
+        // =====================================================
 
-                  super.onRequestPermissionsResult(
-                      requestCode,
-                      permissions,
-                      grantResults
-                  );
 
+        webView.setWebChromeClient(
+            new WebChromeClient() {
 
-                  if (
-                      requestCode ==
-                      CAMERA_PERMISSION_REQUEST
-                  ) {
 
-                      if (
-                          pendingPermissionRequest != null
-                      ) {
+                @Override
 
-                          if (
-                              grantResults.length > 0
-                              &&
-                              grantResults[0]
-                              ==
-                              PackageManager.PERMISSION_GRANTED
-                          ) {
+                public void onPermissionRequest(
+                    final PermissionRequest request
+                ) {
 
-                              pendingPermissionRequest.grant(
-                                  new String[] {
-                                      PermissionRequest
-                                          .RESOURCE_VIDEO_CAPTURE
-                                  }
-                              );
 
-                          } else {
+                    runOnUiThread(() -> {
 
-                              pendingPermissionRequest.deny();
 
-                          }
+                        boolean cameraRequested =
+                            false;
 
 
-                          pendingPermissionRequest = null;
+                        String[] resources =
+                            request.getResources();
 
-                      }
 
-                  }
 
-              }
+                        if (resources != null) {
 
 
-              @Override
-              public void onBackPressed() {
+                            for (
+                                String resource :
+                                resources
+                            ) {
 
-                  if (
-                      webView != null
-                      &&
-                      webView.canGoBack()
-                  ) {
 
-                      webView.goBack();
+                                if (
+                                    PermissionRequest
+                                        .RESOURCE_VIDEO_CAPTURE
+                                        .equals(resource)
+                                ) {
 
-                  } else {
 
-                      super.onBackPressed();
+                                    cameraRequested =
+                                        true;
 
-                  }
 
-              }
+                                    break;
 
+                                }
 
-              @Override
-              protected void onDestroy() {
+                            }
 
-                  if (webView != null) {
+                        }
 
-                      webView.destroy();
 
-                  }
 
-                  super.onDestroy();
+                        if (!cameraRequested) {
 
-              }
 
-          }
-          EOF
+                            request.deny();
+
+
+                            return;
+
+                        }
+
+
+
+                        // =================================================
+                        // CAMERA ALREADY GRANTED
+                        // =================================================
+
+
+                        if (
+                            checkSelfPermission(
+                                Manifest.permission.CAMERA
+                            )
+                            ==
+                            PackageManager.PERMISSION_GRANTED
+                        ) {
+
+
+                            request.grant(
+                                new String[] {
+
+                                    PermissionRequest
+                                        .RESOURCE_VIDEO_CAPTURE
+
+                                }
+                            );
+
+
+                            return;
+
+                        }
+
+
+
+                        // =================================================
+                        // SAVE REQUEST
+                        // =================================================
+
+
+                        pendingPermissionRequest =
+                            request;
+
+
+
+                        // =================================================
+                        // REQUEST CAMERA
+                        // =================================================
+
+
+                        requestPermissions(
+
+                            new String[] {
+
+                                Manifest.permission.CAMERA
+
+                            },
+
+                            CAMERA_PERMISSION_REQUEST
+
+                        );
+
+
+                    });
+
+                }
+
+
+
+                @Override
+
+                public void onPermissionRequestCanceled(
+                    PermissionRequest request
+                ) {
+
+
+                    if (
+                        pendingPermissionRequest ==
+                        request
+                    ) {
+
+
+                        pendingPermissionRequest =
+                            null;
+
+                    }
+
+
+                    super.onPermissionRequestCanceled(
+                        request
+                    );
+
+                }
+
+            }
+
+        );
+
+
+
+        // =====================================================
+        // LOAD WEB APP
+        // =====================================================
+
+
+        webView.loadUrl(
+            "https://appassets.androidplatform.net/assets/index.html"
+        );
+
+
+
+        setContentView(webView);
+
+    }
+
+
+
+    // =========================================================
+    // CAMERA PERMISSION RESULT
+    // =========================================================
+
+
+    @Override
+
+    public void onRequestPermissionsResult(
+
+        int requestCode,
+
+        String[] permissions,
+
+        int[] grantResults
+
+    ) {
+
+
+        super.onRequestPermissionsResult(
+            requestCode,
+            permissions,
+            grantResults
+        );
+
+
+
+        if (
+            requestCode ==
+            CAMERA_PERMISSION_REQUEST
+        ) {
+
+
+            if (
+                pendingPermissionRequest != null
+            ) {
+
+
+                if (
+
+                    grantResults.length > 0
+
+                    &&
+
+                    grantResults[0]
+                    ==
+                    PackageManager.PERMISSION_GRANTED
+
+                ) {
+
+
+                    pendingPermissionRequest.grant(
+
+                        new String[] {
+
+                            PermissionRequest
+                                .RESOURCE_VIDEO_CAPTURE
+
+                        }
+
+                    );
+
+
+                } else {
+
+
+                    pendingPermissionRequest.deny();
+
+                }
+
+
+
+                pendingPermissionRequest =
+                    null;
+
+            }
+
+        }
+
+    }
+
+
+
+    // =========================================================
+    // BACK BUTTON
+    // =========================================================
+
+
+    @Override
+
+    public void onBackPressed() {
+
+
+        if (
+
+            webView != null
+
+            &&
+
+            webView.canGoBack()
+
+        ) {
+
+
+            webView.goBack();
+
+
+        } else {
+
+
+            super.onBackPressed();
+
+        }
+
+    }
+
+
+
+    // =========================================================
+    // CLEANUP
+    // =========================================================
+
+
+    @Override
+
+    protected void onDestroy() {
+
+
+        if (webView != null) {
+
+
+            webView.destroy();
+
+        }
+
+
+        super.onDestroy();
+
+    }
+
+}
+EOF
+
+
+          echo "MainActivity.java created."
 
 
       # =========================================================
-      # 17. APP STYLE
+      # 20. APP STYLE
       # =========================================================
 
       - name: Create styles
         if: steps.queue.outputs.has_build == 'true'
+
         run: |
 
-          mkdir -p android-project/app/src/main/res/values
+          mkdir -p \
+            android-project/app/src/main/res/values
+
 
           cat > android-project/app/src/main/res/values/styles.xml <<EOF
-          <resources>
+<resources>
 
-              <style
-                  name="AppTheme"
-                  parent="android:style/Theme.Material.Light.NoActionBar">
 
-                  <item name="android:fontFamily">sans</item>
+    <style
+        name="AppTheme"
+        parent="android:style/Theme.Material.Light.NoActionBar">
 
-                  <item name="android:colorAccent">
-                      #18A558
-                  </item>
 
-                  <item name="android:statusBarColor">
-                      #B42300
-                  </item>
+        <item name="android:fontFamily">
+            sans
+        </item>
 
-                  <item name="android:navigationBarColor">
-                      #000000
-                  </item>
 
-                  <item name="android:windowLightStatusBar">
-                      false
-                  </item>
+        <item name="android:colorAccent">
+            #18A558
+        </item>
 
-                  <item name="android:windowLightNavigationBar">
-                      false
-                  </item>
 
-              </style>
+        <item name="android:statusBarColor">
+            #B42300
+        </item>
 
-          </resources>
-          EOF
+
+        <item name="android:navigationBarColor">
+            #000000
+        </item>
+
+
+        <item name="android:windowLightStatusBar">
+            false
+        </item>
+
+
+        <item name="android:windowLightNavigationBar">
+            false
+        </item>
+
+
+    </style>
+
+
+</resources>
+EOF
+
+
+          echo "styles.xml created."
 
 
       # =========================================================
-      # 18. BUILD APK
+      # 21. VERIFY PROJECT
+      # =========================================================
+
+      - name: Verify Android project
+        if: steps.queue.outputs.has_build == 'true'
+
+        run: |
+
+          echo "========================================"
+
+          echo "ANDROID PROJECT CHECK"
+
+          echo "========================================"
+
+
+          echo ""
+
+          echo "Root files:"
+
+          find android-project \
+            -maxdepth 3 \
+            -type f \
+            -print
+
+
+          echo ""
+
+          echo "Java files:"
+
+          find android-project/app/src/main/java \
+            -type f \
+            -print
+
+
+          echo ""
+
+          echo "Manifest:"
+
+          test -f \
+            android-project/app/src/main/AndroidManifest.xml
+
+
+          echo "OK"
+
+
+          echo ""
+
+          echo "Build.gradle:"
+
+          cat android-project/build.gradle
+
+
+          echo ""
+
+          echo "App Build.gradle:"
+
+          cat android-project/app/build.gradle
+
+
+          echo ""
+
+          echo "Camera permission check:"
+
+          grep -n "android.permission.CAMERA" \
+            android-project/app/src/main/AndroidManifest.xml
+
+
+      # =========================================================
+      # 22. BUILD APK
       # =========================================================
 
       - name: Build APK
         if: steps.queue.outputs.has_build == 'true'
+
         working-directory: android-project
+
         run: |
 
-          echo "Starting Android APK build..."
+          echo "========================================"
+
+          echo "STARTING ANDROID APK BUILD"
+
+          echo "========================================"
+
 
           gradle assembleDebug \
             --no-daemon \
             --stacktrace
 
-          echo "APK build completed."
 
-          ls -lh app/build/outputs/apk/debug/
+          echo ""
+
+          echo "========================================"
+
+          echo "APK BUILD COMPLETED"
+
+          echo "========================================"
+
+
+          ls -lh \
+            app/build/outputs/apk/debug/
 
 
       # =========================================================
-      # 19. RENAME APK
+      # 23. RENAME APK
       # =========================================================
 
       - name: Rename APK
         if: steps.queue.outputs.has_build == 'true'
+
         run: |
 
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
+
 
           cp \
             android-project/app/build/outputs/apk/debug/app-debug.apk \
             "ASIM-TECH-${BUILD_ID}.apk"
 
 
+          echo "APK renamed."
+
+          ls -lh \
+            "ASIM-TECH-${BUILD_ID}.apk"
+
+
       # =========================================================
-      # 20. SHA256
+      # 24. SHA256
       # =========================================================
 
       - name: Calculate SHA256
         if: steps.queue.outputs.has_build == 'true'
+
         id: sha
+
         run: |
 
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
+
 
           SHA=$(
             sha256sum \
@@ -916,14 +1428,20 @@ jobs:
             awk '{print $1}'
           )
 
+
           SIZE=$(
             stat -c%s \
             "ASIM-TECH-${BUILD_ID}.apk"
           )
 
-          echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
 
-          echo "size=$SIZE" >> "$GITHUB_OUTPUT"
+          echo "sha256=$SHA" \
+            >> "$GITHUB_OUTPUT"
+
+
+          echo "size=$SIZE" \
+            >> "$GITHUB_OUTPUT"
+
 
           echo "SHA256=$SHA"
 
@@ -931,20 +1449,29 @@ jobs:
 
 
       # =========================================================
-      # 21. UPLOAD APK
+      # 25. UPLOAD APK TO SUPABASE
       # =========================================================
 
       - name: Upload APK
         if: steps.queue.outputs.has_build == 'true'
+
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
 
         run: |
 
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
 
+
           STORAGE_PATH="${BUILD_ID}/${FILE_NAME}"
+
+
+          echo "Uploading APK..."
+
+          echo "Storage path: ${STORAGE_PATH}"
+
 
           curl -fL -X POST \
             "${SUPABASE_URL}/storage/v1/object/android-apks/${STORAGE_PATH}" \
@@ -953,22 +1480,33 @@ jobs:
             -H "Content-Type: application/vnd.android.package-archive" \
             --data-binary "@${FILE_NAME}"
 
-          echo "STORAGE_PATH=${STORAGE_PATH}" >> "$GITHUB_ENV"
+
+          echo "STORAGE_PATH=${STORAGE_PATH}" \
+            >> "$GITHUB_ENV"
+
+
+          echo "APK uploaded successfully."
 
 
       # =========================================================
-      # 22. MARK SUCCESS
+      # 26. MARK SUCCESS
       # =========================================================
 
       - name: Mark build successful
         if: steps.queue.outputs.has_build == 'true'
+
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
 
         run: |
 
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
+
+
+          echo "Marking build successful..."
+
 
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
@@ -987,30 +1525,45 @@ jobs:
             }"
 
 
+          echo "Build marked successful."
+
+
       # =========================================================
-      # 23. GITHUB ARTIFACT
+      # 27. GITHUB APK ARTIFACT
       # =========================================================
 
       - name: Upload APK artifact
         if: steps.queue.outputs.has_build == 'true'
+
         uses: actions/upload-artifact@v4
 
         with:
+
           name: ASIM-TECH-${{ steps.queue.outputs.build_id }}
+
           path: ASIM-TECH-${{ steps.queue.outputs.build_id }}.apk
+
+          if-no-files-found: error
 
 
       # =========================================================
-      # 24. MARK FAILED
+      # 28. MARK FAILED
       # =========================================================
 
       - name: Mark build failed
         if: failure() && steps.queue.outputs.has_build == 'true'
+
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
 
         run: |
+
+          echo "Build failed."
+
+          echo "Updating Supabase..."
+
 
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
@@ -1020,6 +1573,9 @@ jobs:
             -H "Prefer: return=minimal" \
             -d "{
               \"status\": \"failed\",
-              \"build_log\": \"GitHub Actions build failed.\",
+              \"build_log\": \"GitHub Actions Android build failed.\",
               \"completed_at\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
             }"
+
+
+          echo "Failure status updated."
