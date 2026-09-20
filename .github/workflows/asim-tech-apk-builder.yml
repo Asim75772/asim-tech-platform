@@ -89,7 +89,6 @@ jobs:
           echo "$RESPONSE"
 
           BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
-
           APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
 
           if [ -z "$BUILD_ID" ] || [ -z "$APP_ID" ]; then
@@ -107,7 +106,7 @@ jobs:
 
           echo "has_build=true" >> "$GITHUB_OUTPUT"
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
-          echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
+          echo "app_id=$APP_ID"
 
 
       # ==================================================
@@ -143,7 +142,7 @@ jobs:
             -H "Prefer: return=minimal" \
             -d '{
               "status": "building",
-              "started_at": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"
+              "started_at": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
             }'
 
           echo "Build marked as building."
@@ -188,7 +187,6 @@ jobs:
           do
 
             FILE_PATH=$(echo "$item" | jq -r '.file_path')
-
             CONTENT=$(echo "$item" | jq -r '.content')
 
             mkdir -p "webapp/$(dirname "$FILE_PATH")"
@@ -219,48 +217,48 @@ jobs:
               echo "Creating URL wrapper."
 
               cat > webapp/index.html <<EOF
-          <!DOCTYPE html>
-          <html>
+<!DOCTYPE html>
+<html>
 
-          <head>
+<head>
 
-          <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-          <meta name="viewport"
-                content="width=device-width,
-                         initial-scale=1.0,
-                         maximum-scale=1.0,
-                         user-scalable=no">
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
 
-          <title>ASIM TECH App</title>
+<title>ASIM TECH App</title>
 
-          <style>
+<style>
 
-          html,
-          body {
-              margin: 0;
-              padding: 0;
-              width: 100%;
-              min-height: 100%;
-              overflow-x: hidden;
-          }
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+}
 
-          </style>
+</style>
 
-          </head>
+</head>
 
-          <body>
+<body>
 
-          <script>
+<script>
 
-          window.location.replace("$URL");
+window.location.replace("$URL");
 
-          </script>
+</script>
 
-          </body>
+</body>
 
-          </html>
-          EOF
+</html>
+EOF
 
             else
 
@@ -292,13 +290,13 @@ jobs:
           else
 
             cat > android-settings.json <<EOF
-          {
-            "appName": "ASIM TECH APP",
-            "packageName": "com.asimtech.app",
-            "versionName": "1.0.0",
-            "versionCode": 1
-          }
-          EOF
+{
+  "appName": "ASIM TECH APP",
+  "packageName": "com.asimtech.app",
+  "versionName": "1.0.0",
+  "versionCode": 1
+}
+EOF
 
           fi
 
@@ -451,74 +449,119 @@ jobs:
 
       # ==================================================
       # 14. CREATE GRADLE FILES
+      # IMPORTANT: ANDROIDX ENABLED
       # ==================================================
 
       - name: Create Gradle files
         if: steps.queue.outputs.has_build == 'true'
         run: |
 
+          # ==============================================
+          # ANDROIDX FIX
+          # ==============================================
+
+          cat > android-project/gradle.properties <<EOF
+android.useAndroidX=true
+android.enableJetifier=true
+org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+EOF
+
+
+          # ==============================================
+          # SETTINGS
+          # ==============================================
+
           cat > android-project/settings.gradle <<EOF
-          pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
+pluginManagement {
 
-          dependencyResolutionManagement {
-              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
 
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-          }
+        google()
 
-          rootProject.name = "GeneratedApp"
+        mavenCentral()
 
-          include(":app")
-          EOF
+        gradlePluginPortal()
 
+    }
+
+}
+
+dependencyResolutionManagement {
+
+    repositoriesMode.set(
+        RepositoriesMode.FAIL_ON_PROJECT_REPOS
+    )
+
+    repositories {
+
+        google()
+
+        mavenCentral()
+
+    }
+
+}
+
+rootProject.name = "GeneratedApp"
+
+include(":app")
+EOF
+
+
+          # ==============================================
+          # PROJECT BUILD.GRADLE
+          # ==============================================
 
           cat > android-project/build.gradle <<EOF
-          plugins {
-              id 'com.android.application' version '8.7.3' apply false
-          }
-          EOF
+plugins {
 
+    id 'com.android.application'
+        version '8.7.3'
+        apply false
+
+}
+EOF
+
+
+          # ==============================================
+          # APP BUILD.GRADLE
+          # ==============================================
 
           cat > android-project/app/build.gradle <<EOF
-          plugins {
-              id 'com.android.application'
-          }
+plugins {
 
-          android {
+    id 'com.android.application'
 
-              namespace '${PACKAGE_NAME}'
+}
 
-              compileSdk 35
+android {
 
-              defaultConfig {
+    namespace '${PACKAGE_NAME}'
 
-                  applicationId '${PACKAGE_NAME}'
+    compileSdk 35
 
-                  minSdk 23
+    defaultConfig {
 
-                  targetSdk 35
+        applicationId '${PACKAGE_NAME}'
 
-                  versionCode ${VERSION_CODE}
+        minSdk 23
 
-                  versionName '${VERSION_NAME}'
-              }
-          }
+        targetSdk 35
 
-          dependencies {
+        versionCode ${VERSION_CODE}
 
-              implementation 'androidx.webkit:webkit:1.12.1'
+        versionName '${VERSION_NAME}'
 
-          }
-          EOF
+    }
+
+}
+
+dependencies {
+
+    implementation 'androidx.webkit:webkit:1.12.1'
+
+}
+EOF
 
 
       # ==================================================
@@ -533,54 +576,63 @@ jobs:
           mkdir -p android-project/app/src/main
 
           cat > android-project/app/src/main/AndroidManifest.xml <<EOF
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-              <!-- Internet -->
-              <uses-permission
-                  android:name="android.permission.INTERNET" />
+    <!-- INTERNET -->
+    <uses-permission
+        android:name="android.permission.INTERNET" />
 
-              <!-- CAMERA PERMISSION -->
-              <uses-permission
-                  android:name="android.permission.CAMERA" />
+    <!-- CAMERA -->
+    <uses-permission
+        android:name="android.permission.CAMERA" />
 
-              <!-- Camera feature -->
-              <uses-feature
-                  android:name="android.hardware.camera"
-                  android:required="false" />
+    <!-- CAMERA HARDWARE -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
-              <application
-                  android:allowBackup="true"
-                  android:usesCleartextTraffic="true"
-                  android:theme="@style/AppTheme"
-                  android:label="${APP_NAME}"
-                  android:icon="@mipmap/ic_launcher"
-                  android:roundIcon="@mipmap/ic_launcher_round">
+    <application
 
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true">
+        android:allowBackup="true"
 
-                      <intent-filter>
+        android:usesCleartextTraffic="true"
 
-                          <action
-                              android:name="android.intent.action.MAIN" />
+        android:theme="@style/AppTheme"
 
-                          <category
-                              android:name="android.intent.category.LAUNCHER" />
+        android:label="${APP_NAME}"
 
-                      </intent-filter>
+        android:icon="@mipmap/ic_launcher"
 
-                  </activity>
+        android:roundIcon="@mipmap/ic_launcher_round">
 
-              </application>
+        <activity
 
-          </manifest>
-          EOF
+            android:name=".MainActivity"
+
+            android:exported="true">
+
+            <intent-filter>
+
+                <action
+                    android:name="android.intent.action.MAIN" />
+
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
+
+            </intent-filter>
+
+        </activity>
+
+    </application>
+
+</manifest>
+EOF
 
 
       # ==================================================
       # 16. MAIN ACTIVITY
-      # WEBVIEW + CAMERA PERMISSION
+      # WEBVIEW + CAMERA
       # ==================================================
 
       - name: Create MainActivity
@@ -592,623 +644,411 @@ jobs:
           mkdir -p "$JAVA_PATH"
 
           cat > "$JAVA_PATH/MainActivity.java" <<EOF
-          package ${PACKAGE_NAME};
+package ${PACKAGE_NAME};
 
-          import android.Manifest;
-          import android.app.Activity;
-          import android.content.pm.PackageManager;
-          import android.graphics.Color;
-          import android.graphics.Insets;
-          import android.net.Uri;
-          import android.os.Bundle;
-          import android.view.WindowInsets;
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Bundle;
 
-          import android.webkit.PermissionRequest;
-          import android.webkit.WebChromeClient;
-          import android.webkit.WebResourceRequest;
-          import android.webkit.WebResourceResponse;
-          import android.webkit.WebSettings;
-          import android.webkit.WebView;
+import android.webkit.PermissionRequest;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.JavascriptInterface;
 
-          import android.webkit.JavascriptInterface;
+import androidx.webkit.WebViewAssetLoader;
+import androidx.webkit.WebViewClientCompat;
 
-          import android.speech.tts.TextToSpeech;
 
-          import androidx.webkit.WebViewAssetLoader;
-          import androidx.webkit.WebViewClientCompat;
+public class MainActivity extends Activity {
 
-          import java.util.Locale;
 
+    private WebView webView;
 
-          public class MainActivity extends Activity {
+    private PermissionRequest pendingPermissionRequest;
 
+    private static final int CAMERA_PERMISSION_REQUEST = 1001;
 
-              private WebView webView;
 
-              private TextToSpeech textToSpeech;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
-              private PermissionRequest pendingPermissionRequest;
+        super.onCreate(savedInstanceState);
 
-              private static final int CAMERA_PERMISSION_REQUEST = 1001;
 
+        // ==============================================
+        // STATUS BAR
+        // ==============================================
 
-              @Override
-              protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setStatusBarColor(
+            Color.rgb(180, 35, 0)
+        );
 
-                  super.onCreate(savedInstanceState);
+        getWindow().setNavigationBarColor(
+            Color.BLACK
+        );
 
 
-                  // ==========================================
-                  // SYSTEM BAR COLORS
-                  // ==========================================
+        // ==============================================
+        // WEBVIEW
+        // ==============================================
 
-                  getWindow().setStatusBarColor(
-                      Color.rgb(180, 35, 0)
-                  );
+        webView = new WebView(this);
 
-                  getWindow().setNavigationBarColor(
-                      Color.BLACK
-                  );
+        WebSettings settings =
+            webView.getSettings();
 
 
-                  // ==========================================
-                  // WEBVIEW
-                  // ==========================================
+        // ==============================================
+        // JAVASCRIPT
+        // ==============================================
 
-                  webView = new WebView(this);
+        settings.setJavaScriptEnabled(true);
 
-                  WebSettings settings =
-                      webView.getSettings();
 
+        // ==============================================
+        // DOM STORAGE
+        // ==============================================
 
-                  // ==========================================
-                  // JAVASCRIPT
-                  // ==========================================
+        settings.setDomStorageEnabled(true);
 
-                  settings.setJavaScriptEnabled(true);
 
+        // ==============================================
+        // FILE ACCESS
+        // ==============================================
 
-                  // ==========================================
-                  // DOM STORAGE
-                  // ==========================================
+        settings.setAllowFileAccess(true);
 
-                  settings.setDomStorageEnabled(true);
+        settings.setAllowContentAccess(true);
 
 
-                  // ==========================================
-                  // FILE ACCESS
-                  // ==========================================
+        // ==============================================
+        // VIEWPORT
+        // ==============================================
 
-                  settings.setAllowFileAccess(true);
+        settings.setUseWideViewPort(true);
 
-                  settings.setAllowContentAccess(true);
+        settings.setLoadWithOverviewMode(true);
 
+        settings.setSupportZoom(false);
 
-                  // ==========================================
-                  // VIEWPORT
-                  // ==========================================
+        settings.setBuiltInZoomControls(false);
 
-                  settings.setUseWideViewPort(true);
+        settings.setDisplayZoomControls(false);
 
-                  settings.setLoadWithOverviewMode(true);
+        settings.setTextZoom(100);
 
-                  settings.setSupportZoom(false);
 
-                  settings.setBuiltInZoomControls(false);
+        // ==============================================
+        // MEDIA
+        // ==============================================
 
-                  settings.setDisplayZoomControls(false);
+        settings.setMediaPlaybackRequiresUserGesture(false);
 
-                  settings.setTextZoom(100);
 
+        // ==============================================
+        // WEBVIEW ASSET LOADER
+        // ==============================================
 
-                  // ==========================================
-                  // MEDIA
-                  // ==========================================
+        final WebViewAssetLoader assetLoader =
+            new WebViewAssetLoader.Builder()
 
-                  settings.setMediaPlaybackRequiresUserGesture(false);
+                .addPathHandler(
+                    "/assets/",
+                    new WebViewAssetLoader
+                        .AssetsPathHandler(this)
+                )
 
+                .build();
 
-                  // ==========================================
-                  // WEBVIEW ASSET LOADER
-                  // ==========================================
 
-                  final WebViewAssetLoader assetLoader =
-                      new WebViewAssetLoader.Builder()
-                          .addPathHandler(
-                              "/assets/",
-                              new WebViewAssetLoader.AssetsPathHandler(
-                                  this
-                              )
-                          )
-                          .build();
+        // ==============================================
+        // WEBVIEW CLIENT
+        // ==============================================
 
+        webView.setWebViewClient(
+            new WebViewClientCompat() {
 
-                  // ==========================================
-                  // WEBVIEW CLIENT
-                  // ==========================================
+                @Override
+                public WebResourceResponse
+                shouldInterceptRequest(
+                    WebView view,
+                    WebResourceRequest request
+                ) {
 
-                  webView.setWebViewClient(
-                      new WebViewClientCompat() {
+                    return assetLoader
+                        .shouldInterceptRequest(
+                            request.getUrl()
+                        );
+                }
 
-                          @Override
-                          public WebResourceResponse
-                          shouldInterceptRequest(
-                              WebView view,
-                              WebResourceRequest request
-                          ) {
 
-                              return assetLoader
-                                  .shouldInterceptRequest(
-                                      request.getUrl()
-                                  );
-                          }
+                @Override
+                public WebResourceResponse
+                shouldInterceptRequest(
+                    WebView view,
+                    String url
+                ) {
 
-                          @Override
-                          public WebResourceResponse
-                          shouldInterceptRequest(
-                              WebView view,
-                              String url
-                          ) {
+                    return assetLoader
+                        .shouldInterceptRequest(
+                            Uri.parse(url)
+                        );
+                }
 
-                              return assetLoader
-                                  .shouldInterceptRequest(
-                                      Uri.parse(url)
-                                  );
-                          }
-                      }
-                  );
+            }
+        );
 
 
-                  // ==========================================
-                  // CAMERA PERMISSION
-                  // ==========================================
+        // ==============================================
+        // CAMERA PERMISSION
+        // ==============================================
 
-                  webView.setWebChromeClient(
-                      new WebChromeClient() {
+        webView.setWebChromeClient(
+            new WebChromeClient() {
 
-                          @Override
-                          public void onPermissionRequest(
-                              final PermissionRequest request
-                          ) {
+                @Override
+                public void onPermissionRequest(
+                    final PermissionRequest request
+                ) {
 
-                              runOnUiThread(() -> {
+                    runOnUiThread(() -> {
 
-                                  boolean cameraRequested =
-                                      false;
+                        boolean cameraRequested = false;
 
-                                  String[] resources =
-                                      request.getResources();
+                        String[] resources =
+                            request.getResources();
 
 
-                                  if (resources != null) {
+                        if (resources != null) {
 
-                                      for (
-                                          String resource :
-                                          resources
-                                      ) {
+                            for (
+                                String resource :
+                                resources
+                            ) {
 
-                                          if (
-                                              PermissionRequest
-                                                  .RESOURCE_VIDEO_CAPTURE
-                                                  .equals(resource)
-                                          ) {
+                                if (
+                                    PermissionRequest
+                                        .RESOURCE_VIDEO_CAPTURE
+                                        .equals(resource)
+                                ) {
 
-                                              cameraRequested = true;
+                                    cameraRequested = true;
 
-                                              break;
-                                          }
-                                      }
-                                  }
+                                    break;
+                                }
 
+                            }
 
-                                  if (!cameraRequested) {
+                        }
 
-                                      request.deny();
 
-                                      return;
-                                  }
+                        // ==================================
+                        // ONLY CAMERA ALLOWED
+                        // ==================================
 
+                        if (!cameraRequested) {
 
-                                  // ==================================
-                                  // CAMERA ALREADY GRANTED
-                                  // ==================================
+                            request.deny();
 
-                                  if (
-                                      checkSelfPermission(
-                                          Manifest.permission.CAMERA
-                                      ) ==
-                                      PackageManager.PERMISSION_GRANTED
-                                  ) {
+                            return;
+                        }
 
-                                      request.grant(
-                                          new String[] {
-                                              PermissionRequest
-                                                  .RESOURCE_VIDEO_CAPTURE
-                                          }
-                                      );
 
-                                      return;
-                                  }
+                        // ==================================
+                        // CAMERA ALREADY GRANTED
+                        // ==================================
 
+                        if (
+                            checkSelfPermission(
+                                Manifest.permission.CAMERA
+                            )
+                            ==
+                            PackageManager.PERMISSION_GRANTED
+                        ) {
 
-                                  // ==================================
-                                  // SAVE REQUEST
-                                  // ==================================
+                            request.grant(
+                                new String[] {
+                                    PermissionRequest
+                                        .RESOURCE_VIDEO_CAPTURE
+                                }
+                            );
 
-                                  pendingPermissionRequest =
-                                      request;
+                            return;
+                        }
 
 
-                                  // ==================================
-                                  // ASK ANDROID PERMISSION
-                                  // ==================================
+                        // ==================================
+                        // SAVE REQUEST
+                        // ==================================
 
-                                  requestPermissions(
-                                      new String[] {
-                                          Manifest.permission.CAMERA
-                                      },
-                                      CAMERA_PERMISSION_REQUEST
-                                  );
+                        pendingPermissionRequest =
+                            request;
 
-                              });
-                          }
 
+                        // ==================================
+                        // REQUEST CAMERA
+                        // ==================================
 
-                          @Override
-                          public void onPermissionRequestCanceled(
-                              PermissionRequest request
-                          ) {
+                        requestPermissions(
+                            new String[] {
+                                Manifest.permission.CAMERA
+                            },
+                            CAMERA_PERMISSION_REQUEST
+                        );
 
-                              if (
-                                  pendingPermissionRequest ==
-                                  request
-                              ) {
+                    });
 
-                                  pendingPermissionRequest =
-                                      null;
-                              }
+                }
 
-                              super.onPermissionRequestCanceled(
-                                  request
-                              );
-                          }
 
-                      }
-                  );
+                @Override
+                public void onPermissionRequestCanceled(
+                    PermissionRequest request
+                ) {
 
+                    if (
+                        pendingPermissionRequest == request
+                    ) {
 
-                  // ==========================================
-                  // SYSTEM WINDOW INSETS
-                  // ==========================================
+                        pendingPermissionRequest = null;
 
-                  webView.setOnApplyWindowInsetsListener(
-                      (view, insets) -> {
+                    }
 
-                          int top = 0;
+                    super.onPermissionRequestCanceled(
+                        request
+                    );
 
-                          int bottom = 0;
+                }
 
+            }
+        );
 
-                          if (
-                              android.os.Build.VERSION.SDK_INT >= 30
-                          ) {
 
-                              Insets systemInsets =
-                                  insets.getInsets(
-                                      WindowInsets.Type.systemBars()
-                                  );
+        // ==============================================
+        // LOAD APP
+        // ==============================================
 
-                              top =
-                                  systemInsets.top;
+        webView.loadUrl(
+            "https://appassets.androidplatform.net/assets/index.html"
+        );
 
-                              bottom =
-                                  systemInsets.bottom;
 
-                          } else {
+        // ==============================================
+        // DISPLAY WEBVIEW
+        // ==============================================
 
-                              top =
-                                  insets.getSystemWindowInsetTop();
+        setContentView(webView);
 
-                              bottom =
-                                  insets.getSystemWindowInsetBottom();
+    }
 
-                          }
 
+    // ==============================================
+    // CAMERA PERMISSION RESULT
+    // ==============================================
 
-                          view.setPadding(
-                              0,
-                              top,
-                              0,
-                              bottom
-                          );
+    @Override
+    public void onRequestPermissionsResult(
+        int requestCode,
+        String[] permissions,
+        int[] grantResults
+    ) {
 
+        super.onRequestPermissionsResult(
+            requestCode,
+            permissions,
+            grantResults
+        );
 
-                          return insets;
 
-                      }
-                  );
+        if (
+            requestCode ==
+            CAMERA_PERMISSION_REQUEST
+        ) {
 
+            if (
+                pendingPermissionRequest != null
+            ) {
 
-                  // ==========================================
-                  // BENGALI TEXT TO SPEECH
-                  // ==========================================
+                if (
+                    grantResults.length > 0
+                    &&
+                    grantResults[0]
+                    ==
+                    PackageManager.PERMISSION_GRANTED
+                ) {
 
-                  textToSpeech =
-                      new TextToSpeech(
-                          this,
-                          status -> {
+                    pendingPermissionRequest.grant(
+                        new String[] {
+                            PermissionRequest
+                                .RESOURCE_VIDEO_CAPTURE
+                        }
+                    );
 
-                              if (
-                                  status ==
-                                  TextToSpeech.SUCCESS
-                              ) {
+                } else {
 
-                                  int result =
-                                      textToSpeech.setLanguage(
-                                          new Locale(
-                                              "bn",
-                                              "IN"
-                                          )
-                                      );
+                    pendingPermissionRequest.deny();
 
+                }
 
-                                  if (
-                                      result ==
-                                      TextToSpeech.LANG_MISSING_DATA
-                                      ||
-                                      result ==
-                                      TextToSpeech.LANG_NOT_SUPPORTED
-                                  ) {
 
-                                      textToSpeech.setLanguage(
-                                          Locale.US
-                                      );
+                pendingPermissionRequest = null;
 
-                                  }
+            }
 
-                              }
+        }
 
-                          }
-                      );
+    }
 
 
-                  // ==========================================
-                  // JAVASCRIPT TTS BRIDGE
-                  // ==========================================
+    // ==============================================
+    // BACK BUTTON
+    // ==============================================
 
-                  webView.addJavascriptInterface(
-                      new AndroidTTS(),
-                      "AndroidTTS"
-                  );
+    @Override
+    public void onBackPressed() {
 
+        if (
+            webView != null
+            &&
+            webView.canGoBack()
+        ) {
 
-                  // ==========================================
-                  // LOAD LOCAL APP
-                  // ==========================================
+            webView.goBack();
 
-                  webView.loadUrl(
-                      "https://appassets.androidplatform.net/assets/index.html"
-                  );
+        } else {
 
+            super.onBackPressed();
 
-                  // ==========================================
-                  // DISPLAY
-                  // ==========================================
+        }
 
-                  setContentView(webView);
+    }
 
-              }
 
+    // ==============================================
+    // CLEANUP
+    // ==============================================
 
-              // ==========================================
-              // CAMERA PERMISSION RESULT
-              // ==========================================
+    @Override
+    protected void onDestroy() {
 
-              @Override
-              public void onRequestPermissionsResult(
-                  int requestCode,
-                  String[] permissions,
-                  int[] grantResults
-              ) {
+        if (webView != null) {
 
-                  super.onRequestPermissionsResult(
-                      requestCode,
-                      permissions,
-                      grantResults
-                  );
+            webView.destroy();
 
+        }
 
-                  if (
-                      requestCode ==
-                      CAMERA_PERMISSION_REQUEST
-                  ) {
+        super.onDestroy();
 
-                      if (
-                          pendingPermissionRequest !=
-                          null
-                      ) {
+    }
 
-                          if (
-                              grantResults.length > 0
-                              &&
-                              grantResults[0] ==
-                                  PackageManager.PERMISSION_GRANTED
-                          ) {
-
-                              pendingPermissionRequest.grant(
-                                  new String[] {
-                                      PermissionRequest
-                                          .RESOURCE_VIDEO_CAPTURE
-                                  }
-                              );
-
-                          } else {
-
-                              pendingPermissionRequest.deny();
-
-                          }
-
-
-                          pendingPermissionRequest =
-                              null;
-                      }
-                  }
-              }
-
-
-              // ==========================================
-              // ANDROID TTS
-              // ==========================================
-
-              public class AndroidTTS {
-
-
-                  @JavascriptInterface
-                  public void speak(
-                      String text,
-                      String language,
-                      float rate,
-                      float pitch
-                  ) {
-
-                      if (
-                          textToSpeech == null
-                      ) {
-
-                          return;
-                      }
-
-
-                      Locale locale;
-
-
-                      if (
-                          language != null
-                          &&
-                          language
-                              .toLowerCase()
-                              .startsWith("bn")
-                      ) {
-
-                          locale =
-                              new Locale(
-                                  "bn",
-                                  "IN"
-                              );
-
-                      } else {
-
-                          locale =
-                              Locale.US;
-                      }
-
-
-                      int result =
-                          textToSpeech.setLanguage(
-                              locale
-                          );
-
-
-                      if (
-                          result ==
-                          TextToSpeech.LANG_MISSING_DATA
-                          ||
-                          result ==
-                          TextToSpeech.LANG_NOT_SUPPORTED
-                      ) {
-
-                          textToSpeech.setLanguage(
-                              Locale.US
-                          );
-                      }
-
-
-                      textToSpeech.setSpeechRate(rate);
-
-                      textToSpeech.setPitch(pitch);
-
-
-                      textToSpeech.speak(
-                          text,
-                          TextToSpeech.QUEUE_FLUSH,
-                          null,
-                          "ASIM_TTS"
-                      );
-
-                  }
-
-
-                  @JavascriptInterface
-                  public void cancel() {
-
-                      if (
-                          textToSpeech != null
-                      ) {
-
-                          textToSpeech.stop();
-
-                      }
-
-                  }
-
-              }
-
-
-              // ==========================================
-              // BACK BUTTON
-              // ==========================================
-
-              @Override
-              public void onBackPressed() {
-
-                  if (
-                      webView.canGoBack()
-                  ) {
-
-                      webView.goBack();
-
-                  } else {
-
-                      super.onBackPressed();
-
-                  }
-
-              }
-
-
-              // ==========================================
-              // CLEANUP
-              // ==========================================
-
-              @Override
-              protected void onDestroy() {
-
-                  if (
-                      textToSpeech != null
-                  ) {
-
-                      textToSpeech.stop();
-
-                      textToSpeech.shutdown();
-
-                  }
-
-
-                  if (
-                      webView != null
-                  ) {
-
-                      webView.destroy();
-
-                  }
-
-
-                  super.onDestroy();
-
-              }
-
-          }
-          EOF
+}
+EOF
 
 
       # ==================================================
@@ -1222,40 +1062,40 @@ jobs:
           mkdir -p android-project/app/src/main/res/values
 
           cat > android-project/app/src/main/res/values/styles.xml <<EOF
-          <resources>
+<resources>
 
-              <style
-                  name="AppTheme"
-                  parent="android:style/Theme.Material.Light.NoActionBar">
+    <style
+        name="AppTheme"
+        parent="android:style/Theme.Material.Light.NoActionBar">
 
-                  <item name="android:fontFamily">
-                      sans
-                  </item>
+        <item name="android:fontFamily">
+            sans
+        </item>
 
-                  <item name="android:colorAccent">
-                      #18A558
-                  </item>
+        <item name="android:colorAccent">
+            #18A558
+        </item>
 
-                  <item name="android:windowLightStatusBar">
-                      false
-                  </item>
+        <item name="android:windowLightStatusBar">
+            false
+        </item>
 
-                  <item name="android:windowLightNavigationBar">
-                      false
-                  </item>
+        <item name="android:windowLightNavigationBar">
+            false
+        </item>
 
-                  <item name="android:statusBarColor">
-                      #B42300
-                  </item>
+        <item name="android:statusBarColor">
+            #B42300
+        </item>
 
-                  <item name="android:navigationBarColor">
-                      #000000
-                  </item>
+        <item name="android:navigationBarColor">
+            #000000
+        </item>
 
-              </style>
+    </style>
 
-          </resources>
-          EOF
+</resources>
+EOF
 
 
       # ==================================================
@@ -1266,6 +1106,8 @@ jobs:
         if: steps.queue.outputs.has_build == 'true'
         working-directory: android-project
         run: |
+
+          echo "Starting Android APK build..."
 
           gradle assembleDebug \
             --no-daemon \
@@ -1290,7 +1132,8 @@ jobs:
             android-project/app/build/outputs/apk/debug/app-debug.apk \
             "ASIM-TECH-${BUILD_ID}.apk"
 
-          ls -lh "ASIM-TECH-${BUILD_ID}.apk"
+          ls -lh \
+            "ASIM-TECH-${BUILD_ID}.apk"
 
 
       # ==================================================
@@ -1304,12 +1147,16 @@ jobs:
 
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
-          SHA=$(sha256sum \
+          SHA=$(
+            sha256sum \
             "ASIM-TECH-${BUILD_ID}.apk" |
-            awk '{print $1}')
+            awk '{print $1}'
+          )
 
-          SIZE=$(stat -c%s \
-            "ASIM-TECH-${BUILD_ID}.apk")
+          SIZE=$(
+            stat -c%s \
+            "ASIM-TECH-${BUILD_ID}.apk"
+          )
 
           echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
 
@@ -1373,12 +1220,12 @@ jobs:
             -H "Prefer: return=minimal" \
             -d '{
               "status": "success",
-              "storage_path": "'"${STORAGE_PATH}"'",
-              "file_name": "'"${FILE_NAME}"'",
+              "storage_path": "'${STORAGE_PATH}'",
+              "file_name": "'${FILE_NAME}'",
               "mime_type": "application/vnd.android.package-archive",
-              "file_size": '"${{ steps.sha.outputs.size }}"',
-              "sha256": "'"${{ steps.sha.outputs.sha256 }}"'",
-              "completed_at": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"
+              "file_size": '${{ steps.sha.outputs.size }}',
+              "sha256": "'${{ steps.sha.outputs.sha256 }}'",
+              "completed_at": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
             }'
 
           echo "Build marked SUCCESS."
@@ -1393,6 +1240,7 @@ jobs:
         uses: actions/upload-artifact@v4
 
         with:
+
           name: ASIM-TECH-${{ steps.queue.outputs.build_id }}
 
           path: ASIM-TECH-${{ steps.queue.outputs.build_id }}.apk
@@ -1419,7 +1267,7 @@ jobs:
             -d '{
               "status": "failed",
               "build_log": "GitHub Actions build failed.",
-              "completed_at": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"
+              "completed_at": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
             }'
 
           echo "Build marked FAILED."
