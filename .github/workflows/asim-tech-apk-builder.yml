@@ -517,7 +517,6 @@ jobs:
 
       # =====================================================
       # ANDROID MANIFEST
-      # CAMERA PERMISSION
       # =====================================================
 
       - name: Create Android Manifest
@@ -590,10 +589,13 @@ jobs:
 
           import android.Manifest;
           import android.app.Activity;
+          import android.content.Intent;
           import android.content.pm.PackageManager;
           import android.graphics.Color;
+          import android.net.Uri;
           import android.os.Bundle;
           import android.webkit.PermissionRequest;
+          import android.webkit.ValueCallback;
           import android.webkit.WebChromeClient;
           import android.webkit.WebResourceRequest;
           import android.webkit.WebResourceResponse;
@@ -609,7 +611,17 @@ jobs:
 
               private PermissionRequest pendingPermissionRequest;
 
+              /*
+               * IMPORTANT:
+               * This callback receives the files selected from
+               * the native Android file picker.
+               */
+              private ValueCallback<Uri[]> filePathCallback;
+
+              private static final int FILE_CHOOSER_REQUEST = 2001;
+
               private static final int CAMERA_PERMISSION_REQUEST = 1001;
+
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
@@ -624,7 +636,17 @@ jobs:
                       Color.BLACK
                   );
 
+
+                  // =========================================
+                  // CREATE WEBVIEW
+                  // =========================================
+
                   webView = new WebView(this);
+
+
+                  // =========================================
+                  // WEBVIEW SETTINGS
+                  // =========================================
 
                   WebSettings settings =
                       webView.getSettings();
@@ -645,6 +667,11 @@ jobs:
 
                   settings.setSupportZoom(false);
 
+
+                  // =========================================
+                  // WEBVIEW ASSET LOADER
+                  // =========================================
+
                   final WebViewAssetLoader assetLoader =
                       new WebViewAssetLoader.Builder()
 
@@ -655,6 +682,11 @@ jobs:
                           )
 
                           .build();
+
+
+                  // =========================================
+                  // WEBVIEW CLIENT
+                  // =========================================
 
                   webView.setWebViewClient(
                       new WebViewClientCompat() {
@@ -676,8 +708,73 @@ jobs:
                       }
                   );
 
+
+                  // =========================================
+                  // WEB CHROME CLIENT
+                  // =========================================
+
                   webView.setWebChromeClient(
                       new WebChromeClient() {
+
+
+                          // =================================
+                          // NATIVE ANDROID FILE PICKER
+                          // =================================
+
+                          @Override
+                          public boolean onShowFileChooser(
+                              WebView view,
+                              ValueCallback<Uri[]> callback,
+                              FileChooserParams params
+                          ) {
+
+                              /*
+                               * Cancel previous callback if any.
+                               */
+
+                              if (filePathCallback != null) {
+
+                                  filePathCallback
+                                      .onReceiveValue(null);
+
+                              }
+
+                              filePathCallback = callback;
+
+
+                              try {
+
+                                  /*
+                                   * Android creates the proper
+                                   * native file picker according
+                                   * to the HTML accept/multiple
+                                   * attributes.
+                                   */
+
+                                  Intent intent =
+                                      params.createIntent();
+
+                                  startActivityForResult(
+                                      intent,
+                                      FILE_CHOOSER_REQUEST
+                                  );
+
+                              } catch (Exception e) {
+
+                                  filePathCallback = null;
+
+                                  return false;
+
+                              }
+
+                              return true;
+
+                          }
+
+
+                          // =================================
+                          // CAMERA / WEBRTC PERMISSION
+                          // =================================
 
                           @Override
                           public void onPermissionRequest(
@@ -686,7 +783,8 @@ jobs:
 
                               runOnUiThread(() -> {
 
-                                  boolean cameraRequested = false;
+                                  boolean cameraRequested =
+                                      false;
 
                                   String[] resources =
                                       request.getResources();
@@ -704,7 +802,8 @@ jobs:
                                                   .equals(resource)
                                           ) {
 
-                                              cameraRequested = true;
+                                              cameraRequested =
+                                                  true;
 
                                               break;
 
@@ -714,6 +813,7 @@ jobs:
 
                                   }
 
+
                                   if (!cameraRequested) {
 
                                       request.deny();
@@ -722,12 +822,14 @@ jobs:
 
                                   }
 
+
                                   if (
                                       checkSelfPermission(
                                           Manifest.permission.CAMERA
                                       )
                                       ==
-                                      PackageManager.PERMISSION_GRANTED
+                                      PackageManager
+                                          .PERMISSION_GRANTED
                                   ) {
 
                                       request.grant(
@@ -740,6 +842,7 @@ jobs:
                                       return;
 
                                   }
+
 
                                   pendingPermissionRequest =
                                       request;
@@ -755,35 +858,121 @@ jobs:
 
                           }
 
+
                           @Override
                           public void onPermissionRequestCanceled(
                               PermissionRequest request
                           ) {
 
                               if (
-                                  pendingPermissionRequest == request
+                                  pendingPermissionRequest
+                                  == request
                               ) {
 
-                                  pendingPermissionRequest = null;
+                                  pendingPermissionRequest =
+                                      null;
 
                               }
 
-                              super.onPermissionRequestCanceled(
-                                  request
-                              );
+                              super
+                                  .onPermissionRequestCanceled(
+                                      request
+                                  );
 
                           }
 
                       }
                   );
 
+
+                  // =========================================
+                  // LOAD HTML APP
+                  // =========================================
+
                   webView.loadUrl(
                       "https://appassets.androidplatform.net/assets/index.html"
                   );
 
+
+                  // =========================================
+                  // SHOW WEBVIEW
+                  // =========================================
+
                   setContentView(webView);
 
               }
+
+
+              // =================================================
+              // FILE PICKER RESULT
+              // =================================================
+
+              @Override
+              protected void onActivityResult(
+                  int requestCode,
+                  int resultCode,
+                  Intent data
+              ) {
+
+                  super.onActivityResult(
+                      requestCode,
+                      resultCode,
+                      data
+                  );
+
+
+                  if (
+                      requestCode ==
+                      FILE_CHOOSER_REQUEST
+                  ) {
+
+                      if (filePathCallback == null) {
+
+                          return;
+
+                      }
+
+
+                      Uri[] results = null;
+
+
+                      if (
+                          resultCode ==
+                          Activity.RESULT_OK
+                          &&
+                          data != null
+                      ) {
+
+                          results =
+                              WebChromeClient
+                                  .FileChooserParams
+                                  .parseResult(
+                                      resultCode,
+                                      data
+                                  );
+
+                      }
+
+
+                      /*
+                       * Return selected files to HTML
+                       * <input type="file">
+                       */
+
+                      filePathCallback
+                          .onReceiveValue(results);
+
+
+                      filePathCallback = null;
+
+                  }
+
+              }
+
+
+              // =================================================
+              // CAMERA PERMISSION RESULT
+              // =================================================
 
               @Override
               public void onRequestPermissionsResult(
@@ -798,21 +987,25 @@ jobs:
                       grantResults
                   );
 
+
                   if (
                       requestCode ==
                       CAMERA_PERMISSION_REQUEST
                   ) {
 
+
                       if (
                           pendingPermissionRequest != null
                       ) {
+
 
                           if (
                               grantResults.length > 0
                               &&
                               grantResults[0]
                               ==
-                              PackageManager.PERMISSION_GRANTED
+                              PackageManager
+                                  .PERMISSION_GRANTED
                           ) {
 
                               pendingPermissionRequest.grant(
@@ -828,6 +1021,7 @@ jobs:
 
                           }
 
+
                           pendingPermissionRequest = null;
 
                       }
@@ -835,6 +1029,11 @@ jobs:
                   }
 
               }
+
+
+              // =================================================
+              // ANDROID BACK BUTTON
+              // =================================================
 
               @Override
               public void onBackPressed() {
@@ -855,6 +1054,11 @@ jobs:
 
               }
 
+
+              // =================================================
+              // DESTROY WEBVIEW
+              // =================================================
+
               @Override
               protected void onDestroy() {
 
@@ -870,6 +1074,7 @@ jobs:
 
           }
           EOF
+
 
           sed -i "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
             "$JAVA_PATH/MainActivity.java"
@@ -893,17 +1098,29 @@ jobs:
                   name="AppTheme"
                   parent="android:style/Theme.Material.Light.NoActionBar">
 
-                  <item name="android:fontFamily">sans</item>
+                  <item name="android:fontFamily">
+                      sans
+                  </item>
 
-                  <item name="android:colorAccent">#18A558</item>
+                  <item name="android:colorAccent">
+                      #18A558
+                  </item>
 
-                  <item name="android:statusBarColor">#B42300</item>
+                  <item name="android:statusBarColor">
+                      #B42300
+                  </item>
 
-                  <item name="android:navigationBarColor">#000000</item>
+                  <item name="android:navigationBarColor">
+                      #000000
+                  </item>
 
-                  <item name="android:windowLightStatusBar">false</item>
+                  <item name="android:windowLightStatusBar">
+                      false
+                  </item>
 
-                  <item name="android:windowLightNavigationBar">false</item>
+                  <item name="android:windowLightNavigationBar">
+                      false
+                  </item>
 
               </style>
 
@@ -933,12 +1150,14 @@ jobs:
 
           test -f android-project/app/src/main/res/values/styles.xml
 
+
           echo ""
           echo "Checking CAMERA permission..."
 
           grep \
             "android.permission.CAMERA" \
             android-project/app/src/main/AndroidManifest.xml
+
 
           echo ""
           echo "Checking package..."
@@ -947,6 +1166,7 @@ jobs:
             "applicationId" \
             android-project/app/build.gradle
 
+
           echo ""
           echo "Checking Gradle plugin..."
 
@@ -954,11 +1174,34 @@ jobs:
             "com.android.application" \
             android-project/build.gradle
 
+
           echo ""
           echo "Checking MainActivity..."
 
           test -f \
             "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          echo ""
+          echo "Checking FILE CHOOSER..."
+
+          grep \
+            "onShowFileChooser" \
+            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          grep \
+            "FILE_CHOOSER_REQUEST" \
+            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          echo ""
+          echo "Checking onActivityResult..."
+
+          grep \
+            "onActivityResult" \
+            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
 
           echo ""
           echo "Project verification completed."
@@ -1133,6 +1376,6 @@ jobs:
             -H "Prefer: return=minimal" \
             -d "{
               \"status\": \"failed\",
-              \"build_log\": \"GitHub Actions Android build failed.\",
+              \"build_log\": \"GitHub Actions Android build failed. Check the Actions log for details.\",
               \"completed_at\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
             }"
