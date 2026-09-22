@@ -14,20 +14,11 @@
 
 <style>
 
-/* ================================
-   RESET
-================================ */
-
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
-
-
-/* ================================
-   FULL PAGE
-================================ */
 
 html,
 body {
@@ -39,7 +30,6 @@ body {
 body {
     font-family: Arial, Helvetica, sans-serif;
     background: #ffffff;
-    color: #1f2937;
 }
 
 
@@ -61,9 +51,9 @@ body {
 
     background: #ffffff;
 
-    font-size: 20px;
+    color: #475569;
 
-    color: #64748b;
+    font-size: 20px;
 
     z-index: 9999;
 }
@@ -77,11 +67,17 @@ body {
 
     display: none;
 
-    max-width: 700px;
+    position: fixed;
 
-    margin: 80px auto;
+    left: 50%;
 
-    padding: 25px;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: min(700px, 90%);
+
+    padding: 30px;
 
     background: #fee2e2;
 
@@ -90,10 +86,11 @@ body {
     border-radius: 14px;
 
     text-align: center;
+
+    z-index: 99999;
 }
 
 #error h2 {
-
     margin-bottom: 10px;
 }
 
@@ -110,23 +107,17 @@ body {
 
     height: 100vh;
 
-    min-height: 100vh;
-
     background: #ffffff;
 }
 
 
-/* ================================
-   WEBSITE FRAME
-================================ */
+#websiteFrame {
 
-.website-frame {
+    display: block;
 
     width: 100%;
 
     height: 100vh;
-
-    min-height: 100vh;
 
     border: 0;
 
@@ -135,8 +126,6 @@ body {
     padding: 0;
 
     background: #ffffff;
-
-    display: block;
 }
 
 </style>
@@ -147,20 +136,10 @@ body {
 <body>
 
 
-<!-- =====================================
-     LOADING
-===================================== -->
-
 <div id="loading">
-
     🚀 Loading website...
-
 </div>
 
-
-<!-- =====================================
-     ERROR
-===================================== -->
 
 <div id="error">
 
@@ -175,15 +154,10 @@ body {
 </div>
 
 
-<!-- =====================================
-     WEBSITE
-===================================== -->
-
 <div id="website">
 
     <iframe
         id="websiteFrame"
-        class="website-frame"
         sandbox="allow-scripts allow-forms allow-modals allow-popups allow-same-origin allow-presentation">
     </iframe>
 
@@ -192,9 +166,8 @@ body {
 
 <script>
 
-
 /* =====================================================
-   SUPABASE CONFIGURATION
+   SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
@@ -203,10 +176,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
-
-/* =====================================================
-   SUPABASE CLIENT
-===================================================== */
 
 const supabaseClient =
     window.supabase.createClient(
@@ -225,49 +194,236 @@ const params =
     );
 
 
-/*
-   Accept both:
-
-   ?id=REPOSITORY_ID
-
-   and
-
-   ?repository_id=REPOSITORY_ID
-*/
-
 const repositoryId =
     params.get("repository_id") ||
     params.get("id");
 
 
 /* =====================================================
-   ERROR HANDLER
+   ERROR
 ===================================================== */
 
 function showError(message) {
 
-    document.getElementById("loading")
-        .style.display = "none";
+    document.getElementById(
+        "loading"
+    ).style.display = "none";
 
 
-    document.getElementById("website")
-        .style.display = "none";
+    document.getElementById(
+        "website"
+    ).style.display = "none";
 
 
-    const errorBox =
-        document.getElementById("error");
+    document.getElementById(
+        "errorText"
+    ).textContent = message;
 
 
-    document.getElementById("errorText")
-        .textContent = message;
-
-
-    errorBox.style.display = "block";
+    document.getElementById(
+        "error"
+    ).style.display = "block";
 }
 
 
 /* =====================================================
-   LOAD PUBLISHED WEBSITE
+   NORMALIZE PATH
+===================================================== */
+
+function normalizePath(path) {
+
+    if (!path) {
+        return "";
+    }
+
+
+    return String(path)
+
+        .replace(/\\/g, "/")
+
+        .replace(/^\.\/+/, "")
+
+        .replace(/^\/+/, "")
+
+        .replace(/\/+/g, "/")
+
+        .trim();
+}
+
+
+/* =====================================================
+   RESOLVE FILE PATH
+===================================================== */
+
+function resolveFilePath(
+    source,
+    baseFile
+) {
+
+    if (!source) {
+        return "";
+    }
+
+
+    /* Remove query */
+
+    source =
+        source
+            .split("?")[0]
+            .split("#")[0];
+
+
+    /* External URL */
+
+    if (
+        /^https?:\/\//i.test(source) ||
+        /^\/\//.test(source)
+    ) {
+
+        return null;
+    }
+
+
+    /* Data / Blob */
+
+    if (
+        source.startsWith("data:") ||
+        source.startsWith("blob:")
+    ) {
+
+        return null;
+    }
+
+
+    const base =
+        normalizePath(
+            baseFile
+        );
+
+
+    const parts =
+        base.split("/");
+
+
+    parts.pop();
+
+
+    const sourceParts =
+        source
+            .replace(/^\/+/, "")
+            .split("/");
+
+
+    for (
+        const part of sourceParts
+    ) {
+
+        if (
+            part === "" ||
+            part === "."
+        ) {
+
+            continue;
+        }
+
+
+        if (part === "..") {
+
+            if (parts.length) {
+                parts.pop();
+            }
+
+        } else {
+
+            parts.push(part);
+
+        }
+
+    }
+
+
+    return normalizePath(
+        parts.join("/")
+    );
+}
+
+
+/* =====================================================
+   FIND FILE
+===================================================== */
+
+function findFile(
+    fileMap,
+    requestedPath
+) {
+
+    const cleanPath =
+        normalizePath(
+            requestedPath
+        );
+
+
+    if (
+        Object.prototype.hasOwnProperty.call(
+            fileMap,
+            cleanPath
+        )
+    ) {
+
+        return cleanPath;
+    }
+
+
+    /* Try root filename */
+
+    const filename =
+        cleanPath.split("/").pop();
+
+
+    const matches =
+        Object.keys(fileMap)
+            .filter(function(path) {
+
+                return (
+                    path === filename ||
+                    path.endsWith(
+                        "/" + filename
+                    )
+                );
+
+            });
+
+
+    if (matches.length === 1) {
+
+        return matches[0];
+    }
+
+
+    return null;
+}
+
+
+/* =====================================================
+   ESCAPE ATTRIBUTE
+===================================================== */
+
+function escapeAttribute(value) {
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;");
+}
+
+
+/* =====================================================
+   LOAD WEBSITE
 ===================================================== */
 
 async function loadPublishedWebsite() {
@@ -276,7 +432,7 @@ async function loadPublishedWebsite() {
 
 
         /* ---------------------------------------------
-           CHECK REPOSITORY ID
+           REPOSITORY ID
         --------------------------------------------- */
 
         if (!repositoryId) {
@@ -290,7 +446,7 @@ async function loadPublishedWebsite() {
 
 
         /* ---------------------------------------------
-           LOAD REPOSITORY
+           REPOSITORY
         --------------------------------------------- */
 
         const {
@@ -321,7 +477,6 @@ async function loadPublishedWebsite() {
         if (repositoryError) {
 
             console.error(
-                "Repository error:",
                 repositoryError
             );
 
@@ -333,8 +488,18 @@ async function loadPublishedWebsite() {
         }
 
 
+        if (!repository) {
+
+            showError(
+                "Repository was not found."
+            );
+
+            return;
+        }
+
+
         /* ---------------------------------------------
-           CHECK PUBLISHED STATUS
+           PUBLISHED
         --------------------------------------------- */
 
         if (!repository.is_published) {
@@ -348,13 +513,13 @@ async function loadPublishedWebsite() {
 
 
         /* ---------------------------------------------
-           PRIVATE REPOSITORY CHECK
+           PRIVATE
         --------------------------------------------- */
 
         if (repository.is_private) {
 
             showError(
-                "This website is private and cannot be viewed publicly."
+                "This website is private."
             );
 
             return;
@@ -362,17 +527,13 @@ async function loadPublishedWebsite() {
 
 
         /* ---------------------------------------------
-           DEFAULT BRANCH
+           BRANCH
         --------------------------------------------- */
 
-        const defaultBranchName =
+        const branchName =
             repository.default_branch ||
             "main";
 
-
-        /* ---------------------------------------------
-           LOAD BRANCH
-        --------------------------------------------- */
 
         const {
             data: branch,
@@ -394,7 +555,7 @@ async function loadPublishedWebsite() {
 
             .eq(
                 "name",
-                defaultBranchName
+                branchName
             )
 
             .maybeSingle();
@@ -403,12 +564,11 @@ async function loadPublishedWebsite() {
         if (branchError) {
 
             console.error(
-                "Branch error:",
                 branchError
             );
 
             showError(
-                "Unable to load the published branch."
+                "Unable to load branch."
             );
 
             return;
@@ -425,13 +585,13 @@ async function loadPublishedWebsite() {
         }
 
 
-        /* ---------------------------------------------
-           LOAD INDEX.HTML
-        --------------------------------------------- */
+        /* =================================================
+           LOAD ALL FILES
+        ================================================= */
 
         const {
-            data: file,
-            error: fileError
+            data: files,
+            error: filesError
         } =
         await supabaseClient
 
@@ -454,71 +614,357 @@ async function loadPublishedWebsite() {
             .eq(
                 "branch_id",
                 branch.id
-            )
-
-            .eq(
-                "file_path",
-                "index.html"
-            )
-
-            .eq(
-                "is_binary",
-                false
-            )
-
-            .maybeSingle();
+            );
 
 
-        if (fileError) {
+        if (filesError) {
 
             console.error(
-                "File error:",
-                fileError
+                filesError
             );
 
             showError(
-                "Unable to load index.html."
+                "Unable to load repository files."
             );
 
             return;
         }
 
 
-        /* ---------------------------------------------
-           INDEX.HTML CHECK
-        --------------------------------------------- */
+        /* =================================================
+           CREATE FILE MAP
+        ================================================= */
 
-        if (!file) {
+        const fileMap = {};
+
+
+        (files || []).forEach(
+            function(file) {
+
+                if (
+                    !file.file_path ||
+                    file.is_binary
+                ) {
+
+                    return;
+                }
+
+
+                const path =
+                    normalizePath(
+                        file.file_path
+                    );
+
+
+                fileMap[path] =
+                    file.content || "";
+
+            }
+        );
+
+
+        console.log(
+            "ASIM TECH files:",
+            Object.keys(fileMap)
+        );
+
+
+        /* =================================================
+           INDEX.HTML
+        ================================================= */
+
+        const indexPath =
+            findFile(
+                fileMap,
+                "index.html"
+            );
+
+
+        if (!indexPath) {
 
             showError(
-                "This published repository does not contain an index.html file on the default branch."
+                "index.html was not found."
             );
 
             return;
         }
 
 
-        /* ---------------------------------------------
-           GET HTML
-        --------------------------------------------- */
-
-        const html =
-            file.content || "";
+        let html =
+            fileMap[indexPath];
 
 
-        if (!html.trim()) {
+        if (!html ||
+            !html.trim()) {
 
             showError(
-                "The index.html file is empty."
+                "index.html is empty."
             );
 
             return;
         }
 
 
-        /* ---------------------------------------------
-           WEBSITE FRAME
-        --------------------------------------------- */
+        /* =================================================
+           CSS INJECTION
+        ================================================= */
+
+        html =
+            html.replace(
+
+                /<link\b([^>]*?)\bhref\s*=\s*["']([^"']+)["']([^>]*?)>/gi,
+
+                function(
+                    fullTag,
+                    before,
+                    href,
+                    after
+                ) {
+
+                    /* Only stylesheet */
+
+                    if (
+                        !/\brel\s*=\s*["']stylesheet["']/i
+                            .test(fullTag)
+                    ) {
+
+                        return fullTag;
+                    }
+
+
+                    /* External */
+
+                    if (
+                        /^https?:\/\//i.test(href) ||
+                        /^\/\//.test(href) ||
+                        href.startsWith("data:")
+                    ) {
+
+                        return fullTag;
+                    }
+
+
+                    const resolved =
+                        resolveFilePath(
+                            href,
+                            indexPath
+                        );
+
+
+                    if (!resolved) {
+
+                        return fullTag;
+                    }
+
+
+                    const actualPath =
+                        findFile(
+                            fileMap,
+                            resolved
+                        );
+
+
+                    if (!actualPath) {
+
+                        console.warn(
+                            "CSS NOT FOUND:",
+                            href
+                        );
+
+                        return fullTag;
+                    }
+
+
+                    const css =
+                        fileMap[actualPath];
+
+
+                    console.log(
+                        "CSS LOADED:",
+                        actualPath
+                    );
+
+
+                    return `
+
+<style
+data-asim-tech-file="${escapeAttribute(actualPath)}">
+
+${css}
+
+</style>
+
+`;
+
+                }
+            );
+
+
+        /* =================================================
+           JAVASCRIPT INJECTION
+        ================================================= */
+
+        html =
+            html.replace(
+
+                /<script\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)>\s*<\/script>/gi,
+
+                function(
+                    fullTag,
+                    before,
+                    src,
+                    after
+                ) {
+
+                    /* External */
+
+                    if (
+                        /^https?:\/\//i.test(src) ||
+                        /^\/\//.test(src) ||
+                        src.startsWith("data:") ||
+                        src.startsWith("blob:")
+                    ) {
+
+                        return fullTag;
+                    }
+
+
+                    const resolved =
+                        resolveFilePath(
+                            src,
+                            indexPath
+                        );
+
+
+                    if (!resolved) {
+
+                        return fullTag;
+                    }
+
+
+                    const actualPath =
+                        findFile(
+                            fileMap,
+                            resolved
+                        );
+
+
+                    if (!actualPath) {
+
+                        console.warn(
+                            "JAVASCRIPT NOT FOUND:",
+                            src
+                        );
+
+                        return fullTag;
+                    }
+
+
+                    const js =
+                        fileMap[actualPath];
+
+
+                    console.log(
+                        "JAVASCRIPT LOADED:",
+                        actualPath
+                    );
+
+
+                    /*
+                       Protect </script>
+                    */
+
+                    const safeJS =
+                        String(js)
+                            .replace(
+                                /<\/script>/gi,
+                                "<\\/script>"
+                            );
+
+
+                    return `
+
+<script
+data-asim-tech-file="${escapeAttribute(actualPath)}">
+
+${safeJS}
+
+<\/script>
+
+`;
+
+                }
+            );
+
+
+        /* =================================================
+           FIX RELATIVE LINKS / IMAGES
+        ================================================= */
+
+        html =
+            html.replace(
+
+                /<img\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)>/gi,
+
+                function(
+                    fullTag,
+                    before,
+                    src,
+                    after
+                ) {
+
+                    if (
+                        /^https?:\/\//i.test(src) ||
+                        /^data:/i.test(src) ||
+                        /^blob:/i.test(src)
+                    ) {
+
+                        return fullTag;
+                    }
+
+
+                    const resolved =
+                        resolveFilePath(
+                            src,
+                            indexPath
+                        );
+
+
+                    if (!resolved) {
+                        return fullTag;
+                    }
+
+
+                    const actualPath =
+                        findFile(
+                            fileMap,
+                            resolved
+                        );
+
+
+                    if (!actualPath) {
+                        return fullTag;
+                    }
+
+
+                    return fullTag;
+                }
+            );
+
+
+        /* =================================================
+           ADD BASE
+        ================================================= */
+
+        /*
+           Do NOT add a base URL.
+           CSS and JS have already been injected.
+        */
+
+
+        /* =================================================
+           FRAME
+        ================================================= */
 
         const frame =
             document.getElementById(
@@ -526,94 +972,37 @@ async function loadPublishedWebsite() {
             );
 
 
-        /* ---------------------------------------------
-           BUILD COMPLETE HTML
-        --------------------------------------------- */
-
-        let completeHtml;
-
-
-        /*
-           If index.html already contains
-           <html>, <head> or <!DOCTYPE>,
-           use it directly.
-        */
-
-        if (
-            /<html[\s>]/i.test(html) ||
-            /<!DOCTYPE/i.test(html)
-        ) {
-
-            completeHtml = html;
-
-        } else {
-
-            completeHtml = `
-
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width,initial-scale=1.0">
-
-<title>
-${escapeHtml(repository.name || "Website")}
-</title>
-
-</head>
-
-<body>
-
-${html}
-
-</body>
-
-</html>
-
-`;
-
-        }
-
-
-        /* ---------------------------------------------
-           LOAD WEBSITE
-        --------------------------------------------- */
-
         frame.srcdoc =
-            completeHtml;
+            html;
 
 
-        /* ---------------------------------------------
-           PAGE TITLE
-        --------------------------------------------- */
+        /* =================================================
+           TITLE
+        ================================================= */
 
         document.title =
             repository.name ||
             "Published Website";
 
 
-        /* ---------------------------------------------
-           SHOW WEBSITE
-        --------------------------------------------- */
+        /* =================================================
+           SHOW
+        ================================================= */
 
-        document.getElementById("loading")
-            .style.display = "none";
+        document.getElementById(
+            "loading"
+        ).style.display =
+            "none";
 
 
-        document.getElementById("website")
-            .style.display = "block";
+        document.getElementById(
+            "website"
+        ).style.display =
+            "block";
 
 
         console.log(
-            "Published website loaded successfully:",
-            repository.name,
-            "Branch:",
-            branch.name
+            "ASIM TECH publishing engine loaded successfully."
         );
 
 
@@ -622,49 +1011,18 @@ ${html}
     catch (error) {
 
         console.error(
-            "Published website error:",
+            "PUBLISH ERROR:",
             error
         );
 
+
         showError(
-            "Unable to load the published website."
+            "Unable to load website: " +
+            error.message
         );
+
     }
-}
 
-
-/* =====================================================
-   HTML ESCAPE
-===================================================== */
-
-function escapeHtml(value) {
-
-    return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
 }
 
 
