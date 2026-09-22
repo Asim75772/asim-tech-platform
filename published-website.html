@@ -24,7 +24,6 @@ html,
 body {
     width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 body {
@@ -32,21 +31,13 @@ body {
     background: #ffffff;
 }
 
-
-/* ================================
-   LOADING
-================================ */
-
 #loading {
 
     position: fixed;
-
     inset: 0;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     background: #ffffff;
@@ -58,11 +49,6 @@ body {
     z-index: 9999;
 }
 
-
-/* ================================
-   ERROR
-================================ */
-
 #error {
 
     display: none;
@@ -70,14 +56,14 @@ body {
     position: fixed;
 
     left: 50%;
-
     top: 50%;
 
     transform: translate(-50%, -50%);
 
-    width: min(700px, 90%);
+    width: 90%;
+    max-width: 700px;
 
-    padding: 30px;
+    padding: 25px;
 
     background: #fee2e2;
 
@@ -94,38 +80,22 @@ body {
     margin-bottom: 10px;
 }
 
-
-/* ================================
-   WEBSITE
-================================ */
-
 #website {
 
     display: none;
 
     width: 100%;
-
     height: 100vh;
-
-    background: #ffffff;
 }
-
 
 #websiteFrame {
 
-    display: block;
-
     width: 100%;
-
     height: 100vh;
 
     border: 0;
 
-    margin: 0;
-
-    padding: 0;
-
-    background: #ffffff;
+    display: block;
 }
 
 </style>
@@ -148,7 +118,7 @@ body {
     </h2>
 
     <p id="errorText">
-        Unable to load this website.
+        Unable to load website.
     </p>
 
 </div>
@@ -185,7 +155,7 @@ const supabaseClient =
 
 
 /* =====================================================
-   GET REPOSITORY ID
+   REPOSITORY ID
 ===================================================== */
 
 const params =
@@ -223,6 +193,7 @@ function showError(message) {
     document.getElementById(
         "error"
     ).style.display = "block";
+
 }
 
 
@@ -236,204 +207,87 @@ function normalizePath(path) {
         return "";
     }
 
-
     return String(path)
-
         .replace(/\\/g, "/")
-
-        .replace(/^\.\/+/, "")
-
-        .replace(/^\/+/, "")
-
+        .replace(/^\.\/+/g, "")
+        .replace(/^\/+/g, "")
         .replace(/\/+/g, "/")
-
         .trim();
+
 }
 
 
 /* =====================================================
-   RESOLVE FILE PATH
+   GET FILE
 ===================================================== */
 
-function resolveFilePath(
-    source,
-    baseFile
+async function getFile(
+    repositoryId,
+    branchId,
+    paths
 ) {
-
-    if (!source) {
-        return "";
-    }
-
-
-    /* Remove query */
-
-    source =
-        source
-            .split("?")[0]
-            .split("#")[0];
-
-
-    /* External URL */
-
-    if (
-        /^https?:\/\//i.test(source) ||
-        /^\/\//.test(source)
-    ) {
-
-        return null;
-    }
-
-
-    /* Data / Blob */
-
-    if (
-        source.startsWith("data:") ||
-        source.startsWith("blob:")
-    ) {
-
-        return null;
-    }
-
-
-    const base =
-        normalizePath(
-            baseFile
-        );
-
-
-    const parts =
-        base.split("/");
-
-
-    parts.pop();
-
-
-    const sourceParts =
-        source
-            .replace(/^\/+/, "")
-            .split("/");
-
 
     for (
-        const part of sourceParts
+        const path of paths
     ) {
+
+        const result =
+            await supabaseClient
+
+                .from("repository_files")
+
+                .select(`
+                    file_path,
+                    content,
+                    is_binary
+                `)
+
+                .eq(
+                    "repository_id",
+                    repositoryId
+                )
+
+                .eq(
+                    "branch_id",
+                    branchId
+                )
+
+                .eq(
+                    "file_path",
+                    path
+                )
+
+                .eq(
+                    "is_binary",
+                    false
+                )
+
+                .maybeSingle();
+
 
         if (
-            part === "" ||
-            part === "."
+            !result.error &&
+            result.data
         ) {
 
-            continue;
-        }
-
-
-        if (part === "..") {
-
-            if (parts.length) {
-                parts.pop();
-            }
-
-        } else {
-
-            parts.push(part);
+            return result.data;
 
         }
 
     }
-
-
-    return normalizePath(
-        parts.join("/")
-    );
-}
-
-
-/* =====================================================
-   FIND FILE
-===================================================== */
-
-function findFile(
-    fileMap,
-    requestedPath
-) {
-
-    const cleanPath =
-        normalizePath(
-            requestedPath
-        );
-
-
-    if (
-        Object.prototype.hasOwnProperty.call(
-            fileMap,
-            cleanPath
-        )
-    ) {
-
-        return cleanPath;
-    }
-
-
-    /* Try root filename */
-
-    const filename =
-        cleanPath.split("/").pop();
-
-
-    const matches =
-        Object.keys(fileMap)
-            .filter(function(path) {
-
-                return (
-                    path === filename ||
-                    path.endsWith(
-                        "/" + filename
-                    )
-                );
-
-            });
-
-
-    if (matches.length === 1) {
-
-        return matches[0];
-    }
-
 
     return null;
+
 }
 
 
 /* =====================================================
-   ESCAPE ATTRIBUTE
-===================================================== */
-
-function escapeAttribute(value) {
-
-    return String(value)
-
-        .replace(/&/g, "&amp;")
-
-        .replace(/"/g, "&quot;")
-
-        .replace(/</g, "&lt;")
-
-        .replace(/>/g, "&gt;");
-}
-
-
-/* =====================================================
-   LOAD WEBSITE
+   MAIN
 ===================================================== */
 
 async function loadPublishedWebsite() {
 
     try {
-
-
-        /* ---------------------------------------------
-           REPOSITORY ID
-        --------------------------------------------- */
 
         if (!repositoryId) {
 
@@ -445,9 +299,9 @@ async function loadPublishedWebsite() {
         }
 
 
-        /* ---------------------------------------------
+        /* =============================================
            REPOSITORY
-        --------------------------------------------- */
+        ============================================= */
 
         const {
             data: repository,
@@ -460,7 +314,6 @@ async function loadPublishedWebsite() {
             .select(`
                 id,
                 name,
-                description,
                 is_private,
                 is_published,
                 default_branch
@@ -481,7 +334,7 @@ async function loadPublishedWebsite() {
             );
 
             showError(
-                "Unable to load repository."
+                "Repository could not be loaded."
             );
 
             return;
@@ -491,44 +344,36 @@ async function loadPublishedWebsite() {
         if (!repository) {
 
             showError(
-                "Repository was not found."
+                "Repository not found."
             );
 
             return;
         }
 
-
-        /* ---------------------------------------------
-           PUBLISHED
-        --------------------------------------------- */
 
         if (!repository.is_published) {
 
             showError(
-                "This repository has not been published yet."
+                "Repository is not published."
             );
 
             return;
         }
 
-
-        /* ---------------------------------------------
-           PRIVATE
-        --------------------------------------------- */
 
         if (repository.is_private) {
 
             showError(
-                "This website is private."
+                "This repository is private."
             );
 
             return;
         }
 
 
-        /* ---------------------------------------------
+        /* =============================================
            BRANCH
-        --------------------------------------------- */
+        ============================================= */
 
         const branchName =
             repository.default_branch ||
@@ -568,7 +413,7 @@ async function loadPublishedWebsite() {
             );
 
             showError(
-                "Unable to load branch."
+                "Branch could not be loaded."
             );
 
             return;
@@ -578,109 +423,28 @@ async function loadPublishedWebsite() {
         if (!branch) {
 
             showError(
-                "Published branch was not found."
+                "Branch not found."
             );
 
             return;
         }
 
 
-        /* =================================================
-           LOAD ALL FILES
-        ================================================= */
-
-        const {
-            data: files,
-            error: filesError
-        } =
-        await supabaseClient
-
-            .from("repository_files")
-
-            .select(`
-                file_path,
-                content,
-                language,
-                is_binary,
-                mime_type,
-                branch_id
-            `)
-
-            .eq(
-                "repository_id",
-                repositoryId
-            )
-
-            .eq(
-                "branch_id",
-                branch.id
-            );
-
-
-        if (filesError) {
-
-            console.error(
-                filesError
-            );
-
-            showError(
-                "Unable to load repository files."
-            );
-
-            return;
-        }
-
-
-        /* =================================================
-           CREATE FILE MAP
-        ================================================= */
-
-        const fileMap = {};
-
-
-        (files || []).forEach(
-            function(file) {
-
-                if (
-                    !file.file_path ||
-                    file.is_binary
-                ) {
-
-                    return;
-                }
-
-
-                const path =
-                    normalizePath(
-                        file.file_path
-                    );
-
-
-                fileMap[path] =
-                    file.content || "";
-
-            }
-        );
-
-
-        console.log(
-            "ASIM TECH files:",
-            Object.keys(fileMap)
-        );
-
-
-        /* =================================================
+        /* =============================================
            INDEX.HTML
-        ================================================= */
+        ============================================= */
 
-        const indexPath =
-            findFile(
-                fileMap,
-                "index.html"
+        const indexFile =
+            await getFile(
+                repositoryId,
+                branch.id,
+                [
+                    "index.html"
+                ]
             );
 
 
-        if (!indexPath) {
+        if (!indexFile) {
 
             showError(
                 "index.html was not found."
@@ -691,11 +455,10 @@ async function loadPublishedWebsite() {
 
 
         let html =
-            fileMap[indexPath];
+            indexFile.content || "";
 
 
-        if (!html ||
-            !html.trim()) {
+        if (!html.trim()) {
 
             showError(
                 "index.html is empty."
@@ -705,90 +468,70 @@ async function loadPublishedWebsite() {
         }
 
 
-        /* =================================================
-           CSS INJECTION
-        ================================================= */
+        /* =============================================
+           CSS FILE
+        ============================================= */
 
-        html =
-            html.replace(
-
-                /<link\b([^>]*?)\bhref\s*=\s*["']([^"']+)["']([^>]*?)>/gi,
-
-                function(
-                    fullTag,
-                    before,
-                    href,
-                    after
-                ) {
-
-                    /* Only stylesheet */
-
-                    if (
-                        !/\brel\s*=\s*["']stylesheet["']/i
-                            .test(fullTag)
-                    ) {
-
-                        return fullTag;
-                    }
+        let cssFile =
+            await getFile(
+                repositoryId,
+                branch.id,
+                [
+                    "style.css",
+                    "css/style.css"
+                ]
+            );
 
 
-                    /* External */
+        /* =============================================
+           JAVASCRIPT FILE
+        ============================================= */
 
-                    if (
-                        /^https?:\/\//i.test(href) ||
-                        /^\/\//.test(href) ||
-                        href.startsWith("data:")
-                    ) {
-
-                        return fullTag;
-                    }
-
-
-                    const resolved =
-                        resolveFilePath(
-                            href,
-                            indexPath
-                        );
+        let jsFile =
+            await getFile(
+                repositoryId,
+                branch.id,
+                [
+                    "script.js",
+                    "js/script.js",
+                    "js/app.js"
+                ]
+            );
 
 
-                    if (!resolved) {
+        console.log(
+            "INDEX:",
+            !!indexFile
+        );
 
-                        return fullTag;
-                    }
+        console.log(
+            "CSS:",
+            cssFile
+                ? cssFile.file_path
+                : "NOT FOUND"
+        );
 
-
-                    const actualPath =
-                        findFile(
-                            fileMap,
-                            resolved
-                        );
-
-
-                    if (!actualPath) {
-
-                        console.warn(
-                            "CSS NOT FOUND:",
-                            href
-                        );
-
-                        return fullTag;
-                    }
+        console.log(
+            "JS:",
+            jsFile
+                ? jsFile.file_path
+                : "NOT FOUND"
+        );
 
 
-                    const css =
-                        fileMap[actualPath];
+        /* =============================================
+           INSERT CSS
+        ============================================= */
+
+        if (cssFile) {
+
+            const css =
+                cssFile.content || "";
 
 
-                    console.log(
-                        "CSS LOADED:",
-                        actualPath
-                    );
+            const styleBlock = `
 
-
-                    return `
-
-<style
-data-asim-tech-file="${escapeAttribute(actualPath)}">
+<style>
 
 ${css}
 
@@ -796,96 +539,51 @@ ${css}
 
 `;
 
-                }
-            );
 
+            if (
+                /<\/head>/i.test(
+                    html
+                )
+            ) {
 
-        /* =================================================
-           JAVASCRIPT INJECTION
-        ================================================= */
-
-        html =
-            html.replace(
-
-                /<script\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)>\s*<\/script>/gi,
-
-                function(
-                    fullTag,
-                    before,
-                    src,
-                    after
-                ) {
-
-                    /* External */
-
-                    if (
-                        /^https?:\/\//i.test(src) ||
-                        /^\/\//.test(src) ||
-                        src.startsWith("data:") ||
-                        src.startsWith("blob:")
-                    ) {
-
-                        return fullTag;
-                    }
-
-
-                    const resolved =
-                        resolveFilePath(
-                            src,
-                            indexPath
-                        );
-
-
-                    if (!resolved) {
-
-                        return fullTag;
-                    }
-
-
-                    const actualPath =
-                        findFile(
-                            fileMap,
-                            resolved
-                        );
-
-
-                    if (!actualPath) {
-
-                        console.warn(
-                            "JAVASCRIPT NOT FOUND:",
-                            src
-                        );
-
-                        return fullTag;
-                    }
-
-
-                    const js =
-                        fileMap[actualPath];
-
-
-                    console.log(
-                        "JAVASCRIPT LOADED:",
-                        actualPath
+                html =
+                    html.replace(
+                        /<\/head>/i,
+                        styleBlock +
+                        "</head>"
                     );
 
+            } else {
 
-                    /*
-                       Protect </script>
-                    */
+                html =
+                    styleBlock +
+                    html;
 
-                    const safeJS =
-                        String(js)
-                            .replace(
-                                /<\/script>/gi,
-                                "<\\/script>"
-                            );
+            }
+
+        }
 
 
-                    return `
+        /* =============================================
+           INSERT JAVASCRIPT
+        ============================================= */
 
-<script
-data-asim-tech-file="${escapeAttribute(actualPath)}">
+        if (jsFile) {
+
+            const js =
+                jsFile.content || "";
+
+
+            const safeJS =
+                js.replace(
+                    /<\/script>/gi,
+                    "<\\/script>"
+                );
+
+
+            const scriptBlock = `
+
+<script>
 
 ${safeJS}
 
@@ -893,78 +591,33 @@ ${safeJS}
 
 `;
 
-                }
-            );
+
+            if (
+                /<\/body>/i.test(
+                    html
+                )
+            ) {
+
+                html =
+                    html.replace(
+                        /<\/body>/i,
+                        scriptBlock +
+                        "</body>"
+                    );
+
+            } else {
+
+                html +=
+                    scriptBlock;
+
+            }
+
+        }
 
 
-        /* =================================================
-           FIX RELATIVE LINKS / IMAGES
-        ================================================= */
-
-        html =
-            html.replace(
-
-                /<img\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)>/gi,
-
-                function(
-                    fullTag,
-                    before,
-                    src,
-                    after
-                ) {
-
-                    if (
-                        /^https?:\/\//i.test(src) ||
-                        /^data:/i.test(src) ||
-                        /^blob:/i.test(src)
-                    ) {
-
-                        return fullTag;
-                    }
-
-
-                    const resolved =
-                        resolveFilePath(
-                            src,
-                            indexPath
-                        );
-
-
-                    if (!resolved) {
-                        return fullTag;
-                    }
-
-
-                    const actualPath =
-                        findFile(
-                            fileMap,
-                            resolved
-                        );
-
-
-                    if (!actualPath) {
-                        return fullTag;
-                    }
-
-
-                    return fullTag;
-                }
-            );
-
-
-        /* =================================================
-           ADD BASE
-        ================================================= */
-
-        /*
-           Do NOT add a base URL.
-           CSS and JS have already been injected.
-        */
-
-
-        /* =================================================
+        /* =============================================
            FRAME
-        ================================================= */
+        ============================================= */
 
         const frame =
             document.getElementById(
@@ -976,18 +629,18 @@ ${safeJS}
             html;
 
 
-        /* =================================================
+        /* =============================================
            TITLE
-        ================================================= */
+        ============================================= */
 
         document.title =
             repository.name ||
             "Published Website";
 
 
-        /* =================================================
+        /* =============================================
            SHOW
-        ================================================= */
+        ============================================= */
 
         document.getElementById(
             "loading"
@@ -1002,7 +655,7 @@ ${safeJS}
 
 
         console.log(
-            "ASIM TECH publishing engine loaded successfully."
+            "ASIM TECH publishing completed."
         );
 
 
@@ -1011,19 +664,48 @@ ${safeJS}
     catch (error) {
 
         console.error(
-            "PUBLISH ERROR:",
+            "Publishing error:",
             error
         );
 
 
         showError(
-            "Unable to load website: " +
+            "Publishing error: " +
             error.message
         );
 
     }
 
 }
+
+
+/* =====================================================
+   TIMEOUT
+===================================================== */
+
+setTimeout(
+    function() {
+
+        const loading =
+            document.getElementById(
+                "loading"
+            );
+
+
+        if (
+            loading &&
+            loading.style.display !== "none"
+        ) {
+
+            showError(
+                "Website loading timed out. Please refresh and try again."
+            );
+
+        }
+
+    },
+    15000
+);
 
 
 /* =====================================================
