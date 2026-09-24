@@ -310,11 +310,56 @@ color:#58a6ff;
 font-weight:600;
 }
 
+/* =================================
+   PATH BAR
+================================= */
+
+.path-bar{
+display:flex;
+align-items:center;
+gap:7px;
+flex-wrap:wrap;
+
+background:#161b22;
+
+border:1px solid #30363d;
+
+border-radius:7px;
+
+padding:10px 13px;
+
+margin-bottom:12px;
+
+font-size:13px;
+}
+
+.path-link{
+color:#58a6ff;
+cursor:pointer;
+font-weight:600;
+}
+
+.path-link:hover{
+text-decoration:underline;
+}
+
+.path-separator{
+color:#8b949e;
+}
+
+.path-current{
+color:#e6edf3;
+font-weight:600;
+}
+
+/* =================================
+   FILE LIST
+================================= */
+
 .file-list{
 border:1px solid #30363d;
-border-top:0;
 background:#0d1117;
-border-radius:0 0 7px 7px;
+border-radius:7px;
 overflow:hidden;
 }
 
@@ -381,11 +426,69 @@ gap:5px;
 flex-wrap:wrap;
 }
 
+/* =================================
+   FOLDER
+================================= */
+
+.folder-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+
+padding:14px 15px;
+
+border-bottom:1px solid #21262d;
+
+background:#0d1117;
+
+cursor:pointer;
+}
+
+.folder-row:hover{
+background:#161b22;
+}
+
+.folder-main{
+display:flex;
+align-items:center;
+gap:12px;
+min-width:0;
+}
+
+.folder-icon{
+font-size:22px;
+width:28px;
+text-align:center;
+}
+
+.folder-name{
+color:#58a6ff;
+font-size:14px;
+font-weight:600;
+word-break:break-word;
+}
+
+.folder-count{
+color:#8b949e;
+font-size:12px;
+margin-top:4px;
+}
+
+.folder-arrow{
+color:#8b949e;
+font-size:18px;
+}
+
 .empty{
 padding:55px 20px;
 text-align:center;
 color:#8b949e;
 }
+
+/* =================================
+   README
+================================= */
 
 .readme{
 margin-top:25px;
@@ -414,7 +517,9 @@ color:#fff;
 margin-bottom:12px;
 }
 
-/* PREVIEW MODAL */
+/* =================================
+   PREVIEW MODAL
+================================= */
 
 .modal{
 display:none;
@@ -471,6 +576,10 @@ gap:8px;
 padding-top:10px;
 }
 
+/* =================================
+   TOAST
+================================= */
+
 .toast{
 position:fixed;
 right:20px;
@@ -499,7 +608,9 @@ border-color:#f85149;
 color:#ff7b72;
 }
 
-/* DELETE CONFIRM */
+/* =================================
+   DELETE
+================================= */
 
 .delete-card{
 max-width:500px;
@@ -531,6 +642,10 @@ justify-content:flex-end;
 gap:10px;
 flex-wrap:wrap;
 }
+
+/* =================================
+   MOBILE
+================================= */
 
 @media(max-width:700px){
 
@@ -846,6 +961,21 @@ main
 </div>
 
 
+<!-- =================================
+     PATH BAR
+================================= -->
+
+<div
+id="pathBar"
+class="path-bar"
+style="display:none;">
+</div>
+
+
+<!-- =================================
+     FILE LIST
+================================= -->
+
 <div
 id="fileList"
 class="file-list">
@@ -876,7 +1006,9 @@ Loading README...
 </div>
 
 
-<!-- PREVIEW MODAL -->
+<!-- =================================
+     PREVIEW MODAL
+================================= -->
 
 <div
 id="modal"
@@ -910,7 +1042,9 @@ onclick="closeModal()">
 </div>
 
 
-<!-- DELETE CONFIRM MODAL -->
+<!-- =================================
+     DELETE MODAL
+================================= -->
 
 <div
 id="deleteModal"
@@ -1005,13 +1139,20 @@ params.get("branch_id");
 ================================= */
 
 let currentUser = null;
+
 let repository = null;
+
 let allBranches = [];
+
 let currentBranch = null;
+
 let allFiles = [];
+
 let isStarred = false;
 
 let filePendingDelete = null;
+
+let currentFolder = "";
 
 
 /* =================================
@@ -1041,7 +1182,9 @@ const {
 data,
 error
 } =
-await supabaseClient.auth.getUser();
+await supabaseClient
+.auth
+.getUser();
 
 
 if(error){
@@ -1273,6 +1416,9 @@ allBranches[0];
 currentBranch =
 selected;
 
+currentFolder =
+"";
+
 
 renderBranchMenu();
 
@@ -1292,7 +1438,8 @@ document.getElementById(
 "branchList"
 );
 
-list.innerHTML = "";
+list.innerHTML =
+"";
 
 
 allBranches.forEach(
@@ -1315,6 +1462,9 @@ function(){
 
 currentBranch =
 branch;
+
+currentFolder =
+"";
 
 updateBranchUI();
 
@@ -1426,7 +1576,271 @@ allFiles
 
 
 /* =================================
-   RENDER FILES
+   FOLDER PATH
+================================= */
+
+function normalizeFolderPath(path){
+
+return String(
+path || ""
+)
+
+.replace(
+/\\/g,
+"/"
+)
+
+.replace(
+/^\/+/,
+""
+)
+
+.replace(
+/\/+$/g,
+""
+)
+
+.replace(
+/\/+/g,
+"/"
+)
+
+.trim();
+
+}
+
+
+function getFolderPath(filePath){
+
+const parts =
+String(
+filePath || ""
+)
+.split("/");
+
+
+if(parts.length <= 1){
+return "";
+}
+
+
+parts.pop();
+
+return parts.join("/");
+
+}
+
+
+function getDirectChildFolder(
+filePath,
+currentPath
+){
+
+const prefix =
+currentPath
+? currentPath + "/"
+: "";
+
+
+if(
+!filePath.startsWith(
+prefix
+)
+){
+
+return null;
+
+}
+
+
+const remaining =
+filePath.substring(
+prefix.length
+);
+
+
+const parts =
+remaining.split("/");
+
+
+if(parts.length <= 1){
+return null;
+}
+
+
+return parts[0];
+
+}
+
+
+/* =================================
+   PATH BAR
+================================= */
+
+function renderPathBar(){
+
+const bar =
+document.getElementById(
+"pathBar"
+);
+
+
+if(!currentFolder){
+
+bar.style.display =
+"none";
+
+bar.innerHTML =
+"";
+
+return;
+
+}
+
+
+bar.style.display =
+"flex";
+
+
+const parts =
+currentFolder.split("/");
+
+
+let html = `
+
+<span
+class="path-link"
+onclick="openFolder('')">
+🏠 Root
+</span>
+
+`;
+
+
+let accumulated = "";
+
+
+parts.forEach(
+(part,index) => {
+
+accumulated =
+accumulated
+? accumulated +
+"/" +
+part
+: part;
+
+
+html += `
+
+<span class="path-separator">
+/
+</span>
+
+`;
+
+
+if(
+index ===
+parts.length - 1
+){
+
+html += `
+
+<span class="path-current">
+📁 ${escapeHtml(part)}
+</span>
+
+`;
+
+}else{
+
+const path =
+accumulated;
+
+
+html += `
+
+<span
+class="path-link"
+onclick='openFolder(${JSON.stringify(path)})'>
+📁 ${escapeHtml(part)}
+</span>
+
+`;
+
+}
+
+}
+);
+
+
+bar.innerHTML =
+html;
+
+}
+
+
+/* =================================
+   OPEN FOLDER
+================================= */
+
+function openFolder(path){
+
+currentFolder =
+normalizeFolderPath(
+path
+);
+
+
+document.getElementById(
+"searchInput"
+).value =
+"";
+
+
+renderPathBar();
+
+renderFiles(
+allFiles
+);
+
+}
+
+
+/* =================================
+   PARENT FOLDER
+================================= */
+
+function goParentFolder(){
+
+if(!currentFolder){
+return;
+}
+
+
+const parts =
+currentFolder.split("/");
+
+
+parts.pop();
+
+
+currentFolder =
+parts.join("/");
+
+
+renderPathBar();
+
+renderFiles(
+allFiles
+);
+
+}
+
+
+/* =================================
+   RENDER FILES + FOLDERS
 ================================= */
 
 function renderFiles(files){
@@ -1436,28 +1850,76 @@ document.getElementById(
 "fileList"
 );
 
-list.innerHTML = "";
+list.innerHTML =
+"";
+
+
+renderPathBar();
+
+
+const searchQuery =
+document.getElementById(
+"searchInput"
+)
+.value
+.trim()
+.toLowerCase();
+
+
+/* =================================
+   SEARCH MODE
+================================= */
+
+if(searchQuery){
+
+const filtered =
+allFiles.filter(
+file => {
+
+if(
+!file.file_path ||
+file.file_path ===
+".gitkeep"
+){
+
+return false;
+
+}
+
+
+return file.file_path
+.toLowerCase()
+.includes(
+searchQuery
+);
+
+}
+);
 
 
 document.getElementById(
 "fileCount"
 ).textContent =
-files.length +
+filtered.length +
 (
-files.length === 1
+filtered.length === 1
 ? " file"
 : " files"
 );
 
 
-if(!files.length){
+if(!filtered.length){
 
-list.innerHTML =
-`
+list.innerHTML = `
+
 <div class="empty">
-📁<br><br>
-No files found.
+
+🔎<br><br>
+
+No matching files found.
+
 </div>
+
 `;
 
 return;
@@ -1465,8 +1927,333 @@ return;
 }
 
 
-files.forEach(
+filtered.forEach(
 file => {
+
+renderSingleFile(
+file,
+list
+);
+
+}
+);
+
+
+return;
+
+}
+
+
+/* =================================
+   CURRENT FOLDER FILES
+================================= */
+
+const visibleFiles =
+files.filter(
+file => {
+
+if(
+!file.file_path ||
+file.file_path ===
+".gitkeep"
+){
+
+return false;
+
+}
+
+
+return (
+getFolderPath(
+file.file_path
+) ===
+currentFolder
+);
+
+}
+);
+
+
+/* =================================
+   CHILD FOLDERS
+================================= */
+
+const folders =
+new Map();
+
+
+allFiles.forEach(
+file => {
+
+if(
+!file.file_path ||
+file.file_path ===
+".gitkeep"
+){
+
+return;
+
+}
+
+
+const childFolder =
+getDirectChildFolder(
+file.file_path,
+currentFolder
+);
+
+
+if(!childFolder){
+return;
+}
+
+
+const fullPath =
+currentFolder
+? currentFolder +
+"/" +
+childFolder
+: childFolder;
+
+
+if(
+!folders.has(
+fullPath
+)
+){
+
+folders.set(
+fullPath,
+0
+);
+
+}
+
+
+folders.set(
+fullPath,
+folders.get(
+fullPath
+) + 1
+);
+
+}
+);
+
+
+/* =================================
+   PARENT
+================================= */
+
+if(currentFolder){
+
+const parentRow =
+document.createElement(
+"div"
+);
+
+parentRow.className =
+"folder-row";
+
+parentRow.onclick =
+goParentFolder;
+
+parentRow.innerHTML = `
+
+<div class="folder-main">
+
+<div class="folder-icon">
+↩️
+</div>
+
+<div>
+
+<div class="folder-name">
+..
+</div>
+
+<div class="folder-count">
+Parent folder
+</div>
+
+</div>
+
+</div>
+
+<div class="folder-arrow">
+←
+</div>
+
+`;
+
+list.appendChild(
+parentRow
+);
+
+}
+
+
+/* =================================
+   FOLDERS
+================================= */
+
+Array.from(
+folders.entries()
+)
+.sort(
+(a,b) =>
+a[0].localeCompare(
+b[0]
+)
+)
+.forEach(
+([folderPath,count]) => {
+
+const folderName =
+folderPath
+.split("/")
+.pop();
+
+
+const row =
+document.createElement(
+"div"
+);
+
+row.className =
+"folder-row";
+
+
+row.onclick =
+function(){
+
+openFolder(
+folderPath
+);
+
+};
+
+
+row.innerHTML = `
+
+<div class="folder-main">
+
+<div class="folder-icon">
+📁
+</div>
+
+<div>
+
+<div class="folder-name">
+${escapeHtml(folderName)}
+</div>
+
+<div class="folder-count">
+
+${count}
+${
+count === 1
+? " item"
+: " items"
+}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="folder-arrow">
+›
+</div>
+
+`;
+
+
+list.appendChild(
+row
+);
+
+}
+);
+
+
+/* =================================
+   FILES
+================================= */
+
+visibleFiles.forEach(
+file => {
+
+renderSingleFile(
+file,
+list
+);
+
+}
+);
+
+
+/* =================================
+   EMPTY
+================================= */
+
+if(
+!folders.size &&
+!visibleFiles.length
+){
+
+list.innerHTML += `
+
+<div class="empty">
+
+📁<br><br>
+
+No files found.
+
+</div>
+
+`;
+
+}
+
+
+/* =================================
+   COUNT
+================================= */
+
+document.getElementById(
+"fileCount"
+).textContent =
+
+folders.size +
+(
+folders.size === 1
+? " folder"
+: " folders"
+) +
+
+" • " +
+
+visibleFiles.length +
+
+(
+visibleFiles.length === 1
+? " file"
+: " files"
+);
+
+}
+
+
+/* =================================
+   SINGLE FILE
+================================= */
+
+function renderSingleFile(
+file,
+list
+){
 
 const row =
 document.createElement(
@@ -1479,51 +2266,67 @@ row.className =
 
 const editUrl =
 "file-editor.html" +
+
 "?file_id=" +
 encodeURIComponent(
 file.id
 ) +
+
 "&repository_id=" +
 encodeURIComponent(
 repoId
 ) +
+
 "&branch_id=" +
 encodeURIComponent(
 currentBranch.id
 );
 
 
-let previewButton = "";
+let previewButton =
+"";
 
 
 if(!file.is_binary){
 
-previewButton =
-`
+previewButton = `
+
 <button
 class="btn btn-blue"
 type="button"
 onclick="previewFile('${file.id}')">
+
 👁 Preview
+
 </button>
+
 `;
 
 }
 
 
-row.innerHTML =
-`
+const displayName =
+file.file_path
+.split("/")
+.pop();
+
+
+row.innerHTML = `
 
 <div class="file-main">
 
 <div class="file-icon">
+
 ${getFileIcon(file)}
+
 </div>
 
 <div>
 
 <div class="file-name">
-${escapeHtml(file.file_path)}
+
+${escapeHtml(displayName)}
+
 </div>
 
 <div class="file-sub">
@@ -1537,7 +2340,9 @@ file.is_binary
 ${
 file.updated_at
 ? " • Updated " +
-formatDate(file.updated_at)
+formatDate(
+file.updated_at
+)
 : ""
 }
 
@@ -1551,11 +2356,19 @@ formatDate(file.updated_at)
 <div class="file-meta">
 
 <span class="type-badge">
-${getFileType(file.file_path)}
+
+${getFileType(
+file.file_path
+)}
+
 </span>
 
 <span>
-${formatFileSize(file.file_size)}
+
+${formatFileSize(
+file.file_size
+)}
+
 </span>
 
 
@@ -1564,23 +2377,31 @@ ${formatFileSize(file.file_size)}
 <a
 class="btn"
 href="${editUrl}">
+
 ✏️ Edit
+
 </a>
 
 ${previewButton}
+
 
 <button
 class="btn"
 type="button"
 onclick="downloadFile('${file.id}')">
+
 ⬇️
+
 </button>
+
 
 <button
 class="btn btn-red"
 type="button"
 onclick="openDeleteModal('${file.id}')">
+
 🗑️
+
 </button>
 
 </div>
@@ -1592,9 +2413,6 @@ onclick="openDeleteModal('${file.id}')">
 
 list.appendChild(
 row
-);
-
-}
 );
 
 }
@@ -1641,7 +2459,8 @@ return;
 const path =
 String(
 file.file_path || ""
-).toLowerCase();
+)
+.toLowerCase();
 
 
 if(
@@ -1675,7 +2494,11 @@ error
 await supabaseClient
 
 .storage
-.from("repository-files")
+
+.from(
+"repository-files"
+)
+
 .download(
 file.storage_path
 );
@@ -1720,14 +2543,15 @@ file.file_path;
 
 document.getElementById(
 "modalText"
-).innerHTML =
-`
+).innerHTML = `
+
 <iframe
 id="previewFrame"
 class="preview-frame"
 title="Live HTML Preview"
 sandbox="allow-scripts allow-forms allow-modals allow-popups">
 </iframe>
+
 `;
 
 
@@ -1766,7 +2590,7 @@ document.getElementById(
 
 
 /* =================================
-   DELETE FILE
+   DELETE
 ================================= */
 
 function openDeleteModal(fileId){
@@ -1827,9 +2651,7 @@ null;
 async function confirmDeleteFile(){
 
 if(!filePendingDelete){
-
 return;
-
 }
 
 
@@ -1842,6 +2664,7 @@ document.getElementById(
 "confirmDeleteButton"
 );
 
+
 button.disabled =
 true;
 
@@ -1850,10 +2673,6 @@ button.textContent =
 
 
 try{
-
-/*
-Delete from Storage first.
-*/
 
 if(file.storage_path){
 
@@ -1874,24 +2693,20 @@ file.storage_path
 
 
 if(storageError){
-
 throw storageError;
-
 }
 
 }
 
-
-/*
-Delete database record.
-*/
 
 const {
 error:dbError
 } =
 await supabaseClient
 
-.from("repository_files")
+.from(
+"repository_files"
+)
 
 .delete()
 
@@ -1902,15 +2717,9 @@ file.id
 
 
 if(dbError){
-
 throw dbError;
-
 }
 
-
-/*
-Remove from local array.
-*/
 
 allFiles =
 allFiles.filter(
@@ -1941,6 +2750,7 @@ console.error(
 error
 );
 
+
 showToast(
 "Delete failed: " +
 (
@@ -1949,6 +2759,7 @@ error.message ||
 ),
 "error"
 );
+
 
 }finally{
 
@@ -1994,7 +2805,11 @@ error
 await supabaseClient
 
 .storage
-.from("repository-files")
+
+.from(
+"repository-files"
+)
+
 .download(
 file.storage_path
 );
@@ -2043,19 +2858,24 @@ document.createElement(
 "a"
 );
 
+
 a.href =
 url;
+
 
 a.download =
 file.file_path
 .split("/")
 .pop();
 
+
 document.body.appendChild(
 a
 );
 
+
 a.click();
+
 
 a.remove();
 
@@ -2080,38 +2900,8 @@ url
 
 function filterFiles(){
 
-const query =
-document.getElementById(
-"searchInput"
-).value
-.trim()
-.toLowerCase();
-
-
-if(!query){
-
 renderFiles(
 allFiles
-);
-
-return;
-
-}
-
-
-const filtered =
-allFiles.filter(
-file =>
-(
-file.file_path || ""
-)
-.toLowerCase()
-.includes(query)
-);
-
-
-renderFiles(
-filtered
 );
 
 }
@@ -2139,6 +2929,7 @@ file.file_path || ""
 )
 .toLowerCase();
 
+
 return (
 name === "readme.md" ||
 name === "readme.txt" ||
@@ -2151,15 +2942,18 @@ name === "readme"
 
 if(!readme){
 
-body.innerHTML =
-`
+body.innerHTML = `
+
 <h2>
-${escapeHtml(repository.name)}
+${escapeHtml(
+repository.name
+)}
 </h2>
 
 <p>
 No README file is available.
 </p>
+
 `;
 
 return;
@@ -2201,7 +2995,9 @@ data
 } =
 await supabaseClient
 
-.from("repository_stars")
+.from(
+"repository_stars"
+)
 
 .select(
 "repository_id,user_id"
@@ -2263,6 +3059,7 @@ document.getElementById(
 "starButton"
 );
 
+
 button.disabled =
 true;
 
@@ -2276,7 +3073,9 @@ error
 } =
 await supabaseClient
 
-.from("repository_stars")
+.from(
+"repository_stars"
+)
 
 .delete()
 
@@ -2299,11 +3098,13 @@ throw error;
 isStarred =
 false;
 
+
 repository.stars_count =
 Math.max(
 0,
 (repository.stars_count || 0) - 1
 );
+
 
 }else{
 
@@ -2312,7 +3113,9 @@ error
 } =
 await supabaseClient
 
-.from("repository_stars")
+.from(
+"repository_stars"
+)
 
 .insert({
 
@@ -2332,6 +3135,7 @@ throw error;
 
 isStarred =
 true;
+
 
 repository.stars_count =
 (repository.stars_count || 0) + 1;
@@ -2379,6 +3183,7 @@ document.getElementById(
 "publishButton"
 );
 
+
 const published =
 document.getElementById(
 "publishedWebsiteButton"
@@ -2390,12 +3195,17 @@ if(repository.is_published){
 publish.style.display =
 "none";
 
+
 published.style.display =
 "inline-flex";
 
+
 published.href =
 "published-website.html?id=" +
-encodeURIComponent(repoId);
+encodeURIComponent(
+repoId
+);
+
 
 return;
 
@@ -2456,9 +3266,13 @@ data:branch
 } =
 await supabaseClient
 
-.from("repository_branches")
+.from(
+"repository_branches"
+)
 
-.select("id,name")
+.select(
+"id,name"
+)
 
 .eq(
 "repository_id",
@@ -2490,7 +3304,9 @@ data:file
 } =
 await supabaseClient
 
-.from("repository_files")
+.from(
+"repository_files"
+)
 
 .select("*")
 
@@ -2569,7 +3385,9 @@ error
 } =
 await supabaseClient
 
-.from("repositories")
+.from(
+"repositories"
+)
 
 .update({
 
@@ -2662,7 +3480,9 @@ error
 } =
 await supabaseClient
 
-.from("repository_branches")
+.from(
+"repository_branches"
+)
 
 .insert({
 
@@ -2698,8 +3518,13 @@ allBranches.push(
 data
 );
 
+
 currentBranch =
 data;
+
+
+currentFolder =
+"";
 
 
 renderBranchMenu();
@@ -3143,8 +3968,10 @@ document.getElementById(
 "toast"
 );
 
+
 toast.textContent =
 message;
+
 
 toast.className =
 "toast show " +
@@ -3176,6 +4003,7 @@ const branch =
 document.querySelector(
 ".branch-wrapper"
 );
+
 
 const add =
 document.querySelector(
