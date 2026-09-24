@@ -25,7 +25,8 @@ body{
 }
 
 button,
-input{
+input,
+textarea{
     font-family:inherit;
 }
 
@@ -38,19 +39,19 @@ a{
     text-decoration:none;
 }
 
-
-/* =========================================================
-   TOP NAVIGATION
-========================================================= */
+/* ================= HEADER ================= */
 
 .topbar{
     background:#010409;
     border-bottom:1px solid #30363d;
-    padding:18px 28px;
+    padding:18px 24px;
+    position:sticky;
+    top:0;
+    z-index:100;
 }
 
 .topbar-inner{
-    max-width:1200px;
+    max-width:1400px;
     margin:auto;
     display:flex;
     align-items:center;
@@ -61,40 +62,60 @@ a{
 .brand{
     font-size:28px;
     font-weight:800;
-    color:#fff;
+    color:#ffffff;
 }
 
-.top-links{
+.brand span{
+    color:#f1c40f;
+}
+
+.nav-links{
     display:flex;
     gap:24px;
     align-items:center;
-}
-
-.top-links a{
-    color:#e6edf3;
     font-size:16px;
+    color:#c9d1d9;
 }
 
-.top-links a:hover{
+.nav-links a:hover{
     color:#58a6ff;
 }
 
-
-/* =========================================================
-   MAIN
-========================================================= */
+/* ================= MAIN ================= */
 
 .container{
-    width:100%;
-    max-width:1200px;
+    max-width:1400px;
     margin:auto;
-    padding:30px 20px 70px;
+    padding:35px 20px 80px;
 }
 
+/* ================= ALERT ================= */
 
-/* =========================================================
-   REPOSITORY HEADER
-========================================================= */
+.alert{
+    border:1px solid;
+    border-radius:10px;
+    padding:15px 18px;
+    margin-bottom:20px;
+    font-size:16px;
+}
+
+.alert.error{
+    background:#3b1d24;
+    border-color:#f85149;
+    color:#ff7b72;
+}
+
+.alert.success{
+    background:#132e1b;
+    border-color:#238636;
+    color:#56d364;
+}
+
+.hidden{
+    display:none !important;
+}
+
+/* ================= REPOSITORY HEADER ================= */
 
 .repo-header{
     margin-bottom:25px;
@@ -103,7 +124,7 @@ a{
 .repo-title{
     font-size:36px;
     font-weight:700;
-    line-height:1.3;
+    margin-bottom:8px;
 }
 
 .repo-title .owner{
@@ -122,77 +143,107 @@ a{
 .visibility{
     display:inline-block;
     border:1px solid #30363d;
-    color:#8b949e;
     border-radius:20px;
-    padding:5px 12px;
+    padding:4px 10px;
     font-size:14px;
+    color:#8b949e;
     vertical-align:middle;
-    margin-left:10px;
+    margin-left:8px;
 }
 
-.description{
+.repo-description{
     color:#8b949e;
     font-size:18px;
-    margin-top:8px;
+    margin-bottom:20px;
 }
 
-
-/* =========================================================
-   STATS
-========================================================= */
-
-.repo-actions{
+.repo-stats{
     display:flex;
+    gap:30px;
+    align-items:center;
     flex-wrap:wrap;
-    gap:14px;
-    margin-top:25px;
 }
 
 .stat{
     color:#8b949e;
-    font-size:17px;
-    padding:12px 0;
-}
-
-.action-btn{
-    background:#21262d;
-    color:#e6edf3;
-    border:1px solid #30363d;
-    border-radius:9px;
-    padding:11px 18px;
     font-size:16px;
 }
 
-.action-btn:hover{
+.stat strong{
+    color:#e6edf3;
+}
+
+/* ================= BUTTONS ================= */
+
+.btn{
+    border:1px solid #30363d;
+    background:#21262d;
+    color:#e6edf3;
+    padding:11px 18px;
+    border-radius:10px;
+    font-size:15px;
+    transition:.2s;
+}
+
+.btn:hover{
     background:#30363d;
 }
 
-.publish-btn{
+.btn-primary{
     background:#238636;
-    border-color:#238636;
+    border-color:#2ea043;
 }
 
-.publish-btn:hover{
+.btn-primary:hover{
     background:#2ea043;
 }
 
+.btn-blue{
+    background:#0969da;
+    border-color:#1f6feb;
+}
 
-/* =========================================================
-   TABS
-========================================================= */
+.btn-blue:hover{
+    background:#1f6feb;
+}
+
+.btn-danger{
+    background:#da3633;
+    border-color:#f85149;
+}
+
+.btn-danger:hover{
+    background:#f85149;
+}
+
+.btn-small{
+    padding:7px 11px;
+    font-size:13px;
+}
+
+.btn-star{
+    background:#21262d;
+}
+
+.action-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:18px;
+}
+
+/* ================= TABS ================= */
 
 .tabs{
     display:flex;
-    gap:0;
     overflow-x:auto;
     border-bottom:1px solid #30363d;
-    margin-top:28px;
+    margin-top:35px;
 }
 
 .tab{
-    padding:16px 28px;
+    padding:17px 28px;
     color:#8b949e;
-    font-size:17px;
     white-space:nowrap;
     border-bottom:3px solid transparent;
 }
@@ -202,169 +253,128 @@ a{
     border-bottom-color:#f78166;
 }
 
-.tab:hover{
-    color:#e6edf3;
-}
-
-
-/* =========================================================
-   TOOLBAR
-========================================================= */
+/* ================= TOOLBAR ================= */
 
 .toolbar{
     display:flex;
     flex-wrap:wrap;
-    gap:14px;
-    margin-top:28px;
-    margin-bottom:20px;
-}
-
-.toolbar-btn{
-    background:#21262d;
-    color:#e6edf3;
-    border:1px solid #30363d;
-    border-radius:9px;
-    padding:12px 18px;
-    font-size:16px;
-}
-
-.toolbar-btn:hover{
-    background:#30363d;
-}
-
-.add-btn{
-    background:#238636;
-    border-color:#238636;
-}
-
-.add-btn:hover{
-    background:#2ea043;
+    gap:12px;
+    margin-top:25px;
+    margin-bottom:15px;
 }
 
 .search-box{
-    flex:1;
-    min-width:220px;
+    width:100%;
+    margin-bottom:15px;
 }
 
 .search-box input{
     width:100%;
     background:#0d1117;
-    color:#e6edf3;
     border:1px solid #30363d;
-    border-radius:9px;
-    padding:13px 16px;
-    font-size:16px;
+    color:#e6edf3;
+    padding:15px 18px;
+    border-radius:10px;
     outline:none;
+    font-size:16px;
 }
 
 .search-box input:focus{
     border-color:#58a6ff;
-    box-shadow:0 0 0 3px rgba(88,166,255,.1);
+    box-shadow:0 0 0 3px rgba(56,139,253,.15);
 }
 
-
-/* =========================================================
-   DROPDOWN
-========================================================= */
+/* ================= DROPDOWN ================= */
 
 .dropdown{
     position:relative;
 }
 
 .dropdown-menu{
-    display:none;
     position:absolute;
     top:calc(100% + 7px);
     left:0;
-    min-width:190px;
+    min-width:220px;
     background:#161b22;
     border:1px solid #30363d;
-    border-radius:9px;
-    box-shadow:0 12px 30px rgba(0,0,0,.4);
-    z-index:100;
-    overflow:hidden;
+    border-radius:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+    padding:6px;
+    z-index:200;
 }
 
-.dropdown-menu.show{
-    display:block;
-}
-
-.dropdown-menu button,
-.dropdown-menu a{
+.dropdown-menu button{
     width:100%;
-    display:block;
     text-align:left;
-    padding:13px 16px;
-    border:0;
     background:transparent;
+    border:0;
     color:#e6edf3;
-    font-size:15px;
+    padding:12px;
+    border-radius:7px;
+    font-size:14px;
 }
 
-.dropdown-menu button:hover,
-.dropdown-menu a:hover{
+.dropdown-menu button:hover{
     background:#21262d;
 }
 
-
-/* =========================================================
-   BRANCH
-========================================================= */
-
-.branch-btn{
-    min-width:150px;
+.branch-menu{
+    min-width:240px;
 }
 
+/* ================= FILE AREA ================= */
 
-/* =========================================================
-   COMMIT BAR
-========================================================= */
+.file-card{
+    border:1px solid #30363d;
+    border-radius:12px;
+    overflow:hidden;
+    background:#0d1117;
+}
 
-.commit-bar{
+.file-header{
+    background:#161b22;
+    padding:18px 20px;
     display:flex;
     justify-content:space-between;
     gap:15px;
     align-items:center;
-    background:#161b22;
-    border:1px solid #30363d;
-    border-radius:9px 9px 0 0;
-    padding:16px 20px;
+    border-bottom:1px solid #30363d;
+}
+
+.file-header-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.file-header-title{
     color:#8b949e;
 }
 
-.commit-bar strong{
-    color:#58a6ff;
+.file-count{
+    color:#8b949e;
 }
 
-
-/* =========================================================
-   PATH BAR
-========================================================= */
+/* ================= PATH BAR ================= */
 
 .path-bar{
+    padding:14px 18px;
+    background:#0d1117;
+    border-bottom:1px solid #30363d;
     display:flex;
     align-items:center;
     flex-wrap:wrap;
-    gap:8px;
-    background:#0d1117;
-    border:1px solid #30363d;
-    border-top:0;
-    padding:15px 18px;
-    min-height:52px;
+    gap:7px;
+    font-size:15px;
 }
 
 .path-link{
     color:#58a6ff;
     cursor:pointer;
-    font-weight:600;
 }
 
 .path-link:hover{
     text-decoration:underline;
-}
-
-.path-separator{
-    color:#8b949e;
 }
 
 .path-current{
@@ -372,61 +382,46 @@ a{
     font-weight:600;
 }
 
-
-/* =========================================================
-   FILE LIST
-========================================================= */
-
-.file-list{
-    border:1px solid #30363d;
-    border-top:0;
-    border-radius:0 0 9px 9px;
-    overflow:hidden;
+.path-separator{
+    color:#6e7681;
 }
 
-.file-row{
+/* ================= FOLDER ================= */
+
+.folder-row{
     display:flex;
     align-items:center;
-    gap:15px;
-    padding:15px 18px;
-    border-top:1px solid #21262d;
-    background:#0d1117;
+    justify-content:space-between;
+    padding:17px 20px;
+    border-bottom:1px solid #21262d;
+    cursor:pointer;
+    transition:.15s;
 }
 
-.file-row:first-child{
-    border-top:0;
-}
-
-.file-row:hover{
+.folder-row:hover{
     background:#161b22;
 }
 
-.folder-row{
-    cursor:pointer;
-}
-
 .folder-main{
-    flex:1;
-    min-width:0;
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:13px;
 }
 
 .folder-icon{
-    font-size:27px;
+    font-size:25px;
 }
 
 .folder-name{
     color:#58a6ff;
-    font-size:17px;
+    font-size:16px;
     font-weight:600;
 }
 
 .folder-count{
     color:#8b949e;
-    font-size:14px;
-    margin-left:5px;
+    font-size:13px;
+    margin-left:7px;
 }
 
 .folder-arrow{
@@ -434,14 +429,34 @@ a{
     font-size:22px;
 }
 
-.file-icon{
-    width:32px;
-    text-align:center;
-    font-size:24px;
+/* ================= FILE ROW ================= */
+
+.file-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    padding:17px 20px;
+    border-bottom:1px solid #21262d;
+}
+
+.file-row:last-child{
+    border-bottom:0;
 }
 
 .file-main{
+    min-width:0;
     flex:1;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.file-icon{
+    font-size:23px;
+}
+
+.file-info{
     min-width:0;
 }
 
@@ -449,246 +464,180 @@ a{
     color:#58a6ff;
     font-size:16px;
     font-weight:600;
-    word-break:break-all;
+    word-break:break-word;
 }
 
 .file-meta{
-    color:#8b949e;
-    font-size:13px;
     margin-top:4px;
+    color:#8b949e;
+    font-size:12px;
 }
 
 .file-actions{
     display:flex;
+    gap:7px;
     flex-wrap:wrap;
-    gap:6px;
     justify-content:flex-end;
 }
 
-.small-btn{
-    background:#21262d;
-    color:#e6edf3;
-    border:1px solid #30363d;
-    border-radius:7px;
-    padding:7px 9px;
-    font-size:13px;
-}
-
-.small-btn:hover{
-    background:#30363d;
-}
-
-.small-btn.danger:hover{
-    background:#da3633;
-    border-color:#da3633;
-}
-
-.small-btn.blue:hover{
-    background:#0969da;
-    border-color:#0969da;
-}
-
-.empty{
-    padding:35px;
+.empty-state{
+    padding:55px 20px;
     text-align:center;
     color:#8b949e;
+    font-size:17px;
 }
 
-.parent-row{
-    cursor:pointer;
+.loading{
+    padding:55px 20px;
+    text-align:center;
+    color:#8b949e;
+    font-size:18px;
 }
 
-.parent-row:hover{
-    background:#161b22;
-}
-
-
-/* =========================================================
-   README
-========================================================= */
+/* ================= README ================= */
 
 .readme{
     margin-top:35px;
     border:1px solid #30363d;
-    border-radius:9px;
+    border-radius:12px;
     overflow:hidden;
 }
 
 .readme-header{
+    padding:18px 20px;
     background:#161b22;
     border-bottom:1px solid #30363d;
-    padding:17px 20px;
     font-size:20px;
-    font-weight:600;
 }
 
 .readme-body{
     padding:35px;
-    background:#0d1117;
+    line-height:1.7;
 }
 
 .readme-body h1{
-    font-size:36px;
+    font-size:38px;
     margin-bottom:20px;
+}
+
+.readme-body h2{
+    margin-top:25px;
 }
 
 .readme-body p{
     color:#c9d1d9;
-    line-height:1.7;
-    margin-bottom:15px;
 }
 
-
-/* =========================================================
-   MODAL
-========================================================= */
+/* ================= MODAL ================= */
 
 .modal{
-    display:none;
     position:fixed;
     inset:0;
     background:rgba(0,0,0,.78);
-    z-index:1000;
+    display:none;
+    align-items:center;
+    justify-content:center;
     padding:20px;
-    overflow:auto;
+    z-index:1000;
 }
 
 .modal.show{
     display:flex;
-    align-items:center;
-    justify-content:center;
 }
 
-.modal-card{
-    width:100%;
-    max-width:900px;
-    max-height:90vh;
-    overflow:auto;
+.modal-box{
+    width:min(1100px,100%);
+    max-height:92vh;
     background:#161b22;
     border:1px solid #30363d;
     border-radius:14px;
-    box-shadow:0 20px 70px rgba(0,0,0,.5);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
 }
 
 .modal-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    padding:18px 20px;
+    padding:17px 20px;
     border-bottom:1px solid #30363d;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
 }
 
 .modal-title{
-    font-size:21px;
+    font-size:20px;
     font-weight:700;
-    word-break:break-all;
-}
-
-.close-btn{
-    background:#21262d;
-    color:#e6edf3;
-    border:1px solid #30363d;
-    border-radius:8px;
-    padding:9px 15px;
-    font-size:15px;
-}
-
-.close-btn:hover{
-    background:#30363d;
+    word-break:break-word;
 }
 
 .modal-body{
-    padding:20px;
-}
-
-.code-editor{
-    width:100%;
-    min-height:500px;
-    background:#0d1117;
-    color:#e6edf3;
-    border:1px solid #30363d;
-    border-radius:8px;
     padding:18px;
-    font-family:"Courier New",monospace;
-    font-size:14px;
-    line-height:1.6;
-    resize:vertical;
-    outline:none;
-}
-
-.code-editor:focus{
-    border-color:#58a6ff;
+    overflow:auto;
 }
 
 .modal-footer{
+    padding:15px 20px;
+    border-top:1px solid #30363d;
     display:flex;
     justify-content:flex-end;
     gap:10px;
-    padding:15px 20px;
-    border-top:1px solid #30363d;
 }
 
 .preview-frame{
     width:100%;
     height:70vh;
-    min-height:500px;
-    border:0;
-    border-radius:8px;
-    background:#fff;
+    border:1px solid #30363d;
+    border-radius:10px;
+    background:white;
 }
 
-.confirm-text{
-    color:#c9d1d9;
-    line-height:1.7;
-    margin-bottom:15px;
-}
-
-.warning{
-    color:#f85149;
-    font-weight:600;
-}
-
-
-/* =========================================================
-   FORM
-========================================================= */
-
-.modal-input{
+.code-view{
     width:100%;
+    min-height:60vh;
     background:#0d1117;
     color:#e6edf3;
     border:1px solid #30363d;
+    border-radius:10px;
+    padding:20px;
+    font-family:monospace;
+    white-space:pre-wrap;
+    overflow:auto;
+}
+
+/* ================= DELETE ================= */
+
+.delete-message{
+    color:#c9d1d9;
+    line-height:1.6;
+}
+
+.delete-file-name{
+    display:block;
+    margin-top:12px;
+    padding:12px;
     border-radius:8px;
-    padding:13px 15px;
-    font-size:16px;
-    outline:none;
-    margin-top:10px;
+    background:#0d1117;
+    color:#ff7b72;
+    word-break:break-word;
 }
 
-.modal-input:focus{
-    border-color:#58a6ff;
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
+/* ================= TOAST ================= */
 
 .toast{
     position:fixed;
     left:50%;
     bottom:25px;
     transform:translateX(-50%) translateY(100px);
-    background:#21262d;
-    color:#fff;
+    background:#161b22;
     border:1px solid #30363d;
-    border-radius:10px;
+    color:#e6edf3;
     padding:14px 20px;
+    border-radius:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+    z-index:2000;
     opacity:0;
-    pointer-events:none;
-    transition:.3s;
-    z-index:3000;
+    transition:.25s;
     max-width:90%;
     text-align:center;
 }
@@ -706,15 +655,12 @@ a{
     border-color:#f85149;
 }
 
-
-/* =========================================================
-   MOBILE
-========================================================= */
+/* ================= RESPONSIVE ================= */
 
 @media(max-width:700px){
 
     .topbar{
-        padding:15px 18px;
+        padding:16px 18px;
     }
 
     .topbar-inner{
@@ -722,38 +668,33 @@ a{
     }
 
     .brand{
-        font-size:24px;
+        font-size:22px;
     }
 
-    .top-links{
+    .nav-links{
         gap:12px;
-    }
-
-    .top-links a{
         font-size:14px;
     }
 
     .container{
-        padding:22px 12px 60px;
+        padding:25px 12px 60px;
     }
 
     .repo-title{
-        font-size:29px;
+        font-size:27px;
     }
 
-    .description{
+    .repo-description{
         font-size:16px;
     }
 
     .tabs{
         margin-left:-12px;
         margin-right:-12px;
-        padding-left:5px;
     }
 
     .tab{
-        padding:15px 17px;
-        font-size:15px;
+        padding:15px 18px;
     }
 
     .toolbar{
@@ -761,1008 +702,457 @@ a{
         grid-template-columns:1fr 1fr;
     }
 
-    .search-box{
-        grid-column:1 / -1;
-        order:-1;
-    }
-
-    .toolbar-btn{
+    .toolbar .btn,
+    .toolbar .dropdown,
+    .toolbar .dropdown > .btn{
         width:100%;
-        padding:11px 10px;
-    }
-
-    .commit-bar{
-        font-size:14px;
     }
 
     .file-row{
         align-items:flex-start;
-        padding:14px 12px;
+        flex-direction:column;
     }
 
     .file-actions{
         width:100%;
         justify-content:flex-start;
-        margin-top:8px;
     }
 
-    .file-row{
-        flex-wrap:wrap;
+    .file-actions .btn{
+        flex:1;
+        min-width:80px;
     }
 
-    .file-main{
-        min-width:calc(100% - 55px);
+    .readme-body{
+        padding:22px;
+    }
+
+    .readme-body h1{
+        font-size:30px;
     }
 
     .modal{
         padding:10px;
     }
 
-    .modal-card{
-        max-height:95vh;
-    }
-
-    .code-editor{
-        min-height:400px;
-    }
-
     .preview-frame{
-        height:65vh;
-        min-height:400px;
+        height:70vh;
     }
 
-}
-
-
-/* =========================================================
-   LOADING
-========================================================= */
-
-.loading{
-    padding:35px;
-    text-align:center;
-    color:#8b949e;
 }
 
 </style>
-
 </head>
 
 <body>
 
-
-<!-- =====================================================
-     TOP BAR
-===================================================== -->
+<!-- ================= TOPBAR ================= -->
 
 <header class="topbar">
 
-<div class="topbar-inner">
+    <div class="topbar-inner">
 
-<div class="brand">
-⚡ ASIM TECH
-</div>
+        <div class="brand">
+            <span>⚡</span> ASIM TECH
+        </div>
 
-<div class="top-links">
+        <nav class="nav-links">
+            <a href="repositories.html">← Repositories</a>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
 
-<a href="repositories.html">
-← Repositories
-</a>
-
-<a href="dashboard.html">
-Dashboard
-</a>
-
-</div>
-
-</div>
+    </div>
 
 </header>
 
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
+<!-- ================= MAIN ================= -->
 
 <main class="container">
 
+    <div id="alertBox" class="alert hidden"></div>
 
-<!-- REPOSITORY HEADER -->
+    <!-- REPOSITORY HEADER -->
 
-<section class="repo-header">
+    <section class="repo-header">
 
-<div class="repo-title">
-
-<span class="owner">
-ASIM TECH
-</span>
-
-<span class="slash">
-/
-</span>
-
-<span class="name" id="repoTitle">
-Repository
-</span>
+        <div class="repo-title">
+            <span class="owner" id="ownerName">ASIM TECH</span>
+            <span class="slash">/</span>
+            <span class="name" id="repoName">Repository</span>
+            <span class="visibility" id="repoVisibility">Public</span>
+        </div>
 
-<span class="visibility">
-Public
-</span>
+        <div class="repo-description" id="repoDescription">
+            No description
+        </div>
 
-</div>
+        <div class="repo-stats">
 
+            <div class="stat">
+                ⭐ <strong id="starCount">0</strong> stars
+            </div>
 
-<div
-class="description"
-id="repoDescription"
->
-No description
-</div>
+            <div class="stat">
+                🍴 <strong id="forkCount">0</strong> forks
+            </div>
 
+            <button class="btn btn-star" onclick="toggleStar()">
+                ☆ Star
+            </button>
 
-<div class="repo-actions">
+            <button class="btn" onclick="repoSettings()">
+                ⚙️ Settings
+            </button>
 
-<div class="stat">
-⭐ <span id="starCount">0</span> stars
-</div>
+            <button class="btn btn-primary" onclick="publishRepo()">
+                🚀 Publish
+            </button>
 
-<div class="stat">
-🍴 <span id="forkCount">0</span> forks
-</div>
+        </div>
 
-<button
-class="action-btn"
-onclick="toggleStar()"
->
-☆ Star
-</button>
+    </section>
 
-<button
-class="action-btn"
-onclick="showSettings()"
->
-⚙️ Settings
-</button>
 
-<button
-class="action-btn publish-btn"
-onclick="publishRepository()"
->
-🚀 Publish
-</button>
+    <!-- TABS -->
 
-</div>
+    <div class="tabs">
 
-</section>
+        <a class="tab active" href="#">
+            Code
+        </a>
 
+        <a class="tab" href="#" onclick="openPage('issues')">
+            Issues
+        </a>
 
-<!-- =====================================================
-     TABS
-===================================================== -->
+        <a class="tab" href="#" onclick="openPage('pulls')">
+            Pull requests
+        </a>
 
-<nav class="tabs">
+        <a class="tab" href="#" onclick="openPage('actions')">
+            Actions
+        </a>
 
-<a
-class="tab active"
-href="#"
->
-Code
-</a>
+        <a class="tab" href="#" onclick="openPage('projects')">
+            Projects
+        </a>
 
-<a
-class="tab"
-href="#"
-onclick="showFeatureMessage('Issues')"
->
-Issues
-</a>
+    </div>
 
-<a
-class="tab"
-href="#"
-onclick="showFeatureMessage('Pull requests')"
->
-Pull requests
-</a>
 
-<a
-class="tab"
-href="#"
-onclick="showFeatureMessage('Actions')"
->
-Actions
-</a>
+    <!-- SEARCH -->
 
-<a
-class="tab"
-href="#"
-onclick="showFeatureMessage('Projects')"
->
-Projects
-</a>
+    <div class="search-box">
 
-</nav>
+        <input
+            type="search"
+            id="searchInput"
+            placeholder="🔎 Go to file..."
+            oninput="handleSearch()"
+        >
 
+    </div>
 
-<!-- =====================================================
-     TOOLBAR
-===================================================== -->
 
-<div class="toolbar">
+    <!-- TOOLBAR -->
 
+    <div class="toolbar">
 
-<div class="dropdown">
+        <div class="dropdown">
 
-<button
-class="toolbar-btn branch-btn"
-onclick="toggleBranchMenu()"
->
+            <button class="btn" onclick="toggleBranchMenu()">
+                🌿 <span id="branchButtonText">main</span> ▾
+            </button>
 
-🌿 <span id="branchButtonText">
-main
-</span>
-⌄
+            <div
+                id="branchMenu"
+                class="dropdown-menu branch-menu hidden"
+            >
 
-</button>
+                <button onclick="selectBranchByName('main')">
+                    🌿 main
+                </button>
 
+                <button onclick="createBranch()">
+                    ➕ Create new branch
+                </button>
 
-<div
-class="dropdown-menu"
-id="branchMenu"
->
+            </div>
 
-<div
-id="branchList"
->
-<div class="loading">
-Loading branches...
-</div>
-</div>
+        </div>
 
-</div>
 
-</div>
+        <button class="btn" onclick="openExplorer()">
+            📁 Explorer
+        </button>
 
 
-<button
-class="toolbar-btn"
-onclick="goToExplorer()"
->
-📁 Explorer
-</button>
+        <div class="dropdown">
 
+            <button
+                class="btn btn-primary"
+                onclick="toggleAddMenu()"
+            >
+                ＋ Add file ▾
+            </button>
 
-<div class="dropdown">
+            <div
+                id="addMenu"
+                class="dropdown-menu hidden"
+            >
 
-<button
-class="toolbar-btn add-btn"
-onclick="toggleAddMenu()"
->
-＋ Add file ▾
-</button>
+                <button onclick="addNewFile()">
+                    📄 Create new file
+                </button>
 
+                <button onclick="uploadNewFile()">
+                    📤 Upload files
+                </button>
 
-<div
-class="dropdown-menu"
-id="addMenu"
->
+                <button onclick="createFolderFromHere()">
+                    📁 Create folder
+                </button>
 
-<a
-id="createFileLink"
-href="#"
->
-➕ Create file
-</a>
+            </div>
 
-<a
-id="uploadFileLink"
-href="#"
->
-📤 Upload file
-</a>
+        </div>
 
-<button
-onclick="openCreateFolderModal()"
->
-📁 Create folder
-</button>
+    </div>
 
-</div>
 
-</div>
+    <!-- FILE CARD -->
 
+    <section class="file-card">
 
-<div class="search-box">
+        <div class="file-header">
 
-<input
-type="text"
-id="searchInput"
-placeholder="🔎 Go to file..."
-oninput="handleSearch()"
->
+            <div class="file-header-left">
 
-</div>
+                <span>🌿</span>
 
-</div>
+                <span class="file-header-title">
+                    Branch:
+                </span>
 
+                <strong id="branchLabel">
+                    main
+                </strong>
 
-<!-- =====================================================
-     COMMIT BAR
-===================================================== -->
+            </div>
 
-<div class="commit-bar">
+            <div class="file-count" id="fileCount">
+                0 folders · 0 files
+            </div>
 
-<div>
+        </div>
 
-🌿 Branch:
-<strong id="currentBranchLabel">
-main
-</strong>
 
-</div>
+        <!-- PATH -->
 
-<div id="itemSummary">
-0 folders · 0 files
-</div>
+        <div
+            id="pathBar"
+            class="path-bar"
+        ></div>
 
-</div>
 
+        <!-- FILE LIST -->
 
-<!-- =====================================================
-     PATH BAR
-===================================================== -->
+        <div id="fileList">
 
-<div
-class="path-bar"
-id="pathBar"
->
-</div>
+            <div class="loading">
+                Loading files...
+            </div>
 
+        </div>
 
-<!-- =====================================================
-     FILE LIST
-===================================================== -->
+    </section>
 
-<div
-class="file-list"
-id="fileList"
->
 
-<div class="loading">
-Loading files...
-</div>
+    <!-- README -->
 
-</div>
+    <section class="readme">
 
+        <div class="readme-header">
+            📖 README
+        </div>
 
-<!-- =====================================================
-     README
-===================================================== -->
+        <div
+            id="readmeBody"
+            class="readme-body"
+        >
 
-<section class="readme">
+            <h1 id="readmeTitle">
+                Repository
+            </h1>
 
-<div class="readme-header">
-📖 README
-</div>
+            <p>
+                No README file is available.
+            </p>
 
-<div
-class="readme-body"
-id="readmeBody"
->
+        </div>
 
-<h1 id="readmeTitle">
-Repository
-</h1>
-
-<p>
-No README file is available.
-</p>
-
-</div>
-
-</section>
+    </section>
 
 </main>
 
 
-<!-- =====================================================
-     EDIT MODAL
-===================================================== -->
+<!-- ================= PREVIEW MODAL ================= -->
 
 <div
-class="modal"
-id="editModal"
+    id="previewModal"
+    class="modal"
 >
 
-<div class="modal-card">
+    <div class="modal-box">
 
-<div class="modal-header">
+        <div class="modal-header">
+
+            <div
+                id="previewTitle"
+                class="modal-title"
+            >
+                🌐 Preview
+            </div>
+
+            <button
+                class="btn"
+                onclick="closePreview()"
+            >
+                ✕ Close
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <iframe
+                id="previewFrame"
+                class="preview-frame"
+                sandbox="allow-scripts allow-forms allow-modals allow-popups"
+            ></iframe>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= CODE MODAL ================= -->
 
 <div
-class="modal-title"
-id="editModalTitle"
+    id="codeModal"
+    class="modal"
 >
-Edit File
-</div>
 
-<button
-class="close-btn"
-onclick="closeEditModal()"
->
-✕ Close
-</button>
+    <div class="modal-box">
 
-</div>
+        <div class="modal-header">
 
+            <div
+                id="codeTitle"
+                class="modal-title"
+            >
+                File
+            </div>
 
-<div class="modal-body">
+            <button
+                class="btn"
+                onclick="closeCodeModal()"
+            >
+                ✕ Close
+            </button>
 
-<textarea
-class="code-editor"
-id="editorText"
-spellcheck="false"
-></textarea>
+        </div>
 
-</div>
+        <div class="modal-body">
 
+            <pre
+                id="codeContent"
+                class="code-view"
+            ></pre>
 
-<div class="modal-footer">
+        </div>
 
-<button
-class="close-btn"
-onclick="closeEditModal()"
->
-Cancel
-</button>
-
-<button
-class="action-btn publish-btn"
-id="saveFileButton"
-onclick="saveEditedFile()"
->
-💾 Save Changes
-</button>
-
-</div>
-
-</div>
+    </div>
 
 </div>
 
 
-<!-- =====================================================
-     PREVIEW MODAL
-===================================================== -->
+<!-- ================= DELETE MODAL ================= -->
 
 <div
-class="modal"
-id="previewModal"
+    id="deleteModal"
+    class="modal"
 >
 
-<div class="modal-card">
+    <div class="modal-box" style="max-width:550px;">
 
-<div class="modal-header">
+        <div class="modal-header">
+
+            <div class="modal-title">
+                🗑️ Delete File
+            </div>
+
+            <button
+                class="btn"
+                onclick="closeDeleteModal()"
+            >
+                ✕
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="delete-message">
+
+                Are you sure you want to delete this file?
+
+                <span
+                    id="deleteFileName"
+                    class="delete-file-name"
+                ></span>
+
+                <br>
+
+                This action cannot be undone.
+
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button
+                class="btn"
+                onclick="closeDeleteModal()"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="confirmDeleteButton"
+                class="btn btn-danger"
+                onclick="confirmDeleteFile()"
+            >
+                🗑️ Delete File
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= TOAST ================= -->
 
 <div
-class="modal-title"
-id="previewTitle"
->
-🌐 Preview
-</div>
-
-<button
-class="close-btn"
-onclick="closePreviewModal()"
->
-✕ Close
-</button>
-
-</div>
-
-
-<div class="modal-body">
-
-<iframe
-id="previewFrame"
-class="preview-frame"
-sandbox="allow-scripts allow-forms allow-modals allow-popups"
->
-</iframe>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     DELETE FILE MODAL
-===================================================== -->
-
-<div
-class="modal"
-id="deleteFileModal"
->
-
-<div class="modal-card">
-
-<div class="modal-header">
-
-<div class="modal-title">
-🗑️ Delete File
-</div>
-
-<button
-class="close-btn"
-onclick="closeDeleteFileModal()"
->
-✕
-</button>
-
-</div>
-
-
-<div class="modal-body">
-
-<p class="confirm-text">
-
-Are you sure you want to delete:
-
-<strong
-id="deleteFileName"
->
-</strong>
-
-?
-
-<br><br>
-
-<span class="warning">
-This action cannot be undone.
-</span>
-
-</p>
-
-</div>
-
-
-<div class="modal-footer">
-
-<button
-class="close-btn"
-onclick="closeDeleteFileModal()"
->
-Cancel
-</button>
-
-<button
-class="action-btn"
-style="background:#da3633;border-color:#da3633;"
-id="confirmDeleteFileButton"
-onclick="confirmDeleteFile()"
->
-🗑️ Delete File
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     REPLACE FILE MODAL
-===================================================== -->
-
-<div
-class="modal"
-id="replaceModal"
->
-
-<div class="modal-card">
-
-<div class="modal-header">
-
-<div class="modal-title">
-🔄 Replace File
-</div>
-
-<button
-class="close-btn"
-onclick="closeReplaceModal()"
->
-✕
-</button>
-
-</div>
-
-
-<div class="modal-body">
-
-<p class="confirm-text">
-
-Replace:
-
-<strong id="replaceFileName">
-</strong>
-
-<br><br>
-
-Select the new file from your device.
-
-</p>
-
-
-<input
-type="file"
-id="replaceFileInput"
-class="modal-input"
->
-
-</div>
-
-
-<div class="modal-footer">
-
-<button
-class="close-btn"
-onclick="closeReplaceModal()"
->
-Cancel
-</button>
-
-<button
-class="action-btn publish-btn"
-id="confirmReplaceButton"
-onclick="confirmReplaceFile()"
->
-🔄 Replace File
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     RENAME FILE MODAL
-===================================================== -->
-
-<div
-class="modal"
-id="renameFileModal"
->
-
-<div class="modal-card">
-
-<div class="modal-header">
-
-<div class="modal-title">
-✏️ Rename File
-</div>
-
-<button
-class="close-btn"
-onclick="closeRenameFileModal()"
->
-✕
-</button>
-
-</div>
-
-
-<div class="modal-body">
-
-<label>
-New File Name
-</label>
-
-<input
-type="text"
-class="modal-input"
-id="renameFileInput"
-placeholder="example.html"
->
-
-</div>
-
-
-<div class="modal-footer">
-
-<button
-class="close-btn"
-onclick="closeRenameFileModal()"
->
-Cancel
-</button>
-
-<button
-class="action-btn publish-btn"
-onclick="confirmRenameFile()"
->
-✏️ Rename
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     RENAME FOLDER MODAL
-===================================================== -->
-
-<div
-class="modal"
-id="renameFolderModal"
->
-
-<div class="modal-card">
-
-<div class="modal-header">
-
-<div class="modal-title">
-✏️ Rename Folder
-</div>
-
-<button
-class="close-btn"
-onclick="closeRenameFolderModal()"
->
-✕
-</button>
-
-</div>
-
-
-<div class="modal-body">
-
-<label>
-New Folder Name
-</label>
-
-<input
-type="text"
-class="modal-input"
-id="renameFolderInput"
-placeholder="assets-new"
->
-
-<p
-class="confirm-text"
-style="margin-top:15px;"
->
-All files inside this folder will be moved to
-the new folder path.
-</p>
-
-</div>
-
-
-<div class="modal-footer">
-
-<button
-class="close-btn"
-onclick="closeRenameFolderModal()"
->
-Cancel
-</button>
-
-<button
-class="action-btn publish-btn"
-id="confirmRenameFolderButton"
-onclick="confirmRenameFolder()"
->
-✏️ Rename Folder
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     DELETE FOLDER MODAL
-===================================================== -->
-
-<div
-class="modal"
-id="deleteFolderModal"
->
-
-<div class="modal-card">
-
-<div class="modal-header">
-
-<div class="modal-title">
-🗑️ Delete Folder
-</div>
-
-<button
-class="close-btn"
-onclick="closeDeleteFolderModal()"
->
-✕
-</button>
-
-</div>
-
-
-<div class="modal-body">
-
-<p class="confirm-text">
-
-Delete folder:
-
-<strong id="deleteFolderName">
-</strong>
-
-?
-
-<br><br>
-
-All files inside this folder will also be deleted.
-
-<br><br>
-
-<span class="warning">
-This action cannot be undone.
-</span>
-
-</p>
-
-</div>
-
-
-<div class="modal-footer">
-
-<button
-class="close-btn"
-onclick="closeDeleteFolderModal()"
->
-Cancel
-</button>
-
-<button
-class="action-btn"
-style="background:#da3633;border-color:#da3633;"
-id="confirmDeleteFolderButton"
-onclick="confirmDeleteFolder()"
->
-🗑️ Delete Folder
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     CREATE FOLDER MODAL
-===================================================== -->
-
-<div
-class="modal"
-id="createFolderModal"
->
-
-<div class="modal-card">
-
-<div class="modal-header">
-
-<div class="modal-title">
-📁 Create Folder
-</div>
-
-<button
-class="close-btn"
-onclick="closeCreateFolderModal()"
->
-✕
-</button>
-
-</div>
-
-
-<div class="modal-body">
-
-<label>
-Folder Name
-</label>
-
-<input
-type="text"
-class="modal-input"
-id="createFolderInput"
-placeholder="assets"
->
-
-</div>
-
-
-<div class="modal-footer">
-
-<button
-class="close-btn"
-onclick="closeCreateFolderModal()"
->
-Cancel
-</button>
-
-<button
-class="action-btn publish-btn"
-onclick="createFolderFromModal()"
->
-📁 Create Folder
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     SETTINGS MODAL
-===================================================== -->
-
-<div
-class="modal"
-id="settingsModal"
->
-
-<div class="modal-card">
-
-<div class="modal-header">
-
-<div class="modal-title">
-⚙️ Repository Settings
-</div>
-
-<button
-class="close-btn"
-onclick="closeSettings()"
->
-✕
-</button>
-
-</div>
-
-
-<div class="modal-body">
-
-<p class="confirm-text">
-
-Repository settings are available from the
-repository management page.
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- TOAST -->
-
-<div
-class="toast"
-id="toast"
->
-</div>
+    id="toast"
+    class="toast"
+></div>
 
 
 <script>
@@ -1772,48 +1162,33 @@ id="toast"
 ========================================================= */
 
 const SUPABASE_URL =
-"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
 const supabaseClient =
-window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
 /* =========================================================
-   URL PARAMETERS
+   KNOWN REPOSITORY
 ========================================================= */
 
-const params =
-new URLSearchParams(
-    window.location.search
-);
-
-
-const repoId =
-params.get("repo_id") ||
-params.get("repoId") ||
-params.get("repository_id") ||
-params.get("repository") ||
-"";
-
-
-const branchIdParam =
-params.get("branch_id") ||
-params.get("branchId") ||
-params.get("branch") ||
-"";
+const DEFAULT_REPOSITORY_ID =
+    "445da78b-1322-4a83-9031-57a064f4ad2e";
 
 
 /* =========================================================
-   STATE
+   GLOBAL VARIABLES
 ========================================================= */
 
-let repositoryData = null;
+let repositoryId = null;
+
+let repository = null;
 
 let allBranches = [];
 
@@ -1823,46 +1198,79 @@ let allFiles = [];
 
 let currentFolder = "";
 
-let searchMode = false;
+let currentSearch = "";
 
 let filePendingDelete = null;
 
-let filePendingReplace = null;
 
-let filePendingRename = null;
+/* =========================================================
+   GET URL PARAMETER
+========================================================= */
 
-let folderPendingRename = null;
+function getParam(name){
 
-let folderPendingDelete = null;
+    const params =
+        new URLSearchParams(window.location.search);
 
-let editingFile = null;
+    return params.get(name);
+
+}
 
 
 /* =========================================================
-   INITIAL LOAD
+   INITIALIZE
 ========================================================= */
 
 document.addEventListener(
-"DOMContentLoaded",
-async function(){
+    "DOMContentLoaded",
+    initialize
+);
 
-    if(!repoId){
 
-        showToast(
-            "Repository ID is missing.",
-            "error"
+async function initialize(){
+
+    try{
+
+        repositoryId =
+            getParam("id") ||
+            getParam("repository_id") ||
+            getParam("repo_id") ||
+            DEFAULT_REPOSITORY_ID;
+
+        if(!repositoryId){
+
+            showError(
+                "Repository ID is missing."
+            );
+
+            return;
+        }
+
+
+        await loadRepository();
+
+        await loadBranches();
+
+        await loadFiles();
+
+        await loadReadme();
+
+    }
+    catch(error){
+
+        console.error(
+            "Initialization error:",
+            error
         );
 
-        return;
+        showError(
+            "Page loading failed: " +
+            getErrorMessage(error)
+        );
 
     }
 
-
-    await loadRepository();
-
-    await loadBranches();
-
-});
+}
 
 
 /* =========================================================
@@ -1871,95 +1279,81 @@ async function(){
 
 async function loadRepository(){
 
-    try{
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
+    const {
+        data,
+        error
+    } = await supabaseClient
         .from("repositories")
         .select("*")
-        .eq("id",repoId)
+        .eq("id", repositoryId)
         .maybeSingle();
 
 
-        if(error){
-
-            throw error;
-
-        }
-
-
-        if(!data){
-
-            showToast(
-                "Repository not found.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        repositoryData =
-        data;
-
-
-        document
-        .getElementById("repoTitle")
-        .textContent =
-        data.name ||
-        "Repository";
-
-
-        document
-        .getElementById("repoDescription")
-        .textContent =
-        data.description ||
-        "No description";
-
-
-        document
-        .getElementById("starCount")
-        .textContent =
-        data.stars_count ||
-        data.star_count ||
-        0;
-
-
-        document
-        .getElementById("forkCount")
-        .textContent =
-        data.forks_count ||
-        data.fork_count ||
-        0;
-
-
-        document
-        .getElementById("readmeTitle")
-        .textContent =
-        data.name ||
-        "Repository";
-
-
-    }
-    catch(error){
+    if(error){
 
         console.error(
             "Repository error:",
             error
         );
 
+        throw error;
 
-        showToast(
-            "Failed to load repository: " +
-            error.message,
-            "error"
+    }
+
+
+    if(!data){
+
+        throw new Error(
+            "Repository not found."
         );
 
     }
+
+
+    repository = data;
+
+
+    document.getElementById(
+        "repoName"
+    ).textContent =
+        data.name ||
+        "Repository";
+
+
+    document.getElementById(
+        "ownerName"
+    ).textContent =
+        "ASIM TECH";
+
+
+    document.getElementById(
+        "repoDescription"
+    ).textContent =
+        data.description ||
+        "No description";
+
+
+    document.getElementById(
+        "repoVisibility"
+    ).textContent =
+        data.visibility ||
+        "Public";
+
+
+    document.getElementById(
+        "starCount"
+    ).textContent =
+        data.stars_count ||
+        data.star_count ||
+        0;
+
+
+    document.getElementById(
+        "forkCount"
+    ).textContent =
+        data.forks_count ||
+        data.fork_count ||
+        0;
 
 }
 
@@ -1970,176 +1364,86 @@ async function loadRepository(){
 
 async function loadBranches(){
 
-    try{
-
-        const {
-            data,
-            error
-        } =
+    let result =
         await supabaseClient
-        .from("repository_branches")
-        .select("*")
-        .eq("repository_id",repoId)
-        .order("created_at",{ascending:true});
+            .from("repository_branches")
+            .select("*")
+            .eq("repository_id", repositoryId)
+            .order("created_at", {
+                ascending:true
+            });
 
 
-        if(error){
-
-            throw error;
-
-        }
-
-
-        allBranches =
-        data ||
-        [];
-
-
-        if(!allBranches.length){
-
-            showToast(
-                "No branches found.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        /*
-           Select requested branch,
-           otherwise main,
-           otherwise first.
-        */
-
-        currentBranch =
-        allBranches.find(
-            b => b.id === branchIdParam
-        ) ||
-        allBranches.find(
-            b => b.name === "main"
-        ) ||
-        allBranches[0];
-
-
-        renderBranchMenu();
-
-        updateBranchUI();
-
-        await loadFiles();
-
-    }
-    catch(error){
+    if(result.error){
 
         console.error(
-            "Branch error:",
-            error
+            "Branch loading error:",
+            result.error
         );
 
-
-        showToast(
-            "Failed to load branches: " +
-            error.message,
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   BRANCH MENU
-========================================================= */
-
-function renderBranchMenu(){
-
-    const container =
-    document.getElementById(
-        "branchList"
-    );
-
-
-    if(!allBranches.length){
-
-        container.innerHTML =
-        `
-        <div class="empty">
-        No branches
-        </div>
-        `;
-
-        return;
+        throw result.error;
 
     }
 
 
-    container.innerHTML =
-    allBranches
-    .map(branch => `
-
-        <button
-        onclick="changeBranch('${escapeAttribute(branch.id)}')"
-        >
-        🌿 ${escapeHtml(branch.name)}
-        ${
-            currentBranch &&
-            branch.id === currentBranch.id
-            ? " ✓"
-            : ""
-        }
-        </button>
-
-    `)
-    .join("");
-
-}
+    allBranches =
+        result.data || [];
 
 
-/* =========================================================
-   CHANGE BRANCH
-========================================================= */
+    if(allBranches.length === 0){
 
-async function changeBranch(branchId){
+        throw new Error(
+            "No branch found for this repository."
+        );
 
-    const branch =
-    allBranches.find(
-        b => b.id === branchId
-    );
+    }
 
 
-    if(!branch){
+    const requestedBranch =
+        getParam("branch");
 
-        return;
+
+    let selectedBranch =
+        null;
+
+
+    if(requestedBranch){
+
+        selectedBranch =
+            allBranches.find(
+                branch =>
+                    branch.name === requestedBranch
+            );
+
+    }
+
+
+    if(!selectedBranch){
+
+        selectedBranch =
+            allBranches.find(
+                branch =>
+                    branch.name === "main"
+            );
+
+    }
+
+
+    if(!selectedBranch){
+
+        selectedBranch =
+            allBranches[0];
 
     }
 
 
     currentBranch =
-    branch;
-
-
-    currentFolder =
-    "";
-
-    searchMode =
-    false;
-
-
-    document
-    .getElementById("searchInput")
-    .value =
-    "";
+        selectedBranch;
 
 
     updateBranchUI();
 
-    renderBranchMenu();
-
-    closeAllMenus();
-
-    await loadFiles();
+    populateBranchMenu();
 
 }
 
@@ -2151,56 +1455,165 @@ async function changeBranch(branchId){
 function updateBranchUI(){
 
     if(!currentBranch){
-
         return;
-
     }
 
 
-    document
-    .getElementById("branchButtonText")
-    .textContent =
-    currentBranch.name;
+    const name =
+        currentBranch.name ||
+        "main";
 
 
-    document
-    .getElementById("currentBranchLabel")
-    .textContent =
-    currentBranch.name;
+    document.getElementById(
+        "branchButtonText"
+    ).textContent =
+        name;
 
 
-    /*
-       Add File links
-    */
+    document.getElementById(
+        "branchLabel"
+    ).textContent =
+        name;
 
-    const baseParams =
-    new URLSearchParams();
+}
 
 
-    baseParams.set(
-        "repo_id",
-        repoId
+/* =========================================================
+   POPULATE BRANCH MENU
+========================================================= */
+
+function populateBranchMenu(){
+
+    const menu =
+        document.getElementById(
+            "branchMenu"
+        );
+
+
+    menu.innerHTML = "";
+
+
+    allBranches.forEach(
+        branch => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.textContent =
+                "🌿 " +
+                branch.name;
+
+
+            button.onclick =
+                function(){
+
+                    selectBranch(
+                        branch
+                    );
+
+                };
+
+
+            menu.appendChild(
+                button
+            );
+
+        }
     );
 
 
-    baseParams.set(
-        "branch_id",
-        currentBranch.id
+    const separator =
+        document.createElement(
+            "div"
+        );
+
+    separator.style.borderTop =
+        "1px solid #30363d";
+
+    separator.style.margin =
+        "5px 0";
+
+
+    menu.appendChild(
+        separator
     );
 
 
-    document
-    .getElementById("createFileLink")
-    .href =
-    "repository-add-file.html?" +
-    baseParams.toString();
+    const createButton =
+        document.createElement(
+            "button"
+        );
 
 
-    document
-    .getElementById("uploadFileLink")
-    .href =
-    "repository-add-file.html?" +
-    baseParams.toString();
+    createButton.textContent =
+        "➕ Create new branch";
+
+
+    createButton.onclick =
+        createBranch;
+
+
+    menu.appendChild(
+        createButton
+    );
+
+}
+
+
+/* =========================================================
+   SELECT BRANCH
+========================================================= */
+
+async function selectBranch(branch){
+
+    closeMenus();
+
+    currentBranch =
+        branch;
+
+    currentFolder =
+        "";
+
+    currentSearch =
+        "";
+
+
+    document.getElementById(
+        "searchInput"
+    ).value = "";
+
+
+    updateBranchUI();
+
+
+    await loadFiles();
+
+}
+
+
+/* =========================================================
+   SELECT BRANCH BY NAME
+========================================================= */
+
+async function selectBranchByName(name){
+
+    const branch =
+        allBranches.find(
+            item =>
+                item.name === name
+        );
+
+
+    if(branch){
+
+        await selectBranch(
+            branch
+        );
+
+    }
 
 }
 
@@ -2211,75 +1624,184 @@ function updateBranchUI(){
 
 async function loadFiles(){
 
-    if(!currentBranch){
+    const list =
+        document.getElementById(
+            "fileList"
+        );
 
-        return;
 
-    }
-
-
-    document
-    .getElementById("fileList")
-    .innerHTML =
-    `
-    <div class="loading">
-    Loading files...
-    </div>
-    `;
+    list.innerHTML =
+        '<div class="loading">Loading files...</div>';
 
 
     try{
 
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .select("*")
-        .eq("repository_id",repoId)
-        .eq("branch_id",currentBranch.id)
-        .order("file_path",{ascending:true});
+        if(!currentBranch){
+
+            throw new Error(
+                "Current branch is missing."
+            );
+
+        }
 
 
-        if(error){
+        /*
+          IMPORTANT:
+          repository_files may contain branch_id
+          OR branch name depending on schema.
+        */
 
-            throw error;
+        let result =
+            await supabaseClient
+                .from("repository_files")
+                .select("*")
+                .eq(
+                    "repository_id",
+                    repositoryId
+                )
+                .eq(
+                    "branch_id",
+                    currentBranch.id
+                )
+                .order(
+                    "file_path",
+                    {
+                        ascending:true
+                    }
+                );
+
+
+        /*
+          If branch_id query gives no data,
+          try branch name.
+        */
+
+        if(
+            !result.error &&
+            (!result.data ||
+             result.data.length === 0)
+        ){
+
+            const fallback =
+                await supabaseClient
+                    .from("repository_files")
+                    .select("*")
+                    .eq(
+                        "repository_id",
+                        repositoryId
+                    )
+                    .eq(
+                        "branch",
+                        currentBranch.name
+                    )
+                    .order(
+                        "file_path",
+                        {
+                            ascending:true
+                        }
+                    );
+
+
+            if(
+                !fallback.error &&
+                fallback.data &&
+                fallback.data.length > 0
+            ){
+
+                result =
+                    fallback;
+
+            }
+
+        }
+
+
+        if(result.error){
+
+            console.error(
+                "repository_files error:",
+                result.error
+            );
+
+            throw result.error;
 
         }
 
 
         allFiles =
-        data ||
-        [];
+            result.data || [];
+
+
+        console.log(
+            "Loaded repository files:",
+            allFiles
+        );
+
+
+        currentFolder =
+            "";
 
 
         renderFiles(
             allFiles
         );
 
-
-        await loadReadme();
-
     }
     catch(error){
 
         console.error(
-            "Files error:",
+            "Load files failed:",
             error
         );
 
 
-        document
-        .getElementById("fileList")
-        .innerHTML =
-        `
-        <div class="empty">
-        Failed to load files.
-        <br><br>
-        ${escapeHtml(error.message)}
-        </div>
+        list.innerHTML = `
+
+            <div class="empty-state">
+
+                <div style="
+                    font-size:45px;
+                    margin-bottom:15px;
+                ">
+                    ⚠️
+                </div>
+
+                <div style="
+                    color:#ff7b72;
+                    font-weight:700;
+                    margin-bottom:10px;
+                ">
+                    Unable to load files
+                </div>
+
+                <div style="
+                    color:#8b949e;
+                    max-width:700px;
+                    margin:auto;
+                    word-break:break-word;
+                ">
+                    ${escapeHtml(
+                        getErrorMessage(error)
+                    )}
+                </div>
+
+                <br>
+
+                <button
+                    class="btn btn-blue"
+                    onclick="loadFiles()"
+                >
+                    🔄 Retry
+                </button>
+
+            </div>
+
         `;
+
+        updateFileCount(
+            0,
+            0
+        );
 
     }
 
@@ -2287,27 +1809,34 @@ async function loadFiles(){
 
 
 /* =========================================================
-   PATH HELPERS
+   NORMALIZE PATH
 ========================================================= */
 
-function normalizeFolderPath(path){
+function normalizePath(path){
 
-    return String(path || "")
-    .replace(/\\/g,"/")
-    .replace(/^\/+/,"")
-    .replace(/\/+$/,"");
+    return String(
+        path || ""
+    )
+    .replace(/^\/+/, "")
+    .replace(/\/+$/, "");
 
 }
 
 
+/* =========================================================
+   GET FOLDER
+========================================================= */
+
 function getFolderPath(filePath){
 
-    const path =
-    normalizeFolderPath(filePath);
+    const clean =
+        normalizePath(
+            filePath
+        );
 
 
     const parts =
-    path.split("/");
+        clean.split("/");
 
 
     if(parts.length <= 1){
@@ -2319,44 +1848,40 @@ function getFolderPath(filePath){
 
     parts.pop();
 
+
     return parts.join("/");
 
 }
 
 
-/*
-   Returns the immediate child folder of currentPath.
-
-   Example:
-
-   currentPath = ""
-
-   assets/test.html
-   => assets
-
-   currentPath = assets
-
-   assets/css/style.css
-   => css
-*/
+/* =========================================================
+   GET DIRECT CHILD FOLDER
+========================================================= */
 
 function getDirectChildFolder(
     filePath,
-    currentPath
+    folder
 ){
 
     const clean =
-    normalizeFolderPath(filePath);
+        normalizePath(
+            filePath
+        );
 
 
     const current =
-    normalizeFolderPath(currentPath);
+        normalizePath(
+            folder
+        );
 
 
     if(
         current &&
-        !clean.startsWith(
-            current + "/"
+        !(
+            clean === current ||
+            clean.startsWith(
+                current + "/"
+            )
         )
     ){
 
@@ -2365,16 +1890,16 @@ function getDirectChildFolder(
     }
 
 
-    let remaining =
-    current
-    ? clean.slice(
-        current.length + 1
-    )
-    : clean;
+    const relative =
+        current
+            ? clean.substring(
+                current.length + 1
+            )
+            : clean;
 
 
     const parts =
-    remaining.split("/");
+        relative.split("/");
 
 
     if(parts.length < 2){
@@ -2384,96 +1909,147 @@ function getDirectChildFolder(
     }
 
 
-    return parts[0];
+    return current
+        ? current + "/" + parts[0]
+        : parts[0];
 
 }
 
 
 /* =========================================================
-   PATH BAR
+   RENDER PATH BAR
 ========================================================= */
 
 function renderPathBar(){
 
     const bar =
-    document.getElementById(
-        "pathBar"
-    );
+        document.getElementById(
+            "pathBar"
+        );
 
 
-    let html =
-    `
-    <span
-    class="path-link"
-    onclick="openFolder('')"
-    >
-    🏠 Root
-    </span>
-    `;
+    bar.innerHTML = "";
+
+
+    const root =
+        document.createElement(
+            "span"
+        );
+
+
+    root.className =
+        currentFolder
+            ? "path-link"
+            : "path-current";
+
+
+    root.textContent =
+        "🏠 Root";
 
 
     if(currentFolder){
 
-        const parts =
-        currentFolder.split("/");
+        root.onclick =
+            function(){
 
+                openFolder("");
 
-        let accumulated =
-        "";
-
-
-        parts.forEach(
-            (part,index) => {
-
-                accumulated =
-                accumulated
-                ? accumulated + "/" + part
-                : part;
-
-
-                html +=
-                `
-                <span class="path-separator">
-                /
-                </span>
-                `;
-
-
-                if(
-                    index ===
-                    parts.length - 1
-                ){
-
-                    html +=
-                    `
-                    <span class="path-current">
-                    📁 ${escapeHtml(part)}
-                    </span>
-                    `;
-
-                }
-                else{
-
-                    html +=
-                    `
-                    <span
-                    class="path-link"
-                    onclick="openFolder('${escapeAttribute(accumulated)}')"
-                    >
-                    📁 ${escapeHtml(part)}
-                    </span>
-                    `;
-
-                }
-
-            }
-        );
+            };
 
     }
 
 
-    bar.innerHTML =
-    html;
+    bar.appendChild(
+        root
+    );
+
+
+    if(!currentFolder){
+
+        return;
+
+    }
+
+
+    const parts =
+        currentFolder.split("/");
+
+
+    let built = "";
+
+
+    parts.forEach(
+        (part,index) => {
+
+            const separator =
+                document.createElement(
+                    "span"
+                );
+
+
+            separator.className =
+                "path-separator";
+
+
+            separator.textContent =
+                "/";
+
+
+            bar.appendChild(
+                separator
+            );
+
+
+            built =
+                built
+                    ? built + "/" + part
+                    : part;
+
+
+            const item =
+                document.createElement(
+                    "span"
+                );
+
+
+            const isLast =
+                index === parts.length - 1;
+
+
+            item.className =
+                isLast
+                    ? "path-current"
+                    : "path-link";
+
+
+            item.textContent =
+                "📁 " + part;
+
+
+            if(!isLast){
+
+                const target =
+                    built;
+
+
+                item.onclick =
+                    function(){
+
+                        openFolder(
+                            target
+                        );
+
+                    };
+
+            }
+
+
+            bar.appendChild(
+                item
+            );
+
+        }
+    );
 
 }
 
@@ -2485,17 +2061,18 @@ function renderPathBar(){
 function openFolder(path){
 
     currentFolder =
-    normalizeFolderPath(path);
+        normalizePath(
+            path
+        );
 
 
-    searchMode =
-    false;
+    currentSearch =
+        "";
 
 
-    document
-    .getElementById("searchInput")
-    .value =
-    "";
+    document.getElementById(
+        "searchInput"
+    ).value = "";
 
 
     renderFiles(
@@ -2519,14 +2096,14 @@ function goParentFolder(){
 
 
     const parts =
-    currentFolder.split("/");
+        currentFolder.split("/");
 
 
     parts.pop();
 
 
     currentFolder =
-    parts.join("/");
+        parts.join("/");
 
 
     renderFiles(
@@ -2546,55 +2123,79 @@ function renderFiles(files){
 
 
     const list =
-    document.getElementById(
-        "fileList"
-    );
+        document.getElementById(
+            "fileList"
+        );
+
+
+    list.innerHTML = "";
 
 
     /*
-       Search mode
+      ---------------------------------------
+      SEARCH MODE
+      ---------------------------------------
     */
 
-    if(searchMode){
+    if(currentSearch.trim()){
+
+        const term =
+            currentSearch
+                .trim()
+                .toLowerCase();
+
 
         const matches =
-        files;
+            files.filter(
+                file => {
+
+                    const path =
+                        String(
+                            file.file_path || ""
+                        );
 
 
-        updateSummary(
+                    return (
+                        path
+                            .toLowerCase()
+                            .includes(term)
+                    );
+
+                }
+            );
+
+
+        updateFileCount(
             0,
             matches.length
         );
 
 
-        if(!matches.length){
+        if(matches.length === 0){
 
             list.innerHTML =
-            `
-            <div class="empty">
-            No files found.
-            </div>
-            `;
+                `
+                <div class="empty-state">
+                    🔎 No files found.
+                </div>
+                `;
 
             return;
 
         }
 
 
-        list.innerHTML =
-        matches
-        .filter(
-            file =>
-            !isGitkeep(file)
-        )
-        .map(
-            file =>
-            renderSingleFile(
-                file,
-                true
-            )
-        )
-        .join("");
+        matches.forEach(
+            file => {
+
+                renderSingleFile(
+                    file,
+                    list,
+                    true
+                );
+
+            }
+        );
 
 
         return;
@@ -2603,82 +2204,102 @@ function renderFiles(files){
 
 
     /*
-       Current folder
+      ---------------------------------------
+      NORMAL FOLDER MODE
+      ---------------------------------------
     */
 
-    const visibleFiles =
-    files.filter(
-        file => {
-
-            if(isGitkeep(file)){
-
-                return false;
-
-            }
-
-
-            const folder =
-            getFolderPath(
-                file.file_path
-            );
-
-
-            return folder ===
-            currentFolder;
-
-        }
-    );
-
-
-    /*
-       Discover direct folders.
-
-       IMPORTANT:
-       .gitkeep is considered when
-       discovering folders, but is not
-       displayed as a file.
-    */
 
     const folderMap =
-    new Map();
+        new Map();
+
+
+    const visibleFiles =
+        [];
 
 
     files.forEach(
         file => {
 
-            const child =
-            getDirectChildFolder(
-                file.file_path,
-                currentFolder
-            );
+            const path =
+                normalizePath(
+                    file.file_path
+                );
 
 
-            if(!child){
+            if(!path){
 
                 return;
 
             }
 
 
-            if(!folderMap.has(child)){
+            /*
+              .gitkeep is hidden as a file,
+              but still creates/displays folder.
+            */
 
-                folderMap.set(
-                    child,
-                    0
+            const isGitKeep =
+                path.endsWith(
+                    "/.gitkeep"
                 );
+
+
+            const childFolder =
+                getDirectChildFolder(
+                    path,
+                    currentFolder
+                );
+
+
+            if(childFolder){
+
+                if(!folderMap.has(
+                    childFolder
+                )){
+
+                    folderMap.set(
+                        childFolder,
+                        0
+                    );
+
+                }
+
+
+                /*
+                  Don't count .gitkeep
+                  as a visible item.
+                */
+
+                if(!isGitKeep){
+
+                    folderMap.set(
+                        childFolder,
+                        folderMap.get(
+                            childFolder
+                        ) + 1
+                    );
+
+                }
+
+
+                return;
 
             }
 
 
             /*
-               Count real files only.
+              File directly inside current folder.
             */
 
-            if(!isGitkeep(file)){
+            if(
+                getFolderPath(path) ===
+                currentFolder &&
+                !isGitKeep
+            ){
 
-                folderMap.set(
-                    child,
-                    folderMap.get(child) + 1
+                visibleFiles.push(
+                    file
                 );
 
             }
@@ -2687,141 +2308,162 @@ function renderFiles(files){
     );
 
 
-    const folders =
-    Array.from(
-        folderMap.entries()
-    )
-    .sort(
-        (a,b) =>
-        a[0].localeCompare(b[0])
-    );
-
-
-    updateSummary(
-        folders.length,
-        visibleFiles.length
-    );
-
-
-    let html = "";
-
-
     /*
-       Parent folder
+      Parent row
     */
 
     if(currentFolder){
 
-        html +=
-        `
-        <div
-        class="file-row parent-row"
-        onclick="goParentFolder()"
-        >
+        const parent =
+            document.createElement(
+                "div"
+            );
 
-            <div class="folder-icon">
-            ↩️
-            </div>
+
+        parent.className =
+            "folder-row";
+
+
+        parent.onclick =
+            goParentFolder;
+
+
+        parent.innerHTML = `
 
             <div class="folder-main">
 
-                <div class="folder-name">
-                ..
-                </div>
+                <span class="folder-icon">
+                    ↩️
+                </span>
+
+                <span class="folder-name">
+                    ..
+                </span>
 
             </div>
 
-        </div>
+            <div class="folder-arrow">
+                ↑
+            </div>
+
         `;
+
+
+        list.appendChild(
+            parent
+        );
 
     }
 
 
     /*
-       Folders
+      Folders
     */
 
+    const folders =
+        Array.from(
+            folderMap.entries()
+        ).sort(
+            (a,b) =>
+                a[0].localeCompare(
+                    b[0]
+                )
+        );
+
+
     folders.forEach(
-        ([folder,count]) => {
+        ([folderPath,count]) => {
 
-            const fullPath =
-            currentFolder
-            ? currentFolder + "/" + folder
-            : folder;
+            const folderName =
+                folderPath
+                    .split("/")
+                    .pop();
 
 
-            html +=
-            `
-            <div
-            class="file-row folder-row"
-            >
+            const row =
+                document.createElement(
+                    "div"
+                );
 
-                <div
-                class="folder-main"
-                onclick="openFolder('${escapeAttribute(fullPath)}')"
-                >
 
-                    <div class="folder-icon">
-                    📁
-                    </div>
+            row.className =
+                "folder-row";
+
+
+            row.onclick =
+                function(){
+
+                    openFolder(
+                        folderPath
+                    );
+
+                };
+
+
+            row.innerHTML = `
+
+                <div class="folder-main">
+
+                    <span class="folder-icon">
+                        📁
+                    </span>
 
                     <div>
 
                         <div class="folder-name">
-                        ${escapeHtml(folder)}
+                            ${escapeHtml(
+                                folderName
+                            )}
                         </div>
 
                         <div class="folder-count">
-                        ${count} ${count === 1 ? "item" : "items"}
+                            ${count}
+                            ${count === 1
+                                ? "item"
+                                : "items"}
                         </div>
 
                     </div>
 
                 </div>
 
-
-                <div class="file-actions">
-
-                    <button
-                    class="small-btn"
-                    onclick="event.stopPropagation();openRenameFolderModal('${escapeAttribute(fullPath)}')"
-                    >
-                    ✏️ Rename
-                    </button>
-
-                    <button
-                    class="small-btn danger"
-                    onclick="event.stopPropagation();openDeleteFolderModal('${escapeAttribute(fullPath)}')"
-                    >
-                    🗑️ Delete
-                    </button>
-
-                    <button
-                    class="small-btn"
-                    onclick="event.stopPropagation();openFolder('${escapeAttribute(fullPath)}')"
-                    >
-                    →
-                    </button>
-
+                <div class="folder-arrow">
+                    ›
                 </div>
 
-            </div>
             `;
+
+
+            list.appendChild(
+                row
+            );
 
         }
     );
 
 
     /*
-       Files
+      Files
     */
+
+    visibleFiles.sort(
+        (a,b) =>
+            String(
+                a.file_path || ""
+            ).localeCompare(
+                String(
+                    b.file_path || ""
+                )
+            )
+    );
+
 
     visibleFiles.forEach(
         file => {
 
-            html +=
             renderSingleFile(
                 file,
+                list,
                 false
             );
 
@@ -2829,20 +2471,45 @@ function renderFiles(files){
     );
 
 
-    if(!html){
+    updateFileCount(
+        folders.length,
+        visibleFiles.length
+    );
 
-        html =
-        `
-        <div class="empty">
-        This folder is empty.
-        </div>
+
+    if(
+        folders.length === 0 &&
+        visibleFiles.length === 0
+    ){
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+
+        empty.className =
+            "empty-state";
+
+
+        empty.innerHTML = `
+
+            📂
+
+            <div style="
+                margin-top:10px;
+            ">
+                This folder is empty.
+            </div>
+
         `;
 
+
+        list.appendChild(
+            empty
+        );
+
     }
-
-
-    list.innerHTML =
-    html;
 
 }
 
@@ -2853,54 +2520,83 @@ function renderFiles(files){
 
 function renderSingleFile(
     file,
-    isSearch
+    list,
+    searchMode
 ){
 
-    const name =
-    isSearch
-    ? file.file_path
-    : getFileName(
-        file.file_path
-    );
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
+        "file-row";
+
+
+    const path =
+        String(
+            file.file_path || ""
+        );
+
+
+    const fileName =
+        path
+            .split("/")
+            .pop();
 
 
     const icon =
-    getFileIcon(
-        file.file_path
-    );
+        getFileIcon(
+            fileName
+        );
 
 
     const size =
-    formatBytes(
-        file.file_size || 0
-    );
+        formatFileSize(
+            file.file_size
+        );
 
 
     const date =
-    file.created_at
-    ? formatDate(
-        file.created_at
-    )
-    : "";
+        formatDate(
+            file.updated_at ||
+            file.created_at
+        );
 
 
-    return `
-    <div class="file-row">
+    const displayName =
+        searchMode
+            ? path
+            : fileName;
 
-        <div class="file-icon">
-        ${icon}
-        </div>
 
+    row.innerHTML = `
 
         <div class="file-main">
 
-            <div class="file-name">
-            ${escapeHtml(name)}
+            <div class="file-icon">
+                ${icon}
             </div>
 
-            <div class="file-meta">
-            ${escapeHtml(size)}
-            ${date ? " · " + escapeHtml(date) : ""}
+            <div class="file-info">
+
+                <div class="file-name">
+                    ${escapeHtml(
+                        displayName
+                    )}
+                </div>
+
+                <div class="file-meta">
+
+                    ${size}
+
+                    ${date
+                        ? " • " + date
+                        : ""}
+
+                </div>
+
             </div>
 
         </div>
@@ -2908,363 +2604,251 @@ function renderSingleFile(
 
         <div class="file-actions">
 
-            ${
-                isPreviewable(file)
-                ?
-                `
-                <button
-                class="small-btn blue"
-                onclick="previewFile('${escapeAttribute(file.id)}')"
-                >
-                🌐 Preview
-                </button>
-                `
-                :
-                ""
-            }
-
-
-            ${
-                !file.is_binary
-                ?
-                `
-                <button
-                class="small-btn"
-                onclick="editFile('${escapeAttribute(file.id)}')"
-                >
+            <button
+                class="btn btn-small"
+                onclick="editFile('${file.id}')"
+            >
                 ✏️ Edit
-                </button>
-                `
-                :
-                ""
-            }
-
-
-            <button
-            class="small-btn"
-            onclick="downloadFile('${escapeAttribute(file.id)}')"
-            >
-            ⬇️ Download
             </button>
 
 
             <button
-            class="small-btn"
-            onclick="openReplaceModal('${escapeAttribute(file.id)}')"
+                class="btn btn-small"
+                onclick="previewFile('${file.id}')"
             >
-            🔄 Replace
+                🌐 Preview
             </button>
 
 
             <button
-            class="small-btn"
-            onclick="openRenameFileModal('${escapeAttribute(file.id)}')"
+                class="btn btn-small"
+                onclick="downloadFile('${file.id}')"
             >
-            ✏️ Rename
+                ⬇️ Download
             </button>
 
 
             <button
-            class="small-btn danger"
-            onclick="openDeleteFileModal('${escapeAttribute(file.id)}')"
+                class="btn btn-small btn-danger"
+                onclick="openDeleteModal('${file.id}')"
             >
-            🗑️ Delete
+                🗑️ Delete
             </button>
 
         </div>
 
-    </div>
     `;
+
+
+    list.appendChild(
+        row
+    );
 
 }
 
 
 /* =========================================================
-   SUMMARY
+   UPDATE FILE COUNT
 ========================================================= */
 
-function updateSummary(
+function updateFileCount(
     folders,
     files
 ){
 
-    document
-    .getElementById("itemSummary")
-    .textContent =
-    folders +
-    " folder" +
-    (folders === 1 ? "" : "s") +
-    " · " +
-    files +
-    " file" +
-    (files === 1 ? "" : "s");
+    document.getElementById(
+        "fileCount"
+    ).textContent =
+        folders +
+        " folder" +
+        (folders === 1 ? "" : "s") +
+        " · " +
+        files +
+        " file" +
+        (files === 1 ? "" : "s");
 
 }
 
 
 /* =========================================================
-   SEARCH
+   FILE ICON
 ========================================================= */
 
-function handleSearch(){
+function getFileIcon(name){
+
+    const lower =
+        String(name)
+            .toLowerCase();
+
+
+    if(
+        lower.endsWith(".html") ||
+        lower.endsWith(".htm")
+    ){
+
+        return "🌐";
+
+    }
+
+
+    if(lower.endsWith(".css")){
+
+        return "🎨";
+
+    }
+
+
+    if(lower.endsWith(".js")){
+
+        return "⚙️";
+
+    }
+
+
+    if(lower.endsWith(".json")){
+
+        return "🧾";
+
+    }
+
+
+    if(
+        lower.endsWith(".png") ||
+        lower.endsWith(".jpg") ||
+        lower.endsWith(".jpeg") ||
+        lower.endsWith(".gif") ||
+        lower.endsWith(".webp")
+    ){
+
+        return "🖼️";
+
+    }
+
+
+    if(lower.endsWith(".md")){
+
+        return "📘";
+
+    }
+
+
+    if(lower.endsWith(".pdf")){
+
+        return "📕";
+
+    }
+
+
+    if(
+        lower.endsWith(".zip") ||
+        lower.endsWith(".rar")
+    ){
+
+        return "🗜️";
+
+    }
+
+
+    return "📄";
+
+}
+
+
+/* =========================================================
+   FORMAT SIZE
+========================================================= */
+
+function formatFileSize(bytes){
+
+    if(
+        bytes === null ||
+        bytes === undefined ||
+        bytes === ""
+    ){
+
+        return "";
+
+    }
+
 
     const value =
-    document
-    .getElementById("searchInput")
-    .value
-    .trim()
-    .toLowerCase();
+        Number(bytes);
 
 
-    if(!value){
+    if(
+        !Number.isFinite(value) ||
+        value <= 0
+    ){
 
-        searchMode =
-        false;
-
-        renderFiles(
-            allFiles
-        );
-
-        return;
+        return "0 B";
 
     }
 
 
-    searchMode =
-    true;
+    const units =
+        [
+            "B",
+            "KB",
+            "MB",
+            "GB"
+        ];
 
 
-    currentFolder =
-    "";
+    const index =
+        Math.min(
+            Math.floor(
+                Math.log(value) /
+                Math.log(1024)
+            ),
+            units.length - 1
+        );
 
 
-    const results =
-    allFiles.filter(
-        file => {
-
-            if(isGitkeep(file)){
-
-                return false;
-
-            }
-
-
-            return String(
-                file.file_path
-            )
-            .toLowerCase()
-            .includes(value);
-
-        }
-    );
-
-
-    renderFiles(
-        results
-    );
+    return (
+        value /
+        Math.pow(
+            1024,
+            index
+        )
+    ).toFixed(
+        index === 0 ? 0 : 1
+    )
+    + " " +
+    units[index];
 
 }
 
 
 /* =========================================================
-   EDIT FILE
+   FORMAT DATE
 ========================================================= */
 
-function editFile(fileId){
+function formatDate(date){
 
-    const file =
-    allFiles.find(
-        item => item.id === fileId
-    );
+    if(!date){
 
-
-    if(!file){
-
-        showToast(
-            "File not found.",
-            "error"
-        );
-
-        return;
+        return "";
 
     }
-
-
-    if(file.is_binary){
-
-        showToast(
-            "Binary files cannot be edited.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    editingFile =
-    file;
-
-
-    document
-    .getElementById("editModalTitle")
-    .textContent =
-    "✏️ Edit — " +
-    file.file_path;
-
-
-    document
-    .getElementById("editorText")
-    .value =
-    file.content || "";
-
-
-    document
-    .getElementById("editModal")
-    .classList.add("show");
-
-}
-
-
-/* =========================================================
-   SAVE EDITED FILE
-========================================================= */
-
-async function saveEditedFile(){
-
-    if(!editingFile){
-
-        return;
-
-    }
-
-
-    const button =
-    document.getElementById(
-        "saveFileButton"
-    );
-
-
-    const content =
-    document
-    .getElementById("editorText")
-    .value;
-
-
-    button.disabled =
-    true;
-
-    button.textContent =
-    "Saving...";
 
 
     try{
 
-        const {
-            error:storageError
-        } =
-        await supabaseClient
-        .storage
-        .from("repository-files")
-        .upload(
-            editingFile.storage_path,
-            new Blob(
-                [content],
-                {
-                    type:
-                    editingFile.mime_type ||
-                    getMimeType(
-                        editingFile.file_path
-                    )
-                }
-            ),
+        return new Date(
+            date
+        ).toLocaleDateString(
+            "en-IN",
             {
-                upsert:true,
-                contentType:
-                editingFile.mime_type ||
-                getMimeType(
-                    editingFile.file_path
-                )
+                day:"2-digit",
+                month:"short",
+                year:"numeric"
             }
         );
 
-
-        if(storageError){
-
-            throw storageError;
-
-        }
-
-
-        const {
-            error:dbError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .update({
-
-            content:content,
-
-            file_size:
-            new Blob([content]).size
-
-        })
-        .eq(
-            "id",
-            editingFile.id
-        );
-
-
-        if(dbError){
-
-            throw dbError;
-
-        }
-
-
-        editingFile.content =
-        content;
-
-
-        editingFile.file_size =
-        new Blob([content]).size;
-
-
-        closeEditModal();
-
-        renderFiles(
-            allFiles
-        );
-
-
-        showToast(
-            "File saved successfully.",
-            "success"
-        );
-
     }
-    catch(error){
+    catch(e){
 
-        console.error(
-            "Save error:",
-            error
-        );
-
-
-        showToast(
-            "Save failed: " +
-            error.message,
-            "error"
-        );
-
-    }
-    finally{
-
-        button.disabled =
-        false;
-
-        button.textContent =
-        "💾 Save Changes";
+        return "";
 
     }
 
@@ -3272,33 +2856,23 @@ async function saveEditedFile(){
 
 
 /* =========================================================
-   PREVIEW
+   PREVIEW FILE
 ========================================================= */
 
 async function previewFile(fileId){
 
     const file =
-    allFiles.find(
-        item => item.id === fileId
-    );
+        allFiles.find(
+            item =>
+                String(item.id) ===
+                String(fileId)
+        );
 
 
     if(!file){
 
         showToast(
             "File not found.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(file.is_binary){
-
-        showToast(
-            "Binary files cannot be previewed.",
             "error"
         );
 
@@ -3308,10 +2882,9 @@ async function previewFile(fileId){
 
 
     const path =
-    String(
-        file.file_path || ""
-    )
-    .toLowerCase();
+        String(
+            file.file_path || ""
+        ).toLowerCase();
 
 
     if(
@@ -3329,31 +2902,53 @@ async function previewFile(fileId){
     }
 
 
-    let html =
-    file.content || "";
+    try{
+
+        let html =
+            file.content || "";
 
 
-    if(
-        !html.trim() &&
-        file.storage_path
-    ){
+        /*
+          If content is not stored in DB,
+          download it from Storage.
+        */
 
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-        .storage
-        .from("repository-files")
-        .download(
+        if(
+            !html.trim() &&
             file.storage_path
-        );
+        ){
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .storage
+                    .from(
+                        "repository-files"
+                    )
+                    .download(
+                        file.storage_path
+                    );
 
 
-        if(error){
+            if(error){
+
+                throw error;
+
+            }
+
+
+            html =
+                await data.text();
+
+        }
+
+
+        if(!html.trim()){
 
             showToast(
-                error.message,
+                "HTML file is empty.",
                 "error"
             );
 
@@ -3362,16 +2957,95 @@ async function previewFile(fileId){
         }
 
 
-        html =
-        await data.text();
+        document.getElementById(
+            "previewTitle"
+        ).textContent =
+            "🌐 Preview — " +
+            file.file_path;
+
+
+        const modal =
+            document.getElementById(
+                "previewModal"
+            );
+
+
+        modal.classList.add(
+            "show"
+        );
+
+
+        const frame =
+            document.getElementById(
+                "previewFrame"
+            );
+
+
+        frame.srcdoc =
+            html;
+
+    }
+    catch(error){
+
+        console.error(
+            "Preview error:",
+            error
+        );
+
+
+        showToast(
+            "Preview failed: " +
+            getErrorMessage(error),
+            "error"
+        );
 
     }
 
+}
 
-    if(!html.trim()){
+
+/* =========================================================
+   CLOSE PREVIEW
+========================================================= */
+
+function closePreview(){
+
+    const frame =
+        document.getElementById(
+            "previewFrame"
+        );
+
+
+    frame.srcdoc = "";
+
+
+    document.getElementById(
+        "previewModal"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   EDIT FILE
+========================================================= */
+
+function editFile(fileId){
+
+    const file =
+        allFiles.find(
+            item =>
+                String(item.id) ===
+                String(fileId)
+        );
+
+
+    if(!file){
 
         showToast(
-            "HTML file is empty.",
+            "File not found.",
             "error"
         );
 
@@ -3380,40 +3054,36 @@ async function previewFile(fileId){
     }
 
 
-    document
-    .getElementById("previewTitle")
-    .textContent =
-    "🌐 Preview — " +
-    file.file_path;
+    const url =
+        "repository-edit-file.html" +
+        "?id=" +
+        encodeURIComponent(
+            file.id
+        ) +
+        "&repository_id=" +
+        encodeURIComponent(
+            repositoryId
+        );
 
 
-    document
-    .getElementById("previewModal")
-    .classList.add("show");
-
-
-    const frame =
-    document.getElementById(
-        "previewFrame"
-    );
-
-
-    frame.srcdoc =
-    html;
+    window.location.href =
+        url;
 
 }
 
 
 /* =========================================================
-   DOWNLOAD
+   DOWNLOAD FILE
 ========================================================= */
 
 async function downloadFile(fileId){
 
     const file =
-    allFiles.find(
-        item => item.id === fileId
-    );
+        allFiles.find(
+            item =>
+                String(item.id) ===
+                String(fileId)
+        );
 
 
     if(!file){
@@ -3430,7 +3100,7 @@ async function downloadFile(fileId){
 
     try{
 
-        let blob;
+        let blob = null;
 
 
         if(file.storage_path){
@@ -3439,63 +3109,72 @@ async function downloadFile(fileId){
                 data,
                 error
             } =
-            await supabaseClient
-            .storage
-            .from("repository-files")
-            .download(
-                file.storage_path
-            );
+                await supabaseClient
+                    .storage
+                    .from(
+                        "repository-files"
+                    )
+                    .download(
+                        file.storage_path
+                    );
 
 
-            if(error){
+            if(!error){
 
-                throw error;
+                blob =
+                    data;
 
             }
 
-
-            blob =
-            data;
-
         }
-        else{
+
+
+        if(!blob){
 
             blob =
-            new Blob(
-                [file.content || ""],
-                {
-                    type:
-                    file.mime_type ||
-                    "application/octet-stream"
-                }
-            );
+                new Blob(
+                    [
+                        file.content || ""
+                    ],
+                    {
+                        type:
+                            file.mime_type ||
+                            "text/plain"
+                    }
+                );
 
         }
 
 
         const url =
-        URL.createObjectURL(
-            blob
-        );
+            URL.createObjectURL(
+                blob
+            );
 
 
         const a =
-        document.createElement("a");
+            document.createElement(
+                "a"
+            );
 
 
         a.href =
-        url;
+            url;
 
 
         a.download =
-        getFileName(
             file.file_path
+                .split("/")
+                .pop();
+
+
+        document.body.appendChild(
+            a
         );
 
 
-        document.body.appendChild(a);
-
         a.click();
+
 
         a.remove();
 
@@ -3503,6 +3182,7 @@ async function downloadFile(fileId){
         URL.revokeObjectURL(
             url
         );
+
 
     }
     catch(error){
@@ -3515,7 +3195,7 @@ async function downloadFile(fileId){
 
         showToast(
             "Download failed: " +
-            error.message,
+            getErrorMessage(error),
             "error"
         );
 
@@ -3525,535 +3205,17 @@ async function downloadFile(fileId){
 
 
 /* =========================================================
-   REPLACE FILE
+   DELETE MODAL
 ========================================================= */
 
-function openReplaceModal(fileId){
+function openDeleteModal(fileId){
 
     const file =
-    allFiles.find(
-        item => item.id === fileId
-    );
-
-
-    if(!file){
-
-        showToast(
-            "File not found.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    filePendingReplace =
-    file;
-
-
-    document
-    .getElementById("replaceFileName")
-    .textContent =
-    file.file_path;
-
-
-    document
-    .getElementById("replaceFileInput")
-    .value =
-    "";
-
-
-    document
-    .getElementById("replaceModal")
-    .classList.add("show");
-
-}
-
-
-/* =========================================================
-   CONFIRM REPLACE
-========================================================= */
-
-async function confirmReplaceFile(){
-
-    if(!filePendingReplace){
-
-        return;
-
-    }
-
-
-    const input =
-    document.getElementById(
-        "replaceFileInput"
-    );
-
-
-    const newFile =
-    input.files[0];
-
-
-    if(!newFile){
-
-        showToast(
-            "Please select a file.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const file =
-    filePendingReplace;
-
-
-    const button =
-    document.getElementById(
-        "confirmReplaceButton"
-    );
-
-
-    button.disabled =
-    true;
-
-    button.textContent =
-    "Replacing...";
-
-
-    try{
-
-        /*
-           Keep the original repository path.
-        */
-
-        const storagePath =
-        file.storage_path ||
-        (
-            repoId +
-            "/" +
-            currentBranch.id +
-            "/" +
-            file.file_path
-        );
-
-
-        const {
-            error:storageError
-        } =
-        await supabaseClient
-        .storage
-        .from("repository-files")
-        .upload(
-            storagePath,
-            newFile,
-            {
-                upsert:true,
-                contentType:
-                newFile.type ||
-                getMimeType(
-                    file.file_path
-                )
-            }
-        );
-
-
-        if(storageError){
-
-            throw storageError;
-
-        }
-
-
-        const isBinary =
-        detectBinaryFile(
-            newFile,
-            file.file_path
-        );
-
-
-        let content =
-        "";
-
-
-        if(!isBinary){
-
-            content =
-            await newFile.text();
-
-        }
-
-
-        const {
-            error:dbError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .update({
-
-            content:content,
-
-            mime_type:
-            newFile.type ||
-            getMimeType(
-                file.file_path
-            ),
-
-            file_size:
-            newFile.size,
-
-            is_binary:
-            isBinary,
-
-            storage_path:
-            storagePath
-
-        })
-        .eq(
-            "id",
-            file.id
-        );
-
-
-        if(dbError){
-
-            throw dbError;
-
-        }
-
-
-        file.content =
-        content;
-
-
-        file.file_size =
-        newFile.size;
-
-
-        file.mime_type =
-        newFile.type ||
-        getMimeType(
-            file.file_path
-        );
-
-
-        file.is_binary =
-        isBinary;
-
-
-        closeReplaceModal();
-
-        renderFiles(
-            allFiles
-        );
-
-
-        showToast(
-            "File replaced successfully.",
-            "success"
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            "Replace error:",
-            error
-        );
-
-
-        showToast(
-            "Replace failed: " +
-            error.message,
-            "error"
-        );
-
-    }
-    finally{
-
-        button.disabled =
-        false;
-
-        button.textContent =
-        "🔄 Replace File";
-
-    }
-
-}
-
-
-/* =========================================================
-   RENAME FILE
-========================================================= */
-
-function openRenameFileModal(fileId){
-
-    const file =
-    allFiles.find(
-        item => item.id === fileId
-    );
-
-
-    if(!file){
-
-        showToast(
-            "File not found.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    filePendingRename =
-    file;
-
-
-    document
-    .getElementById("renameFileInput")
-    .value =
-    getFileName(
-        file.file_path
-    );
-
-
-    document
-    .getElementById("renameFileModal")
-    .classList.add("show");
-
-}
-
-
-/* =========================================================
-   CONFIRM RENAME FILE
-========================================================= */
-
-async function confirmRenameFile(){
-
-    if(!filePendingRename){
-
-        return;
-
-    }
-
-
-    const file =
-    filePendingRename;
-
-
-    const newName =
-    document
-    .getElementById("renameFileInput")
-    .value
-    .trim();
-
-
-    if(!newName){
-
-        showToast(
-            "Please enter a file name.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(
-        newName.includes("/") ||
-        newName.includes("\\") ||
-        newName === "." ||
-        newName === ".."
-    ){
-
-        showToast(
-            "Invalid file name.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const folder =
-    getFolderPath(
-        file.file_path
-    );
-
-
-    const newPath =
-    folder
-    ? folder + "/" + newName
-    : newName;
-
-
-    if(
-        allFiles.some(
+        allFiles.find(
             item =>
-            item.id !== file.id &&
-            item.file_path === newPath
-        )
-    ){
-
-        showToast(
-            "A file with this name already exists.",
-            "error"
+                String(item.id) ===
+                String(fileId)
         );
-
-        return;
-
-    }
-
-
-    try{
-
-        const oldStoragePath =
-        file.storage_path;
-
-
-        const newStoragePath =
-        repoId +
-        "/" +
-        currentBranch.id +
-        "/" +
-        newPath;
-
-
-        /*
-           Copy to new Storage path
-        */
-
-        if(oldStoragePath){
-
-            const {
-                error:copyError
-            } =
-            await supabaseClient
-            .storage
-            .from("repository-files")
-            .copy(
-                oldStoragePath,
-                newStoragePath
-            );
-
-
-            if(copyError){
-
-                throw copyError;
-
-            }
-
-
-            /*
-               Remove old path
-            */
-
-            const {
-                error:removeError
-            } =
-            await supabaseClient
-            .storage
-            .from("repository-files")
-            .remove([
-                oldStoragePath
-            ]);
-
-
-            if(removeError){
-
-                throw removeError;
-
-            }
-
-        }
-
-
-        /*
-           Update DB
-        */
-
-        const {
-            error:dbError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .update({
-
-            file_path:
-            newPath,
-
-            storage_path:
-            newStoragePath
-
-        })
-        .eq(
-            "id",
-            file.id
-        );
-
-
-        if(dbError){
-
-            throw dbError;
-
-        }
-
-
-        file.file_path =
-        newPath;
-
-
-        file.storage_path =
-        newStoragePath;
-
-
-        closeRenameFileModal();
-
-        renderFiles(
-            allFiles
-        );
-
-
-        showToast(
-            "File renamed successfully.",
-            "success"
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            "Rename file error:",
-            error
-        );
-
-
-        showToast(
-            "Rename failed: " +
-            error.message,
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   DELETE FILE
-========================================================= */
-
-function openDeleteFileModal(fileId){
-
-    const file =
-    allFiles.find(
-        item => item.id === fileId
-    );
 
 
     if(!file){
@@ -4069,24 +3231,45 @@ function openDeleteFileModal(fileId){
 
 
     filePendingDelete =
-    file;
+        file;
 
 
-    document
-    .getElementById("deleteFileName")
-    .textContent =
-    file.file_path;
+    document.getElementById(
+        "deleteFileName"
+    ).textContent =
+        file.file_path;
 
 
-    document
-    .getElementById("deleteFileModal")
-    .classList.add("show");
+    document.getElementById(
+        "deleteModal"
+    ).classList.add(
+        "show"
+    );
 
 }
 
 
 /* =========================================================
-   CONFIRM DELETE FILE
+   CLOSE DELETE
+========================================================= */
+
+function closeDeleteModal(){
+
+    document.getElementById(
+        "deleteModal"
+    ).classList.remove(
+        "show"
+    );
+
+
+    filePendingDelete =
+        null;
+
+}
+
+
+/* =========================================================
+   CONFIRM DELETE
 ========================================================= */
 
 async function confirmDeleteFile(){
@@ -4099,56 +3282,75 @@ async function confirmDeleteFile(){
 
 
     const file =
-    filePendingDelete;
+        filePendingDelete;
 
 
     const button =
-    document.getElementById(
-        "confirmDeleteFileButton"
-    );
+        document.getElementById(
+            "confirmDeleteButton"
+        );
 
 
     button.disabled =
-    true;
+        true;
+
 
     button.textContent =
-    "Deleting...";
+        "Deleting...";
 
 
     try{
 
+        /*
+          Delete storage object first.
+        */
+
         if(file.storage_path){
 
             const {
-                error:storageError
+                error:
+                    storageError
             } =
-            await supabaseClient
-            .storage
-            .from("repository-files")
-            .remove([
-                file.storage_path
-            ]);
+                await supabaseClient
+                    .storage
+                    .from(
+                        "repository-files"
+                    )
+                    .remove(
+                        [
+                            file.storage_path
+                        ]
+                    );
 
 
             if(storageError){
 
-                throw storageError;
+                console.warn(
+                    "Storage delete warning:",
+                    storageError
+                );
 
             }
 
         }
 
 
+        /*
+          Delete database row.
+        */
+
         const {
             error:dbError
         } =
-        await supabaseClient
-        .from("repository_files")
-        .delete()
-        .eq(
-            "id",
-            file.id
-        );
+            await supabaseClient
+                .from(
+                    "repository_files"
+                )
+                .delete()
+                .eq(
+                    "id",
+                    file.id
+                );
 
 
         if(dbError){
@@ -4159,13 +3361,14 @@ async function confirmDeleteFile(){
 
 
         allFiles =
-        allFiles.filter(
-            item =>
-            item.id !== file.id
-        );
+            allFiles.filter(
+                item =>
+                    item.id !== file.id
+            );
 
 
-        closeDeleteFileModal();
+        closeDeleteModal();
+
 
         renderFiles(
             allFiles
@@ -4181,14 +3384,14 @@ async function confirmDeleteFile(){
     catch(error){
 
         console.error(
-            "Delete file error:",
+            "Delete error:",
             error
         );
 
 
         showToast(
             "Delete failed: " +
-            error.message,
+            getErrorMessage(error),
             "error"
         );
 
@@ -4196,10 +3399,11 @@ async function confirmDeleteFile(){
     finally{
 
         button.disabled =
-        false;
+            false;
+
 
         button.textContent =
-        "🗑️ Delete File";
+            "🗑️ Delete File";
 
     }
 
@@ -4207,827 +3411,20 @@ async function confirmDeleteFile(){
 
 
 /* =========================================================
-   RENAME FOLDER
+   SEARCH
 ========================================================= */
 
-function openRenameFolderModal(
-    folderPath
-){
+function handleSearch(){
 
-    folderPendingRename =
-    folderPath;
-
-
-    const parts =
-    folderPath.split("/");
+    currentSearch =
+        document.getElementById(
+            "searchInput"
+        ).value;
 
 
-    document
-    .getElementById("renameFolderInput")
-    .value =
-    parts[parts.length - 1];
-
-
-    document
-    .getElementById("renameFolderModal")
-    .classList.add("show");
-
-}
-
-
-/* =========================================================
-   CONFIRM RENAME FOLDER
-========================================================= */
-
-async function confirmRenameFolder(){
-
-    if(!folderPendingRename){
-
-        return;
-
-    }
-
-
-    const oldFolder =
-    folderPendingRename;
-
-
-    const newName =
-    document
-    .getElementById("renameFolderInput")
-    .value
-    .trim();
-
-
-    if(!newName){
-
-        showToast(
-            "Please enter a folder name.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(
-        newName.includes("/") ||
-        newName.includes("\\") ||
-        newName === "." ||
-        newName === ".." ||
-        newName.includes("..")
-    ){
-
-        showToast(
-            "Invalid folder name.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const oldParts =
-    oldFolder.split("/");
-
-
-    oldParts.pop();
-
-
-    const parent =
-    oldParts.join("/");
-
-
-    const newFolder =
-    parent
-    ? parent + "/" + newName
-    : newName;
-
-
-    if(
-        newFolder === oldFolder
-    ){
-
-        closeRenameFolderModal();
-
-        return;
-
-    }
-
-
-    const affected =
-    allFiles.filter(
-        file =>
-        file.file_path === oldFolder ||
-        file.file_path.startsWith(
-            oldFolder + "/"
-        )
+    renderFiles(
+        allFiles
     );
-
-
-    if(!affected.length){
-
-        showToast(
-            "Folder is empty or not found.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const button =
-    document.getElementById(
-        "confirmRenameFolderButton"
-    );
-
-
-    button.disabled =
-    true;
-
-    button.textContent =
-    "Renaming...";
-
-
-    try{
-
-        /*
-           Check conflicts
-        */
-
-        for(
-            const file of affected
-        ){
-
-            const relative =
-            file.file_path === oldFolder
-            ? ""
-            : file.file_path.slice(
-                oldFolder.length + 1
-            );
-
-
-            const newPath =
-            relative
-            ? newFolder + "/" + relative
-            : newFolder;
-
-
-            const conflict =
-            allFiles.find(
-                item =>
-                !affected.includes(item) &&
-                item.file_path === newPath
-            );
-
-
-            if(conflict){
-
-                throw new Error(
-                    "A file already exists at: " +
-                    newPath
-                );
-
-            }
-
-        }
-
-
-        /*
-           Move each storage object
-        */
-
-        for(
-            const file of affected
-        ){
-
-            const relative =
-            file.file_path === oldFolder
-            ? ""
-            : file.file_path.slice(
-                oldFolder.length + 1
-            );
-
-
-            const newPath =
-            relative
-            ? newFolder + "/" + relative
-            : newFolder;
-
-
-            const oldStoragePath =
-            file.storage_path;
-
-
-            const newStoragePath =
-            repoId +
-            "/" +
-            currentBranch.id +
-            "/" +
-            newPath;
-
-
-            if(oldStoragePath){
-
-                const {
-                    error:copyError
-                } =
-                await supabaseClient
-                .storage
-                .from("repository-files")
-                .copy(
-                    oldStoragePath,
-                    newStoragePath
-                );
-
-
-                if(copyError){
-
-                    throw copyError;
-
-                }
-
-
-                const {
-                    error:removeError
-                } =
-                await supabaseClient
-                .storage
-                .from("repository-files")
-                .remove([
-                    oldStoragePath
-                ]);
-
-
-                if(removeError){
-
-                    throw removeError;
-
-                }
-
-            }
-
-
-            /*
-               Update DB
-            */
-
-            const {
-                error:dbError
-            } =
-            await supabaseClient
-            .from("repository_files")
-            .update({
-
-                file_path:
-                newPath,
-
-                storage_path:
-                newStoragePath
-
-            })
-            .eq(
-                "id",
-                file.id
-            );
-
-
-            if(dbError){
-
-                throw dbError;
-
-            }
-
-
-            file.file_path =
-            newPath;
-
-
-            file.storage_path =
-            newStoragePath;
-
-        }
-
-
-        /*
-           Keep user inside renamed folder
-        */
-
-        if(
-            currentFolder === oldFolder
-        ){
-
-            currentFolder =
-            newFolder;
-
-        }
-        else if(
-            currentFolder.startsWith(
-                oldFolder + "/"
-            )
-        ){
-
-            currentFolder =
-            newFolder +
-            currentFolder.slice(
-                oldFolder.length
-            );
-
-        }
-
-
-        closeRenameFolderModal();
-
-        renderFiles(
-            allFiles
-        );
-
-
-        showToast(
-            "Folder renamed successfully.",
-            "success"
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            "Rename folder error:",
-            error
-        );
-
-
-        showToast(
-            "Rename folder failed: " +
-            error.message,
-            "error"
-        );
-
-        /*
-           Refresh because a partial move may
-           have happened before an error.
-        */
-
-        await loadFiles();
-
-    }
-    finally{
-
-        button.disabled =
-        false;
-
-        button.textContent =
-        "✏️ Rename Folder";
-
-    }
-
-}
-
-
-/* =========================================================
-   DELETE FOLDER
-========================================================= */
-
-function openDeleteFolderModal(
-    folderPath
-){
-
-    folderPendingDelete =
-    folderPath;
-
-
-    document
-    .getElementById("deleteFolderName")
-    .textContent =
-    folderPath;
-
-
-    document
-    .getElementById("deleteFolderModal")
-    .classList.add("show");
-
-}
-
-
-/* =========================================================
-   CONFIRM DELETE FOLDER
-========================================================= */
-
-async function confirmDeleteFolder(){
-
-    if(!folderPendingDelete){
-
-        return;
-
-    }
-
-
-    const folder =
-    folderPendingDelete;
-
-
-    const affected =
-    allFiles.filter(
-        file =>
-        file.file_path === folder ||
-        file.file_path.startsWith(
-            folder + "/"
-        )
-    );
-
-
-    if(!affected.length){
-
-        showToast(
-            "Folder is empty or not found.",
-            "error"
-        );
-
-        closeDeleteFolderModal();
-
-        return;
-
-    }
-
-
-    const button =
-    document.getElementById(
-        "confirmDeleteFolderButton"
-    );
-
-
-    button.disabled =
-    true;
-
-    button.textContent =
-    "Deleting...";
-
-
-    try{
-
-        /*
-           Remove Storage files
-        */
-
-        const storagePaths =
-        affected
-        .filter(
-            file =>
-            !!file.storage_path
-        )
-        .map(
-            file =>
-            file.storage_path
-        );
-
-
-        if(storagePaths.length){
-
-            const {
-                error:storageError
-            } =
-            await supabaseClient
-            .storage
-            .from("repository-files")
-            .remove(
-                storagePaths
-            );
-
-
-            if(storageError){
-
-                throw storageError;
-
-            }
-
-        }
-
-
-        /*
-           Delete DB records
-        */
-
-        const {
-            error:dbError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .delete()
-        .eq(
-            "repository_id",
-            repoId
-        )
-        .eq(
-            "branch_id",
-            currentBranch.id
-        )
-        .like(
-            "file_path",
-            folder + "/%"
-        );
-
-
-        if(dbError){
-
-            throw dbError;
-
-        }
-
-
-        /*
-           If there is a direct folder record
-           remove it too.
-        */
-
-        await supabaseClient
-        .from("repository_files")
-        .delete()
-        .eq(
-            "repository_id",
-            repoId
-        )
-        .eq(
-            "branch_id",
-            currentBranch.id
-        )
-        .eq(
-            "file_path",
-            folder
-        );
-
-
-        allFiles =
-        allFiles.filter(
-            file =>
-            !(
-                file.file_path === folder ||
-                file.file_path.startsWith(
-                    folder + "/"
-                )
-            )
-        );
-
-
-        if(
-            currentFolder === folder ||
-            currentFolder.startsWith(
-                folder + "/"
-            )
-        ){
-
-            const parts =
-            folder.split("/");
-
-            parts.pop();
-
-            currentFolder =
-            parts.join("/");
-
-        }
-
-
-        closeDeleteFolderModal();
-
-        renderFiles(
-            allFiles
-        );
-
-
-        showToast(
-            "Folder deleted successfully.",
-            "success"
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            "Delete folder error:",
-            error
-        );
-
-
-        showToast(
-            "Delete folder failed: " +
-            error.message,
-            "error"
-        );
-
-        await loadFiles();
-
-    }
-    finally{
-
-        button.disabled =
-        false;
-
-        button.textContent =
-        "🗑️ Delete Folder";
-
-    }
-
-}
-
-
-/* =========================================================
-   CREATE FOLDER FROM MODAL
-========================================================= */
-
-async function createFolderFromModal(){
-
-    const input =
-    document.getElementById(
-        "createFolderInput"
-    );
-
-
-    const name =
-    input.value.trim();
-
-
-    if(!name){
-
-        showToast(
-            "Please enter a folder name.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(
-        name.includes("/") ||
-        name.includes("\\") ||
-        name === "." ||
-        name === ".." ||
-        name.includes("..")
-    ){
-
-        showToast(
-            "Invalid folder name.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const folderPath =
-    currentFolder
-    ? currentFolder + "/" + name
-    : name;
-
-
-    const placeholderPath =
-    folderPath + "/.gitkeep";
-
-
-    if(
-        allFiles.some(
-            file =>
-            file.file_path ===
-            placeholderPath
-        )
-    ){
-
-        showToast(
-            "Folder already exists.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    try{
-
-        const storagePath =
-        repoId +
-        "/" +
-        currentBranch.id +
-        "/" +
-        placeholderPath;
-
-
-        const {
-            error:storageError
-        } =
-        await supabaseClient
-        .storage
-        .from("repository-files")
-        .upload(
-            storagePath,
-            new Blob(
-                [""],
-                {
-                    type:"text/plain"
-                }
-            ),
-            {
-                upsert:false,
-                contentType:"text/plain"
-            }
-        );
-
-
-        if(storageError){
-
-            throw storageError;
-
-        }
-
-
-        const {
-            data,
-            error:dbError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .insert({
-
-            repository_id:
-            repoId,
-
-            branch_id:
-            currentBranch.id,
-
-            file_path:
-            placeholderPath,
-
-            content:
-            "",
-
-            mime_type:
-            "text/plain",
-
-            file_size:
-            0,
-
-            is_binary:
-            false,
-
-            storage_path:
-            storagePath
-
-        })
-        .select()
-        .single();
-
-
-        if(dbError){
-
-            await supabaseClient
-            .storage
-            .from("repository-files")
-            .remove([
-                storagePath
-            ]);
-
-            throw dbError;
-
-        }
-
-
-        allFiles.push(
-            data
-        );
-
-
-        closeCreateFolderModal();
-
-        renderFiles(
-            allFiles
-        );
-
-
-        showToast(
-            "Folder created successfully.",
-            "success"
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            "Create folder error:",
-            error
-        );
-
-
-        showToast(
-            "Create folder failed: " +
-            error.message,
-            "error"
-        );
-
-    }
 
 }
 
@@ -5038,115 +3435,143 @@ async function createFolderFromModal(){
 
 async function loadReadme(){
 
-    const readme =
-    allFiles.find(
-        file =>
-        !isGitkeep(file) &&
-        getFileName(
-            file.file_path
-        ).toLowerCase() ===
-        "readme.md"
-    );
+    try{
+
+        const readme =
+            allFiles.find(
+                file => {
+
+                    const path =
+                        String(
+                            file.file_path || ""
+                        ).toLowerCase();
 
 
-    const body =
-    document.getElementById(
-        "readmeBody"
-    );
+                    return (
+                        path === "readme.md" ||
+                        path === "readme"
+                    );
+
+                }
+            );
 
 
-    if(!readme){
+        if(!readme){
 
-        body.innerHTML =
-        `
-        <h1>
-        ${escapeHtml(
-            repositoryData?.name ||
-            "Repository"
-        )}
-        </h1>
+            return;
 
-        <p>
-        No README file is available.
-        </p>
-        `;
+        }
 
-        return;
+
+        let content =
+            readme.content || "";
+
+
+        if(
+            !content.trim() &&
+            readme.storage_path
+        ){
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .storage
+                    .from(
+                        "repository-files"
+                    )
+                    .download(
+                        readme.storage_path
+                    );
+
+
+            if(!error){
+
+                content =
+                    await data.text();
+
+            }
+
+        }
+
+
+        if(content.trim()){
+
+            document.getElementById(
+                "readmeBody"
+            ).innerHTML =
+                markdownToHtml(
+                    content
+                );
+
+        }
 
     }
+    catch(error){
 
+        console.warn(
+            "README error:",
+            error
+        );
 
-    body.innerHTML =
-    `
-    <h1>
-    ${escapeHtml(
-        repositoryData?.name ||
-        "Repository"
-    )}
-    </h1>
-
-    <div>
-    ${markdownToHtml(
-        readme.content || ""
-    )}
-    </div>
-    `;
+    }
 
 }
 
 
 /* =========================================================
-   MARKDOWN
+   SIMPLE MARKDOWN
 ========================================================= */
 
-function markdownToHtml(markdown){
+function markdownToHtml(text){
 
     let html =
-    escapeHtml(
-        markdown
-    );
+        escapeHtml(
+            text
+        );
 
 
     html =
-    html.replace(
-        /^### (.*)$/gm,
-        "<h3>$1</h3>"
-    );
+        html.replace(
+            /^### (.*)$/gm,
+            "<h3>$1</h3>"
+        );
 
 
     html =
-    html.replace(
-        /^## (.*)$/gm,
-        "<h2>$1</h2>"
-    );
+        html.replace(
+            /^## (.*)$/gm,
+            "<h2>$1</h2>"
+        );
 
 
     html =
-    html.replace(
-        /^# (.*)$/gm,
-        "<h1>$1</h1>"
-    );
+        html.replace(
+            /^# (.*)$/gm,
+            "<h1>$1</h1>"
+        );
 
 
     html =
-    html.replace(
-        /\*\*(.*?)\*\*/g,
-        "<strong>$1</strong>"
-    );
+        html.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
 
 
     html =
-    html.replace(
-        /\*(.*?)\*/g,
-        "<em>$1</em>"
-    );
+        html.replace(
+            /\*(.*?)\*/g,
+            "<em>$1</em>"
+        );
 
 
     html =
-    html.replace(
-        /\n/g,
-        "<br>"
-    );
+        html.replace(
+            /\n/g,
+            "<br>"
+        );
 
 
     return html;
@@ -5155,13 +3580,228 @@ function markdownToHtml(markdown){
 
 
 /* =========================================================
+   ADD FILE
+========================================================= */
+
+function addNewFile(){
+
+    closeMenus();
+
+
+    const url =
+        "repository-add-file.html" +
+        "?repository_id=" +
+        encodeURIComponent(
+            repositoryId
+        ) +
+        "&branch_id=" +
+        encodeURIComponent(
+            currentBranch.id
+        );
+
+
+    window.location.href =
+        url;
+
+}
+
+
+/* =========================================================
+   UPLOAD FILE
+========================================================= */
+
+function uploadNewFile(){
+
+    addNewFile();
+
+}
+
+
+/* =========================================================
+   CREATE FOLDER
+========================================================= */
+
+function createFolderFromHere(){
+
+    closeMenus();
+
+
+    const url =
+        "repository-add-file.html" +
+        "?repository_id=" +
+        encodeURIComponent(
+            repositoryId
+        ) +
+        "&branch_id=" +
+        encodeURIComponent(
+            currentBranch.id
+        ) +
+        "&folder=" +
+        encodeURIComponent(
+            currentFolder
+        );
+
+
+    window.location.href =
+        url;
+
+}
+
+
+/* =========================================================
+   EXPLORER
+========================================================= */
+
+function openExplorer(){
+
+    if(currentFolder){
+
+        showToast(
+            "Current folder: " +
+            currentFolder,
+            "success"
+        );
+
+    }
+    else{
+
+        showToast(
+            "You are in repository root.",
+            "success"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CREATE BRANCH
+========================================================= */
+
+async function createBranch(){
+
+    closeMenus();
+
+
+    const name =
+        prompt(
+            "Enter new branch name:"
+        );
+
+
+    if(!name){
+
+        return;
+
+    }
+
+
+    const branchName =
+        name.trim();
+
+
+    if(!branchName){
+
+        return;
+
+    }
+
+
+    try{
+
+        /*
+          Try inserting branch.
+        */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from(
+                    "repository_branches"
+                )
+                .insert(
+                    {
+                        repository_id:
+                            repositoryId,
+
+                        name:
+                            branchName
+                    }
+                )
+                .select()
+                .single();
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        allBranches.push(
+            data
+        );
+
+
+        populateBranchMenu();
+
+
+        await selectBranch(
+            data
+        );
+
+
+        showToast(
+            "Branch created successfully.",
+            "success"
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "Create branch error:",
+            error
+        );
+
+
+        showToast(
+            "Branch creation failed: " +
+            getErrorMessage(error),
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
    STAR
 ========================================================= */
 
-async function toggleStar(){
+function toggleStar(){
 
     showToast(
-        "Star feature ready for integration.",
+        "Star feature is ready for connection.",
+        "success"
+    );
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function repoSettings(){
+
+    showToast(
+        "Repository settings page is ready for connection.",
         "success"
     );
 
@@ -5172,7 +3812,7 @@ async function toggleStar(){
    PUBLISH
 ========================================================= */
 
-function publishRepository(){
+function publishRepo(){
 
     showToast(
         "Publish feature is ready.",
@@ -5183,185 +3823,20 @@ function publishRepository(){
 
 
 /* =========================================================
-   EXPLORER
+   PAGE LINKS
 ========================================================= */
 
-function goToExplorer(){
+function openPage(page){
 
-    openFolder(
-        currentFolder
+    closeMenus();
+
+
+    showToast(
+        page.charAt(0).toUpperCase() +
+        page.slice(1) +
+        " page is ready for connection.",
+        "success"
     );
-
-}
-
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-function showSettings(){
-
-    document
-    .getElementById("settingsModal")
-    .classList.add("show");
-
-}
-
-
-function closeSettings(){
-
-    document
-    .getElementById("settingsModal")
-    .classList.remove("show");
-
-}
-
-
-/* =========================================================
-   CREATE FOLDER MODAL
-========================================================= */
-
-function openCreateFolderModal(){
-
-    document
-    .getElementById("createFolderInput")
-    .value =
-    "";
-
-
-    document
-    .getElementById("createFolderModal")
-    .classList.add("show");
-
-}
-
-
-function closeCreateFolderModal(){
-
-    document
-    .getElementById("createFolderModal")
-    .classList.remove("show");
-
-}
-
-
-/* =========================================================
-   DELETE FILE MODAL
-========================================================= */
-
-function closeDeleteFileModal(){
-
-    document
-    .getElementById("deleteFileModal")
-    .classList.remove("show");
-
-
-    filePendingDelete =
-    null;
-
-}
-
-
-/* =========================================================
-   REPLACE MODAL
-========================================================= */
-
-function closeReplaceModal(){
-
-    document
-    .getElementById("replaceModal")
-    .classList.remove("show");
-
-
-    filePendingReplace =
-    null;
-
-}
-
-
-/* =========================================================
-   RENAME FILE MODAL
-========================================================= */
-
-function closeRenameFileModal(){
-
-    document
-    .getElementById("renameFileModal")
-    .classList.remove("show");
-
-
-    filePendingRename =
-    null;
-
-}
-
-
-/* =========================================================
-   RENAME FOLDER MODAL
-========================================================= */
-
-function closeRenameFolderModal(){
-
-    document
-    .getElementById("renameFolderModal")
-    .classList.remove("show");
-
-
-    folderPendingRename =
-    null;
-
-}
-
-
-/* =========================================================
-   DELETE FOLDER MODAL
-========================================================= */
-
-function closeDeleteFolderModal(){
-
-    document
-    .getElementById("deleteFolderModal")
-    .classList.remove("show");
-
-
-    folderPendingDelete =
-    null;
-
-}
-
-
-/* =========================================================
-   EDIT MODAL
-========================================================= */
-
-function closeEditModal(){
-
-    document
-    .getElementById("editModal")
-    .classList.remove("show");
-
-
-    editingFile =
-    null;
-
-}
-
-
-/* =========================================================
-   PREVIEW MODAL
-========================================================= */
-
-function closePreviewModal(){
-
-    document
-    .getElementById("previewModal")
-    .classList.remove("show");
-
-
-    document
-    .getElementById("previewFrame")
-    .srcdoc =
-    "";
 
 }
 
@@ -5372,454 +3847,188 @@ function closePreviewModal(){
 
 function toggleBranchMenu(){
 
-    closeAddMenu();
+    const menu =
+        document.getElementById(
+            "branchMenu"
+        );
 
 
-    document
-    .getElementById("branchMenu")
-    .classList.toggle("show");
+    const add =
+        document.getElementById(
+            "addMenu"
+        );
+
+
+    add.classList.add(
+        "hidden"
+    );
+
+
+    menu.classList.toggle(
+        "hidden"
+    );
 
 }
 
+
+/* =========================================================
+   ADD MENU
+========================================================= */
 
 function toggleAddMenu(){
 
-    closeBranchMenu();
-
-
-    document
-    .getElementById("addMenu")
-    .classList.toggle("show");
-
-}
-
-
-function closeBranchMenu(){
-
-    document
-    .getElementById("branchMenu")
-    .classList.remove("show");
-
-}
-
-
-function closeAddMenu(){
-
-    document
-    .getElementById("addMenu")
-    .classList.remove("show");
-
-}
-
-
-function closeAllMenus(){
-
-    closeBranchMenu();
-
-    closeAddMenu();
-
-}
-
-
-/* =========================================================
-   FEATURE MESSAGE
-========================================================= */
-
-function showFeatureMessage(
-    name
-){
-
-    showToast(
-        name +
-        " section is ready.",
-        "success"
-    );
-
-}
-
-
-/* =========================================================
-   FILE HELPERS
-========================================================= */
-
-function isGitkeep(file){
-
-    return String(
-        file.file_path || ""
-    )
-    .toLowerCase()
-    .endsWith(
-        "/.gitkeep"
-    );
-
-}
-
-
-function getFileName(path){
-
-    const parts =
-    String(path || "")
-    .split("/");
-
-
-    return parts[
-        parts.length - 1
-    ];
-
-}
-
-
-function getFileIcon(path){
-
-    const name =
-    getFileName(
-        path
-    ).toLowerCase();
-
-
-    if(name.endsWith(".html")){
-
-        return "🌐";
-
-    }
-
-    if(name.endsWith(".css")){
-
-        return "🎨";
-
-    }
-
-    if(
-        name.endsWith(".js") ||
-        name.endsWith(".jsx")
-    ){
-
-        return "📜";
-
-    }
-
-    if(
-        name.endsWith(".json")
-    ){
-
-        return "🧩";
-
-    }
-
-    if(
-        name.endsWith(".png") ||
-        name.endsWith(".jpg") ||
-        name.endsWith(".jpeg") ||
-        name.endsWith(".gif") ||
-        name.endsWith(".webp")
-    ){
-
-        return "🖼️";
-
-    }
-
-    if(
-        name.endsWith(".pdf")
-    ){
-
-        return "📕";
-
-    }
-
-    if(
-        name.endsWith(".zip") ||
-        name.endsWith(".rar")
-    ){
-
-        return "📦";
-
-    }
-
-    if(
-        name.endsWith(".md")
-    ){
-
-        return "📖";
-
-    }
-
-
-    return "📄";
-
-}
-
-
-function isPreviewable(file){
-
-    const path =
-    String(
-        file.file_path || ""
-    )
-    .toLowerCase();
-
-
-    return (
-        !file.is_binary &&
-        (
-            path.endsWith(".html") ||
-            path.endsWith(".htm")
-        )
-    );
-
-}
-
-
-function formatBytes(bytes){
-
-    if(
-        !bytes ||
-        bytes === 0
-    ){
-
-        return "0 Bytes";
-
-    }
-
-
-    const units = [
-        "Bytes",
-        "KB",
-        "MB",
-        "GB"
-    ];
-
-
-    const index =
-    Math.floor(
-        Math.log(bytes) /
-        Math.log(1024)
-    );
-
-
-    return (
-        parseFloat(
-            (
-                bytes /
-                Math.pow(1024,index)
-            ).toFixed(2)
-        )
-        +
-        " " +
-        units[index]
-    );
-
-}
-
-
-function formatDate(date){
-
-    try{
-
-        return new Date(
-            date
-        ).toLocaleDateString(
-            "en-IN"
+    const menu =
+        document.getElementById(
+            "addMenu"
         );
 
-    }
-    catch(error){
 
-        return "";
-
-    }
-
-}
+    const branch =
+        document.getElementById(
+            "branchMenu"
+        );
 
 
-/* =========================================================
-   BINARY DETECTION
-========================================================= */
-
-function detectBinaryFile(
-    file,
-    originalPath
-){
-
-    const type =
-    String(
-        file.type || ""
-    ).toLowerCase();
+    branch.classList.add(
+        "hidden"
+    );
 
 
-    const path =
-    String(
-        originalPath ||
-        file.name ||
-        ""
-    ).toLowerCase();
-
-
-    const textExtensions = [
-
-        ".html",
-        ".htm",
-        ".css",
-        ".js",
-        ".jsx",
-        ".ts",
-        ".tsx",
-        ".json",
-        ".xml",
-        ".txt",
-        ".md",
-        ".csv",
-        ".sql",
-        ".php",
-        ".py",
-        ".java",
-        ".c",
-        ".cpp",
-        ".h",
-        ".hpp",
-        ".cs",
-        ".go",
-        ".rs",
-        ".rb",
-        ".sh",
-        ".bat",
-        ".yaml",
-        ".yml",
-        ".env"
-
-    ];
-
-
-    for(
-        const ext of textExtensions
-    ){
-
-        if(path.endsWith(ext)){
-
-            return false;
-
-        }
-
-    }
-
-
-    if(
-        type.startsWith("text/")
-    ){
-
-        return false;
-
-    }
-
-
-    if(
-        type.includes("javascript") ||
-        type.includes("json") ||
-        type.includes("xml")
-    ){
-
-        return false;
-
-    }
-
-
-    return true;
+    menu.classList.toggle(
+        "hidden"
+    );
 
 }
 
 
 /* =========================================================
-   MIME TYPE
+   CLOSE MENUS
 ========================================================= */
 
-function getMimeType(path){
+function closeMenus(){
 
-    const extension =
-    String(path || "")
-    .split(".")
-    .pop()
-    .toLowerCase();
+    document.getElementById(
+        "branchMenu"
+    ).classList.add(
+        "hidden"
+    );
 
 
-    const types = {
+    document.getElementById(
+        "addMenu"
+    ).classList.add(
+        "hidden"
+    );
 
-        html:"text/html",
+}
 
-        htm:"text/html",
 
-        css:"text/css",
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
 
-        js:"application/javascript",
+function getErrorMessage(error){
 
-        jsx:"application/javascript",
+    if(!error){
 
-        ts:"text/plain",
+        return "Unknown error";
 
-        tsx:"text/plain",
-
-        json:"application/json",
-
-        txt:"text/plain",
-
-        md:"text/markdown",
-
-        csv:"text/csv",
-
-        xml:"application/xml",
-
-        php:"text/plain",
-
-        py:"text/plain",
-
-        java:"text/plain",
-
-        c:"text/plain",
-
-        cpp:"text/plain",
-
-        png:"image/png",
-
-        jpg:"image/jpeg",
-
-        jpeg:"image/jpeg",
-
-        gif:"image/gif",
-
-        webp:"image/webp",
-
-        svg:"image/svg+xml",
-
-        ico:"image/x-icon",
-
-        pdf:"application/pdf",
-
-        zip:"application/zip",
-
-        rar:"application/vnd.rar",
-
-        mp3:"audio/mpeg",
-
-        mp4:"video/mp4",
-
-        wav:"audio/wav",
-
-        doc:"application/msword",
-
-        docx:
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-
-        xls:
-        "application/vnd.ms-excel",
-
-        xlsx:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-
-    };
+    }
 
 
     return (
-        types[extension] ||
-        "application/octet-stream"
+        error.message ||
+        error.error_description ||
+        error.details ||
+        error.hint ||
+        String(error)
     );
+
+}
+
+
+/* =========================================================
+   SHOW ERROR
+========================================================= */
+
+function showError(message){
+
+    const box =
+        document.getElementById(
+            "alertBox"
+        );
+
+
+    box.className =
+        "alert error";
+
+
+    box.textContent =
+        message;
+
+
+    box.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer = null;
+
+
+function showToast(
+    message,
+    type="success"
+){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+
+    toast.className =
+        "toast " +
+        type;
+
+
+    setTimeout(
+        () => {
+
+            toast.classList.add(
+                "show"
+            );
+
+        },
+        10
+    );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            3500
+        );
 
 }
 
@@ -5858,157 +4067,169 @@ function escapeHtml(value){
 
 
 /* =========================================================
-   ESCAPE ATTRIBUTE
-========================================================= */
-
-function escapeAttribute(value){
-
-    return String(
-        value ?? ""
-    )
-    .replace(
-        /\\/g,
-        "\\\\"
-    )
-    .replace(
-        /'/g,
-        "\\'"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    );
-
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-let toastTimer =
-null;
-
-
-function showToast(
-    message,
-    type="success"
-){
-
-    const toast =
-    document.getElementById(
-        "toast"
-    );
-
-
-    toast.textContent =
-    message;
-
-
-    toast.className =
-    "toast show " +
-    type;
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-    setTimeout(
-        function(){
-
-            toast.className =
-            "toast";
-
-        },
-        3500
-    );
-
-}
-
-
-/* =========================================================
    CLICK OUTSIDE
 ========================================================= */
 
 document.addEventListener(
-"click",
-function(event){
+    "click",
+    function(event){
 
-    if(
-        !event.target.closest(
-            ".dropdown"
-        )
-    ){
+        const branchMenu =
+            document.getElementById(
+                "branchMenu"
+            );
 
-        closeAllMenus();
+
+        const addMenu =
+            document.getElementById(
+                "addMenu"
+            );
+
+
+        if(
+            !event.target.closest(
+                ".dropdown"
+            )
+        ){
+
+            branchMenu.classList.add(
+                "hidden"
+            );
+
+
+            addMenu.classList.add(
+                "hidden"
+            );
+
+        }
 
     }
-
-});
+);
 
 
 /* =========================================================
-   ESC KEY
+   ESCAPE KEY
 ========================================================= */
 
 document.addEventListener(
-"keydown",
-function(event){
+    "keydown",
+    function(event){
 
-    if(event.key !== "Escape"){
+        if(
+            event.key === "Escape"
+        ){
 
-        return;
+            closeMenus();
+
+            closePreview();
+
+            closeCodeModal();
+
+            closeDeleteModal();
+
+        }
 
     }
-
-
-    closeAllMenus();
-
-    closeEditModal();
-
-    closePreviewModal();
-
-    closeDeleteFileModal();
-
-    closeReplaceModal();
-
-    closeRenameFileModal();
-
-    closeRenameFolderModal();
-
-    closeDeleteFolderModal();
-
-    closeCreateFolderModal();
-
-    closeSettings();
-
-});
+);
 
 
 /* =========================================================
    MODAL BACKDROP
 ========================================================= */
 
-document.addEventListener(
-"click",
-function(event){
+document.getElementById(
+    "previewModal"
+).addEventListener(
+    "click",
+    function(event){
 
-    if(
-        event.target.classList.contains(
-            "modal"
-        )
-    ){
+        if(
+            event.target === this
+        ){
 
-        event.target.classList.remove(
-            "show"
-        );
+            closePreview();
+
+        }
 
     }
+);
 
-});
+
+document.getElementById(
+    "codeModal"
+).addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target === this
+        ){
+
+            closeCodeModal();
+
+        }
+
+    }
+);
+
+
+document.getElementById(
+    "deleteModal"
+).addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target === this
+        ){
+
+            closeDeleteModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CODE MODAL
+========================================================= */
+
+function openCodeModal(
+    title,
+    content
+){
+
+    document.getElementById(
+        "codeTitle"
+    ).textContent =
+        title;
+
+
+    document.getElementById(
+        "codeContent"
+    ).textContent =
+        content;
+
+
+    document.getElementById(
+        "codeModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+function closeCodeModal(){
+
+    document.getElementById(
+        "codeModal"
+    ).classList.remove(
+        "show"
+    );
+
+}
 
 </script>
 
