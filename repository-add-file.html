@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -49,6 +51,7 @@ body{
 .header p{
     color:#8b949e;
     font-size:18px;
+    line-height:1.5;
 }
 
 .info-box{
@@ -80,21 +83,25 @@ body{
     color:#58a6ff;
     font-size:22px;
     font-weight:700;
-    margin-bottom:6px;
+    margin-bottom:8px;
 }
 
 .section-description{
     color:#8b949e;
     font-size:16px;
-    line-height:1.6;
-    margin-bottom:20px;
+    line-height:1.7;
+    margin-bottom:22px;
+}
+
+.form-group{
+    margin-bottom:25px;
 }
 
 label{
     display:block;
     font-size:18px;
     font-weight:600;
-    margin-bottom:8px;
+    margin-bottom:9px;
     color:#e6edf3;
 }
 
@@ -102,7 +109,7 @@ label{
     display:block;
     color:#8b949e;
     font-size:15px;
-    line-height:1.5;
+    line-height:1.6;
     margin-bottom:10px;
 }
 
@@ -132,18 +139,14 @@ textarea{
     line-height:1.6;
 }
 
-.form-group{
-    margin-bottom:25px;
-}
-
 .path-preview{
     margin-top:10px;
-    padding:10px 12px;
-    border-radius:8px;
+    padding:12px 14px;
+    border-radius:9px;
     background:#161b22;
     border:1px dashed #30363d;
     color:#8b949e;
-    font-size:14px;
+    font-size:15px;
     word-break:break-all;
 }
 
@@ -158,13 +161,20 @@ textarea{
     padding:25px;
     text-align:center;
     background:#0d1117;
-    margin-top:10px;
 }
 
 .file-upload-box input[type="file"]{
     border:none;
     padding:10px;
     background:transparent;
+    color:#e6edf3;
+}
+
+.file-info{
+    margin-top:15px;
+    color:#8b949e;
+    font-size:14px;
+    word-break:break-all;
 }
 
 .button-group{
@@ -197,7 +207,7 @@ button:disabled{
 
 .primary-btn{
     background:#238636;
-    color:white;
+    color:#fff;
 }
 
 .primary-btn:hover{
@@ -206,7 +216,7 @@ button:disabled{
 
 .blue-btn{
     background:#0969da;
-    color:white;
+    color:#fff;
 }
 
 .blue-btn:hover{
@@ -223,19 +233,6 @@ button:disabled{
     background:#30363d;
 }
 
-.file-info{
-    margin-top:15px;
-    color:#8b949e;
-    font-size:14px;
-    word-break:break-all;
-}
-
-.loading{
-    text-align:center;
-    padding:20px;
-    color:#8b949e;
-}
-
 .toast{
     position:fixed;
     left:50%;
@@ -243,7 +240,7 @@ button:disabled{
     transform:translateX(-50%) translateY(100px);
     background:#21262d;
     border:1px solid #30363d;
-    color:white;
+    color:#fff;
     padding:14px 20px;
     border-radius:10px;
     box-shadow:0 8px 30px rgba(0,0,0,.4);
@@ -303,224 +300,282 @@ button:disabled{
     textarea{
         min-height:280px;
     }
+
 }
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-    <div class="card">
+<div class="card">
 
-        <div class="header">
-            <h1>📁 Repository File</h1>
-            <p>Upload a new file, create a file, or create a folder.</p>
-        </div>
+<!-- HEADER -->
 
-        <!-- Repository Information -->
-        <div class="info-box">
+<div class="header">
 
-            <div class="info-row">
-                <strong>Repository:</strong>
-                <span id="repoName">Loading...</span>
-            </div>
+<h1>📁 Repository File</h1>
 
-            <div class="info-row">
-                <strong>Branch:</strong>
-                <span id="branchName">Loading...</span>
-            </div>
-
-        </div>
-
-
-        <!-- CREATE FOLDER -->
-        <div class="section">
-
-            <div class="section-title">
-                📁 Create Folder
-            </div>
-
-            <div class="section-description">
-                Create a folder in the current branch.
-                A hidden <strong>.gitkeep</strong> file will be used because
-                storage systems cannot keep a completely empty folder.
-            </div>
-
-            <div class="form-group">
-
-                <label for="folderName">
-                    Folder Name
-                </label>
-
-                <input
-                    type="text"
-                    id="folderName"
-                    placeholder="Example: assets"
-                    autocomplete="off"
-                >
-
-            </div>
-
-            <button
-                type="button"
-                class="blue-btn"
-                id="createFolderButton"
-                onclick="createFolder()"
-            >
-                📁 Create Folder
-            </button>
-
-        </div>
-
-
-        <!-- FILE PATH -->
-        <div class="section">
-
-            <div class="form-group">
-
-                <label for="filePath">
-                    File Path
-                </label>
-
-                <span class="hint">
-                    To put a file inside a folder, use:
-                    <strong>folder-name/file-name.ext</strong>
-                    <br>
-                    Example:
-                    <strong>assets/logo.png</strong>
-                </span>
-
-                <input
-                    type="text"
-                    id="filePath"
-                    placeholder="assets/logo.png"
-                    autocomplete="off"
-                >
-
-                <div class="path-preview">
-                    Current path:
-                    <span id="pathPreview">root/file.ext</span>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- CREATE FILE -->
-        <div class="section">
-
-            <div class="section-title">
-                📄 Create / Upload File
-            </div>
-
-            <div class="section-description">
-                Create a text file directly or upload a file from your device.
-            </div>
-
-
-            <!-- FILE NAME -->
-
-            <div class="form-group">
-
-                <label for="fileName">
-                    File Name
-                </label>
-
-                <input
-                    type="text"
-                    id="fileName"
-                    placeholder="example.html"
-                    autocomplete="off"
-                >
-
-            </div>
-
-
-            <!-- FILE CONTENT -->
-
-            <div class="form-group">
-
-                <label for="fileContent">
-                    File Content
-                </label>
-
-                <textarea
-                    id="fileContent"
-                    placeholder="Write your code here..."
-                ></textarea>
-
-            </div>
-
-
-            <!-- UPLOAD -->
-
-            <div class="form-group">
-
-                <label>
-                    Or Upload File
-                </label>
-
-                <div class="file-upload-box">
-
-                    <input
-                        type="file"
-                        id="fileInput"
-                    >
-
-                    <div
-                        id="selectedFileInfo"
-                        class="file-info"
-                    >
-                        No file selected
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- BUTTONS -->
-
-            <div class="button-group">
-
-                <button
-                    type="button"
-                    class="primary-btn"
-                    id="createFileButton"
-                    onclick="createFile()"
-                >
-                    ➕ Create File
-                </button>
-
-                <button
-                    type="button"
-                    class="blue-btn"
-                    id="uploadFileButton"
-                    onclick="uploadFile()"
-                >
-                    📤 Upload File
-                </button>
-
-                <button
-                    type="button"
-                    class="secondary-btn"
-                    onclick="goBack()"
-                >
-                    ← Back to Repository
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
+<p>
+Upload a new file, create a file, or create a folder.
+</p>
 
 </div>
 
 
-<div id="toast" class="toast"></div>
+<!-- REPOSITORY INFORMATION -->
+
+<div class="info-box">
+
+<div class="info-row">
+
+<strong>Repository:</strong>
+
+<span id="repoName">
+Loading...
+</span>
+
+</div>
+
+<div class="info-row">
+
+<strong>Branch:</strong>
+
+<span id="branchName">
+Loading...
+</span>
+
+</div>
+
+</div>
+
+
+<!-- CREATE FOLDER -->
+
+<div class="section">
+
+<div class="section-title">
+📁 Create Folder
+</div>
+
+<div class="section-description">
+
+Create a folder in the current branch.
+A hidden <strong>.gitkeep</strong> file will be used because
+storage systems cannot keep a completely empty folder.
+
+</div>
+
+
+<div class="form-group">
+
+<label for="folderName">
+Folder Name
+</label>
+
+<input
+type="text"
+id="folderName"
+placeholder="Example: assets"
+autocomplete="off"
+>
+
+</div>
+
+
+<button
+type="button"
+class="blue-btn"
+id="createFolderButton"
+onclick="createFolder()"
+>
+
+📁 Create Folder
+
+</button>
+
+</div>
+
+
+<!-- FILE PATH -->
+
+<div class="section">
+
+<div class="form-group">
+
+<label for="filePath">
+File Path
+</label>
+
+<span class="hint">
+
+To put a file inside a folder, use:
+<strong>folder-name/file-name.ext</strong>
+
+<br>
+
+Example:
+<strong>assets/logo.png</strong>
+
+</span>
+
+
+<input
+type="text"
+id="filePath"
+placeholder="assets/logo.png"
+autocomplete="off"
+>
+
+
+<div class="path-preview">
+
+Current path:
+
+<span id="pathPreview">
+root/file.ext
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- CREATE / UPLOAD FILE -->
+
+<div class="section">
+
+<div class="section-title">
+📄 Create / Upload File
+</div>
+
+<div class="section-description">
+
+Create a text file directly or upload a file
+from your device.
+
+</div>
+
+
+<!-- FILE NAME -->
+
+<div class="form-group">
+
+<label for="fileName">
+File Name
+</label>
+
+<input
+type="text"
+id="fileName"
+placeholder="example.html"
+autocomplete="off"
+>
+
+</div>
+
+
+<!-- FILE CONTENT -->
+
+<div class="form-group">
+
+<label for="fileContent">
+File Content
+</label>
+
+<textarea
+id="fileContent"
+placeholder="Write your code here..."
+></textarea>
+
+</div>
+
+
+<!-- UPLOAD FILE -->
+
+<div class="form-group">
+
+<label>
+Or Upload File
+</label>
+
+<div class="file-upload-box">
+
+<input
+type="file"
+id="fileInput"
+>
+
+<div
+id="selectedFileInfo"
+class="file-info"
+>
+No file selected
+</div>
+
+</div>
+
+</div>
+
+
+<!-- BUTTONS -->
+
+<div class="button-group">
+
+<button
+type="button"
+class="primary-btn"
+id="createFileButton"
+onclick="createFile()"
+>
+
+➕ Create File
+
+</button>
+
+
+<button
+type="button"
+class="blue-btn"
+id="uploadFileButton"
+onclick="uploadFile()"
+>
+
+📤 Upload File
+
+</button>
+
+
+<button
+type="button"
+class="secondary-btn"
+onclick="goBack()"
+>
+
+← Back to Repository
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+id="toast"
+class="toast"
+></div>
 
 
 <script>
@@ -530,178 +585,250 @@ button:disabled{
 ========================================================= */
 
 const SUPABASE_URL =
-    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
+"https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
 const SUPABASE_KEY =
-    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
 const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 
 /* =========================================================
    URL PARAMETERS
 ========================================================= */
 
-const params = new URLSearchParams(window.location.search);
-
-
 /*
-   We support multiple parameter names so that
-   the page works with the existing repository pages.
+   IMPORTANT:
+
+   We read the ORIGINAL URL parameters here.
+
+   This includes:
+   repo_id
+   branch_id
+   repo_name
+   branch_name
+   and any other parameters.
 */
 
+const params =
+new URLSearchParams(
+    window.location.search
+);
+
+
 const repoId =
-    params.get("repo_id") ||
-    params.get("repoId") ||
-    params.get("repository_id") ||
-    params.get("repository");
+params.get("repo_id") ||
+params.get("repoId") ||
+params.get("repository_id") ||
+params.get("repository") ||
+"";
+
 
 const branchId =
-    params.get("branch_id") ||
-    params.get("branchId") ||
-    params.get("branch");
+params.get("branch_id") ||
+params.get("branchId") ||
+params.get("branch") ||
+"";
+
 
 const repoNameParam =
-    params.get("repo_name") ||
-    params.get("repoName") ||
-    "";
+params.get("repo_name") ||
+params.get("repoName") ||
+"";
+
 
 const branchNameParam =
-    params.get("branch_name") ||
-    params.get("branchName") ||
-    "main";
+params.get("branch_name") ||
+params.get("branchName") ||
+"main";
 
 
 let repositoryData = null;
+
 let branchData = null;
 
 
 /* =========================================================
-   INITIAL LOAD
+   PAGE LOAD
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", async function(){
+document.addEventListener(
+"DOMContentLoaded",
+async function(){
 
     updatePathPreview();
 
+
+    /* File Path */
+
     document
-        .getElementById("filePath")
-        .addEventListener("input", function(){
+    .getElementById("filePath")
+    .addEventListener(
+        "input",
+        function(){
 
             syncFileNameFromPath();
 
             updatePathPreview();
 
-        });
+        }
+    );
 
+
+    /* File Name */
 
     document
-        .getElementById("fileName")
-        .addEventListener("input", function(){
+    .getElementById("fileName")
+    .addEventListener(
+        "input",
+        function(){
 
             updatePathPreview();
 
-        });
+        }
+    );
 
+
+    /* Folder Enter */
 
     document
-        .getElementById("folderName")
-        .addEventListener("keydown", function(event){
+    .getElementById("folderName")
+    .addEventListener(
+        "keydown",
+        function(event){
 
             if(event.key === "Enter"){
+
                 event.preventDefault();
+
                 createFolder();
+
             }
 
-        });
+        }
+    );
 
+
+    /* File Path Enter */
 
     document
-        .getElementById("filePath")
-        .addEventListener("keydown", function(event){
+    .getElementById("filePath")
+    .addEventListener(
+        "keydown",
+        function(event){
 
             if(event.key === "Enter"){
+
                 event.preventDefault();
 
                 syncFileNameFromPath();
 
                 updatePathPreview();
+
             }
 
-        });
+        }
+    );
 
+
+    /* File selection */
 
     document
-        .getElementById("fileInput")
-        .addEventListener("change", function(){
+    .getElementById("fileInput")
+    .addEventListener(
+        "change",
+        function(){
 
-            const file = this.files[0];
+            const file =
+            this.files[0];
+
 
             if(!file){
-                document.getElementById(
+
+                document
+                .getElementById(
                     "selectedFileInfo"
-                ).textContent = "No file selected";
+                )
+                .textContent =
+                "No file selected";
 
                 return;
+
             }
 
-            document.getElementById(
+
+            document
+            .getElementById(
                 "selectedFileInfo"
-            ).textContent =
-                "Selected: " +
-                file.name +
-                " (" +
-                formatBytes(file.size) +
-                ")";
+            )
+            .textContent =
+            "Selected: " +
+            file.name +
+            " (" +
+            formatBytes(file.size) +
+            ")";
 
 
             /*
-               Automatically put selected filename
-               into File Name and File Path
+               If File Path is empty,
+               use selected filename.
             */
 
             const currentPath =
-                document
-                .getElementById("filePath")
-                .value
-                .trim();
+            document
+            .getElementById("filePath")
+            .value
+            .trim();
+
 
             if(!currentPath){
 
-                document.getElementById(
-                    "fileName"
-                ).value = file.name;
+                document
+                .getElementById("fileName")
+                .value =
+                file.name;
 
-                document.getElementById(
-                    "filePath"
-                ).value = file.name;
 
-            }else{
+                document
+                .getElementById("filePath")
+                .value =
+                file.name;
+
+            }
+            else{
 
                 const parts =
-                    currentPath.split("/");
+                currentPath.split("/");
 
-                parts[parts.length - 1] =
-                    file.name;
 
-                document.getElementById(
-                    "filePath"
-                ).value =
-                    parts.join("/");
+                parts[
+                    parts.length - 1
+                ] =
+                file.name;
 
-                document.getElementById(
-                    "fileName"
-                ).value =
-                    file.name;
+
+                document
+                .getElementById("filePath")
+                .value =
+                parts.join("/");
+
+
+                document
+                .getElementById("fileName")
+                .value =
+                file.name;
+
             }
+
 
             updatePathPreview();
 
-        });
+        }
+    );
 
 
     await loadRepository();
@@ -718,48 +845,57 @@ async function loadRepository(){
     try{
 
         /*
-           If repository ID is not available,
-           still show parameter values.
+           Repository
         */
 
-        if(!repoId){
-
-            document.getElementById(
-                "repoName"
-            ).textContent =
-                repoNameParam || "Repository";
-
-        }else{
+        if(repoId){
 
             const {
                 data,
                 error
-            } = await supabaseClient
-                .from("repositories")
-                .select("*")
-                .eq("id", repoId)
-                .maybeSingle();
+            } =
+            await supabaseClient
+            .from("repositories")
+            .select("*")
+            .eq("id",repoId)
+            .maybeSingle();
+
 
             if(error){
+
                 console.warn(
                     "Repository load warning:",
                     error
                 );
+
             }
 
-            repositoryData = data;
 
-            document.getElementById(
-                "repoName"
-            ).textContent =
-                data?.name ||
-                repoNameParam ||
-                "Repository";
+            repositoryData =
+            data;
+
+
+            document
+            .getElementById("repoName")
+            .textContent =
+            data?.name ||
+            repoNameParam ||
+            "Repository";
+
+        }
+        else{
+
+            document
+            .getElementById("repoName")
+            .textContent =
+            repoNameParam ||
+            "Repository";
+
         }
 
 
         /*
-           Load branch
+           Branch
         */
 
         if(branchId){
@@ -767,11 +903,13 @@ async function loadRepository(){
             const {
                 data,
                 error
-            } = await supabaseClient
-                .from("repository_branches")
-                .select("*")
-                .eq("id", branchId)
-                .maybeSingle();
+            } =
+            await supabaseClient
+            .from("repository_branches")
+            .select("*")
+            .eq("id",branchId)
+            .maybeSingle();
+
 
             if(error){
 
@@ -782,34 +920,43 @@ async function loadRepository(){
 
             }
 
-            branchData = data;
+
+            branchData =
+            data;
 
         }
 
 
-        document.getElementById(
-            "branchName"
-        ).textContent =
-            branchData?.name ||
-            branchNameParam ||
-            "main";
+        document
+        .getElementById("branchName")
+        .textContent =
+        branchData?.name ||
+        branchNameParam ||
+        "main";
 
-    }catch(error){
+
+    }
+    catch(error){
 
         console.error(
             "Load repository error:",
             error
         );
 
-        document.getElementById(
-            "repoName"
-        ).textContent =
-            repoNameParam || "Repository";
 
-        document.getElementById(
-            "branchName"
-        ).textContent =
-            branchNameParam || "main";
+        document
+        .getElementById("repoName")
+        .textContent =
+        repoNameParam ||
+        "Repository";
+
+
+        document
+        .getElementById("branchName")
+        .textContent =
+        branchNameParam ||
+        "main";
+
     }
 
 }
@@ -822,11 +969,11 @@ async function loadRepository(){
 function normalizePath(path){
 
     return String(path || "")
-        .trim()
-        .replace(/\\/g, "/")
-        .replace(/^\/+/, "")
-        .replace(/\/+/g, "/")
-        .replace(/\/+$/, "");
+    .trim()
+    .replace(/\\/g,"/")
+    .replace(/^\/+/,"")
+    .replace(/\/+/g,"/")
+    .replace(/\/+$/,"");
 
 }
 
@@ -837,7 +984,9 @@ function normalizePath(path){
 
 function validateFilePath(path){
 
-    path = normalizePath(path);
+    path =
+    normalizePath(path);
+
 
     if(!path){
 
@@ -859,17 +1008,9 @@ function validateFilePath(path){
     }
 
 
-    if(path.startsWith(".")){
+    const parts =
+    path.split("/");
 
-        /*
-           Allow normal filenames but prevent
-           weird hidden root paths.
-        */
-
-    }
-
-
-    const parts = path.split("/");
 
     for(const part of parts){
 
@@ -877,16 +1018,22 @@ function validateFilePath(path){
 
             return {
                 valid:false,
-                message:"Invalid empty folder name."
+                message:
+                "Invalid empty folder name."
             };
 
         }
 
-        if(part === "." || part === ".."){
+
+        if(
+            part === "." ||
+            part === ".."
+        ){
 
             return {
                 valid:false,
-                message:"Invalid path."
+                message:
+                "Invalid path."
             };
 
         }
@@ -903,61 +1050,66 @@ function validateFilePath(path){
 
 
 /* =========================================================
-   GET FILE PATH
+   GET FINAL FILE PATH
 ========================================================= */
 
 function getFinalFilePath(){
 
     let path =
-        document
-        .getElementById("filePath")
-        .value
-        .trim();
+    document
+    .getElementById("filePath")
+    .value
+    .trim();
+
 
     const fileName =
-        document
-        .getElementById("fileName")
-        .value
-        .trim();
+    document
+    .getElementById("fileName")
+    .value
+    .trim();
 
 
     /*
-       If File Path is empty,
+       If File Path empty,
        use File Name.
     */
 
     if(!path && fileName){
 
-        path = fileName;
+        path =
+        fileName;
 
     }
 
 
     /*
-       If user entered folder path but filename separately,
-       make sure filename is included.
+       If both exist,
+       make sure filename is correct.
     */
 
     if(path && fileName){
 
         const lastPart =
-            path.split("/").pop();
+        path
+        .split("/")
+        .pop();
 
-        /*
-           If File Path does not already end
-           with the File Name, replace last part.
-        */
 
         if(lastPart !== fileName){
 
             const pathParts =
-                path.split("/");
+            path.split("/");
 
-            pathParts[pathParts.length - 1] =
-                fileName;
+
+            pathParts[
+                pathParts.length - 1
+            ] =
+            fileName;
+
 
             path =
-                pathParts.join("/");
+            pathParts.join("/");
+
         }
 
     }
@@ -969,33 +1121,43 @@ function getFinalFilePath(){
 
 
 /* =========================================================
-   SYNC FILE NAME FROM PATH
+   SYNC FILE NAME
 ========================================================= */
 
 function syncFileNameFromPath(){
 
     const path =
-        document
-        .getElementById("filePath")
-        .value
-        .trim();
+    document
+    .getElementById("filePath")
+    .value
+    .trim();
 
-    if(!path) return;
+
+    if(!path){
+
+        return;
+
+    }
+
 
     const clean =
-        normalizePath(path);
+    normalizePath(path);
+
 
     const parts =
-        clean.split("/");
+    clean.split("/");
+
 
     const filename =
-        parts[parts.length - 1];
+    parts[parts.length - 1];
+
 
     if(filename){
 
-        document.getElementById(
-            "fileName"
-        ).value = filename;
+        document
+        .getElementById("fileName")
+        .value =
+        filename;
 
     }
 
@@ -1009,12 +1171,14 @@ function syncFileNameFromPath(){
 function updatePathPreview(){
 
     const path =
-        getFinalFilePath();
+    getFinalFilePath();
 
-    document.getElementById(
-        "pathPreview"
-    ).textContent =
-        path || "root/file.ext";
+
+    document
+    .getElementById("pathPreview")
+    .textContent =
+    path ||
+    "root/file.ext";
 
 }
 
@@ -1026,15 +1190,10 @@ function updatePathPreview(){
 async function createFolder(){
 
     const button =
-        document.getElementById(
-            "createFolderButton"
-        );
-
-    const folderName =
-        document
-        .getElementById("folderName")
-        .value
-        .trim();
+    document
+    .getElementById(
+        "createFolderButton"
+    );
 
 
     if(!repoId){
@@ -1045,6 +1204,7 @@ async function createFolder(){
         );
 
         return;
+
     }
 
 
@@ -1056,7 +1216,15 @@ async function createFolder(){
         );
 
         return;
+
     }
+
+
+    const folderName =
+    document
+    .getElementById("folderName")
+    .value
+    .trim();
 
 
     if(!folderName){
@@ -1067,12 +1235,12 @@ async function createFolder(){
         );
 
         return;
+
     }
 
 
     /*
-       Folder must be a single folder name.
-       Nested folders can be created one by one.
+       Single folder name only
     */
 
     if(
@@ -1084,47 +1252,54 @@ async function createFolder(){
     ){
 
         showToast(
-            "Please enter a valid single folder name.",
+            "Please enter a valid folder name.",
             "error"
         );
 
         return;
+
     }
 
 
-    button.disabled = true;
-    button.textContent = "Creating Folder...";
+    button.disabled =
+    true;
+
+    button.textContent =
+    "Creating Folder...";
 
 
     try{
 
         const folderPath =
-            normalizePath(folderName);
+        normalizePath(folderName);
+
 
         const placeholderPath =
-            folderPath + "/.gitkeep";
+        folderPath +
+        "/.gitkeep";
 
 
         /*
-           Check whether placeholder already exists
+           Check duplicate
         */
 
         const {
             data:existing,
             error:existingError
-        } = await supabaseClient
-            .from("repository_files")
-            .select("id,file_path")
-            .eq("repository_id", repoId)
-            .eq("branch_id", branchId)
-            .eq("file_path", placeholderPath)
-            .maybeSingle();
+        } =
+        await supabaseClient
+        .from("repository_files")
+        .select("id,file_path")
+        .eq("repository_id",repoId)
+        .eq("branch_id",branchId)
+        .eq("file_path",placeholderPath)
+        .maybeSingle();
 
 
         if(existingError){
 
             console.warn(
-                "Existing folder check:",
+                "Folder check:",
                 existingError
             );
 
@@ -1139,6 +1314,7 @@ async function createFolder(){
             );
 
             return;
+
         }
 
 
@@ -1147,47 +1323,43 @@ async function createFolder(){
         */
 
         const storagePath =
-            repoId +
-            "/" +
-            branchId +
-            "/" +
-            placeholderPath;
+        repoId +
+        "/" +
+        branchId +
+        "/" +
+        placeholderPath;
 
 
         /*
-           Empty .gitkeep file
+           Empty .gitkeep
         */
 
         const blob =
-            new Blob(
-                [""],
-                {
-                    type:"text/plain"
-                }
-            );
+        new Blob(
+            [""],
+            {
+                type:"text/plain"
+            }
+        );
 
 
         const {
             error:storageError
-        } = await supabaseClient
-            .storage
-            .from("repository-files")
-            .upload(
-                storagePath,
-                blob,
-                {
-                    upsert:false,
-                    contentType:"text/plain"
-                }
-            );
+        } =
+        await supabaseClient
+        .storage
+        .from("repository-files")
+        .upload(
+            storagePath,
+            blob,
+            {
+                upsert:false,
+                contentType:"text/plain"
+            }
+        );
 
 
         if(storageError){
-
-            /*
-               If storage says file already exists,
-               try DB check before failing.
-            */
 
             throw storageError;
 
@@ -1195,46 +1367,52 @@ async function createFolder(){
 
 
         /*
-           Insert database record
+           Database
         */
 
         const {
             error:dbError
-        } = await supabaseClient
-            .from("repository_files")
-            .insert({
+        } =
+        await supabaseClient
+        .from("repository_files")
+        .insert({
 
-                repository_id:repoId,
+            repository_id:
+            repoId,
 
-                branch_id:branchId,
+            branch_id:
+            branchId,
 
-                file_path:placeholderPath,
+            file_path:
+            placeholderPath,
 
-                content:"",
+            content:
+            "",
 
-                mime_type:"text/plain",
+            mime_type:
+            "text/plain",
 
-                file_size:0,
+            file_size:
+            0,
 
-                is_binary:false,
+            is_binary:
+            false,
 
-                storage_path:storagePath
+            storage_path:
+            storagePath
 
-            });
+        });
 
 
         if(dbError){
 
-            /*
-               Cleanup storage if DB insert fails
-            */
-
             await supabaseClient
-                .storage
-                .from("repository-files")
-                .remove([
-                    storagePath
-                ]);
+            .storage
+            .from("repository-files")
+            .remove([
+                storagePath
+            ]);
+
 
             throw dbError;
 
@@ -1247,42 +1425,52 @@ async function createFolder(){
         );
 
 
-        document.getElementById(
-            "folderName"
-        ).value = "";
+        document
+        .getElementById("folderName")
+        .value =
+        "";
 
 
         /*
-           Give user a moment to see success
-           and return to repository.
+           Return to previous Repository Details
         */
 
-        setTimeout(function(){
+        setTimeout(
+            function(){
 
-            goBack();
+                goBack();
 
-        },700);
+            },
+            700
+        );
 
 
-    }catch(error){
+    }
+    catch(error){
 
         console.error(
             "Create folder error:",
             error
         );
 
+
         showToast(
             "Folder creation failed: " +
-            (error.message || "Unknown error"),
+            (
+                error.message ||
+                "Unknown error"
+            ),
             "error"
         );
 
-    }finally{
+    }
+    finally{
 
-        button.disabled = false;
+        button.disabled =
+        false;
 
         button.textContent =
-            "📁 Create Folder";
+        "📁 Create Folder";
 
     }
 
@@ -1296,9 +1484,10 @@ async function createFolder(){
 async function createFile(){
 
     const button =
-        document.getElementById(
-            "createFileButton"
-        );
+    document
+    .getElementById(
+        "createFileButton"
+    );
 
 
     if(!repoId){
@@ -1309,6 +1498,7 @@ async function createFile(){
         );
 
         return;
+
     }
 
 
@@ -1320,17 +1510,18 @@ async function createFile(){
         );
 
         return;
+
     }
 
 
     let filePath =
-        getFinalFilePath();
+    getFinalFilePath();
 
 
     const content =
-        document
-        .getElementById("fileContent")
-        .value;
+    document
+    .getElementById("fileContent")
+    .value;
 
 
     if(!filePath){
@@ -1341,11 +1532,12 @@ async function createFile(){
         );
 
         return;
+
     }
 
 
     const validation =
-        validateFilePath(filePath);
+    validateFilePath(filePath);
 
 
     if(!validation.valid){
@@ -1356,43 +1548,38 @@ async function createFile(){
         );
 
         return;
+
     }
 
 
     filePath =
-        validation.path;
+    validation.path;
 
 
-    if(!content.trim()){
+    button.disabled =
+    true;
 
-        /*
-           Allow empty files too,
-           but ask through normal confirmation.
-        */
-
-    }
-
-
-    button.disabled = true;
-    button.textContent = "Creating...";
+    button.textContent =
+    "Creating...";
 
 
     try{
 
         /*
-           Check duplicate
+           Duplicate check
         */
 
         const {
             data:existing,
             error:checkError
-        } = await supabaseClient
-            .from("repository_files")
-            .select("id")
-            .eq("repository_id", repoId)
-            .eq("branch_id", branchId)
-            .eq("file_path", filePath)
-            .maybeSingle();
+        } =
+        await supabaseClient
+        .from("repository_files")
+        .select("id")
+        .eq("repository_id",repoId)
+        .eq("branch_id",branchId)
+        .eq("file_path",filePath)
+        .maybeSingle();
 
 
         if(checkError){
@@ -1410,43 +1597,49 @@ async function createFile(){
             );
 
             return;
+
         }
 
 
+        const mimeType =
+        getMimeType(filePath);
+
+
         const blob =
-            new Blob(
-                [content],
-                {
-                    type:getMimeType(filePath)
-                }
-            );
+        new Blob(
+            [content],
+            {
+                type:mimeType
+            }
+        );
 
 
         const storagePath =
-            repoId +
-            "/" +
-            branchId +
-            "/" +
-            filePath;
+        repoId +
+        "/" +
+        branchId +
+        "/" +
+        filePath;
 
 
         /*
-           Upload to Storage
+           Upload Storage
         */
 
         const {
             error:storageError
-        } = await supabaseClient
-            .storage
-            .from("repository-files")
-            .upload(
-                storagePath,
-                blob,
-                {
-                    upsert:false,
-                    contentType:getMimeType(filePath)
-                }
-            );
+        } =
+        await supabaseClient
+        .storage
+        .from("repository-files")
+        .upload(
+            storagePath,
+            blob,
+            {
+                upsert:false,
+                contentType:mimeType
+            }
+        );
 
 
         if(storageError){
@@ -1457,42 +1650,52 @@ async function createFile(){
 
 
         /*
-           Insert DB row
+           Insert DB
         */
 
         const {
             error:dbError
-        } = await supabaseClient
-            .from("repository_files")
-            .insert({
+        } =
+        await supabaseClient
+        .from("repository_files")
+        .insert({
 
-                repository_id:repoId,
+            repository_id:
+            repoId,
 
-                branch_id:branchId,
+            branch_id:
+            branchId,
 
-                file_path:filePath,
+            file_path:
+            filePath,
 
-                content:content,
+            content:
+            content,
 
-                mime_type:getMimeType(filePath),
+            mime_type:
+            mimeType,
 
-                file_size:new Blob([content]).size,
+            file_size:
+            new Blob([content]).size,
 
-                is_binary:false,
+            is_binary:
+            false,
 
-                storage_path:storagePath
+            storage_path:
+            storagePath
 
-            });
+        });
 
 
         if(dbError){
 
             await supabaseClient
-                .storage
-                .from("repository-files")
-                .remove([
-                    storagePath
-                ]);
+            .storage
+            .from("repository-files")
+            .remove([
+                storagePath
+            ]);
+
 
             throw dbError;
 
@@ -1505,32 +1708,48 @@ async function createFile(){
         );
 
 
-        setTimeout(function(){
+        /*
+           IMPORTANT:
+           Go back using browser history
+           so repo_id and branch_id remain.
+        */
 
-            goBack();
+        setTimeout(
+            function(){
 
-        },700);
+                goBack();
+
+            },
+            700
+        );
 
 
-    }catch(error){
+    }
+    catch(error){
 
         console.error(
             "Create file error:",
             error
         );
 
+
         showToast(
             "File creation failed: " +
-            (error.message || "Unknown error"),
+            (
+                error.message ||
+                "Unknown error"
+            ),
             "error"
         );
 
-    }finally{
+    }
+    finally{
 
-        button.disabled = false;
+        button.disabled =
+        false;
 
         button.textContent =
-            "➕ Create File";
+        "➕ Create File";
 
     }
 
@@ -1544,9 +1763,10 @@ async function createFile(){
 async function uploadFile(){
 
     const button =
-        document.getElementById(
-            "uploadFileButton"
-        );
+    document
+    .getElementById(
+        "uploadFileButton"
+    );
 
 
     if(!repoId){
@@ -1557,6 +1777,7 @@ async function uploadFile(){
         );
 
         return;
+
     }
 
 
@@ -1568,17 +1789,19 @@ async function uploadFile(){
         );
 
         return;
+
     }
 
 
     const input =
-        document.getElementById(
-            "fileInput"
-        );
+    document
+    .getElementById(
+        "fileInput"
+    );
 
 
     const file =
-        input.files[0];
+    input.files[0];
 
 
     if(!file){
@@ -1589,49 +1812,51 @@ async function uploadFile(){
         );
 
         return;
+
     }
 
 
     let filePath =
-        document
-        .getElementById("filePath")
-        .value
-        .trim();
+    document
+    .getElementById("filePath")
+    .value
+    .trim();
 
 
     /*
-       If File Path is empty,
-       use selected filename.
+       If empty use filename
     */
 
     if(!filePath){
 
         filePath =
-            file.name;
+        file.name;
 
     }
 
 
     /*
-       Replace filename at end
-       with actual selected file name.
+       Keep folder path but replace
+       filename with actual selected file.
     */
 
     const pathParts =
-        normalizePath(filePath)
-        .split("/");
+    normalizePath(filePath)
+    .split("/");
 
 
-    pathParts[pathParts.length - 1] =
-        file.name;
+    pathParts[
+        pathParts.length - 1
+    ] =
+    file.name;
 
 
     filePath =
-        pathParts.join("/");
+    pathParts.join("/");
 
 
     const validation =
-        validateFilePath(filePath);
+    validateFilePath(filePath);
 
 
     if(!validation.valid){
@@ -1642,15 +1867,19 @@ async function uploadFile(){
         );
 
         return;
+
     }
 
 
     filePath =
-        validation.path;
+    validation.path;
 
 
-    button.disabled = true;
-    button.textContent = "Uploading...";
+    button.disabled =
+    true;
+
+    button.textContent =
+    "Uploading...";
 
 
     try{
@@ -1662,13 +1891,14 @@ async function uploadFile(){
         const {
             data:existing,
             error:checkError
-        } = await supabaseClient
-            .from("repository_files")
-            .select("id")
-            .eq("repository_id", repoId)
-            .eq("branch_id", branchId)
-            .eq("file_path", filePath)
-            .maybeSingle();
+        } =
+        await supabaseClient
+        .from("repository_files")
+        .select("id")
+        .eq("repository_id",repoId)
+        .eq("branch_id",branchId)
+        .eq("file_path",filePath)
+        .maybeSingle();
 
 
         if(checkError){
@@ -1686,36 +1916,38 @@ async function uploadFile(){
             );
 
             return;
+
         }
 
 
         const storagePath =
-            repoId +
-            "/" +
-            branchId +
-            "/" +
-            filePath;
+        repoId +
+        "/" +
+        branchId +
+        "/" +
+        filePath;
 
 
         /*
-           Upload file
+           Upload Storage
         */
 
         const {
             error:storageError
-        } = await supabaseClient
-            .storage
-            .from("repository-files")
-            .upload(
-                storagePath,
-                file,
-                {
-                    upsert:false,
-                    contentType:
-                        file.type ||
-                        getMimeType(filePath)
-                }
-            );
+        } =
+        await supabaseClient
+        .storage
+        .from("repository-files")
+        .upload(
+            storagePath,
+            file,
+            {
+                upsert:false,
+                contentType:
+                file.type ||
+                getMimeType(filePath)
+            }
+        );
 
 
         if(storageError){
@@ -1730,26 +1962,29 @@ async function uploadFile(){
         */
 
         const isBinary =
-            detectBinary(file);
+        detectBinary(file);
+
+
+        let content =
+        "";
 
 
         /*
-           Read text content only for text files
+           Read text files
         */
-
-        let content = "";
-
 
         if(!isBinary){
 
             try{
 
                 content =
-                    await file.text();
+                await file.text();
 
-            }catch(error){
+            }
+            catch(error){
 
-                content = "";
+                content =
+                "";
 
             }
 
@@ -1762,29 +1997,37 @@ async function uploadFile(){
 
         const {
             error:dbError
-        } = await supabaseClient
-            .from("repository_files")
-            .insert({
+        } =
+        await supabaseClient
+        .from("repository_files")
+        .insert({
 
-                repository_id:repoId,
+            repository_id:
+            repoId,
 
-                branch_id:branchId,
+            branch_id:
+            branchId,
 
-                file_path:filePath,
+            file_path:
+            filePath,
 
-                content:content,
+            content:
+            content,
 
-                mime_type:
-                    file.type ||
-                    getMimeType(filePath),
+            mime_type:
+            file.type ||
+            getMimeType(filePath),
 
-                file_size:file.size,
+            file_size:
+            file.size,
 
-                is_binary:isBinary,
+            is_binary:
+            isBinary,
 
-                storage_path:storagePath
+            storage_path:
+            storagePath
 
-            });
+        });
 
 
         if(dbError){
@@ -1794,11 +2037,12 @@ async function uploadFile(){
             */
 
             await supabaseClient
-                .storage
-                .from("repository-files")
-                .remove([
-                    storagePath
-                ]);
+            .storage
+            .from("repository-files")
+            .remove([
+                storagePath
+            ]);
+
 
             throw dbError;
 
@@ -1811,32 +2055,47 @@ async function uploadFile(){
         );
 
 
-        setTimeout(function(){
+        /*
+           IMPORTANT:
+           Return using history.
+        */
 
-            goBack();
+        setTimeout(
+            function(){
 
-        },700);
+                goBack();
+
+            },
+            700
+        );
 
 
-    }catch(error){
+    }
+    catch(error){
 
         console.error(
             "Upload error:",
             error
         );
 
+
         showToast(
             "Upload failed: " +
-            (error.message || "Unknown error"),
+            (
+                error.message ||
+                "Unknown error"
+            ),
             "error"
         );
 
-    }finally{
+    }
+    finally{
 
-        button.disabled = false;
+        button.disabled =
+        false;
 
         button.textContent =
-            "📤 Upload File";
+        "📤 Upload File";
 
     }
 
@@ -1850,15 +2109,15 @@ async function uploadFile(){
 function detectBinary(file){
 
     const type =
-        String(file.type || "").toLowerCase();
+    String(
+        file.type || ""
+    ).toLowerCase();
 
-
-    /*
-       Known text extensions
-    */
 
     const path =
-        String(file.name || "").toLowerCase();
+    String(
+        file.name || ""
+    ).toLowerCase();
 
 
     const textExtensions = [
@@ -1898,7 +2157,9 @@ function detectBinary(file){
     ];
 
 
-    for(const ext of textExtensions){
+    for(
+        const ext of textExtensions
+    ){
 
         if(path.endsWith(ext)){
 
@@ -1941,74 +2202,114 @@ function detectBinary(file){
 function getMimeType(path){
 
     const extension =
-        path
-        .split(".")
-        .pop()
-        .toLowerCase();
+    path
+    .split(".")
+    .pop()
+    .toLowerCase();
 
 
     const types = {
 
-        html:"text/html",
+        html:
+        "text/html",
 
-        htm:"text/html",
+        htm:
+        "text/html",
 
-        css:"text/css",
+        css:
+        "text/css",
 
-        js:"application/javascript",
+        js:
+        "application/javascript",
 
-        json:"application/json",
+        json:
+        "application/json",
 
-        txt:"text/plain",
+        txt:
+        "text/plain",
 
-        md:"text/markdown",
+        md:
+        "text/markdown",
 
-        csv:"text/csv",
+        csv:
+        "text/csv",
 
-        xml:"application/xml",
+        xml:
+        "application/xml",
 
-        pdf:"application/pdf",
+        php:
+        "text/plain",
 
-        png:"image/png",
+        py:
+        "text/plain",
 
-        jpg:"image/jpeg",
+        java:
+        "text/plain",
 
-        jpeg:"image/jpeg",
+        c:
+        "text/plain",
 
-        gif:"image/gif",
+        cpp:
+        "text/plain",
 
-        webp:"image/webp",
+        png:
+        "image/png",
 
-        svg:"image/svg+xml",
+        jpg:
+        "image/jpeg",
 
-        ico:"image/x-icon",
+        jpeg:
+        "image/jpeg",
 
-        zip:"application/zip",
+        gif:
+        "image/gif",
 
-        rar:"application/vnd.rar",
+        webp:
+        "image/webp",
 
-        mp3:"audio/mpeg",
+        svg:
+        "image/svg+xml",
 
-        mp4:"video/mp4",
+        ico:
+        "image/x-icon",
 
-        wav:"audio/wav",
+        pdf:
+        "application/pdf",
 
-        doc:"application/msword",
+        zip:
+        "application/zip",
+
+        rar:
+        "application/vnd.rar",
+
+        mp3:
+        "audio/mpeg",
+
+        mp4:
+        "video/mp4",
+
+        wav:
+        "audio/wav",
+
+        doc:
+        "application/msword",
 
         docx:
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 
         xls:
-            "application/vnd.ms-excel",
+        "application/vnd.ms-excel",
 
         xlsx:
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
     };
 
 
-    return types[extension] ||
-        "application/octet-stream";
+    return (
+        types[extension] ||
+        "application/octet-stream"
+    );
 
 }
 
@@ -2019,7 +2320,10 @@ function getMimeType(path){
 
 function formatBytes(bytes){
 
-    if(!bytes || bytes === 0){
+    if(
+        !bytes ||
+        bytes === 0
+    ){
 
         return "0 Bytes";
 
@@ -2035,10 +2339,10 @@ function formatBytes(bytes){
 
 
     const index =
-        Math.floor(
-            Math.log(bytes) /
-            Math.log(1024)
-        );
+    Math.floor(
+        Math.log(bytes) /
+        Math.log(1024)
+    );
 
 
     return (
@@ -2057,28 +2361,59 @@ function formatBytes(bytes){
 
 
 /* =========================================================
-   GO BACK
+   GO BACK — IMPORTANT FIX
 ========================================================= */
 
 function goBack(){
 
     /*
-       Keep repository and branch information.
-       This works with the existing repository-details page.
+       IMPORTANT:
+
+       Do NOT manually construct:
+
+       repository-details.html?repo_id=...
+
+       because some existing links may contain
+       additional parameters.
+
+       history.back() returns to the exact page
+       from which this page was opened.
+
+       Therefore repo_id, branch_id, repo name,
+       branch name and folder state remain intact.
     */
 
-    let url =
-        "repository-details.html";
+    if(
+        document.referrer &&
+        document.referrer !==
+        window.location.href
+    ){
+
+        window.history.back();
+
+        return;
+
+    }
 
 
-    const query = [];
+    /*
+       Fallback only if the page was opened
+       directly without previous history.
+    */
 
+    const query =
+    new URLSearchParams();
+
+
+    /*
+       Preserve repository information
+    */
 
     if(repoId){
 
-        query.push(
-            "repo_id=" +
-            encodeURIComponent(repoId)
+        query.set(
+            "repo_id",
+            repoId
         );
 
     }
@@ -2086,22 +2421,53 @@ function goBack(){
 
     if(branchId){
 
-        query.push(
-            "branch_id=" +
-            encodeURIComponent(branchId)
+        query.set(
+            "branch_id",
+            branchId
         );
 
     }
 
 
-    if(query.length){
+    if(repoNameParam){
 
-        url += "?" + query.join("&");
+        query.set(
+            "repo_name",
+            repoNameParam
+        );
 
     }
 
 
-    window.location.href = url;
+    if(branchNameParam){
+
+        query.set(
+            "branch_name",
+            branchNameParam
+        );
+
+    }
+
+
+    let url =
+    "repository-details.html";
+
+
+    const queryString =
+    query.toString();
+
+
+    if(queryString){
+
+        url +=
+        "?" +
+        queryString;
+
+    }
+
+
+    window.location.href =
+    url;
 
 }
 
@@ -2110,33 +2476,44 @@ function goBack(){
    TOAST
 ========================================================= */
 
-let toastTimer = null;
+let toastTimer =
+null;
 
-function showToast(message,type="success"){
+
+function showToast(
+    message,
+    type="success"
+){
 
     const toast =
-        document.getElementById("toast");
+    document
+    .getElementById("toast");
 
 
     toast.textContent =
-        message;
+    message;
 
 
     toast.className =
-        "toast show " +
-        type;
+    "toast show " +
+    type;
 
 
-    clearTimeout(toastTimer);
+    clearTimeout(
+        toastTimer
+    );
 
 
     toastTimer =
-        setTimeout(function(){
+    setTimeout(
+        function(){
 
             toast.className =
-                "toast";
+            "toast";
 
-        },3500);
+        },
+        3500
+    );
 
 }
 
