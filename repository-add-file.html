@@ -35,18 +35,14 @@ body{
 
 .navbar{
     min-height:64px;
-
     background:#010409;
-
     border-bottom:1px solid #30363d;
 
     display:flex;
     align-items:center;
-
     gap:24px;
 
     padding:12px 5%;
-
     flex-wrap:wrap;
 }
 
@@ -69,17 +65,13 @@ body{
 .container{
     width:94%;
     max-width:900px;
-
     margin:35px auto;
 }
 
 .card{
     background:#161b22;
-
     border:1px solid #30363d;
-
     border-radius:12px;
-
     padding:25px;
 
     box-shadow:
@@ -89,31 +81,24 @@ body{
 .title{
     font-size:25px;
     font-weight:700;
-
     margin-bottom:8px;
 }
 
 .subtitle{
     color:#8b949e;
-
     font-size:14px;
-
     margin-bottom:25px;
 }
 
 .info{
     background:#0d1117;
-
     border:1px solid #30363d;
-
     border-radius:8px;
 
     padding:14px;
-
     margin-bottom:20px;
 
     line-height:1.7;
-
     font-size:14px;
 }
 
@@ -123,11 +108,8 @@ body{
 
 label{
     display:block;
-
     margin-bottom:8px;
-
     font-weight:600;
-
     font-size:14px;
 }
 
@@ -157,20 +139,52 @@ textarea{
 
 input[type="text"]:focus,
 textarea:focus{
-
     border-color:#58a6ff;
 }
 
 textarea{
-
     min-height:300px;
-
     resize:vertical;
 
     font-family:
     Consolas,
     "Courier New",
     monospace;
+}
+
+.help-text{
+    color:#8b949e;
+    font-size:12px;
+    margin-top:-10px;
+    margin-bottom:18px;
+    line-height:1.5;
+}
+
+.folder-box{
+    background:#0d1117;
+    border:1px solid #30363d;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:20px;
+}
+
+.folder-title{
+    font-size:14px;
+    font-weight:700;
+    color:#58a6ff;
+    margin-bottom:8px;
+}
+
+.folder-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.folder-actions input{
+    flex:1;
+    min-width:220px;
+    margin-bottom:0;
 }
 
 .file-box{
@@ -191,14 +205,11 @@ textarea{
 }
 
 .file-box:hover{
-
     border-color:#58a6ff;
 }
 
 .file-icon{
-
     font-size:45px;
-
     margin-bottom:12px;
 }
 
@@ -225,16 +236,13 @@ textarea{
     font-weight:600;
 
     border:0;
-
 }
 
 .choose-btn:hover{
-
     background:#2ea043;
 }
 
 #fileInput{
-
     display:none;
 }
 
@@ -256,25 +264,18 @@ textarea{
 }
 
 .selected-file.show{
-
     display:block;
 }
 
 .file-name{
-
     color:#58a6ff;
-
     font-weight:700;
-
     word-break:break-word;
 }
 
 .file-size{
-
     color:#8b949e;
-
     font-size:12px;
-
     margin-top:5px;
 }
 
@@ -298,7 +299,6 @@ textarea{
 }
 
 .exists-box.show{
-
     display:block;
 }
 
@@ -320,7 +320,6 @@ textarea{
 }
 
 .new-box.show{
-
     display:block;
 }
 
@@ -363,7 +362,6 @@ textarea{
 }
 
 .btn:hover{
-
     background:#30363d;
 }
 
@@ -377,7 +375,6 @@ textarea{
 }
 
 .btn-green:hover{
-
     background:#2ea043;
 }
 
@@ -391,7 +388,6 @@ textarea{
 }
 
 .btn-blue:hover{
-
     background:#388bfd;
 }
 
@@ -405,7 +401,6 @@ textarea{
 }
 
 .btn-orange:hover{
-
     background:#bb8009;
 }
 
@@ -419,9 +414,7 @@ textarea{
 }
 
 .btn:disabled{
-
     opacity:.5;
-
     cursor:not-allowed;
 }
 
@@ -439,7 +432,6 @@ textarea{
 }
 
 .status.show{
-
     display:block;
 }
 
@@ -478,7 +470,6 @@ textarea{
 }
 
 .progress.show{
-
     display:block;
 }
 
@@ -516,43 +507,42 @@ textarea{
 }
 
 .hidden{
-
     display:none !important;
 }
 
 @media(max-width:700px){
 
     .navbar{
-
         padding:12px 4%;
-
         gap:14px;
     }
 
     .container{
-
         width:94%;
-
         margin:20px auto;
     }
 
     .card{
-
         padding:18px;
     }
 
     .title{
-
         font-size:21px;
     }
 
     .actions{
-
         flex-direction:column;
     }
 
     .actions .btn{
+        width:100%;
+    }
 
+    .folder-actions{
+        flex-direction:column;
+    }
+
+    .folder-actions input{
         width:100%;
     }
 
@@ -563,7 +553,6 @@ textarea{
 </head>
 
 <body>
-
 
 <nav class="navbar">
 
@@ -591,7 +580,7 @@ textarea{
     </div>
 
     <div class="subtitle">
-        Upload a new file or replace an existing file.
+        Upload a new file, create a file, or create a folder.
     </div>
 
 
@@ -610,9 +599,80 @@ textarea{
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
+         FOLDER CREATE
+    ====================================================== -->
+
+    <div class="folder-box">
+
+        <div class="folder-title">
+            📁 Create Folder
+        </div>
+
+        <div class="help-text"
+             style="margin-bottom:12px;">
+
+            Create a folder in the current branch.
+            A hidden <strong>.gitkeep</strong> file will be used
+            because storage systems cannot keep a completely
+            empty folder.
+
+        </div>
+
+        <div class="folder-actions">
+
+            <input
+                id="folderName"
+                type="text"
+                placeholder="Example: assets">
+
+            <button
+                class="btn btn-blue"
+                type="button"
+                onclick="createFolder()">
+
+                📁 Create Folder
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILE PATH
+    ====================================================== -->
+
+    <div>
+
+        <label>
+            File Path
+        </label>
+
+        <input
+            id="filePath"
+            type="text"
+            placeholder="Example: index.html or assets/logo.png">
+
+        <div class="help-text">
+
+            To put a file inside a folder, use:
+            <strong>folder-name/file-name.ext</strong>
+
+            <br>
+
+            Example:
+            <strong>assets/logo.png</strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
          FILE UPLOAD
-    ========================== -->
+    ====================================================== -->
 
     <div id="uploadSection">
 
@@ -646,12 +706,14 @@ textarea{
                 id="selectedFile"
                 class="selected-file">
 
-                <div class="file-name"
-                     id="selectedFileName">
+                <div
+                    class="file-name"
+                    id="selectedFileName">
                 </div>
 
-                <div class="file-size"
-                     id="selectedFileSize">
+                <div
+                    class="file-size"
+                    id="selectedFileSize">
                 </div>
 
             </div>
@@ -661,9 +723,9 @@ textarea{
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          CREATE FILE
-    ========================== -->
+    ====================================================== -->
 
     <div
         id="createSection"
@@ -689,9 +751,9 @@ textarea{
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          EXISTING FILE
-    ========================== -->
+    ====================================================== -->
 
     <div
         id="existsBox"
@@ -719,9 +781,9 @@ textarea{
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          NEW FILE
-    ========================== -->
+    ====================================================== -->
 
     <div
         id="newBox"
@@ -737,9 +799,9 @@ textarea{
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          ACTIONS
-    ========================== -->
+    ====================================================== -->
 
     <div class="actions">
 
@@ -777,9 +839,9 @@ textarea{
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          PROGRESS
-    ========================== -->
+    ====================================================== -->
 
     <div
         id="progress"
@@ -805,9 +867,9 @@ textarea{
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          STATUS
-    ========================== -->
+    ====================================================== -->
 
     <div
         id="status"
@@ -895,7 +957,6 @@ async function initialize(){
 
         }
 
-
         await loadUser();
 
         await loadRepository();
@@ -931,17 +992,14 @@ async function loadUser(){
     .auth
     .getUser();
 
-
     if(error){
 
         throw error;
 
     }
 
-
     currentUser =
         data?.user || null;
-
 
     if(!currentUser){
 
@@ -966,25 +1024,19 @@ async function loadRepository(){
         error
     } =
     await supabaseClient
-
     .from("repositories")
-
     .select("*")
-
     .eq(
         "id",
         repoId
     )
-
     .single();
-
 
     if(error){
 
         throw error;
 
     }
-
 
     if(!data){
 
@@ -994,16 +1046,13 @@ async function loadRepository(){
 
     }
 
-
     repository =
         data;
-
 
     document.getElementById(
         "repoName"
     ).textContent =
         repository.name;
-
 
     document.getElementById(
         "backRepoLink"
@@ -1025,16 +1074,12 @@ async function loadBranch(){
 
     let query =
         supabaseClient
-
         .from("repository_branches")
-
         .select("*")
-
         .eq(
             "repository_id",
             repoId
         );
-
 
     if(branchId){
 
@@ -1055,20 +1100,17 @@ async function loadBranch(){
 
     }
 
-
     const {
         data,
         error
     } =
     await query.maybeSingle();
 
-
     if(error){
 
         throw error;
 
     }
-
 
     if(!data){
 
@@ -1078,10 +1120,8 @@ async function loadBranch(){
 
     }
 
-
     currentBranch =
         data;
-
 
     document.getElementById(
         "branchName"
@@ -1105,24 +1145,27 @@ function setupMode(){
             "hidden"
         );
 
-
         document.getElementById(
             "createSection"
         ).classList.remove(
             "hidden"
         );
 
-
         document.getElementById(
             "uploadButton"
         ).textContent =
             "📝 Create File";
 
-
         document.getElementById(
             "uploadButton"
         ).disabled =
             false;
+
+        document.getElementById(
+            "filePath"
+        ).classList.add(
+            "hidden"
+        );
 
     }
 
@@ -1145,13 +1188,10 @@ document.getElementById(
             ? this.files[0]
             : null;
 
-
         existingFile =
             null;
 
-
         hideBoxes();
-
 
         if(!selectedFile){
 
@@ -1175,20 +1215,17 @@ document.getElementById(
 
         }
 
-
         document.getElementById(
             "selectedFile"
         ).classList.add(
             "show"
         );
 
-
         document.getElementById(
             "selectedFileName"
         ).textContent =
             "📄 " +
             selectedFile.name;
-
 
         document.getElementById(
             "selectedFileSize"
@@ -1197,12 +1234,42 @@ document.getElementById(
                 selectedFile.size
             );
 
+        document.getElementById(
+            "filePath"
+        ).value =
+            selectedFile.name;
 
         document.getElementById(
             "uploadButton"
         ).disabled =
             true;
 
+        await checkExistingFile();
+
+    }
+);
+
+
+/* =====================================================
+   FILE PATH CHANGE
+===================================================== */
+
+document.getElementById(
+    "filePath"
+).addEventListener(
+    "input",
+    async function(){
+
+        if(!selectedFile){
+
+            return;
+
+        }
+
+        existingFile =
+            null;
+
+        hideBoxes();
 
         await checkExistingFile();
 
@@ -1222,46 +1289,45 @@ async function checkExistingFile(){
 
     }
 
+    const filePath =
+        normalizePath(
+            document.getElementById(
+                "filePath"
+            ).value ||
+            selectedFile.name
+        );
+
+    if(!filePath){
+
+        return;
+
+    }
 
     setProgress(
         15,
         "Checking repository..."
     );
 
-
-    const filePath =
-        normalizePath(
-            selectedFile.name
-        );
-
-
     const {
         data,
         error
     } =
     await supabaseClient
-
     .from("repository_files")
-
     .select("*")
-
     .eq(
         "repository_id",
         repoId
     )
-
     .eq(
         "branch_id",
         currentBranch.id
     )
-
     .eq(
         "file_path",
         filePath
     )
-
     .maybeSingle();
-
 
     if(error){
 
@@ -1276,13 +1342,10 @@ async function checkExistingFile(){
 
     }
 
-
     existingFile =
         data || null;
 
-
     hideProgress();
-
 
     if(existingFile){
 
@@ -1291,13 +1354,11 @@ async function checkExistingFile(){
         ).textContent =
             existingFile.file_path;
 
-
         document.getElementById(
             "existsBox"
         ).classList.add(
             "show"
         );
-
 
         document.getElementById(
             "replaceButton"
@@ -1305,19 +1366,16 @@ async function checkExistingFile(){
             "hidden"
         );
 
-
         document.getElementById(
             "replaceButton"
         ).disabled =
             false;
-
 
         document.getElementById(
             "uploadButton"
         ).classList.add(
             "hidden"
         );
-
 
     }else{
 
@@ -1327,13 +1385,11 @@ async function checkExistingFile(){
             "show"
         );
 
-
         document.getElementById(
             "uploadButton"
         ).classList.remove(
             "hidden"
         );
-
 
         document.getElementById(
             "uploadButton"
@@ -1359,7 +1415,6 @@ async function saveFile(){
 
     }
 
-
     if(!selectedFile){
 
         showStatus(
@@ -1371,7 +1426,6 @@ async function saveFile(){
 
     }
 
-
     if(existingFile){
 
         showStatus(
@@ -1382,7 +1436,6 @@ async function saveFile(){
         return;
 
     }
-
 
     await uploadNewFile();
 
@@ -1408,60 +1461,60 @@ async function uploadNewFile(){
             "Reading file..."
         );
 
-
         const filePath =
             normalizePath(
+                document.getElementById(
+                    "filePath"
+                ).value ||
                 selectedFile.name
             );
 
+        if(!filePath){
+
+            throw new Error(
+                "File path is required."
+            );
+
+        }
 
         const binary =
             isBinaryFile(
                 selectedFile
             );
 
-
         setProgress(
             35,
             "Preparing file..."
         );
-
 
         const storagePath =
             buildStoragePath(
                 filePath
             );
 
-
         setProgress(
             50,
             "Uploading file..."
         );
 
-
         const {
             error:storageError
         } =
         await supabaseClient
-
         .storage
-
         .from(
             "repository-files"
         )
-
         .upload(
             storagePath,
             selectedFile,
             {
                 upsert:true,
-
                 contentType:
                     selectedFile.type ||
                     "application/octet-stream"
             }
         );
-
 
         if(storageError){
 
@@ -1469,28 +1522,21 @@ async function uploadNewFile(){
 
         }
 
-
         setProgress(
             75,
             "Saving repository record..."
         );
-
 
         const content =
             binary
             ? ""
             : await selectedFile.text();
 
-
         const {
             error:dbError
         } =
         await supabaseClient
-
-        .from(
-            "repository_files"
-        )
-
+        .from("repository_files")
         .insert({
 
             repository_id:
@@ -1520,31 +1566,26 @@ async function uploadNewFile(){
 
         });
 
-
         if(dbError){
 
             throw dbError;
 
         }
 
-
         setProgress(
             100,
             "Upload completed."
         );
-
 
         showStatus(
             "✅ File uploaded successfully!",
             "success"
         );
 
-
         setTimeout(
             goBack,
             1200
         );
-
 
     }catch(error){
 
@@ -1585,7 +1626,6 @@ async function replaceFile(){
 
     }
 
-
     if(!existingFile){
 
         showStatus(
@@ -1597,7 +1637,6 @@ async function replaceFile(){
 
     }
 
-
     const confirmReplace =
         confirm(
             "Replace existing file?\n\n" +
@@ -1605,13 +1644,11 @@ async function replaceFile(){
             "\n\nThe old content will be replaced."
         );
 
-
     if(!confirmReplace){
 
         return;
 
     }
-
 
     try{
 
@@ -1621,18 +1658,18 @@ async function replaceFile(){
 
         showProgress();
 
-
         const filePath =
             normalizePath(
+                document.getElementById(
+                    "filePath"
+                ).value ||
                 selectedFile.name
             );
-
 
         const binary =
             isBinaryFile(
                 selectedFile
             );
-
 
         const storagePath =
             existingFile.storage_path ||
@@ -1640,30 +1677,24 @@ async function replaceFile(){
                 filePath
             );
 
-
         setProgress(
             20,
             "Preparing replacement..."
         );
-
 
         setProgress(
             40,
             "Uploading replacement..."
         );
 
-
         const {
             error:storageError
         } =
         await supabaseClient
-
         .storage
-
         .from(
             "repository-files"
         )
-
         .upload(
             storagePath,
             selectedFile,
@@ -1676,35 +1707,27 @@ async function replaceFile(){
             }
         );
 
-
         if(storageError){
 
             throw storageError;
 
         }
 
-
         setProgress(
             70,
             "Updating repository record..."
         );
-
 
         const content =
             binary
             ? ""
             : await selectedFile.text();
 
-
         const {
             error:updateError
         } =
         await supabaseClient
-
-        .from(
-            "repository_files"
-        )
-
+        .from("repository_files")
         .update({
 
             content:
@@ -1724,12 +1747,10 @@ async function replaceFile(){
                 binary
 
         })
-
         .eq(
             "id",
             existingFile.id
         );
-
 
         if(updateError){
 
@@ -1737,24 +1758,20 @@ async function replaceFile(){
 
         }
 
-
         setProgress(
             100,
             "Replacement completed."
         );
-
 
         showStatus(
             "✅ Existing file replaced successfully!",
             "success"
         );
 
-
         setTimeout(
             goBack,
             1200
         );
-
 
     }catch(error){
 
@@ -1789,12 +1806,10 @@ async function createFile(){
             "createFileName"
         ).value.trim();
 
-
     const content =
         document.getElementById(
             "createContent"
         ).value;
-
 
     if(!fileName){
 
@@ -1807,7 +1822,6 @@ async function createFile(){
 
     }
 
-
     if(fileName.includes("\\")){
 
         showStatus(
@@ -1819,12 +1833,10 @@ async function createFile(){
 
     }
 
-
     const filePath =
         normalizePath(
             fileName
         );
-
 
     try{
 
@@ -1834,49 +1846,37 @@ async function createFile(){
 
         showProgress();
 
-
         setProgress(
             20,
             "Checking file..."
         );
-
 
         const {
             data:existing,
             error:checkError
         } =
         await supabaseClient
-
-        .from(
-            "repository_files"
-        )
-
+        .from("repository_files")
         .select("id,file_path")
-        
         .eq(
             "repository_id",
             repoId
         )
-
         .eq(
             "branch_id",
             currentBranch.id
         )
-
         .eq(
             "file_path",
             filePath
         )
-
         .maybeSingle();
-
 
         if(checkError){
 
             throw checkError;
 
         }
-
 
         if(existing){
 
@@ -1893,12 +1893,10 @@ async function createFile(){
 
         }
 
-
         setProgress(
             50,
             "Saving file..."
         );
-
 
         const blob =
             new Blob(
@@ -1911,24 +1909,19 @@ async function createFile(){
                 }
             );
 
-
         const storagePath =
             buildStoragePath(
                 filePath
             );
 
-
         const {
             error:storageError
         } =
         await supabaseClient
-
         .storage
-
         .from(
             "repository-files"
         )
-
         .upload(
             storagePath,
             blob,
@@ -1942,29 +1935,22 @@ async function createFile(){
             }
         );
 
-
         if(storageError){
 
             throw storageError;
 
         }
 
-
         setProgress(
             75,
             "Creating repository record..."
         );
 
-
         const {
             error:dbError
         } =
         await supabaseClient
-
-        .from(
-            "repository_files"
-        )
-
+        .from("repository_files")
         .insert({
 
             repository_id:
@@ -1997,8 +1983,260 @@ async function createFile(){
 
         });
 
+        if(dbError){
+
+            throw dbError;
+
+        }
+
+        setProgress(
+            100,
+            "File created."
+        );
+
+        showStatus(
+            "✅ File created successfully!",
+            "success"
+        );
+
+        setTimeout(
+            goBack,
+            1200
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        hideProgress();
+
+        showStatus(
+            error.message ||
+            "Could not create file.",
+            "error"
+        );
+
+        disableButtons(false);
+
+    }
+
+}
+
+
+/* =====================================================
+   CREATE FOLDER
+===================================================== */
+
+async function createFolder(){
+
+    const input =
+        document.getElementById(
+            "folderName"
+        );
+
+    const folderName =
+        input.value.trim();
+
+    if(!folderName){
+
+        showStatus(
+            "Please enter a folder name.",
+            "error"
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+    if(
+        folderName.includes("/") ||
+        folderName.includes("\\") ||
+        folderName.includes("..")
+    ){
+
+        showStatus(
+            "Invalid folder name. Please enter only one folder name.",
+            "error"
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+    try{
+
+        disableButtons(true);
+
+        clearStatus();
+
+        showProgress();
+
+        setProgress(
+            20,
+            "Checking folder..."
+        );
+
+
+        const placeholderPath =
+            normalizePath(
+                folderName +
+                "/.gitkeep"
+            );
+
+
+        /* Check whether folder already exists */
+
+        const {
+            data:existing,
+            error:checkError
+        } =
+        await supabaseClient
+        .from("repository_files")
+        .select("id,file_path")
+        .eq(
+            "repository_id",
+            repoId
+        )
+        .eq(
+            "branch_id",
+            currentBranch.id
+        )
+        .eq(
+            "file_path",
+            placeholderPath
+        )
+        .maybeSingle();
+
+
+        if(checkError){
+
+            throw checkError;
+
+        }
+
+
+        if(existing){
+
+            hideProgress();
+
+            showStatus(
+                "⚠️ This folder already exists.",
+                "error"
+            );
+
+            disableButtons(false);
+
+            return;
+
+        }
+
+
+        setProgress(
+            45,
+            "Creating folder..."
+        );
+
+
+        const emptyBlob =
+            new Blob(
+                [""],
+                {
+                    type:
+                    "text/plain"
+                }
+            );
+
+
+        const storagePath =
+            buildStoragePath(
+                placeholderPath
+            );
+
+
+        const {
+            error:storageError
+        } =
+        await supabaseClient
+        .storage
+        .from(
+            "repository-files"
+        )
+        .upload(
+            storagePath,
+            emptyBlob,
+            {
+                upsert:false,
+
+                contentType:
+                    "text/plain"
+            }
+        );
+
+
+        if(storageError){
+
+            throw storageError;
+
+        }
+
+
+        setProgress(
+            75,
+            "Saving folder information..."
+        );
+
+
+        const {
+            error:dbError
+        } =
+        await supabaseClient
+        .from("repository_files")
+        .insert({
+
+            repository_id:
+                repoId,
+
+            branch_id:
+                currentBranch.id,
+
+            file_path:
+                placeholderPath,
+
+            content:
+                "",
+
+            storage_path:
+                storagePath,
+
+            mime_type:
+                "text/plain",
+
+            file_size:
+                0,
+
+            is_binary:
+                false
+
+        });
+
 
         if(dbError){
+
+            /* Try to remove storage placeholder
+               if DB insert fails */
+
+            await supabaseClient
+            .storage
+            .from(
+                "repository-files"
+            )
+            .remove([
+                storagePath
+            ]);
 
             throw dbError;
 
@@ -2007,12 +2245,17 @@ async function createFile(){
 
         setProgress(
             100,
-            "File created."
+            "Folder created."
         );
 
 
+        input.value = "";
+
+
         showStatus(
-            "✅ File created successfully!",
+            "✅ Folder '" +
+            folderName +
+            "' created successfully!",
             "success"
         );
 
@@ -2025,13 +2268,33 @@ async function createFile(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Create folder error:",
+            error
+        );
 
         hideProgress();
 
-        showStatus(
+        let message =
             error.message ||
-            "Could not create file.",
+            "Could not create folder.";
+
+
+        if(
+            message
+            .toLowerCase()
+            .includes("duplicate")
+        ){
+
+            message =
+                "This folder already exists.";
+
+        }
+
+
+        showStatus(
+            "Folder creation failed: " +
+            message,
             "error"
         );
 
@@ -2094,7 +2357,6 @@ function isBinaryFile(file){
     const name =
         file.name.toLowerCase();
 
-
     const binaryExtensions = [
 
         ".png",
@@ -2136,7 +2398,6 @@ function isBinaryFile(file){
 
     ];
 
-
     return binaryExtensions.some(
         ext =>
             name.endsWith(ext)
@@ -2156,7 +2417,6 @@ function guessMimeType(path){
         .toLowerCase()
         .split(".")
         .pop();
-
 
     const types = {
 
@@ -2189,7 +2449,6 @@ function guessMimeType(path){
 
     };
 
-
     return (
         types[ext] ||
         "text/plain"
@@ -2207,14 +2466,12 @@ function formatFileSize(bytes){
     const n =
         Number(bytes || 0);
 
-
     if(n < 1024){
 
         return n +
             " B";
 
     }
-
 
     if(
         n <
@@ -2227,7 +2484,6 @@ function formatFileSize(bytes){
         " KB";
 
     }
-
 
     if(
         n <
@@ -2243,7 +2499,6 @@ function formatFileSize(bytes){
         " MB";
 
     }
-
 
     return (
         n /
@@ -2270,7 +2525,6 @@ function showProgress(){
 
 }
 
-
 function hideProgress(){
 
     document.getElementById(
@@ -2281,7 +2535,6 @@ function hideProgress(){
 
 }
 
-
 function setProgress(
     percent,
     message
@@ -2291,7 +2544,6 @@ function setProgress(
         "progressFill"
     ).style.width =
         percent + "%";
-
 
     document.getElementById(
         "progressText"
@@ -2315,17 +2567,14 @@ function showStatus(
             "status"
         );
 
-
     box.textContent =
         message;
-
 
     box.className =
         "status show " +
         type;
 
 }
-
 
 function clearStatus(){
 
@@ -2334,10 +2583,8 @@ function clearStatus(){
             "status"
         );
 
-
     box.className =
         "status";
-
 
     box.textContent =
         "";
@@ -2357,20 +2604,17 @@ function hideBoxes(){
         "show"
     );
 
-
     document.getElementById(
         "newBox"
     ).classList.remove(
         "show"
     );
 
-
     document.getElementById(
         "replaceButton"
     ).classList.add(
         "hidden"
     );
-
 
     document.getElementById(
         "replaceButton"
@@ -2390,7 +2634,6 @@ function disableButtons(disabled){
         "uploadButton"
     ).disabled =
         disabled;
-
 
     document.getElementById(
         "replaceButton"
