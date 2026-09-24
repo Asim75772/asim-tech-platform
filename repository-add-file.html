@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -225,41 +224,63 @@ margin-top:7px;
 line-height:1.5;
 }
 
+/* =========================
+   FILE DROP AREA
+========================= */
+
 .drop-zone{
 border:2px dashed #30363d;
-border-radius:8px;
-padding:45px 20px;
+border-radius:10px;
+padding:40px 20px;
 text-align:center;
 cursor:pointer;
 transition:.2s;
+background:#0d1117;
 }
 
 .drop-zone:hover,
 .drop-zone.drag{
 border-color:#58a6ff;
-background:#0d1117;
+background:#161b22;
 }
 
 .drop-icon{
-font-size:42px;
+font-size:46px;
 margin-bottom:12px;
 }
 
 .drop-title{
-font-size:15px;
+font-size:16px;
 font-weight:600;
-margin-bottom:7px;
+margin-bottom:8px;
 }
 
 .drop-subtitle{
 color:#8b949e;
 font-size:13px;
+margin-bottom:5px;
+}
+
+.choose-file-button{
+margin-top:16px;
+background:#1f6feb;
+border:1px solid #1f6feb;
+color:white;
+padding:11px 20px;
+border-radius:7px;
+cursor:pointer;
+font-size:14px;
+font-weight:600;
+}
+
+.choose-file-button:hover{
+background:#388bfd;
 }
 
 .file-info{
 display:none;
 margin-top:15px;
-padding:13px;
+padding:14px;
 background:#0d1117;
 border:1px solid #30363d;
 border-radius:6px;
@@ -280,6 +301,16 @@ color:#8b949e;
 font-size:12px;
 margin-top:5px;
 }
+
+.file-type{
+color:#8b949e;
+font-size:12px;
+margin-top:4px;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
 
 .actions{
 display:flex;
@@ -334,6 +365,10 @@ opacity:.5;
 cursor:not-allowed;
 }
 
+/* =========================
+   MESSAGE
+========================= */
+
 .message{
 display:none;
 padding:12px 14px;
@@ -359,11 +394,72 @@ border:1px solid #f85149;
 color:#ff7b72;
 }
 
+.message.info{
+background:rgba(31,111,235,.12);
+border:1px solid #1f6feb;
+color:#58a6ff;
+}
+
+/* =========================
+   PROGRESS
+========================= */
+
+.progress-container{
+display:none;
+margin-top:18px;
+}
+
+.progress-container.show{
+display:block;
+}
+
+.progress-label{
+font-size:12px;
+color:#8b949e;
+margin-bottom:7px;
+}
+
+.progress{
+height:8px;
+background:#30363d;
+border-radius:10px;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:#238636;
+transition:width .3s;
+}
+
+/* =========================
+   LOADING
+========================= */
+
 .loading{
 padding:60px 20px;
 text-align:center;
 color:#8b949e;
 font-size:15px;
+}
+
+.spinner{
+display:inline-block;
+width:20px;
+height:20px;
+border:3px solid #30363d;
+border-top-color:#58a6ff;
+border-radius:50%;
+animation:spin 1s linear infinite;
+vertical-align:middle;
+margin-right:8px;
+}
+
+@keyframes spin{
+to{
+transform:rotate(360deg);
+}
 }
 
 footer{
@@ -372,6 +468,10 @@ padding:45px 10px;
 color:#6e7681;
 font-size:12px;
 }
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:600px){
 
@@ -423,6 +523,19 @@ width:100%;
 min-width:0;
 }
 
+.choose-file-button{
+width:100%;
+}
+
+.actions{
+flex-direction:column;
+}
+
+.actions .btn{
+width:100%;
+text-align:center;
+}
+
 }
 
 </style>
@@ -431,6 +544,10 @@ min-width:0;
 
 <body>
 
+
+<!-- =========================
+     NAVBAR
+========================= -->
 
 <nav class="navbar">
 
@@ -453,6 +570,10 @@ Dashboard
 </nav>
 
 
+<!-- =========================
+     MAIN
+========================= -->
+
 <div class="container">
 
 
@@ -474,13 +595,23 @@ Create a new file or upload a file to this repository.
 </div>
 
 
+<!-- LOADING -->
+
 <div id="loading" class="loading">
+
+<span class="spinner"></span>
+
 Loading repository and branches...
+
 </div>
 
 
+<!-- MAIN CONTENT -->
+
 <div id="mainContent" style="display:none;">
 
+
+<!-- REPOSITORY -->
 
 <div class="repo-box">
 
@@ -520,11 +651,17 @@ class="branch-info">
 </div>
 
 
+<!-- MESSAGE -->
+
 <div id="message" class="message"></div>
 
 
+<!-- CARD -->
+
 <div class="card">
 
+
+<!-- TABS -->
 
 <div class="tabs">
 
@@ -550,7 +687,9 @@ id="uploadTab">
 </div>
 
 
-<!-- CREATE FILE -->
+<!-- =========================
+     CREATE FILE
+========================= -->
 
 <div
 id="createPanel"
@@ -575,8 +714,10 @@ Examples:
 
 <strong>index.html</strong>
 •
+
 <strong>css/style.css</strong>
 •
+
 <strong>js/app.js</strong>
 
 </div>
@@ -624,7 +765,9 @@ id="createButton">
 </div>
 
 
-<!-- UPLOAD FILE -->
+<!-- =========================
+     UPLOAD FILE
+========================= -->
 
 <div
 id="uploadPanel"
@@ -638,54 +781,92 @@ Select file
 </label>
 
 
+<!-- FILE DROP ZONE -->
+
 <div
 class="drop-zone"
 id="dropZone">
+
 
 <div class="drop-icon">
 📁
 </div>
 
+
 <div class="drop-title">
-Click to select a file
+Choose a file to upload
 </div>
+
+
+<div class="drop-subtitle">
+Select a file from your phone or computer
+</div>
+
 
 <div class="drop-subtitle">
 or drag & drop your file here
 </div>
 
+
+<button
+type="button"
+class="choose-file-button"
+id="chooseFileButton">
+
+📁 Choose File
+
+</button>
+
+
 <input
 type="file"
 id="fileInput"
-hidden
+style="display:none;"
 >
 
 </div>
 
 
 <div class="help">
-Maximum file size: <strong>50 MB</strong>
+
+Maximum file size:
+
+<strong>50 MB</strong>
+
 </div>
 
+
+<!-- SELECTED FILE -->
 
 <div
 id="fileInfo"
 class="file-info">
+
 
 <div
 id="selectedFileName"
 class="file-name">
 </div>
 
+
 <div
 id="selectedFileSize"
 class="file-size">
 </div>
 
+
+<div
+id="selectedFileType"
+class="file-type">
 </div>
+
 
 </div>
 
+</div>
+
+
+<!-- FILE PATH -->
 
 <div class="field">
 
@@ -701,7 +882,7 @@ placeholder="assets/myfile.png"
 
 <div class="help">
 
-The uploaded file will be stored securely in the
+The uploaded file will be stored in the
 <strong>repository-files</strong>
 storage bucket.
 
@@ -709,6 +890,32 @@ storage bucket.
 
 </div>
 
+
+<!-- PROGRESS -->
+
+<div
+id="progressContainer"
+class="progress-container">
+
+<div class="progress-label">
+
+Uploading file...
+
+</div>
+
+<div class="progress">
+
+<div
+id="progressBar"
+class="progress-bar">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ACTIONS -->
 
 <div class="actions">
 
@@ -733,6 +940,7 @@ disabled>
 </button>
 
 </div>
+
 
 </div>
 
@@ -763,6 +971,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
+
 const supabaseClient =
 window.supabase.createClient(
 SUPABASE_URL,
@@ -771,7 +980,7 @@ SUPABASE_KEY
 
 
 /* =====================================================
-   URL
+   URL PARAMETERS
 ===================================================== */
 
 const params =
@@ -794,7 +1003,7 @@ params.get("branch");
 
 
 /* =====================================================
-   GLOBALS
+   GLOBAL VARIABLES
 ===================================================== */
 
 let currentUser = null;
@@ -860,6 +1069,9 @@ document.getElementById("fileInput");
 const dropZone =
 document.getElementById("dropZone");
 
+const chooseFileButton =
+document.getElementById("chooseFileButton");
+
 const fileInfo =
 document.getElementById("fileInfo");
 
@@ -868,6 +1080,9 @@ document.getElementById("selectedFileName");
 
 const selectedFileSize =
 document.getElementById("selectedFileSize");
+
+const selectedFileType =
+document.getElementById("selectedFileType");
 
 const uploadPath =
 document.getElementById("uploadPath");
@@ -880,6 +1095,12 @@ document.getElementById("cancelCreate");
 
 const cancelUpload =
 document.getElementById("cancelUpload");
+
+const progressContainer =
+document.getElementById("progressContainer");
+
+const progressBar =
+document.getElementById("progressBar");
 
 
 /* =====================================================
@@ -907,7 +1128,7 @@ behavior:"smooth"
 
 
 /* =====================================================
-   INIT
+   INITIALIZE
 ===================================================== */
 
 async function init(){
@@ -943,8 +1164,10 @@ await loadBranches();
 
 setupLinks();
 
+
 loading.style.display =
 "none";
+
 
 mainContent.style.display =
 "block";
@@ -1028,7 +1251,8 @@ if(
 repository.is_private &&
 (
 !currentUser ||
-currentUser.id !== repository.owner_id
+currentUser.id !==
+repository.owner_id
 )
 ){
 
@@ -1096,7 +1320,7 @@ throw new Error(
 let selected = null;
 
 
-/* URL branch ID */
+/* Branch ID */
 
 if(requestedBranchId){
 
@@ -1110,7 +1334,7 @@ requestedBranchId
 }
 
 
-/* URL branch name */
+/* Branch name */
 
 if(
 !selected &&
@@ -1366,6 +1590,13 @@ fileInfo.classList.remove(
 
 uploadButton.disabled =
 true;
+
+progressContainer.classList.remove(
+"show"
+);
+
+progressBar.style.width =
+"0%";
 
 }
 
@@ -1623,10 +1854,7 @@ return;
 }
 
 
-/*
-   CHECK DUPLICATE
-   ONLY INSIDE CURRENT BRANCH
-*/
+/* DUPLICATE CHECK */
 
 const {
 data:existing,
@@ -1770,17 +1998,46 @@ createButton.textContent =
 
 
 /* =====================================================
-   FILE SELECT
+   CHOOSE FILE BUTTON
 ===================================================== */
 
-dropZone.addEventListener(
+chooseFileButton.addEventListener(
 "click",
-function(){
+function(event){
+
+event.stopPropagation();
 
 fileInput.click();
 
 });
 
+
+/* =====================================================
+   DROP ZONE CLICK
+===================================================== */
+
+dropZone.addEventListener(
+"click",
+function(event){
+
+if(
+event.target ===
+dropZone ||
+event.target.closest(".drop-icon") ||
+event.target.closest(".drop-title") ||
+event.target.closest(".drop-subtitle")
+){
+
+fileInput.click();
+
+}
+
+});
+
+
+/* =====================================================
+   FILE SELECT
+===================================================== */
 
 fileInput.addEventListener(
 "change",
@@ -1788,7 +2045,7 @@ function(){
 
 if(
 fileInput.files &&
-fileInput.files[0]
+fileInput.files.length > 0
 ){
 
 handleSelectedFile(
@@ -1801,7 +2058,7 @@ fileInput.files[0]
 
 
 /* =====================================================
-   DRAG & DROP
+   DRAG OVER
 ===================================================== */
 
 dropZone.addEventListener(
@@ -1817,6 +2074,10 @@ dropZone.classList.add(
 });
 
 
+/* =====================================================
+   DRAG LEAVE
+===================================================== */
+
 dropZone.addEventListener(
 "dragleave",
 function(){
@@ -1827,6 +2088,10 @@ dropZone.classList.remove(
 
 });
 
+
+/* =====================================================
+   DROP
+===================================================== */
 
 dropZone.addEventListener(
 "drop",
@@ -1855,7 +2120,7 @@ file
 
 
 /* =====================================================
-   HANDLE SELECTED FILE
+   HANDLE FILE
 ===================================================== */
 
 function handleSelectedFile(file){
@@ -1866,9 +2131,12 @@ file.size >
 ){
 
 showMessage(
-"File size cannot exceed 50 MB.",
+"❌ File size cannot exceed 50 MB.",
 "error"
 );
+
+fileInput.value =
+"";
 
 return;
 
@@ -1880,12 +2148,21 @@ file;
 
 
 selectedFileName.textContent =
-file.name;
+"📄 " + file.name;
 
 
 selectedFileSize.textContent =
+"Size: " +
 formatFileSize(
 file.size
+);
+
+
+selectedFileType.textContent =
+"Type: " +
+(
+file.type ||
+"Unknown"
 );
 
 
@@ -1893,6 +2170,8 @@ fileInfo.classList.add(
 "show"
 );
 
+
+/* Automatically set path */
 
 if(!uploadPath.value){
 
@@ -1905,11 +2184,17 @@ file.name;
 uploadButton.disabled =
 false;
 
+
+showMessage(
+"File selected successfully. You can now upload it.",
+"info"
+);
+
 }
 
 
 /* =====================================================
-   UPLOAD
+   UPLOAD BUTTON
 ===================================================== */
 
 uploadButton.addEventListener(
@@ -1917,6 +2202,10 @@ uploadButton.addEventListener(
 uploadFile
 );
 
+
+/* =====================================================
+   UPLOAD FILE
+===================================================== */
 
 async function uploadFile(){
 
@@ -1951,7 +2240,7 @@ return;
 if(!selectedFile){
 
 showMessage(
-"Please select a file.",
+"Please select a file first.",
 "error"
 );
 
@@ -1985,10 +2274,7 @@ return;
 }
 
 
-/*
-   CHECK DUPLICATE
-   ONLY INSIDE CURRENT BRANCH
-*/
+/* DUPLICATE CHECK */
 
 const {
 data:existing,
@@ -2045,14 +2331,19 @@ uploadButton.textContent =
 "Uploading...";
 
 
+progressContainer.classList.add(
+"show"
+);
+
+progressBar.style.width =
+"10%";
+
+
 try{
 
-/*
+/* =========================
    STORAGE PATH
-
-   Includes repository,
-   branch and file path.
-*/
+========================= */
 
 const storagePath =
 repositoryId +
@@ -2062,9 +2353,13 @@ currentBranch.id +
 path;
 
 
-/*
-   UPLOAD TO STORAGE
-*/
+progressBar.style.width =
+"25%";
+
+
+/* =========================
+   UPLOAD TO SUPABASE STORAGE
+========================= */
 
 const {
 error:storageError
@@ -2093,9 +2388,13 @@ throw storageError;
 }
 
 
-/*
-   INSERT DATABASE RECORD
-*/
+progressBar.style.width =
+"65%";
+
+
+/* =========================
+   DATABASE RECORD
+========================= */
 
 const {
 error:dbError
@@ -2137,10 +2436,7 @@ true
 
 if(dbError){
 
-/*
-   Try to remove uploaded
-   storage file if DB insert fails.
-*/
+/* Remove uploaded file */
 
 try{
 
@@ -2165,8 +2461,12 @@ throw dbError;
 }
 
 
+progressBar.style.width =
+"100%";
+
+
 showMessage(
-"File '" +
+"✅ File '" +
 path +
 "' uploaded successfully to branch '" +
 currentBranch.name +
@@ -2174,6 +2474,8 @@ currentBranch.name +
 "success"
 );
 
+
+/* RESET */
 
 selectedFile =
 null;
@@ -2189,13 +2491,39 @@ fileInfo.classList.remove(
 );
 
 
+setTimeout(
+function(){
+
+progressContainer.classList.remove(
+"show"
+);
+
+progressBar.style.width =
+"0%";
+
+},
+1200
+);
+
+
 }catch(error){
 
 console.error(error);
 
+progressContainer.classList.remove(
+"show"
+);
+
+progressBar.style.width =
+"0%";
+
+
 showMessage(
+"❌ " +
+(
 error.message ||
-"Unable to upload file.",
+"Unable to upload file."
+),
 "error"
 );
 
@@ -2265,7 +2593,7 @@ bytes /
 
 
 /* =====================================================
-   START
+   START APPLICATION
 ===================================================== */
 
 init();
@@ -2275,4 +2603,3 @@ init();
 </body>
 
 </html>
-
