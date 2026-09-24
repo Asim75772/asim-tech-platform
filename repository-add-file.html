@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Add File — ASIM TECH</title>
+<title>Repository — ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -28,19 +25,20 @@ min-height:100vh;
 }
 
 .navbar{
-height:64px;
+min-height:64px;
 background:#010409;
 border-bottom:1px solid #30363d;
 display:flex;
 align-items:center;
-padding:0 5%;
-gap:25px;
+padding:12px 5%;
+gap:24px;
+flex-wrap:wrap;
 }
 
 .logo{
 font-size:21px;
 font-weight:700;
-color:white;
+color:#fff;
 }
 
 .navbar a{
@@ -54,281 +52,87 @@ color:#58a6ff;
 }
 
 .container{
-width:92%;
-max-width:1000px;
-margin:30px auto;
+width:94%;
+max-width:1250px;
+margin:28px auto;
 }
 
-.back{
-display:inline-block;
-margin-bottom:20px;
-color:#58a6ff;
-text-decoration:none;
-font-size:14px;
-}
-
-.back:hover{
-text-decoration:underline;
-}
-
-.header{
-border-bottom:1px solid #30363d;
-padding-bottom:20px;
-margin-bottom:22px;
-}
-
-.header h1{
-font-size:26px;
-margin-bottom:8px;
-}
-
-.header p{
-color:#8b949e;
-font-size:14px;
-}
-
-.repo-box{
-background:#161b22;
-border:1px solid #30363d;
-border-radius:6px;
-padding:14px 15px;
-margin-bottom:15px;
-font-size:14px;
+.loading{
+padding:70px 20px;
+text-align:center;
 color:#8b949e;
 }
 
-.repo-box strong{
-color:#58a6ff;
+.error{
+display:none;
+background:#3d1f25;
+border:1px solid #f85149;
+color:#ff7b72;
+padding:14px;
+border-radius:8px;
+margin-bottom:20px;
 }
 
-.branch-box{
-background:#161b22;
-border:1px solid #30363d;
-border-radius:6px;
-padding:15px;
+.repo-header{
 margin-bottom:20px;
+}
+
+.repo-title{
 display:flex;
 align-items:center;
-gap:12px;
-flex-wrap:wrap;
-}
-
-.branch-label{
-font-weight:600;
-}
-
-.branch-select{
-background:#21262d;
-border:1px solid #30363d;
-color:#e6edf3;
-padding:9px 12px;
-border-radius:6px;
-font-size:14px;
-min-width:220px;
-outline:none;
-cursor:pointer;
-}
-
-.branch-select:focus{
-border-color:#58a6ff;
-}
-
-.branch-info{
-color:#8b949e;
-font-size:13px;
-}
-
-.card{
-background:#161b22;
-border:1px solid #30363d;
-border-radius:8px;
-padding:22px;
-}
-
-.tabs{
-display:flex;
 gap:8px;
-margin-bottom:22px;
-border-bottom:1px solid #30363d;
-padding-bottom:12px;
-}
-
-.tab{
-border:1px solid #30363d;
-background:#21262d;
-color:#e6edf3;
-padding:9px 15px;
-border-radius:6px;
-cursor:pointer;
-font-size:14px;
-}
-
-.tab:hover{
-background:#30363d;
-}
-
-.tab.active{
-background:#238636;
-border-color:#238636;
-color:white;
-}
-
-.panel{
-display:none;
-}
-
-.panel.active{
-display:block;
-}
-
-.field{
-margin-bottom:20px;
-}
-
-label{
-display:block;
-font-size:14px;
-font-weight:600;
-margin-bottom:8px;
-}
-
-input[type="text"],
-textarea{
-width:100%;
-background:#0d1117;
-border:1px solid #30363d;
-border-radius:6px;
-color:#e6edf3;
-padding:11px 12px;
-font-size:14px;
-outline:none;
-}
-
-input[type="text"]:focus,
-textarea:focus{
-border-color:#58a6ff;
-box-shadow:0 0 0 2px rgba(88,166,255,.15);
-}
-
-textarea{
-min-height:360px;
-resize:vertical;
-font-family:monospace;
-line-height:1.5;
-}
-
-.help{
-color:#8b949e;
-font-size:12px;
-margin-top:7px;
-line-height:1.5;
-}
-
-/* =========================
-   FILE DROP AREA
-========================= */
-
-.drop-zone{
-border:2px dashed #30363d;
-border-radius:10px;
-padding:40px 20px;
-text-align:center;
-cursor:pointer;
-transition:.2s;
-background:#0d1117;
-}
-
-.drop-zone:hover,
-.drop-zone.drag{
-border-color:#58a6ff;
-background:#161b22;
-}
-
-.drop-icon{
-font-size:46px;
-margin-bottom:12px;
-}
-
-.drop-title{
-font-size:16px;
-font-weight:600;
-margin-bottom:8px;
-}
-
-.drop-subtitle{
-color:#8b949e;
-font-size:13px;
-margin-bottom:5px;
-}
-
-.choose-file-button{
-margin-top:16px;
-background:#1f6feb;
-border:1px solid #1f6feb;
-color:white;
-padding:11px 20px;
-border-radius:7px;
-cursor:pointer;
-font-size:14px;
-font-weight:600;
-}
-
-.choose-file-button:hover{
-background:#388bfd;
-}
-
-.file-info{
-display:none;
-margin-top:15px;
-padding:14px;
-background:#0d1117;
-border:1px solid #30363d;
-border-radius:6px;
-}
-
-.file-info.show{
-display:block;
-}
-
-.file-name{
-font-weight:600;
-color:#e6edf3;
-word-break:break-word;
-}
-
-.file-size{
-color:#8b949e;
-font-size:12px;
-margin-top:5px;
-}
-
-.file-type{
-color:#8b949e;
-font-size:12px;
-margin-top:4px;
-}
-
-/* =========================
-   ACTION BUTTONS
-========================= */
-
-.actions{
-display:flex;
-gap:10px;
-margin-top:22px;
 flex-wrap:wrap;
+font-size:26px;
+margin-bottom:10px;
+}
+
+.owner{
+color:#58a6ff;
+}
+
+.repo-slash{
+color:#8b949e;
+}
+
+.visibility{
+border:1px solid #30363d;
+border-radius:20px;
+padding:4px 10px;
+font-size:12px;
+color:#8b949e;
+}
+
+.description{
+color:#8b949e;
+font-size:14px;
+margin-bottom:15px;
+}
+
+.repo-info{
+display:flex;
+align-items:center;
+gap:9px;
+flex-wrap:wrap;
+}
+
+.info-item{
+font-size:13px;
+color:#8b949e;
 }
 
 .btn{
 border:1px solid #30363d;
 background:#21262d;
 color:#e6edf3;
-padding:9px 16px;
-border-radius:6px;
+padding:8px 13px;
+border-radius:7px;
+font-size:13px;
 cursor:pointer;
-font-size:14px;
 text-decoration:none;
-display:inline-block;
+display:inline-flex;
+align-items:center;
+gap:6px;
+white-space:nowrap;
 }
 
 .btn:hover{
@@ -345,11 +149,6 @@ color:white;
 background:#2ea043;
 }
 
-.btn-green:disabled{
-opacity:.5;
-cursor:not-allowed;
-}
-
 .btn-blue{
 background:#1f6feb;
 border-color:#1f6feb;
@@ -360,133 +159,343 @@ color:white;
 background:#388bfd;
 }
 
-.btn-blue:disabled{
-opacity:.5;
-cursor:not-allowed;
+.btn-red{
+background:#da3633;
+border-color:#da3633;
+color:white;
 }
 
-/* =========================
-   MESSAGE
-========================= */
-
-.message{
-display:none;
-padding:12px 14px;
-border-radius:6px;
+.tabs{
+display:flex;
+border-bottom:1px solid #30363d;
+overflow-x:auto;
 margin-bottom:18px;
-font-size:14px;
-line-height:1.5;
 }
 
-.message.show{
-display:block;
-}
-
-.message.success{
-background:rgba(46,160,67,.15);
-border:1px solid #238636;
-color:#3fb950;
-}
-
-.message.error{
-background:rgba(248,81,73,.12);
-border:1px solid #f85149;
-color:#ff7b72;
-}
-
-.message.info{
-background:rgba(31,111,235,.12);
-border:1px solid #1f6feb;
-color:#58a6ff;
-}
-
-/* =========================
-   PROGRESS
-========================= */
-
-.progress-container{
-display:none;
-margin-top:18px;
-}
-
-.progress-container.show{
-display:block;
-}
-
-.progress-label{
-font-size:12px;
+.tab{
+padding:12px 16px;
 color:#8b949e;
-margin-bottom:7px;
+text-decoration:none;
+font-size:14px;
+white-space:nowrap;
 }
 
-.progress{
-height:8px;
-background:#30363d;
-border-radius:10px;
+.tab.active{
+color:#fff;
+font-weight:600;
+border-bottom:2px solid #f78166;
+}
+
+.toolbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin-bottom:14px;
+flex-wrap:wrap;
+}
+
+.toolbar-left{
+display:flex;
+gap:8px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.toolbar-right{
+display:flex;
+flex:1;
+justify-content:flex-end;
+}
+
+.search{
+width:300px;
+max-width:100%;
+background:#0d1117;
+border:1px solid #30363d;
+border-radius:7px;
+padding:9px 12px;
+color:#fff;
+outline:none;
+}
+
+.search:focus{
+border-color:#58a6ff;
+}
+
+.branch-wrapper,
+.add-wrapper{
+position:relative;
+}
+
+.branch-menu,
+.add-menu{
+display:none;
+position:absolute;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:8px;
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+z-index:3000;
 overflow:hidden;
 }
 
-.progress-bar{
-height:100%;
-width:0%;
-background:#238636;
-transition:width .3s;
+.branch-menu{
+top:44px;
+left:0;
+width:280px;
 }
 
-/* =========================
-   LOADING
-========================= */
+.add-menu{
+top:44px;
+right:0;
+width:220px;
+}
 
-.loading{
-padding:60px 20px;
+.branch-menu.show,
+.add-menu.show{
+display:block;
+}
+
+.branch-item{
+display:block;
+width:100%;
+padding:12px 15px;
+border:0;
+background:transparent;
+color:#e6edf3;
+text-align:left;
+cursor:pointer;
+}
+
+.branch-item:hover{
+background:#21262d;
+}
+
+.add-menu a{
+display:block;
+padding:12px 15px;
+color:#e6edf3;
+text-decoration:none;
+}
+
+.add-menu a:hover{
+background:#21262d;
+color:#58a6ff;
+}
+
+.commit-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:7px 7px 0 0;
+padding:12px 15px;
+font-size:13px;
+color:#8b949e;
+}
+
+.commit{
+color:#58a6ff;
+font-weight:600;
+}
+
+.file-list{
+border:1px solid #30363d;
+border-top:0;
+background:#0d1117;
+border-radius:0 0 7px 7px;
+overflow:hidden;
+}
+
+.file-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+padding:13px 15px;
+border-bottom:1px solid #21262d;
+}
+
+.file-row:last-child{
+border-bottom:0;
+}
+
+.file-row:hover{
+background:#161b22;
+}
+
+.file-main{
+display:flex;
+align-items:center;
+gap:12px;
+min-width:0;
+}
+
+.file-icon{
+font-size:21px;
+width:28px;
+text-align:center;
+}
+
+.file-name{
+color:#58a6ff;
+font-size:14px;
+word-break:break-word;
+}
+
+.file-sub{
+color:#8b949e;
+font-size:11px;
+margin-top:4px;
+}
+
+.file-meta{
+display:flex;
+align-items:center;
+gap:8px;
+flex-wrap:wrap;
+}
+
+.type-badge{
+border:1px solid #30363d;
+border-radius:15px;
+padding:3px 8px;
+font-size:10px;
+color:#8b949e;
+}
+
+.file-actions{
+display:flex;
+gap:5px;
+flex-wrap:wrap;
+}
+
+.empty{
+padding:55px 20px;
 text-align:center;
 color:#8b949e;
-font-size:15px;
 }
 
-.spinner{
-display:inline-block;
-width:20px;
-height:20px;
-border:3px solid #30363d;
-border-top-color:#58a6ff;
-border-radius:50%;
-animation:spin 1s linear infinite;
-vertical-align:middle;
-margin-right:8px;
+.readme{
+margin-top:25px;
+border:1px solid #30363d;
+border-radius:7px;
+overflow:hidden;
 }
 
-@keyframes spin{
-to{
-transform:rotate(360deg);
-}
-}
-
-footer{
-text-align:center;
-padding:45px 10px;
-color:#6e7681;
-font-size:12px;
+.readme-header{
+background:#161b22;
+border-bottom:1px solid #30363d;
+padding:14px;
+font-weight:600;
 }
 
-/* =========================
-   MOBILE
-========================= */
+.readme-body{
+padding:24px;
+line-height:1.7;
+color:#c9d1d9;
+}
 
-@media(max-width:600px){
+.readme-body h1,
+.readme-body h2,
+.readme-body h3{
+color:#fff;
+margin-bottom:12px;
+}
+
+/* ===============================
+   LIVE PREVIEW MODAL
+================================ */
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.85);
+align-items:center;
+justify-content:center;
+z-index:9999;
+padding:12px;
+}
+
+.modal.show{
+display:flex;
+}
+
+.modal-card{
+width:100%;
+max-width:1200px;
+height:94vh;
+background:#161b22;
+border:1px solid #30363d;
+border-radius:10px;
+padding:14px;
+display:flex;
+flex-direction:column;
+box-shadow:0 20px 60px rgba(0,0,0,.7);
+}
+
+.modal-title{
+font-size:19px;
+font-weight:600;
+padding:5px 0 12px;
+}
+
+.modal-text{
+flex:1;
+min-height:0;
+}
+
+.preview-frame{
+width:100%;
+height:100%;
+border:1px solid #30363d;
+border-radius:7px;
+background:#fff;
+display:block;
+}
+
+.modal-actions{
+display:flex;
+justify-content:flex-end;
+gap:8px;
+padding-top:10px;
+}
+
+.toast{
+position:fixed;
+right:20px;
+bottom:20px;
+background:#161b22;
+border:1px solid #30363d;
+color:#e6edf3;
+padding:13px 17px;
+border-radius:8px;
+display:none;
+z-index:10000;
+}
+
+.toast.show{
+display:block;
+}
+
+.toast.success{
+border-color:#238636;
+color:#56d364;
+}
+
+.toast.error{
+border-color:#f85149;
+color:#ff7b72;
+}
+
+@media(max-width:700px){
 
 .navbar{
-height:58px;
-padding:0 4%;
+padding:12px 4%;
 gap:14px;
-}
-
-.logo{
-font-size:18px;
-}
-
-.navbar a{
-font-size:12px;
 }
 
 .container{
@@ -494,46 +503,39 @@ width:94%;
 margin:20px auto;
 }
 
-.header h1{
-font-size:23px;
+.repo-title{
+font-size:21px;
 }
 
-.card{
-padding:16px;
-}
-
-.tabs{
-overflow-x:auto;
-}
-
-.tab{
-white-space:nowrap;
-}
-
-textarea{
-min-height:280px;
-}
-
-.drop-zone{
-padding:35px 15px;
-}
-
-.branch-select{
-width:100%;
-min-width:0;
-}
-
-.choose-file-button{
+.toolbar-left,
+.toolbar-right{
 width:100%;
 }
 
-.actions{
+.toolbar-right{
+justify-content:flex-start;
+}
+
+.search{
+width:100%;
+}
+
+.file-row{
 flex-direction:column;
+align-items:flex-start;
 }
 
-.actions .btn{
+.file-meta{
 width:100%;
-text-align:center;
+}
+
+.modal-card{
+height:94vh;
+padding:10px;
+}
+
+.preview-frame{
+min-height:400px;
 }
 
 }
@@ -544,23 +546,14 @@ text-align:center;
 
 <body>
 
-
-<!-- =========================
-     NAVBAR
-========================= -->
-
 <nav class="navbar">
 
 <div class="logo">
 ⚡ ASIM TECH
 </div>
 
-<a href="index.html">
-Home
-</a>
-
 <a href="repositories.html">
-Repositories
+← Repositories
 </a>
 
 <a href="dashboard.html">
@@ -570,195 +563,231 @@ Dashboard
 </nav>
 
 
-<!-- =========================
-     MAIN
-========================= -->
-
 <div class="container">
 
-
-<a href="#" id="backBtn" class="back">
-← Back to repository
-</a>
-
-
-<div class="header">
-
-<h1>
-＋ Add file
-</h1>
-
-<p>
-Create a new file or upload a file to this repository.
-</p>
-
-</div>
-
-
-<!-- LOADING -->
-
 <div id="loading" class="loading">
-
-<span class="spinner"></span>
-
-Loading repository and branches...
-
+Loading repository...
 </div>
 
-
-<!-- MAIN CONTENT -->
-
-<div id="mainContent" style="display:none;">
+<div id="error" class="error"></div>
 
 
-<!-- REPOSITORY -->
+<div id="content" style="display:none;">
 
-<div class="repo-box">
+<!-- =========================
+     REPOSITORY HEADER
+========================= -->
 
-Repository:
+<div class="repo-header">
+
+<div class="repo-title">
+
+<span
+id="repoOwner"
+class="owner">
+ASIM TECH
+</span>
+
+<span class="repo-slash">
+/
+</span>
 
 <strong id="repoName">
-Loading...
+—
 </strong>
 
+<span
+id="visibility"
+class="visibility">
+—
+</span>
+
 </div>
 
-
-<!-- BRANCH -->
-
-<div class="branch-box">
-
-<div class="branch-label">
-🌿 Branch:
-</div>
-
-<select
-id="branchSelect"
-class="branch-select">
-
-<option value="">
-Loading branches...
-</option>
-
-</select>
 
 <div
-id="branchInfo"
-class="branch-info">
+id="repoDescription"
+class="description">
+—
+</div>
+
+
+<div class="repo-info">
+
+<span class="info-item">
+⭐ <strong id="starCount">0</strong> stars
+</span>
+
+<span class="info-item">
+🍴 <strong id="forkCount">0</strong> forks
+</span>
+
+<button
+id="starButton"
+class="btn"
+onclick="toggleStar()">
+☆ Star
+</button>
+
+<a
+id="editRepoLink"
+class="btn"
+href="#">
+⚙️ Settings
+</a>
+
+<button
+id="publishButton"
+class="btn btn-green"
+onclick="publishRepository()"
+style="display:none;">
+🚀 Publish
+</button>
+
+<a
+id="publishedWebsiteButton"
+class="btn btn-blue"
+href="#"
+target="_blank"
+style="display:none;">
+🌐 Published Website
+</a>
 
 </div>
 
 </div>
 
 
-<!-- MESSAGE -->
-
-<div id="message" class="message"></div>
-
-
-<!-- CARD -->
-
-<div class="card">
-
-
-<!-- TABS -->
+<!-- =========================
+     TABS
+========================= -->
 
 <div class="tabs">
 
-<button
-type="button"
-class="tab active"
-id="createTab">
+<a class="tab active" href="#">
+Code
+</a>
 
-✏️ Create file
-
-</button>
-
-
-<button
-type="button"
+<a
 class="tab"
-id="uploadTab">
+id="issuesLink"
+href="#">
+Issues
+</a>
 
-📤 Upload file
+<a
+class="tab"
+id="pullRequestsLink"
+href="#">
+Pull requests
+</a>
 
-</button>
+<a
+class="tab"
+id="actionsLink"
+href="#">
+Actions
+</a>
+
+<a
+class="tab"
+href="#">
+Projects
+</a>
 
 </div>
 
 
 <!-- =========================
-     CREATE FILE
+     TOOLBAR
 ========================= -->
 
+<div class="toolbar">
+
+<div class="toolbar-left">
+
+<div class="branch-wrapper">
+
+<button
+class="btn"
+onclick="toggleBranchMenu()">
+
+🌿
+<span id="branchName">
+main
+</span>
+▾
+
+</button>
+
+
 <div
-id="createPanel"
-class="panel active">
+id="branchMenu"
+class="branch-menu">
 
+<div
+id="branchList">
+</div>
 
-<div class="field">
-
-<label for="filePath">
-File name / path
-</label>
-
-<input
-type="text"
-id="filePath"
-placeholder="example.html"
-/>
-
-<div class="help">
-
-Examples:
-
-<strong>index.html</strong>
-•
-
-<strong>css/style.css</strong>
-•
-
-<strong>js/app.js</strong>
+<button
+class="branch-item"
+onclick="createNewBranch()">
+＋ Create new branch
+</button>
 
 </div>
 
 </div>
 
-
-<div class="field">
-
-<label for="fileContent">
-File content
-</label>
-
-<textarea
-id="fileContent"
-placeholder="Write your file content here..."
-></textarea>
-
-</div>
-
-
-<div class="actions">
 
 <a
-href="#"
-id="cancelCreate"
-class="btn">
-
-Cancel
-
+id="explorerButton"
+class="btn"
+href="#">
+📂 Explorer
 </a>
 
 
+<div class="add-wrapper">
+
 <button
-type="button"
 class="btn btn-green"
-id="createButton">
-
-✓ Create file
-
+onclick="toggleAddMenu()">
+＋ Add file ▾
 </button>
+
+
+<div
+id="addMenu"
+class="add-menu">
+
+<a
+id="createFileLink"
+href="#">
+📝 Create new file
+</a>
+
+<a
+id="uploadFileLink"
+href="#">
+⬆️ Upload files
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="toolbar-right">
+
+<input
+id="searchInput"
+class="search"
+type="search"
+placeholder="🔎 Go to file..."
+oninput="filterFiles()">
 
 </div>
 
@@ -766,204 +795,109 @@ id="createButton">
 
 
 <!-- =========================
-     UPLOAD FILE
+     COMMIT BAR
+========================= -->
+
+<div class="commit-bar">
+
+<span>
+🌿 Branch:
+<span
+id="commitBranch"
+class="commit">
+main
+</span>
+</span>
+
+<span id="fileCount">
+0 files
+</span>
+
+</div>
+
+
+<!-- =========================
+     FILE LIST
 ========================= -->
 
 <div
-id="uploadPanel"
-class="panel">
+id="fileList"
+class="file-list">
+
+<div class="empty">
+Loading files...
+</div>
+
+</div>
 
 
-<div class="field">
+<!-- =========================
+     README
+========================= -->
 
-<label>
-Select file
-</label>
+<div class="readme">
 
-
-<!-- FILE DROP ZONE -->
+<div class="readme-header">
+📖 README
+</div>
 
 <div
-class="drop-zone"
-id="dropZone">
+id="readmeBody"
+class="readme-body">
+Loading README...
+</div>
 
+</div>
 
-<div class="drop-icon">
-📁
+</div>
+
 </div>
 
 
-<div class="drop-title">
-Choose a file to upload
+<!-- ===============================
+     LIVE PREVIEW MODAL
+================================ -->
+
+<div
+id="modal"
+class="modal">
+
+<div class="modal-card">
+
+<div
+id="modalTitle"
+class="modal-title">
+🌐 HTML Preview
 </div>
 
-
-<div class="drop-subtitle">
-Select a file from your phone or computer
+<div
+id="modalText"
+class="modal-text">
 </div>
 
-
-<div class="drop-subtitle">
-or drag & drop your file here
-</div>
-
+<div class="modal-actions">
 
 <button
-type="button"
-class="choose-file-button"
-id="chooseFileButton">
-
-📁 Choose File
-
-</button>
-
-
-<input
-type="file"
-id="fileInput"
-style="display:none;"
->
-
-</div>
-
-
-<div class="help">
-
-Maximum file size:
-
-<strong>50 MB</strong>
-
-</div>
-
-
-<!-- SELECTED FILE -->
-
-<div
-id="fileInfo"
-class="file-info">
-
-
-<div
-id="selectedFileName"
-class="file-name">
-</div>
-
-
-<div
-id="selectedFileSize"
-class="file-size">
-</div>
-
-
-<div
-id="selectedFileType"
-class="file-type">
-</div>
-
-
-</div>
-
-</div>
-
-
-<!-- FILE PATH -->
-
-<div class="field">
-
-<label for="uploadPath">
-File path
-</label>
-
-<input
-type="text"
-id="uploadPath"
-placeholder="assets/myfile.png"
-/>
-
-<div class="help">
-
-The uploaded file will be stored in the
-<strong>repository-files</strong>
-storage bucket.
-
-</div>
-
-</div>
-
-
-<!-- PROGRESS -->
-
-<div
-id="progressContainer"
-class="progress-container">
-
-<div class="progress-label">
-
-Uploading file...
-
-</div>
-
-<div class="progress">
-
-<div
-id="progressBar"
-class="progress-bar">
-</div>
-
-</div>
-
-</div>
-
-
-<!-- ACTIONS -->
-
-<div class="actions">
-
-<a
-href="#"
-id="cancelUpload"
-class="btn">
-
-Cancel
-
-</a>
-
-
-<button
-type="button"
-class="btn btn-blue"
-id="uploadButton"
-disabled>
-
-📤 Upload file
-
+class="btn"
+onclick="closeModal()">
+✕ Close
 </button>
 
 </div>
 
-
-</div>
-
-
-</div>
-
 </div>
 
 </div>
 
 
-<footer>
-
-© 2026 ASIM TECH — Code. Create. Innovate.
-
-</footer>
+<div id="toast" class="toast"></div>
 
 
 <script>
 
-/* =====================================================
+/* =================================
    SUPABASE
-===================================================== */
+================================= */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -971,205 +905,147 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
-
 const supabaseClient =
-window.supabase.createClient(
+supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
 
 
-/* =====================================================
-   URL PARAMETERS
-===================================================== */
+/* =================================
+   URL
+================================= */
 
 const params =
 new URLSearchParams(
 window.location.search
 );
 
-
-const repositoryId =
+const repoId =
 params.get("repository_id") ||
 params.get("id");
 
-
-const requestedBranchId =
+const branchIdFromUrl =
 params.get("branch_id");
 
 
-const requestedBranchName =
-params.get("branch");
-
-
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
+/* =================================
+   GLOBAL
+================================= */
 
 let currentUser = null;
-
 let repository = null;
-
-let branches = [];
-
+let allBranches = [];
 let currentBranch = null;
-
-let selectedFile = null;
-
-
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
-const loading =
-document.getElementById("loading");
-
-const mainContent =
-document.getElementById("mainContent");
-
-const repoName =
-document.getElementById("repoName");
-
-const branchSelect =
-document.getElementById("branchSelect");
-
-const branchInfo =
-document.getElementById("branchInfo");
-
-const message =
-document.getElementById("message");
-
-const createTab =
-document.getElementById("createTab");
-
-const uploadTab =
-document.getElementById("uploadTab");
-
-const createPanel =
-document.getElementById("createPanel");
-
-const uploadPanel =
-document.getElementById("uploadPanel");
-
-const filePath =
-document.getElementById("filePath");
-
-const fileContent =
-document.getElementById("fileContent");
-
-const createButton =
-document.getElementById("createButton");
-
-const uploadButton =
-document.getElementById("uploadButton");
-
-const fileInput =
-document.getElementById("fileInput");
-
-const dropZone =
-document.getElementById("dropZone");
-
-const chooseFileButton =
-document.getElementById("chooseFileButton");
-
-const fileInfo =
-document.getElementById("fileInfo");
-
-const selectedFileName =
-document.getElementById("selectedFileName");
-
-const selectedFileSize =
-document.getElementById("selectedFileSize");
-
-const selectedFileType =
-document.getElementById("selectedFileType");
-
-const uploadPath =
-document.getElementById("uploadPath");
-
-const backBtn =
-document.getElementById("backBtn");
-
-const cancelCreate =
-document.getElementById("cancelCreate");
-
-const cancelUpload =
-document.getElementById("cancelUpload");
-
-const progressContainer =
-document.getElementById("progressContainer");
-
-const progressBar =
-document.getElementById("progressBar");
+let allFiles = [];
+let isStarred = false;
+let previewUrl = null;
 
 
-/* =====================================================
-   MESSAGE
-===================================================== */
+/* =================================
+   LOAD
+================================= */
 
-function showMessage(
-text,
-type
-){
+document.addEventListener(
+"DOMContentLoaded",
+loadRepository
+);
 
-message.textContent =
-text;
 
-message.className =
-"message show " +
-type;
+async function loadRepository(){
 
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
+try{
+
+if(!repoId){
+
+throw new Error(
+"Repository ID is missing."
+);
 
 }
 
 
-/* =====================================================
-   INITIALIZE
-===================================================== */
+const {
+data,
+error
+} =
+await supabaseClient.auth.getUser();
 
-async function init(){
 
-if(!repositoryId){
+if(error){
+throw error;
+}
 
-showError(
-"Repository ID is missing."
-);
+
+currentUser =
+data?.user || null;
+
+
+if(!currentUser){
+
+window.location.href =
+"login.html";
 
 return;
 
 }
 
 
-try{
-
 const {
-data:userData
+data:repo,
+error:repoError
 } =
 await supabaseClient
-.auth
-.getUser();
+
+.from("repositories")
+
+.select("*")
+
+.eq(
+"id",
+repoId
+)
+
+.single();
 
 
-currentUser =
-userData?.user || null;
+if(repoError){
+throw repoError;
+}
 
 
-await loadRepository();
+if(!repo){
+throw new Error(
+"Repository not found."
+);
+}
+
+
+repository =
+repo;
+
+
+renderRepository();
 
 await loadBranches();
 
-setupLinks();
+await loadFiles();
+
+await loadReadme();
+
+updatePageLinks();
+
+updatePublishUI();
 
 
-loading.style.display =
+document.getElementById(
+"loading"
+).style.display =
 "none";
 
-
-mainContent.style.display =
+document.getElementById(
+"content"
+).style.display =
 "block";
 
 
@@ -1177,102 +1053,68 @@ mainContent.style.display =
 
 console.error(error);
 
-showError(
-error.message ||
-"Unable to load repository."
-);
-
-}
-
-}
-
-
-/* =====================================================
-   ERROR
-===================================================== */
-
-function showError(
-text
-){
-
-loading.style.display =
+document.getElementById(
+"loading"
+).style.display =
 "none";
 
-message.textContent =
-"❌ " + text;
-
-message.className =
-"message show error";
-
-}
-
-
-/* =====================================================
-   LOAD REPOSITORY
-===================================================== */
-
-async function loadRepository(){
-
-const {
-data,
-error
-} =
-await supabaseClient
-.from("repositories")
-.select("*")
-.eq(
-"id",
-repositoryId
-)
-.single();
-
-
-if(error){
-
-throw error;
-
-}
-
-
-if(!data){
-
-throw new Error(
-"Repository not found."
+const box =
+document.getElementById(
+"error"
 );
 
+box.style.display =
+"block";
+
+box.textContent =
+error.message ||
+"Unable to load repository.";
+
 }
-
-
-repository =
-data;
-
-
-if(
-repository.is_private &&
-(
-!currentUser ||
-currentUser.id !==
-repository.owner_id
-)
-){
-
-throw new Error(
-"You do not have access to this private repository."
-);
 
 }
 
 
-repoName.textContent =
-repository.name ||
-"Repository";
+/* =================================
+   REPOSITORY
+================================= */
+
+function renderRepository(){
+
+document.getElementById(
+"repoOwner"
+).textContent =
+"ASIM TECH";
+
+document.getElementById(
+"repoName"
+).textContent =
+repository.name;
+
+document.getElementById(
+"repoDescription"
+).textContent =
+repository.description ||
+"No description";
+
+document.getElementById(
+"visibility"
+).textContent =
+repository.is_private
+? "Private"
+: "Public";
+
+document.getElementById(
+"starCount"
+).textContent =
+repository.stars_count || 0;
 
 }
 
 
-/* =====================================================
-   LOAD BRANCHES
-===================================================== */
+/* =================================
+   BRANCHES
+================================= */
 
 async function loadBranches(){
 
@@ -1281,14 +1123,16 @@ data,
 error
 } =
 await supabaseClient
+
 .from("repository_branches")
-.select(
-"id,name,repository_id,created_by,created_at"
-)
+
+.select("*")
+
 .eq(
 "repository_id",
-repositoryId
+repoId
 )
+
 .order(
 "name",
 {
@@ -1298,82 +1142,55 @@ ascending:true
 
 
 if(error){
-
 throw error;
-
 }
 
 
-branches =
+allBranches =
 data || [];
 
 
-if(!branches.length){
+if(!allBranches.length){
 
 throw new Error(
-"No branches found for this repository."
+"No branches found."
 );
 
 }
 
 
-let selected = null;
+let selected =
+null;
 
 
-/* Branch ID */
-
-if(requestedBranchId){
+if(branchIdFromUrl){
 
 selected =
-branches.find(
-branch =>
-branch.id ===
-requestedBranchId
+allBranches.find(
+b =>
+b.id ===
+branchIdFromUrl
 );
 
 }
 
-
-/* Branch name */
-
-if(
-!selected &&
-requestedBranchName
-){
-
-selected =
-branches.find(
-branch =>
-branch.name ===
-requestedBranchName
-);
-
-}
-
-
-/* Default branch */
 
 if(!selected){
 
 selected =
-branches.find(
-branch =>
-branch.name ===
-(
-repository.default_branch ||
-"main"
-)
+allBranches.find(
+b =>
+b.name ===
+(repository.default_branch || "main")
 );
 
 }
 
 
-/* First branch */
-
 if(!selected){
 
 selected =
-branches[0];
+allBranches[0];
 
 }
 
@@ -1382,1187 +1199,1507 @@ currentBranch =
 selected;
 
 
-renderBranches();
+renderBranchMenu();
+
+updateBranchUI();
 
 }
 
 
-/* =====================================================
-   RENDER BRANCHES
-===================================================== */
+function renderBranchMenu(){
 
-function renderBranches(){
+const list =
+document.getElementById(
+"branchList"
+);
 
-branchSelect.innerHTML =
+list.innerHTML =
 "";
 
 
-branches.forEach(
-function(branch){
+allBranches.forEach(
+branch => {
 
-const option =
+const button =
 document.createElement(
-"option"
+"button"
 );
 
+button.className =
+"branch-item";
 
-option.value =
-branch.id;
-
-
-option.textContent =
+button.textContent =
 "🌿 " +
 branch.name;
 
-
-if(
-currentBranch &&
-branch.id ===
-currentBranch.id
-){
-
-option.selected =
-true;
-
-}
-
-
-branchSelect.appendChild(
-option
-);
-
-});
-
-
-updateBranchInfo();
-
-}
-
-
-/* =====================================================
-   BRANCH CHANGE
-===================================================== */
-
-branchSelect.addEventListener(
-"change",
+button.onclick =
 function(){
-
-const branch =
-branches.find(
-item =>
-item.id ===
-branchSelect.value
-);
-
-
-if(!branch){
-
-return;
-
-}
-
 
 currentBranch =
 branch;
 
+updateBranchUI();
 
-updateBranchInfo();
+loadFiles();
 
-updateUrl();
+loadReadme();
 
-clearForm();
-
-});
-
-
-/* =====================================================
-   BRANCH INFO
-===================================================== */
-
-function updateBranchInfo(){
-
-if(!currentBranch){
-
-branchInfo.textContent =
-"";
-
-return;
-
-}
-
-
-branchInfo.textContent =
-"Files created or uploaded here will belong to this branch.";
-
-}
-
-
-/* =====================================================
-   UPDATE URL
-===================================================== */
-
-function updateUrl(){
-
-const url =
-new URL(
-window.location.href
-);
-
-
-url.searchParams.set(
-"repository_id",
-repositoryId
-);
-
-
-if(currentBranch){
-
-url.searchParams.set(
-"branch_id",
-currentBranch.id
-);
-
-}
-
-
-window.history.replaceState(
-{},
-"",
-url.toString()
-);
-
-}
-
-
-/* =====================================================
-   LINKS
-===================================================== */
-
-function setupLinks(){
-
-backBtn.href =
-"repository-details.html?id=" +
-encodeURIComponent(
-repositoryId
-);
-
-
-cancelCreate.href =
-"repository-details.html?id=" +
-encodeURIComponent(
-repositoryId
-);
-
-
-cancelUpload.href =
-"repository-details.html?id=" +
-encodeURIComponent(
-repositoryId
-);
-
-}
-
-
-/* =====================================================
-   CLEAR FORM
-===================================================== */
-
-function clearForm(){
-
-filePath.value =
-"";
-
-fileContent.value =
-"";
-
-uploadPath.value =
-"";
-
-selectedFile =
-null;
-
-fileInput.value =
-"";
-
-fileInfo.classList.remove(
-"show"
-);
-
-uploadButton.disabled =
-true;
-
-progressContainer.classList.remove(
-"show"
-);
-
-progressBar.style.width =
-"0%";
-
-}
-
-
-/* =====================================================
-   TAB SWITCH
-===================================================== */
-
-createTab.addEventListener(
-"click",
-function(){
-
-createTab.classList.add(
-"active"
-);
-
-uploadTab.classList.remove(
-"active"
-);
-
-createPanel.classList.add(
-"active"
-);
-
-uploadPanel.classList.remove(
-"active"
-);
-
-});
-
-
-uploadTab.addEventListener(
-"click",
-function(){
-
-uploadTab.classList.add(
-"active"
-);
-
-createTab.classList.remove(
-"active"
-);
-
-uploadPanel.classList.add(
-"active"
-);
-
-createPanel.classList.remove(
-"active"
-);
-
-});
-
-
-/* =====================================================
-   CLEAN PATH
-===================================================== */
-
-function cleanPath(path){
-
-return path
-.trim()
-.replace(
-/^\/+/,
-""
-)
-.replace(
-/\/+/g,
-"/"
-);
-
-}
-
-
-/* =====================================================
-   VALIDATE PATH
-===================================================== */
-
-function validatePath(path){
-
-if(!path){
-
-return "File path is required.";
-
-}
-
-
-if(path.includes("..")){
-
-return "Invalid file path.";
-
-}
-
-
-if(path.startsWith("/")){
-
-return "File path cannot start with /.";
-
-}
-
-
-if(path.endsWith("/")){
-
-return "Please enter a file name.";
-
-}
-
-
-if(path.length > 500){
-
-return "File path is too long.";
-
-}
-
-
-return null;
-
-}
-
-
-/* =====================================================
-   LANGUAGE
-===================================================== */
-
-function detectLanguage(path){
-
-const ext =
-path
-.split(".")
-.pop()
-.toLowerCase();
-
-
-const map = {
-
-html:"html",
-htm:"html",
-
-css:"css",
-
-js:"javascript",
-mjs:"javascript",
-cjs:"javascript",
-
-ts:"typescript",
-
-json:"json",
-
-xml:"xml",
-
-md:"markdown",
-
-txt:"text",
-
-csv:"csv",
-
-php:"php",
-
-py:"python",
-
-java:"java",
-
-c:"c",
-
-cpp:"cpp",
-
-h:"c",
-
-hpp:"cpp",
-
-sql:"sql",
-
-sh:"shell",
-
-bash:"shell",
-
-yaml:"yaml",
-
-yml:"yaml"
+closeBranchMenu();
 
 };
 
+list.appendChild(
+button
+);
 
-return map[ext] ||
-"text";
+}
+);
 
 }
 
 
-/* =====================================================
-   CREATE FILE
-===================================================== */
-
-createButton.addEventListener(
-"click",
-createFile
-);
-
-
-async function createFile(){
-
-message.className =
-"message";
-
-
-if(!currentUser){
-
-showMessage(
-"Please login first.",
-"error"
-);
-
-return;
-
-}
-
+function updateBranchUI(){
 
 if(!currentBranch){
-
-showMessage(
-"Please select a branch.",
-"error"
-);
-
 return;
+}
+
+document.getElementById(
+"branchName"
+).textContent =
+currentBranch.name;
+
+document.getElementById(
+"commitBranch"
+).textContent =
+currentBranch.name;
+
+updatePageLinks();
 
 }
 
 
-let path =
-cleanPath(
-filePath.value
-);
+/* =================================
+   FILES
+================================= */
 
+async function loadFiles(){
 
-const content =
-fileContent.value;
-
-
-const pathError =
-validatePath(
-path
-);
-
-
-if(pathError){
-
-showMessage(
-pathError,
-"error"
-);
-
+if(!currentBranch){
 return;
-
 }
 
 
-/* DUPLICATE CHECK */
+document.getElementById(
+"fileList"
+).innerHTML =
+'<div class="empty">Loading files...</div>';
+
 
 const {
-data:existing,
-error:checkError
+data,
+error
 } =
 await supabaseClient
+
 .from("repository_files")
-.select("id")
+
+.select("*")
+
 .eq(
 "repository_id",
-repositoryId
+repoId
 )
+
 .eq(
 "branch_id",
 currentBranch.id
 )
-.eq(
+
+.order(
 "file_path",
-path
-)
-.maybeSingle();
-
-
-if(checkError){
-
-showMessage(
-checkError.message,
-"error"
-);
-
-return;
-
+{
+ascending:true
 }
-
-
-if(existing){
-
-showMessage(
-"File already exists in branch '" +
-currentBranch.name +
-"'.",
-"error"
 );
-
-return;
-
-}
-
-
-createButton.disabled =
-true;
-
-createButton.textContent =
-"Creating...";
-
-
-try{
-
-const {
-error
-} =
-await supabaseClient
-.from("repository_files")
-.insert({
-
-repository_id:
-repositoryId,
-
-branch_id:
-currentBranch.id,
-
-file_path:
-path,
-
-content:
-content,
-
-language:
-detectLanguage(path),
-
-storage_path:
-null,
-
-mime_type:
-"text/plain",
-
-file_size:
-new Blob([content]).size,
-
-is_binary:
-false
-
-});
 
 
 if(error){
 
-throw error;
-
-}
-
-
-showMessage(
-"File '" +
-path +
-"' created successfully in branch '" +
-currentBranch.name +
-"'.",
-"success"
-);
-
-
-filePath.value =
-"";
-
-fileContent.value =
-"";
-
-
-}catch(error){
-
-console.error(error);
-
-showMessage(
-error.message ||
-"Unable to create file.",
+showToast(
+error.message,
 "error"
 );
 
-}finally{
-
-createButton.disabled =
-false;
-
-createButton.textContent =
-"✓ Create file";
-
-}
+return;
 
 }
 
 
-/* =====================================================
-   CHOOSE FILE BUTTON
-===================================================== */
-
-chooseFileButton.addEventListener(
-"click",
-function(event){
-
-event.stopPropagation();
-
-fileInput.click();
-
-});
+allFiles =
+data || [];
 
 
-/* =====================================================
-   DROP ZONE CLICK
-===================================================== */
-
-dropZone.addEventListener(
-"click",
-function(event){
-
-if(
-event.target ===
-dropZone ||
-event.target.closest(".drop-icon") ||
-event.target.closest(".drop-title") ||
-event.target.closest(".drop-subtitle")
-){
-
-fileInput.click();
-
-}
-
-});
-
-
-/* =====================================================
-   FILE SELECT
-===================================================== */
-
-fileInput.addEventListener(
-"change",
-function(){
-
-if(
-fileInput.files &&
-fileInput.files.length > 0
-){
-
-handleSelectedFile(
-fileInput.files[0]
+renderFiles(
+allFiles
 );
 
 }
 
-});
 
+/* =================================
+   RENDER FILES
+================================= */
 
-/* =====================================================
-   DRAG OVER
-===================================================== */
+function renderFiles(files){
 
-dropZone.addEventListener(
-"dragover",
-function(event){
-
-event.preventDefault();
-
-dropZone.classList.add(
-"drag"
+const list =
+document.getElementById(
+"fileList"
 );
 
-});
+list.innerHTML =
+"";
 
 
-/* =====================================================
-   DRAG LEAVE
-===================================================== */
-
-dropZone.addEventListener(
-"dragleave",
-function(){
-
-dropZone.classList.remove(
-"drag"
+document.getElementById(
+"fileCount"
+).textContent =
+files.length +
+(
+files.length === 1
+? " file"
+: " files"
 );
 
-});
+
+if(!files.length){
+
+list.innerHTML =
+`
+<div class="empty">
+📁<br><br>
+No files found.
+</div>
+`;
+
+return;
+
+}
 
 
-/* =====================================================
-   DROP
-===================================================== */
+files.forEach(
+file => {
 
-dropZone.addEventListener(
-"drop",
-function(event){
-
-event.preventDefault();
-
-dropZone.classList.remove(
-"drag"
+const row =
+document.createElement(
+"div"
 );
 
+row.className =
+"file-row";
+
+
+const editUrl =
+"file-editor.html" +
+"?file_id=" +
+encodeURIComponent(
+file.id
+) +
+"&repository_id=" +
+encodeURIComponent(
+repoId
+) +
+"&branch_id=" +
+encodeURIComponent(
+currentBranch.id
+);
+
+
+const name =
+file.file_path
+.split("/")
+.pop();
+
+
+let previewButton =
+"";
+
+
+if(!file.is_binary){
+
+previewButton =
+`
+<button
+class="btn btn-blue"
+type="button"
+onclick="previewFile('${file.id}')">
+👁 Preview
+</button>
+`;
+
+}
+
+
+row.innerHTML =
+`
+
+<div class="file-main">
+
+<div class="file-icon">
+${getFileIcon(file)}
+</div>
+
+<div>
+
+<div class="file-name">
+${escapeHtml(file.file_path)}
+</div>
+
+<div class="file-sub">
+
+${
+file.is_binary
+? "Binary file"
+: "Text file"
+}
+
+${
+file.updated_at
+? " • Updated " +
+formatDate(file.updated_at)
+: ""
+}
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="file-meta">
+
+<span class="type-badge">
+${getFileType(file.file_path)}
+</span>
+
+<span>
+${formatFileSize(file.file_size)}
+</span>
+
+
+<div class="file-actions">
+
+<a
+class="btn"
+href="${editUrl}">
+✏️ Edit
+</a>
+
+${previewButton}
+
+<button
+class="btn"
+onclick="downloadFile('${file.id}')">
+⬇️
+</button>
+
+</div>
+
+</div>
+
+`;
+
+
+list.appendChild(
+row
+);
+
+}
+);
+
+}
+
+
+/* =================================
+   ⭐ LIVE PREVIEW
+================================= */
+
+async function previewFile(fileId){
 
 const file =
-event.dataTransfer.files[0];
-
-
-if(file){
-
-handleSelectedFile(
-file
+allFiles.find(
+item =>
+item.id ===
+fileId
 );
+
+
+if(!file){
+
+showToast(
+"File not found.",
+"error"
+);
+
+return;
 
 }
 
-});
+
+if(file.is_binary){
+
+showToast(
+"Binary files cannot be previewed.",
+"error"
+);
+
+return;
+
+}
 
 
-/* =====================================================
-   HANDLE FILE
-===================================================== */
+const path =
+String(
+file.file_path || ""
+).toLowerCase();
 
-function handleSelectedFile(file){
 
 if(
-file.size >
-50 * 1024 * 1024
+!path.endsWith(".html") &&
+!path.endsWith(".htm")
 ){
 
-showMessage(
-"❌ File size cannot exceed 50 MB.",
+showToast(
+"Live Preview is available for HTML files.",
 "error"
 );
-
-fileInput.value =
-"";
 
 return;
 
 }
 
 
-selectedFile =
-file;
+let html =
+file.content || "";
 
 
-selectedFileName.textContent =
-"📄 " + file.name;
+/*
+If content is not in database,
+load it from Storage.
+*/
 
+if(
+!html &&
+file.storage_path
+){
 
-selectedFileSize.textContent =
-"Size: " +
-formatFileSize(
-file.size
+const {
+data:blob,
+error
+} =
+await supabaseClient
+
+.storage
+
+.from(
+"repository-files"
+)
+
+.download(
+file.storage_path
 );
 
 
-selectedFileType.textContent =
-"Type: " +
-(
-file.type ||
-"Unknown"
+if(error){
+
+showToast(
+error.message,
+"error"
 );
 
+return;
 
-fileInfo.classList.add(
+}
+
+
+html =
+await blob.text();
+
+}
+
+
+if(!html.trim()){
+
+showToast(
+"HTML file is empty.",
+"error"
+);
+
+return;
+
+}
+
+
+/*
+Create live preview.
+*/
+
+document.getElementById(
+"modalTitle"
+).textContent =
+"🌐 Preview — " +
+file.file_path;
+
+
+document.getElementById(
+"modalText"
+).innerHTML =
+`
+<iframe
+id="previewFrame"
+class="preview-frame"
+title="Live HTML Preview"
+sandbox="allow-scripts allow-forms allow-modals allow-popups">
+</iframe>
+`;
+
+
+document.getElementById(
+"modal"
+).classList.add(
 "show"
 );
 
 
-/* Automatically set path */
+const frame =
+document.getElementById(
+"previewFrame"
+);
 
-if(!uploadPath.value){
 
-uploadPath.value =
-file.name;
+/*
+IMPORTANT:
+srcdoc renders the HTML
+instead of displaying source code.
+*/
+
+frame.srcdoc =
+html;
 
 }
 
 
-uploadButton.disabled =
-false;
+/* =================================
+   CLOSE MODAL
+================================= */
 
+function closeModal(){
 
-showMessage(
-"File selected successfully. You can now upload it.",
-"info"
-);
-
-}
-
-
-/* =====================================================
-   UPLOAD BUTTON
-===================================================== */
-
-uploadButton.addEventListener(
-"click",
-uploadFile
-);
-
-
-/* =====================================================
-   UPLOAD FILE
-===================================================== */
-
-async function uploadFile(){
-
-message.className =
-"message";
-
-
-if(!currentUser){
-
-showMessage(
-"Please login first.",
-"error"
-);
-
-return;
-
-}
-
-
-if(!currentBranch){
-
-showMessage(
-"Please select a branch.",
-"error"
-);
-
-return;
-
-}
-
-
-if(!selectedFile){
-
-showMessage(
-"Please select a file first.",
-"error"
-);
-
-return;
-
-}
-
-
-let path =
-cleanPath(
-uploadPath.value ||
-selectedFile.name
-);
-
-
-const pathError =
-validatePath(
-path
-);
-
-
-if(pathError){
-
-showMessage(
-pathError,
-"error"
-);
-
-return;
-
-}
-
-
-/* DUPLICATE CHECK */
-
-const {
-data:existing,
-error:checkError
-} =
-await supabaseClient
-.from("repository_files")
-.select("id")
-.eq(
-"repository_id",
-repositoryId
-)
-.eq(
-"branch_id",
-currentBranch.id
-)
-.eq(
-"file_path",
-path
-)
-.maybeSingle();
-
-
-if(checkError){
-
-showMessage(
-checkError.message,
-"error"
-);
-
-return;
-
-}
-
-
-if(existing){
-
-showMessage(
-"File already exists in branch '" +
-currentBranch.name +
-"'.",
-"error"
-);
-
-return;
-
-}
-
-
-uploadButton.disabled =
-true;
-
-uploadButton.textContent =
-"Uploading...";
-
-
-progressContainer.classList.add(
+document.getElementById(
+"modal"
+).classList.remove(
 "show"
 );
 
-progressBar.style.width =
-"10%";
+}
 
 
-try{
+/* =================================
+   DOWNLOAD
+================================= */
 
-/* =========================
-   STORAGE PATH
-========================= */
+async function downloadFile(fileId){
 
-const storagePath =
-repositoryId +
-"/" +
-currentBranch.id +
-"/" +
-path;
-
-
-progressBar.style.width =
-"25%";
+const file =
+allFiles.find(
+f =>
+f.id ===
+fileId
+);
 
 
-/* =========================
-   UPLOAD TO SUPABASE STORAGE
-========================= */
+if(!file){
+return;
+}
+
+
+let blob;
+
+
+if(
+file.storage_path
+){
 
 const {
-error:storageError
+data,
+error
 } =
 await supabaseClient
+
 .storage
 .from(
 "repository-files"
 )
-.upload(
-storagePath,
-selectedFile,
+.download(
+file.storage_path
+);
+
+
+if(error){
+
+showToast(
+error.message,
+"error"
+);
+
+return;
+
+}
+
+
+blob =
+data;
+
+}else{
+
+blob =
+new Blob(
+[
+file.content || ""
+],
 {
-upsert:false,
-contentType:
-selectedFile.type ||
-"application/octet-stream"
+type:
+file.mime_type ||
+"text/plain"
 }
-);
-
-
-if(storageError){
-
-throw storageError;
-
-}
-
-
-progressBar.style.width =
-"65%";
-
-
-/* =========================
-   DATABASE RECORD
-========================= */
-
-const {
-error:dbError
-} =
-await supabaseClient
-.from("repository_files")
-.insert({
-
-repository_id:
-repositoryId,
-
-branch_id:
-currentBranch.id,
-
-file_path:
-path,
-
-content:
-null,
-
-language:
-detectLanguage(path),
-
-storage_path:
-storagePath,
-
-mime_type:
-selectedFile.type ||
-"application/octet-stream",
-
-file_size:
-selectedFile.size,
-
-is_binary:
-true
-
-});
-
-
-if(dbError){
-
-/* Remove uploaded file */
-
-try{
-
-await supabaseClient
-.storage
-.from("repository-files")
-.remove([
-storagePath
-]);
-
-}catch(cleanError){
-
-console.warn(
-cleanError
 );
 
 }
 
 
-throw dbError;
-
-}
-
-
-progressBar.style.width =
-"100%";
-
-
-showMessage(
-"✅ File '" +
-path +
-"' uploaded successfully to branch '" +
-currentBranch.name +
-"'.",
-"success"
+const url =
+URL.createObjectURL(
+blob
 );
 
 
-/* RESET */
-
-selectedFile =
-null;
-
-fileInput.value =
-"";
-
-uploadPath.value =
-"";
-
-fileInfo.classList.remove(
-"show"
+const a =
+document.createElement(
+"a"
 );
+
+a.href =
+url;
+
+a.download =
+file.file_path
+.split("/")
+.pop();
+
+document.body.appendChild(
+a
+);
+
+a.click();
+
+a.remove();
 
 
 setTimeout(
 function(){
 
-progressContainer.classList.remove(
-"show"
+URL.revokeObjectURL(
+url
 );
-
-progressBar.style.width =
-"0%";
 
 },
-1200
+1000
 );
+
+}
+
+
+/* =================================
+   SEARCH
+================================= */
+
+function filterFiles(){
+
+const query =
+document.getElementById(
+"searchInput"
+).value
+.trim()
+.toLowerCase();
+
+
+if(!query){
+
+renderFiles(
+allFiles
+);
+
+return;
+
+}
+
+
+const filtered =
+allFiles.filter(
+file =>
+(
+file.file_path || ""
+)
+.toLowerCase()
+.includes(query)
+);
+
+
+renderFiles(
+filtered
+);
+
+}
+
+
+/* =================================
+   README
+================================= */
+
+async function loadReadme(){
+
+const body =
+document.getElementById(
+"readmeBody"
+);
+
+
+const readme =
+allFiles.find(
+file => {
+
+const name =
+(
+file.file_path || ""
+)
+.toLowerCase();
+
+return (
+name === "readme.md" ||
+name === "readme.txt" ||
+name === "readme"
+);
+
+}
+);
+
+
+if(!readme){
+
+body.innerHTML =
+`
+<h2>
+${escapeHtml(repository.name)}
+</h2>
+
+<p>
+No README file is available.
+</p>
+`;
+
+return;
+
+}
+
+
+if(readme.is_binary){
+
+body.innerHTML =
+"<p>This README is a binary file.</p>";
+
+return;
+
+}
+
+
+body.innerHTML =
+markdownToHtml(
+readme.content || ""
+);
+
+}
+
+
+/* =================================
+   STAR STATUS
+================================= */
+
+async function loadStarStatus(){
+
+if(!currentUser){
+return;
+}
+
+
+const {
+data
+} =
+await supabaseClient
+
+.from("repository_stars")
+
+.select(
+"repository_id,user_id"
+)
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"user_id",
+currentUser.id
+)
+
+.maybeSingle();
+
+
+isStarred =
+!!data;
+
+
+document.getElementById(
+"starButton"
+).textContent =
+isStarred
+? "★ Starred"
+: "☆ Star";
+
+}
+
+
+async function toggleStar(){
+
+if(!currentUser){
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+const button =
+document.getElementById(
+"starButton"
+);
+
+button.disabled =
+true;
+
+
+try{
+
+if(isStarred){
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_stars")
+
+.delete()
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"user_id",
+currentUser.id
+);
+
+
+if(error){
+throw error;
+}
+
+
+isStarred =
+false;
+
+repository.stars_count =
+Math.max(
+0,
+(repository.stars_count || 0) - 1
+);
+
+}else{
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repository_stars")
+
+.insert({
+
+repository_id:
+repoId,
+
+user_id:
+currentUser.id
+
+});
+
+
+if(error){
+throw error;
+}
+
+
+isStarred =
+true;
+
+repository.stars_count =
+(repository.stars_count || 0) + 1;
+
+}
+
+
+document.getElementById(
+"starCount"
+).textContent =
+repository.stars_count;
+
+
+button.textContent =
+isStarred
+? "★ Starred"
+: "☆ Star";
 
 
 }catch(error){
 
-console.error(error);
-
-progressContainer.classList.remove(
-"show"
-);
-
-progressBar.style.width =
-"0%";
-
-
-showMessage(
-"❌ " +
-(
-error.message ||
-"Unable to upload file."
-),
+showToast(
+error.message,
 "error"
 );
 
 }finally{
 
-uploadButton.disabled =
+button.disabled =
 false;
 
-uploadButton.textContent =
-"📤 Upload file";
+}
+
+}
+
+
+/* =================================
+   PUBLISH UI
+================================= */
+
+function updatePublishUI(){
+
+const publish =
+document.getElementById(
+"publishButton"
+);
+
+const published =
+document.getElementById(
+"publishedWebsiteButton"
+);
+
+
+if(repository.is_published){
+
+publish.style.display =
+"none";
+
+published.style.display =
+"inline-flex";
+
+published.href =
+"published-website.html?id=" +
+encodeURIComponent(repoId);
+
+return;
+
+}
+
+
+published.style.display =
+"none";
+
+
+if(
+currentUser &&
+repository.owner_id ===
+currentUser.id
+){
+
+publish.style.display =
+"inline-flex";
 
 }
 
 }
 
 
-/* =====================================================
-   FORMAT FILE SIZE
-===================================================== */
+/* =================================
+   PUBLISH
+================================= */
+
+async function publishRepository(){
+
+if(!currentUser){
+return;
+}
+
+
+if(
+repository.owner_id !==
+currentUser.id
+){
+
+showToast(
+"Only repository owner can publish.",
+"error"
+);
+
+return;
+
+}
+
+
+const branchName =
+repository.default_branch ||
+"main";
+
+
+const {
+data:branch
+} =
+await supabaseClient
+
+.from("repository_branches")
+
+.select("id,name")
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"name",
+branchName
+)
+
+.maybeSingle();
+
+
+if(!branch){
+
+showToast(
+"Default branch not found.",
+"error"
+);
+
+return;
+
+}
+
+
+const {
+data:file
+} =
+await supabaseClient
+
+.from("repository_files")
+
+.select("*")
+
+.eq(
+"repository_id",
+repoId
+)
+
+.eq(
+"branch_id",
+branch.id
+)
+
+.eq(
+"file_path",
+"index.html"
+)
+
+.maybeSingle();
+
+
+if(!file){
+
+showToast(
+"index.html not found.",
+"error"
+);
+
+return;
+
+}
+
+
+if(file.is_binary){
+
+showToast(
+"index.html is marked as binary.",
+"error"
+);
+
+return;
+
+}
+
+
+if(
+!file.content ||
+!file.content.trim()
+){
+
+showToast(
+"index.html is empty.",
+"error"
+);
+
+return;
+
+}
+
+
+if(
+!confirm(
+"Publish repository " +
+repository.name +
+"?\n\nDefault file: index.html"
+)
+){
+
+return;
+
+}
+
+
+const {
+error
+} =
+await supabaseClient
+
+.from("repositories")
+
+.update({
+
+is_published:true,
+
+published_at:
+new Date().toISOString(),
+
+updated_at:
+new Date().toISOString()
+
+})
+
+.eq(
+"id",
+repoId
+);
+
+
+if(error){
+
+showToast(
+error.message,
+"error"
+);
+
+return;
+
+}
+
+
+repository.is_published =
+true;
+
+
+updatePublishUI();
+
+
+showToast(
+"Repository published successfully!",
+"success"
+);
+
+}
+
+
+/* =================================
+   CREATE BRANCH
+================================= */
+
+async function createNewBranch(){
+
+const name =
+prompt(
+"Enter new branch name:"
+);
+
+
+if(!name){
+return;
+}
+
+
+const branchName =
+name.trim();
+
+
+if(!branchName){
+
+return;
+
+}
+
+
+if(
+branchName.includes(" ")
+){
+
+showToast(
+"Branch name cannot contain spaces.",
+"error"
+);
+
+return;
+
+}
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("repository_branches")
+
+.insert({
+
+repository_id:
+repoId,
+
+name:
+branchName,
+
+created_by:
+currentUser.id
+
+})
+
+.select()
+
+.single();
+
+
+if(error){
+
+showToast(
+error.message,
+"error"
+);
+
+return;
+
+}
+
+
+allBranches.push(
+data
+);
+
+currentBranch =
+data;
+
+
+renderBranchMenu();
+
+updateBranchUI();
+
+await loadFiles();
+
+await loadReadme();
+
+
+showToast(
+"Branch created successfully.",
+"success"
+);
+
+}
+
+
+/* =================================
+   PAGE LINKS
+================================= */
+
+function updatePageLinks(){
+
+if(!repoId){
+return;
+}
+
+
+const branchQuery =
+currentBranch
+? "&branch_id=" +
+encodeURIComponent(
+currentBranch.id
+)
+: "";
+
+
+document.getElementById(
+"explorerButton"
+).href =
+"repository-explorer.html" +
+"?repository_id=" +
+encodeURIComponent(repoId) +
+branchQuery;
+
+
+document.getElementById(
+"createFileLink"
+).href =
+"repository-add-file.html" +
+"?repository_id=" +
+encodeURIComponent(repoId) +
+branchQuery +
+"&mode=create";
+
+
+document.getElementById(
+"uploadFileLink"
+).href =
+"repository-add-file.html" +
+"?repository_id=" +
+encodeURIComponent(repoId) +
+branchQuery +
+"&mode=upload";
+
+
+document.getElementById(
+"editRepoLink"
+).href =
+"edit-repository.html?id=" +
+encodeURIComponent(repoId);
+
+
+document.getElementById(
+"issuesLink"
+).href =
+"issues.html?repository_id=" +
+encodeURIComponent(repoId);
+
+
+document.getElementById(
+"pullRequestsLink"
+).href =
+"pull-requests.html?repository_id=" +
+encodeURIComponent(repoId);
+
+
+document.getElementById(
+"actionsLink"
+).href =
+"actions.html?repository_id=" +
+encodeURIComponent(repoId);
+
+}
+
+
+/* =================================
+   ADD MENU
+================================= */
+
+function toggleAddMenu(){
+
+document.getElementById(
+"addMenu"
+).classList.toggle(
+"show"
+);
+
+}
+
+
+function closeAddMenu(){
+
+document.getElementById(
+"addMenu"
+).classList.remove(
+"show"
+);
+
+}
+
+
+/* =================================
+   BRANCH MENU
+================================= */
+
+function toggleBranchMenu(){
+
+document.getElementById(
+"branchMenu"
+).classList.toggle(
+"show"
+);
+
+}
+
+
+function closeBranchMenu(){
+
+document.getElementById(
+"branchMenu"
+).classList.remove(
+"show"
+);
+
+}
+
+
+/* =================================
+   FILE ICON
+================================= */
+
+function getFileIcon(file){
+
+if(file.is_binary){
+return "📦";
+}
+
+
+const name =
+(
+file.file_path || ""
+).toLowerCase();
+
+
+if(
+name.endsWith(".html") ||
+name.endsWith(".htm")
+){
+return "🌐";
+}
+
+
+if(name.endsWith(".css")){
+return "🎨";
+}
+
+
+if(name.endsWith(".js")){
+return "⚡";
+}
+
+
+if(name.endsWith(".json")){
+return "🔧";
+}
+
+
+if(name.endsWith(".md")){
+return "📖";
+}
+
+
+if(
+name.endsWith(".png") ||
+name.endsWith(".jpg") ||
+name.endsWith(".jpeg") ||
+name.endsWith(".gif") ||
+name.endsWith(".webp")
+){
+return "🖼️";
+}
+
+
+return "📄";
+
+}
+
+
+/* =================================
+   FILE TYPE
+================================= */
+
+function getFileType(path){
+
+const parts =
+path.split(".");
+
+
+if(parts.length < 2){
+return "FILE";
+}
+
+
+return parts
+.pop()
+.toUpperCase();
+
+}
+
+
+/* =================================
+   FILE SIZE
+================================= */
 
 function formatFileSize(bytes){
 
 if(
-bytes < 1024
+bytes === null ||
+bytes === undefined ||
+bytes === ""
 ){
+return "";
+}
 
-return bytes +
-" B";
 
+const n =
+Number(bytes);
+
+
+if(n < 1024){
+return n + " B";
 }
 
 
 if(
-bytes <
-1024 * 1024
+n < 1024 * 1024
 ){
 
 return (
-bytes / 1024
+n / 1024
 ).toFixed(1) +
 " KB";
 
@@ -2570,12 +2707,13 @@ bytes / 1024
 
 
 if(
-bytes <
-1024 * 1024 * 1024
+n < 1024 *
+1024 *
+1024
 ){
 
 return (
-bytes /
+n /
 (1024 * 1024)
 ).toFixed(1) +
 " MB";
@@ -2584,22 +2722,285 @@ bytes /
 
 
 return (
-bytes /
-(1024 * 1024 * 1024)
+n /
+(1024 *
+1024 *
+1024)
 ).toFixed(1) +
 " GB";
 
 }
 
 
-/* =====================================================
-   START APPLICATION
-===================================================== */
+/* =================================
+   DATE
+================================= */
 
-init();
+function formatDate(value){
+
+if(!value){
+return "";
+}
+
+
+try{
+
+return new Date(
+value
+).toLocaleString(
+"en-IN",
+{
+day:"2-digit",
+month:"short",
+year:"numeric",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
+}catch(e){
+
+return "";
+
+}
+
+}
+
+
+/* =================================
+   ESCAPE HTML
+================================= */
+
+function escapeHtml(value){
+
+return String(
+value ?? ""
+)
+
+.replace(
+/&/g,
+"&amp;"
+)
+
+.replace(
+/</g,
+"&lt;"
+)
+
+.replace(
+/>/g,
+"&gt;"
+)
+
+.replace(
+/"/g,
+"&quot;"
+)
+
+.replace(
+/'/g,
+"&#039;"
+);
+
+}
+
+
+/* =================================
+   MARKDOWN
+================================= */
+
+function markdownToHtml(markdown){
+
+let text =
+escapeHtml(
+markdown
+);
+
+
+text =
+text.replace(
+/^### (.*)$/gm,
+"<h3>$1</h3>"
+);
+
+
+text =
+text.replace(
+/^## (.*)$/gm,
+"<h2>$1</h2>"
+);
+
+
+text =
+text.replace(
+/^# (.*)$/gm,
+"<h1>$1</h1>"
+);
+
+
+text =
+text.replace(
+/\*\*(.*?)\*\*/g,
+"<strong>$1</strong>"
+);
+
+
+text =
+text.replace(
+/\n\n/g,
+"</p><p>"
+);
+
+
+text =
+text.replace(
+/\n/g,
+"<br>"
+);
+
+
+return "<p>" +
+text +
+"</p>";
+
+}
+
+
+/* =================================
+   TOAST
+================================= */
+
+function showToast(
+message,
+type
+){
+
+const toast =
+document.getElementById(
+"toast"
+);
+
+toast.textContent =
+message;
+
+toast.className =
+"toast show " +
+(type || "");
+
+setTimeout(
+function(){
+
+toast.className =
+"toast";
+
+},
+3500
+);
+
+}
+
+
+/* =================================
+   CLICK OUTSIDE
+================================= */
+
+document.addEventListener(
+"click",
+function(event){
+
+const branch =
+document.querySelector(
+".branch-wrapper"
+);
+
+const add =
+document.querySelector(
+".add-wrapper"
+);
+
+
+if(
+branch &&
+!branch.contains(
+event.target
+)
+){
+
+closeBranchMenu();
+
+}
+
+
+if(
+add &&
+!add.contains(
+event.target
+)
+){
+
+closeAddMenu();
+
+}
+
+}
+);
+
+
+/* =================================
+   ESC
+================================= */
+
+document.addEventListener(
+"keydown",
+function(event){
+
+if(
+event.key ===
+"Escape"
+){
+
+closeModal();
+
+closeBranchMenu();
+
+closeAddMenu();
+
+}
+
+}
+);
+
+
+/* =================================
+   MODAL BACKDROP
+================================= */
+
+document.getElementById(
+"modal"
+).addEventListener(
+"click",
+function(event){
+
+if(
+event.target ===
+this
+){
+
+closeModal();
+
+}
+
+}
+);
+
+
+/* =================================
+   STAR STATUS LOAD
+================================= */
+
+loadStarStatus();
 
 </script>
 
 </body>
-
 </html>
