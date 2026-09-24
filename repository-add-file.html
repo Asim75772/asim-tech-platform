@@ -320,7 +320,8 @@ button:disabled{
 <h1>📁 Repository File</h1>
 
 <p>
-Upload a new file, create a file, or create a folder.
+Upload a new file, replace an existing file, create a file,
+or create a folder.
 </p>
 
 </div>
@@ -459,6 +460,9 @@ root/file.ext
 Create a text file directly or upload a file
 from your device.
 
+If the selected file already exists in this repository
+and branch, you can replace it.
+
 </div>
 
 
@@ -501,7 +505,7 @@ placeholder="Write your code here..."
 <div class="form-group">
 
 <label>
-Or Upload File
+Or Upload / Replace File
 </label>
 
 <div class="file-upload-box">
@@ -546,7 +550,7 @@ id="uploadFileButton"
 onclick="uploadFile()"
 >
 
-📤 Upload File
+📤 Upload / Replace File
 
 </button>
 
@@ -601,24 +605,10 @@ window.supabase.createClient(
    URL PARAMETERS
 ========================================================= */
 
-/*
-   IMPORTANT:
-
-   We read the ORIGINAL URL parameters here.
-
-   This includes:
-   repo_id
-   branch_id
-   repo_name
-   branch_name
-   and any other parameters.
-*/
-
 const params =
 new URLSearchParams(
     window.location.search
 );
-
 
 const repoId =
 params.get("repo_id") ||
@@ -627,19 +617,16 @@ params.get("repository_id") ||
 params.get("repository") ||
 "";
 
-
 const branchId =
 params.get("branch_id") ||
 params.get("branchId") ||
 params.get("branch") ||
 "";
 
-
 const repoNameParam =
 params.get("repo_name") ||
 params.get("repoName") ||
 "";
-
 
 const branchNameParam =
 params.get("branch_name") ||
@@ -1239,10 +1226,6 @@ async function createFolder(){
     }
 
 
-    /*
-       Single folder name only
-    */
-
     if(
         folderName.includes("/") ||
         folderName.includes("\\") ||
@@ -1279,10 +1262,6 @@ async function createFolder(){
         "/.gitkeep";
 
 
-        /*
-           Check duplicate
-        */
-
         const {
             data:existing,
             error:existingError
@@ -1318,10 +1297,6 @@ async function createFolder(){
         }
 
 
-        /*
-           Storage path
-        */
-
         const storagePath =
         repoId +
         "/" +
@@ -1329,10 +1304,6 @@ async function createFolder(){
         "/" +
         placeholderPath;
 
-
-        /*
-           Empty .gitkeep
-        */
 
         const blob =
         new Blob(
@@ -1365,10 +1336,6 @@ async function createFolder(){
 
         }
 
-
-        /*
-           Database
-        */
 
         const {
             error:dbError
@@ -1430,10 +1397,6 @@ async function createFolder(){
         .value =
         "";
 
-
-        /*
-           Return to previous Repository Details
-        */
 
         setTimeout(
             function(){
@@ -1566,7 +1529,8 @@ async function createFile(){
     try{
 
         /*
-           Duplicate check
+           CREATE FILE MUST NOT REPLACE.
+           Existing file remains protected.
         */
 
         const {
@@ -1622,10 +1586,6 @@ async function createFile(){
         filePath;
 
 
-        /*
-           Upload Storage
-        */
-
         const {
             error:storageError
         } =
@@ -1648,10 +1608,6 @@ async function createFile(){
 
         }
 
-
-        /*
-           Insert DB
-        */
 
         const {
             error:dbError
@@ -1708,12 +1664,6 @@ async function createFile(){
         );
 
 
-        /*
-           IMPORTANT:
-           Go back using browser history
-           so repo_id and branch_id remain.
-        */
-
         setTimeout(
             function(){
 
@@ -1757,7 +1707,7 @@ async function createFile(){
 
 
 /* =========================================================
-   UPLOAD FILE
+   UPLOAD / REPLACE FILE
 ========================================================= */
 
 async function uploadFile(){
@@ -1824,7 +1774,7 @@ async function uploadFile(){
 
 
     /*
-       If empty use filename
+       If empty use selected filename.
     */
 
     if(!filePath){
@@ -1837,7 +1787,7 @@ async function uploadFile(){
 
     /*
        Keep folder path but replace
-       filename with actual selected file.
+       filename with selected filename.
     */
 
     const pathParts =
@@ -1879,13 +1829,15 @@ async function uploadFile(){
     true;
 
     button.textContent =
-    "Uploading...";
+    "Checking File...";
 
 
     try{
 
         /*
-           Duplicate check
+           =====================================================
+           CHECK EXISTING FILE
+           =====================================================
         */
 
         const {
@@ -1894,7 +1846,7 @@ async function uploadFile(){
         } =
         await supabaseClient
         .from("repository_files")
-        .select("id")
+        .select("*")
         .eq("repository_id",repoId)
         .eq("branch_id",branchId)
         .eq("file_path",filePath)
@@ -1908,57 +1860,54 @@ async function uploadFile(){
         }
 
 
-        if(existing){
-
-            showToast(
-                "A file with this path already exists.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        const storagePath =
-        repoId +
-        "/" +
-        branchId +
-        "/" +
-        filePath;
+        let replaceExisting =
+        false;
 
 
         /*
-           Upload Storage
+           =====================================================
+           EXISTING FILE FOUND
+           =====================================================
         */
 
-        const {
-            error:storageError
-        } =
-        await supabaseClient
-        .storage
-        .from("repository-files")
-        .upload(
-            storagePath,
-            file,
-            {
-                upsert:false,
-                contentType:
-                file.type ||
-                getMimeType(filePath)
+        if(existing){
+
+            const confirmed =
+            window.confirm(
+
+                "A file with this path already exists.\n\n" +
+
+                filePath +
+
+                "\n\n" +
+
+                "Do you want to REPLACE the existing file?"
+
+            );
+
+
+            if(!confirmed){
+
+                showToast(
+                    "Upload cancelled.",
+                    "error"
+                );
+
+                return;
+
             }
-        );
 
 
-        if(storageError){
-
-            throw storageError;
+            replaceExisting =
+            true;
 
         }
 
 
         /*
-           Detect binary
+           =====================================================
+           DETECT BINARY
+           =====================================================
         */
 
         const isBinary =
@@ -1991,73 +1940,198 @@ async function uploadFile(){
         }
 
 
+        const mimeType =
+        file.type ||
+        getMimeType(filePath);
+
+
+        const storagePath =
+        repoId +
+        "/" +
+        branchId +
+        "/" +
+        filePath;
+
+
         /*
-           Insert DB
+           =====================================================
+           UPLOAD / REPLACE STORAGE FILE
+           =====================================================
         */
 
+        button.textContent =
+        replaceExisting
+        ? "Replacing File..."
+        : "Uploading...";
+
+
         const {
-            error:dbError
+            error:storageError
         } =
         await supabaseClient
-        .from("repository_files")
-        .insert({
+        .storage
+        .from("repository-files")
+        .upload(
+            storagePath,
+            file,
+            {
+                /*
+                   IMPORTANT:
+                   true = overwrite existing Storage file
+                */
+                upsert:true,
 
-            repository_id:
-            repoId,
-
-            branch_id:
-            branchId,
-
-            file_path:
-            filePath,
-
-            content:
-            content,
-
-            mime_type:
-            file.type ||
-            getMimeType(filePath),
-
-            file_size:
-            file.size,
-
-            is_binary:
-            isBinary,
-
-            storage_path:
-            storagePath
-
-        });
+                contentType:
+                mimeType
+            }
+        );
 
 
-        if(dbError){
+        if(storageError){
 
-            /*
-               Cleanup Storage
-            */
-
-            await supabaseClient
-            .storage
-            .from("repository-files")
-            .remove([
-                storagePath
-            ]);
-
-
-            throw dbError;
+            throw storageError;
 
         }
 
 
-        showToast(
-            "File uploaded successfully.",
-            "success"
-        );
+        /*
+           =====================================================
+           UPDATE EXISTING DATABASE ROW
+           =====================================================
+        */
+
+        if(replaceExisting){
+
+            const {
+                error:updateError
+            } =
+            await supabaseClient
+            .from("repository_files")
+            .update({
+
+                content:
+                content,
+
+                mime_type:
+                mimeType,
+
+                file_size:
+                file.size,
+
+                is_binary:
+                isBinary,
+
+                storage_path:
+                storagePath
+
+            })
+            .eq("id",existing.id);
+
+
+            if(updateError){
+
+                console.error(
+                    "Database update error:",
+                    updateError
+                );
+
+
+                /*
+                   Storage has already been replaced.
+                   Do not remove it here because that would
+                   delete the newly uploaded replacement.
+                */
+
+                throw new Error(
+                    "File was replaced in Storage, " +
+                    "but database update failed: " +
+                    updateError.message
+                );
+
+            }
+
+
+            showToast(
+                "File replaced successfully.",
+                "success"
+            );
+
+        }
 
 
         /*
-           IMPORTANT:
-           Return using history.
+           =====================================================
+           INSERT NEW DATABASE ROW
+           =====================================================
+        */
+
+        else{
+
+            const {
+                error:dbError
+            } =
+            await supabaseClient
+            .from("repository_files")
+            .insert({
+
+                repository_id:
+                repoId,
+
+                branch_id:
+                branchId,
+
+                file_path:
+                filePath,
+
+                content:
+                content,
+
+                mime_type:
+                mimeType,
+
+                file_size:
+                file.size,
+
+                is_binary:
+                isBinary,
+
+                storage_path:
+                storagePath
+
+            });
+
+
+            if(dbError){
+
+                /*
+                   Cleanup newly uploaded Storage file
+                */
+
+                await supabaseClient
+                .storage
+                .from("repository-files")
+                .remove([
+                    storagePath
+                ]);
+
+
+                throw dbError;
+
+            }
+
+
+            showToast(
+                "File uploaded successfully.",
+                "success"
+            );
+
+        }
+
+
+        /*
+           =====================================================
+           RETURN TO REPOSITORY
+           =====================================================
         */
 
         setTimeout(
@@ -2074,7 +2148,7 @@ async function uploadFile(){
     catch(error){
 
         console.error(
-            "Upload error:",
+            "Upload / Replace error:",
             error
         );
 
@@ -2095,7 +2169,7 @@ async function uploadFile(){
         false;
 
         button.textContent =
-        "📤 Upload File";
+        "📤 Upload / Replace File";
 
     }
 
@@ -2361,26 +2435,14 @@ function formatBytes(bytes){
 
 
 /* =========================================================
-   GO BACK — IMPORTANT FIX
+   GO BACK
 ========================================================= */
 
 function goBack(){
 
     /*
-       IMPORTANT:
-
-       Do NOT manually construct:
-
-       repository-details.html?repo_id=...
-
-       because some existing links may contain
-       additional parameters.
-
-       history.back() returns to the exact page
-       from which this page was opened.
-
-       Therefore repo_id, branch_id, repo name,
-       branch name and folder state remain intact.
+       Use browser history so all original
+       parameters remain intact.
     */
 
     if(
@@ -2397,17 +2459,12 @@ function goBack(){
 
 
     /*
-       Fallback only if the page was opened
-       directly without previous history.
+       Fallback
     */
 
     const query =
     new URLSearchParams();
 
-
-    /*
-       Preserve repository information
-    */
 
     if(repoId){
 
