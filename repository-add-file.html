@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>Upload File — ASIM TECH</title>
+<title>Repository File — ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
@@ -20,2250 +16,1252 @@
 }
 
 body{
-    font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Arial,
-    sans-serif;
-
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
     background:#0d1117;
     color:#e6edf3;
-
     min-height:100vh;
 }
 
-.navbar{
-    min-height:64px;
-    background:#010409;
-    border-bottom:1px solid #30363d;
-
-    display:flex;
-    align-items:center;
-    gap:24px;
-
-    padding:12px 5%;
-    flex-wrap:wrap;
-}
-
-.logo{
-    font-size:21px;
-    font-weight:700;
-    color:#fff;
-}
-
-.navbar a{
-    color:#e6edf3;
-    text-decoration:none;
-    font-size:14px;
-}
-
-.navbar a:hover{
-    color:#58a6ff;
-}
-
 .container{
-    width:94%;
+    width:100%;
     max-width:900px;
-    margin:35px auto;
+    margin:0 auto;
+    padding:40px 20px 80px;
 }
 
 .card{
     background:#161b22;
     border:1px solid #30363d;
-    border-radius:12px;
-    padding:25px;
-
-    box-shadow:
-    0 15px 40px rgba(0,0,0,.35);
+    border-radius:18px;
+    padding:32px;
+    box-shadow:0 10px 40px rgba(0,0,0,.25);
 }
 
-.title{
-    font-size:25px;
-    font-weight:700;
+.header{
+    margin-bottom:30px;
+}
+
+.header h1{
+    font-size:34px;
     margin-bottom:8px;
 }
 
-.subtitle{
+.header p{
     color:#8b949e;
-    font-size:14px;
-    margin-bottom:25px;
+    font-size:18px;
 }
 
-.info{
+.info-box{
     background:#0d1117;
     border:1px solid #30363d;
-    border-radius:8px;
-
-    padding:14px;
-    margin-bottom:20px;
-
-    line-height:1.7;
-    font-size:14px;
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:28px;
 }
 
-.info strong{
+.info-row{
+    font-size:18px;
+    margin:8px 0;
+}
+
+.info-row strong{
     color:#58a6ff;
+}
+
+.section{
+    background:#0d1117;
+    border:1px solid #30363d;
+    border-radius:14px;
+    padding:26px;
+    margin-bottom:28px;
+}
+
+.section-title{
+    color:#58a6ff;
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:6px;
+}
+
+.section-description{
+    color:#8b949e;
+    font-size:16px;
+    line-height:1.6;
+    margin-bottom:20px;
 }
 
 label{
     display:block;
-    margin-bottom:8px;
+    font-size:18px;
     font-weight:600;
-    font-size:14px;
+    margin-bottom:8px;
+    color:#e6edf3;
 }
 
-input[type="text"],
-textarea{
-
-    width:100%;
-
-    background:#0d1117;
-
-    border:1px solid #30363d;
-
-    border-radius:8px;
-
-    color:#fff;
-
-    padding:12px;
-
-    outline:none;
-
-    font-family:inherit;
-
-    font-size:14px;
-
-    margin-bottom:18px;
-}
-
-input[type="text"]:focus,
-textarea:focus{
-    border-color:#58a6ff;
-}
-
-textarea{
-    min-height:300px;
-    resize:vertical;
-
-    font-family:
-    Consolas,
-    "Courier New",
-    monospace;
-}
-
-.help-text{
+.hint{
+    display:block;
     color:#8b949e;
-    font-size:12px;
-    margin-top:-10px;
-    margin-bottom:18px;
+    font-size:15px;
     line-height:1.5;
+    margin-bottom:10px;
 }
 
-.folder-box{
+input,
+textarea{
+    width:100%;
     background:#0d1117;
+    color:#e6edf3;
     border:1px solid #30363d;
     border-radius:10px;
-    padding:15px;
-    margin-bottom:20px;
-}
-
-.folder-title{
-    font-size:14px;
-    font-weight:700;
-    color:#58a6ff;
-    margin-bottom:8px;
-}
-
-.folder-actions{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.folder-actions input{
-    flex:1;
-    min-width:220px;
-    margin-bottom:0;
-}
-
-.file-box{
-
-    border:2px dashed #30363d;
-
-    border-radius:12px;
-
-    padding:35px 20px;
-
-    text-align:center;
-
-    margin-bottom:20px;
-
-    background:#0d1117;
-
+    padding:15px 16px;
+    font-size:17px;
+    outline:none;
     transition:.2s;
 }
 
-.file-box:hover{
+input:focus,
+textarea:focus{
     border-color:#58a6ff;
+    box-shadow:0 0 0 3px rgba(88,166,255,.12);
 }
 
-.file-icon{
-    font-size:45px;
-    margin-bottom:12px;
-}
-
-.choose-btn{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:8px;
-
-    background:#238636;
-
-    color:#fff;
-
-    padding:12px 22px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    font-weight:600;
-
-    border:0;
-}
-
-.choose-btn:hover{
-    background:#2ea043;
-}
-
-#fileInput{
-    display:none;
-}
-
-.selected-file{
-
-    display:none;
-
-    margin-top:18px;
-
-    padding:14px;
-
-    background:#161b22;
-
-    border:1px solid #30363d;
-
-    border-radius:8px;
-
-    text-align:left;
-}
-
-.selected-file.show{
-    display:block;
-}
-
-.file-name{
-    color:#58a6ff;
-    font-weight:700;
-    word-break:break-word;
-}
-
-.file-size{
-    color:#8b949e;
-    font-size:12px;
-    margin-top:5px;
-}
-
-.exists-box{
-
-    display:none;
-
-    background:#3d2b13;
-
-    border:1px solid #d29922;
-
-    color:#e3b341;
-
-    border-radius:8px;
-
-    padding:15px;
-
-    margin:15px 0;
-
+textarea{
+    min-height:320px;
+    resize:vertical;
+    font-family:"Courier New",monospace;
     line-height:1.6;
 }
 
-.exists-box.show{
-    display:block;
+.form-group{
+    margin-bottom:25px;
 }
 
-.new-box{
-
-    display:none;
-
-    background:#102a1b;
-
-    border:1px solid #238636;
-
-    color:#56d364;
-
+.path-preview{
+    margin-top:10px;
+    padding:10px 12px;
     border-radius:8px;
-
-    padding:15px;
-
-    margin:15px 0;
-}
-
-.new-box.show{
-    display:block;
-}
-
-.actions{
-
-    display:flex;
-
-    gap:10px;
-
-    flex-wrap:wrap;
-
-    margin-top:20px;
-}
-
-.btn{
-
-    border:1px solid #30363d;
-
-    background:#21262d;
-
-    color:#e6edf3;
-
-    padding:11px 18px;
-
-    border-radius:8px;
-
+    background:#161b22;
+    border:1px dashed #30363d;
+    color:#8b949e;
     font-size:14px;
-
-    cursor:pointer;
-
-    text-decoration:none;
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:7px;
+    word-break:break-all;
 }
 
-.btn:hover{
+.path-preview span{
+    color:#58a6ff;
+    font-weight:600;
+}
+
+.file-upload-box{
+    border:2px dashed #30363d;
+    border-radius:12px;
+    padding:25px;
+    text-align:center;
+    background:#0d1117;
+    margin-top:10px;
+}
+
+.file-upload-box input[type="file"]{
+    border:none;
+    padding:10px;
+    background:transparent;
+}
+
+.button-group{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    margin-top:25px;
+}
+
+button{
+    width:100%;
+    border:none;
+    border-radius:10px;
+    padding:15px 20px;
+    font-size:17px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+}
+
+button:hover{
+    transform:translateY(-1px);
+}
+
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    transform:none;
+}
+
+.primary-btn{
+    background:#238636;
+    color:white;
+}
+
+.primary-btn:hover{
+    background:#2ea043;
+}
+
+.blue-btn{
+    background:#0969da;
+    color:white;
+}
+
+.blue-btn:hover{
+    background:#1f6feb;
+}
+
+.secondary-btn{
+    background:#21262d;
+    color:#e6edf3;
+    border:1px solid #30363d;
+}
+
+.secondary-btn:hover{
     background:#30363d;
 }
 
-.btn-green{
-
-    background:#238636;
-
-    border-color:#238636;
-
-    color:#fff;
-}
-
-.btn-green:hover{
-    background:#2ea043;
-}
-
-.btn-blue{
-
-    background:#1f6feb;
-
-    border-color:#1f6feb;
-
-    color:#fff;
-}
-
-.btn-blue:hover{
-    background:#388bfd;
-}
-
-.btn-orange{
-
-    background:#9e6a03;
-
-    border-color:#9e6a03;
-
-    color:#fff;
-}
-
-.btn-orange:hover{
-    background:#bb8009;
-}
-
-.btn-red{
-
-    background:#da3633;
-
-    border-color:#da3633;
-
-    color:#fff;
-}
-
-.btn:disabled{
-    opacity:.5;
-    cursor:not-allowed;
-}
-
-.status{
-
-    display:none;
-
-    margin-top:20px;
-
-    padding:14px;
-
-    border-radius:8px;
-
-    line-height:1.6;
-}
-
-.status.show{
-    display:block;
-}
-
-.status.success{
-
-    background:#102a1b;
-
-    border:1px solid #238636;
-
-    color:#56d364;
-}
-
-.status.error{
-
-    background:#3d1f25;
-
-    border:1px solid #f85149;
-
-    color:#ff7b72;
-}
-
-.status.loading{
-
-    background:#172033;
-
-    border:1px solid #1f6feb;
-
-    color:#79c0ff;
-}
-
-.progress{
-
-    display:none;
-
+.file-info{
     margin-top:15px;
-}
-
-.progress.show{
-    display:block;
-}
-
-.progress-bar{
-
-    width:100%;
-
-    height:8px;
-
-    background:#21262d;
-
-    border-radius:10px;
-
-    overflow:hidden;
-}
-
-.progress-fill{
-
-    width:0%;
-
-    height:100%;
-
-    background:#238636;
-
-    transition:.3s;
-}
-
-.small{
-
-    font-size:12px;
-
     color:#8b949e;
-
-    margin-top:7px;
+    font-size:14px;
+    word-break:break-all;
 }
 
-.hidden{
-    display:none !important;
+.loading{
+    text-align:center;
+    padding:20px;
+    color:#8b949e;
 }
 
-@media(max-width:700px){
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:25px;
+    transform:translateX(-50%) translateY(100px);
+    background:#21262d;
+    border:1px solid #30363d;
+    color:white;
+    padding:14px 20px;
+    border-radius:10px;
+    box-shadow:0 8px 30px rgba(0,0,0,.4);
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+    z-index:9999;
+    max-width:90%;
+    text-align:center;
+}
 
-    .navbar{
-        padding:12px 4%;
-        gap:14px;
-    }
+.toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+}
+
+.toast.success{
+    border-color:#238636;
+}
+
+.toast.error{
+    border-color:#da3633;
+}
+
+@media(max-width:600px){
 
     .container{
-        width:94%;
-        margin:20px auto;
+        padding:20px 12px 60px;
     }
 
     .card{
         padding:18px;
+        border-radius:14px;
     }
 
-    .title{
-        font-size:21px;
+    .header h1{
+        font-size:28px;
     }
 
-    .actions{
-        flex-direction:column;
+    .header p{
+        font-size:16px;
     }
 
-    .actions .btn{
-        width:100%;
+    .section{
+        padding:18px;
     }
 
-    .folder-actions{
-        flex-direction:column;
+    .section-title{
+        font-size:20px;
     }
 
-    .folder-actions input{
-        width:100%;
+    input,
+    textarea{
+        font-size:16px;
     }
 
+    textarea{
+        min-height:280px;
+    }
 }
-
 </style>
-
 </head>
 
 <body>
 
-<nav class="navbar">
-
-    <div class="logo">
-        ⚡ ASIM TECH
-    </div>
-
-    <a href="repositories.html">
-        ← Repositories
-    </a>
-
-    <a id="backRepoLink" href="#">
-        Repository
-    </a>
-
-</nav>
-
-
 <div class="container">
 
-<div class="card">
+    <div class="card">
 
-    <div class="title">
-        📁 Repository File
-    </div>
-
-    <div class="subtitle">
-        Upload a new file, create a file, or create a folder.
-    </div>
-
-
-    <div class="info">
-
-        <div>
-            <strong>Repository:</strong>
-            <span id="repoName">Loading...</span>
+        <div class="header">
+            <h1>📁 Repository File</h1>
+            <p>Upload a new file, create a file, or create a folder.</p>
         </div>
 
-        <div>
-            <strong>Branch:</strong>
-            <span id="branchName">Loading...</span>
-        </div>
+        <!-- Repository Information -->
+        <div class="info-box">
 
-    </div>
+            <div class="info-row">
+                <strong>Repository:</strong>
+                <span id="repoName">Loading...</span>
+            </div>
 
-
-    <!-- =====================================================
-         FOLDER CREATE
-    ====================================================== -->
-
-    <div class="folder-box">
-
-        <div class="folder-title">
-            📁 Create Folder
-        </div>
-
-        <div class="help-text"
-             style="margin-bottom:12px;">
-
-            Create a folder in the current branch.
-            A hidden <strong>.gitkeep</strong> file will be used
-            because storage systems cannot keep a completely
-            empty folder.
+            <div class="info-row">
+                <strong>Branch:</strong>
+                <span id="branchName">Loading...</span>
+            </div>
 
         </div>
 
-        <div class="folder-actions">
 
-            <input
-                id="folderName"
-                type="text"
-                placeholder="Example: assets">
+        <!-- CREATE FOLDER -->
+        <div class="section">
+
+            <div class="section-title">
+                📁 Create Folder
+            </div>
+
+            <div class="section-description">
+                Create a folder in the current branch.
+                A hidden <strong>.gitkeep</strong> file will be used because
+                storage systems cannot keep a completely empty folder.
+            </div>
+
+            <div class="form-group">
+
+                <label for="folderName">
+                    Folder Name
+                </label>
+
+                <input
+                    type="text"
+                    id="folderName"
+                    placeholder="Example: assets"
+                    autocomplete="off"
+                >
+
+            </div>
 
             <button
-                class="btn btn-blue"
                 type="button"
-                onclick="createFolder()">
-
+                class="blue-btn"
+                id="createFolderButton"
+                onclick="createFolder()"
+            >
                 📁 Create Folder
-
             </button>
 
         </div>
 
-    </div>
 
+        <!-- FILE PATH -->
+        <div class="section">
 
-    <!-- =====================================================
-         FILE PATH
-    ====================================================== -->
+            <div class="form-group">
 
-    <div>
+                <label for="filePath">
+                    File Path
+                </label>
 
-        <label>
-            File Path
-        </label>
+                <span class="hint">
+                    To put a file inside a folder, use:
+                    <strong>folder-name/file-name.ext</strong>
+                    <br>
+                    Example:
+                    <strong>assets/logo.png</strong>
+                </span>
 
-        <input
-            id="filePath"
-            type="text"
-            placeholder="Example: index.html or assets/logo.png">
+                <input
+                    type="text"
+                    id="filePath"
+                    placeholder="assets/logo.png"
+                    autocomplete="off"
+                >
 
-        <div class="help-text">
-
-            To put a file inside a folder, use:
-            <strong>folder-name/file-name.ext</strong>
-
-            <br>
-
-            Example:
-            <strong>assets/logo.png</strong>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         FILE UPLOAD
-    ====================================================== -->
-
-    <div id="uploadSection">
-
-        <label>
-            Select File
-        </label>
-
-        <div class="file-box">
-
-            <div class="file-icon">
-                📁
-            </div>
-
-            <div style="margin-bottom:15px;color:#8b949e;">
-                Select a file from your device
-            </div>
-
-            <label
-                for="fileInput"
-                class="choose-btn">
-
-                📂 Choose File
-
-            </label>
-
-            <input
-                id="fileInput"
-                type="file">
-
-            <div
-                id="selectedFile"
-                class="selected-file">
-
-                <div
-                    class="file-name"
-                    id="selectedFileName">
-                </div>
-
-                <div
-                    class="file-size"
-                    id="selectedFileSize">
+                <div class="path-preview">
+                    Current path:
+                    <span id="pathPreview">root/file.ext</span>
                 </div>
 
             </div>
 
         </div>
 
-    </div>
+
+        <!-- CREATE FILE -->
+        <div class="section">
+
+            <div class="section-title">
+                📄 Create / Upload File
+            </div>
+
+            <div class="section-description">
+                Create a text file directly or upload a file from your device.
+            </div>
 
 
-    <!-- =====================================================
-         CREATE FILE
-    ====================================================== -->
+            <!-- FILE NAME -->
 
-    <div
-        id="createSection"
-        class="hidden">
+            <div class="form-group">
 
-        <label>
-            File Name
-        </label>
+                <label for="fileName">
+                    File Name
+                </label>
 
-        <input
-            id="createFileName"
-            type="text"
-            placeholder="example.html">
+                <input
+                    type="text"
+                    id="fileName"
+                    placeholder="example.html"
+                    autocomplete="off"
+                >
 
-        <label>
-            File Content
-        </label>
-
-        <textarea
-            id="createContent"
-            placeholder="Write your code here..."></textarea>
-
-    </div>
+            </div>
 
 
-    <!-- =====================================================
-         EXISTING FILE
-    ====================================================== -->
+            <!-- FILE CONTENT -->
 
-    <div
-        id="existsBox"
-        class="exists-box">
+            <div class="form-group">
 
-        ⚠️ <strong>File already exists!</strong>
+                <label for="fileContent">
+                    File Content
+                </label>
 
-        <br>
+                <textarea
+                    id="fileContent"
+                    placeholder="Write your code here..."
+                ></textarea>
 
-        A file with this name already exists
-        in this repository and branch.
-
-        <br><br>
-
-        Existing file:
-
-        <strong id="existingFileName">
-        </strong>
-
-        <br>
-
-        You can replace the existing file with
-        the selected file.
-
-    </div>
+            </div>
 
 
-    <!-- =====================================================
-         NEW FILE
-    ====================================================== -->
+            <!-- UPLOAD -->
 
-    <div
-        id="newBox"
-        class="new-box">
+            <div class="form-group">
 
-        ✅ <strong>New file</strong>
+                <label>
+                    Or Upload File
+                </label>
 
-        <br>
+                <div class="file-upload-box">
 
-        This filename is not present in the
-        selected branch.
+                    <input
+                        type="file"
+                        id="fileInput"
+                    >
 
-    </div>
+                    <div
+                        id="selectedFileInfo"
+                        class="file-info"
+                    >
+                        No file selected
+                    </div>
 
+                </div>
 
-    <!-- =====================================================
-         ACTIONS
-    ====================================================== -->
-
-    <div class="actions">
-
-        <button
-            id="uploadButton"
-            class="btn btn-green"
-            onclick="saveFile()"
-            disabled>
-
-            ⬆️ Upload File
-
-        </button>
+            </div>
 
 
-        <button
-            id="replaceButton"
-            class="btn btn-orange hidden"
-            onclick="replaceFile()"
-            disabled>
+            <!-- BUTTONS -->
 
-            🔄 Replace Existing File
+            <div class="button-group">
 
-        </button>
+                <button
+                    type="button"
+                    class="primary-btn"
+                    id="createFileButton"
+                    onclick="createFile()"
+                >
+                    ➕ Create File
+                </button>
 
+                <button
+                    type="button"
+                    class="blue-btn"
+                    id="uploadFileButton"
+                    onclick="uploadFile()"
+                >
+                    📤 Upload File
+                </button>
 
-        <button
-            id="cancelButton"
-            class="btn"
-            onclick="goBack()">
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="goBack()"
+                >
+                    ← Back to Repository
+                </button>
 
-            ❌ Cancel
-
-        </button>
-
-    </div>
-
-
-    <!-- =====================================================
-         PROGRESS
-    ====================================================== -->
-
-    <div
-        id="progress"
-        class="progress">
-
-        <div class="progress-bar">
-
-            <div
-                id="progressFill"
-                class="progress-fill">
             </div>
 
         </div>
 
-        <div
-            id="progressText"
-            class="small">
-
-            Processing...
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         STATUS
-    ====================================================== -->
-
-    <div
-        id="status"
-        class="status">
     </div>
 
 </div>
 
-</div>
+
+<div id="toast" class="toast"></div>
 
 
 <script>
 
-/* =====================================================
+/* =========================================================
    SUPABASE
-===================================================== */
+========================================================= */
 
 const SUPABASE_URL =
-"https://lgwaeqgiqrsjprsecwxx.supabase.co";
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
 const supabaseClient =
-supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
-/* =====================================================
+/* =========================================================
    URL PARAMETERS
-===================================================== */
+========================================================= */
 
-const params =
-new URLSearchParams(
-    window.location.search
-);
+const params = new URLSearchParams(window.location.search);
+
+
+/*
+   We support multiple parameter names so that
+   the page works with the existing repository pages.
+*/
 
 const repoId =
-params.get("repository_id") ||
-params.get("id");
+    params.get("repo_id") ||
+    params.get("repoId") ||
+    params.get("repository_id") ||
+    params.get("repository");
 
 const branchId =
-params.get("branch_id");
+    params.get("branch_id") ||
+    params.get("branchId") ||
+    params.get("branch");
 
-const mode =
-params.get("mode") || "upload";
+const repoNameParam =
+    params.get("repo_name") ||
+    params.get("repoName") ||
+    "";
 
-
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
-
-let currentUser = null;
-
-let repository = null;
-
-let currentBranch = null;
-
-let selectedFile = null;
-
-let existingFile = null;
+const branchNameParam =
+    params.get("branch_name") ||
+    params.get("branchName") ||
+    "main";
 
 
-/* =====================================================
-   START
-===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    initialize
-);
+let repositoryData = null;
+let branchData = null;
 
 
-async function initialize(){
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
 
-    try{
+document.addEventListener("DOMContentLoaded", async function(){
 
-        if(!repoId){
+    updatePathPreview();
 
-            throw new Error(
-                "Repository ID is missing."
-            );
+    document
+        .getElementById("filePath")
+        .addEventListener("input", function(){
 
-        }
+            syncFileNameFromPath();
 
-        await loadUser();
+            updatePathPreview();
 
-        await loadRepository();
-
-        await loadBranch();
-
-        setupMode();
-
-    }catch(error){
-
-        showStatus(
-            error.message ||
-            "Unable to load page.",
-            "error"
-        );
-
-    }
-
-}
+        });
 
 
-/* =====================================================
-   USER
-===================================================== */
+    document
+        .getElementById("fileName")
+        .addEventListener("input", function(){
 
-async function loadUser(){
+            updatePathPreview();
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-    .auth
-    .getUser();
-
-    if(error){
-
-        throw error;
-
-    }
-
-    currentUser =
-        data?.user || null;
-
-    if(!currentUser){
-
-        window.location.href =
-            "login.html";
-
-        return;
-
-    }
-
-}
+        });
 
 
-/* =====================================================
-   REPOSITORY
-===================================================== */
+    document
+        .getElementById("folderName")
+        .addEventListener("keydown", function(event){
+
+            if(event.key === "Enter"){
+                event.preventDefault();
+                createFolder();
+            }
+
+        });
+
+
+    document
+        .getElementById("filePath")
+        .addEventListener("keydown", function(event){
+
+            if(event.key === "Enter"){
+                event.preventDefault();
+
+                syncFileNameFromPath();
+
+                updatePathPreview();
+            }
+
+        });
+
+
+    document
+        .getElementById("fileInput")
+        .addEventListener("change", function(){
+
+            const file = this.files[0];
+
+            if(!file){
+                document.getElementById(
+                    "selectedFileInfo"
+                ).textContent = "No file selected";
+
+                return;
+            }
+
+            document.getElementById(
+                "selectedFileInfo"
+            ).textContent =
+                "Selected: " +
+                file.name +
+                " (" +
+                formatBytes(file.size) +
+                ")";
+
+
+            /*
+               Automatically put selected filename
+               into File Name and File Path
+            */
+
+            const currentPath =
+                document
+                .getElementById("filePath")
+                .value
+                .trim();
+
+            if(!currentPath){
+
+                document.getElementById(
+                    "fileName"
+                ).value = file.name;
+
+                document.getElementById(
+                    "filePath"
+                ).value = file.name;
+
+            }else{
+
+                const parts =
+                    currentPath.split("/");
+
+                parts[parts.length - 1] =
+                    file.name;
+
+                document.getElementById(
+                    "filePath"
+                ).value =
+                    parts.join("/");
+
+                document.getElementById(
+                    "fileName"
+                ).value =
+                    file.name;
+            }
+
+            updatePathPreview();
+
+        });
+
+
+    await loadRepository();
+
+});
+
+
+/* =========================================================
+   LOAD REPOSITORY
+========================================================= */
 
 async function loadRepository(){
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-    .from("repositories")
-    .select("*")
-    .eq(
-        "id",
-        repoId
-    )
-    .single();
-
-    if(error){
-
-        throw error;
-
-    }
-
-    if(!data){
-
-        throw new Error(
-            "Repository not found."
-        );
-
-    }
-
-    repository =
-        data;
-
-    document.getElementById(
-        "repoName"
-    ).textContent =
-        repository.name;
-
-    document.getElementById(
-        "backRepoLink"
-    ).href =
-        "repository-details.html" +
-        "?repository_id=" +
-        encodeURIComponent(
-            repoId
-        );
-
-}
-
-
-/* =====================================================
-   BRANCH
-===================================================== */
-
-async function loadBranch(){
-
-    let query =
-        supabaseClient
-        .from("repository_branches")
-        .select("*")
-        .eq(
-            "repository_id",
-            repoId
-        );
-
-    if(branchId){
-
-        query =
-            query.eq(
-                "id",
-                branchId
-            );
-
-    }else{
-
-        query =
-            query.eq(
-                "name",
-                repository.default_branch ||
-                "main"
-            );
-
-    }
-
-    const {
-        data,
-        error
-    } =
-    await query.maybeSingle();
-
-    if(error){
-
-        throw error;
-
-    }
-
-    if(!data){
-
-        throw new Error(
-            "Branch not found."
-        );
-
-    }
-
-    currentBranch =
-        data;
-
-    document.getElementById(
-        "branchName"
-    ).textContent =
-        currentBranch.name;
-
-}
-
-
-/* =====================================================
-   MODE
-===================================================== */
-
-function setupMode(){
-
-    if(mode === "create"){
-
-        document.getElementById(
-            "uploadSection"
-        ).classList.add(
-            "hidden"
-        );
-
-        document.getElementById(
-            "createSection"
-        ).classList.remove(
-            "hidden"
-        );
-
-        document.getElementById(
-            "uploadButton"
-        ).textContent =
-            "📝 Create File";
-
-        document.getElementById(
-            "uploadButton"
-        ).disabled =
-            false;
-
-        document.getElementById(
-            "filePath"
-        ).classList.add(
-            "hidden"
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   FILE INPUT
-===================================================== */
-
-document.getElementById(
-    "fileInput"
-).addEventListener(
-    "change",
-    async function(){
-
-        selectedFile =
-            this.files &&
-            this.files[0]
-            ? this.files[0]
-            : null;
-
-        existingFile =
-            null;
-
-        hideBoxes();
-
-        if(!selectedFile){
-
-            document.getElementById(
-                "selectedFile"
-            ).classList.remove(
-                "show"
-            );
-
-            document.getElementById(
-                "uploadButton"
-            ).disabled =
-                true;
-
-            document.getElementById(
-                "replaceButton"
-            ).disabled =
-                true;
-
-            return;
-
-        }
-
-        document.getElementById(
-            "selectedFile"
-        ).classList.add(
-            "show"
-        );
-
-        document.getElementById(
-            "selectedFileName"
-        ).textContent =
-            "📄 " +
-            selectedFile.name;
-
-        document.getElementById(
-            "selectedFileSize"
-        ).textContent =
-            formatFileSize(
-                selectedFile.size
-            );
-
-        document.getElementById(
-            "filePath"
-        ).value =
-            selectedFile.name;
-
-        document.getElementById(
-            "uploadButton"
-        ).disabled =
-            true;
-
-        await checkExistingFile();
-
-    }
-);
-
-
-/* =====================================================
-   FILE PATH CHANGE
-===================================================== */
-
-document.getElementById(
-    "filePath"
-).addEventListener(
-    "input",
-    async function(){
-
-        if(!selectedFile){
-
-            return;
-
-        }
-
-        existingFile =
-            null;
-
-        hideBoxes();
-
-        await checkExistingFile();
-
-    }
-);
-
-
-/* =====================================================
-   CHECK EXISTING FILE
-===================================================== */
-
-async function checkExistingFile(){
-
-    if(!selectedFile){
-
-        return;
-
-    }
-
-    const filePath =
-        normalizePath(
-            document.getElementById(
-                "filePath"
-            ).value ||
-            selectedFile.name
-        );
-
-    if(!filePath){
-
-        return;
-
-    }
-
-    setProgress(
-        15,
-        "Checking repository..."
-    );
-
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-    .from("repository_files")
-    .select("*")
-    .eq(
-        "repository_id",
-        repoId
-    )
-    .eq(
-        "branch_id",
-        currentBranch.id
-    )
-    .eq(
-        "file_path",
-        filePath
-    )
-    .maybeSingle();
-
-    if(error){
-
-        hideProgress();
-
-        showStatus(
-            error.message,
-            "error"
-        );
-
-        return;
-
-    }
-
-    existingFile =
-        data || null;
-
-    hideProgress();
-
-    if(existingFile){
-
-        document.getElementById(
-            "existingFileName"
-        ).textContent =
-            existingFile.file_path;
-
-        document.getElementById(
-            "existsBox"
-        ).classList.add(
-            "show"
-        );
-
-        document.getElementById(
-            "replaceButton"
-        ).classList.remove(
-            "hidden"
-        );
-
-        document.getElementById(
-            "replaceButton"
-        ).disabled =
-            false;
-
-        document.getElementById(
-            "uploadButton"
-        ).classList.add(
-            "hidden"
-        );
-
-    }else{
-
-        document.getElementById(
-            "newBox"
-        ).classList.add(
-            "show"
-        );
-
-        document.getElementById(
-            "uploadButton"
-        ).classList.remove(
-            "hidden"
-        );
-
-        document.getElementById(
-            "uploadButton"
-        ).disabled =
-            false;
-
-    }
-
-}
-
-
-/* =====================================================
-   SAVE NEW FILE
-===================================================== */
-
-async function saveFile(){
-
-    if(mode === "create"){
-
-        await createFile();
-
-        return;
-
-    }
-
-    if(!selectedFile){
-
-        showStatus(
-            "Please select a file.",
-            "error"
-        );
-
-        return;
-
-    }
-
-    if(existingFile){
-
-        showStatus(
-            "This file already exists. Use Replace Existing File.",
-            "error"
-        );
-
-        return;
-
-    }
-
-    await uploadNewFile();
-
-}
-
-
-/* =====================================================
-   UPLOAD NEW FILE
-===================================================== */
-
-async function uploadNewFile(){
-
     try{
 
-        disableButtons(true);
+        /*
+           If repository ID is not available,
+           still show parameter values.
+        */
 
-        clearStatus();
+        if(!repoId){
 
-        showProgress();
+            document.getElementById(
+                "repoName"
+            ).textContent =
+                repoNameParam || "Repository";
 
-        setProgress(
-            20,
-            "Reading file..."
-        );
+        }else{
 
-        const filePath =
-            normalizePath(
-                document.getElementById(
-                    "filePath"
-                ).value ||
-                selectedFile.name
-            );
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("repositories")
+                .select("*")
+                .eq("id", repoId)
+                .maybeSingle();
 
-        if(!filePath){
-
-            throw new Error(
-                "File path is required."
-            );
-
-        }
-
-        const binary =
-            isBinaryFile(
-                selectedFile
-            );
-
-        setProgress(
-            35,
-            "Preparing file..."
-        );
-
-        const storagePath =
-            buildStoragePath(
-                filePath
-            );
-
-        setProgress(
-            50,
-            "Uploading file..."
-        );
-
-        const {
-            error:storageError
-        } =
-        await supabaseClient
-        .storage
-        .from(
-            "repository-files"
-        )
-        .upload(
-            storagePath,
-            selectedFile,
-            {
-                upsert:true,
-                contentType:
-                    selectedFile.type ||
-                    "application/octet-stream"
+            if(error){
+                console.warn(
+                    "Repository load warning:",
+                    error
+                );
             }
-        );
 
-        if(storageError){
+            repositoryData = data;
 
-            throw storageError;
+            document.getElementById(
+                "repoName"
+            ).textContent =
+                data?.name ||
+                repoNameParam ||
+                "Repository";
+        }
+
+
+        /*
+           Load branch
+        */
+
+        if(branchId){
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("repository_branches")
+                .select("*")
+                .eq("id", branchId)
+                .maybeSingle();
+
+            if(error){
+
+                console.warn(
+                    "Branch load warning:",
+                    error
+                );
+
+            }
+
+            branchData = data;
 
         }
 
-        setProgress(
-            75,
-            "Saving repository record..."
-        );
 
-        const content =
-            binary
-            ? ""
-            : await selectedFile.text();
-
-        const {
-            error:dbError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .insert({
-
-            repository_id:
-                repoId,
-
-            branch_id:
-                currentBranch.id,
-
-            file_path:
-                filePath,
-
-            content:
-                content,
-
-            storage_path:
-                storagePath,
-
-            mime_type:
-                selectedFile.type ||
-                "application/octet-stream",
-
-            file_size:
-                selectedFile.size,
-
-            is_binary:
-                binary
-
-        });
-
-        if(dbError){
-
-            throw dbError;
-
-        }
-
-        setProgress(
-            100,
-            "Upload completed."
-        );
-
-        showStatus(
-            "✅ File uploaded successfully!",
-            "success"
-        );
-
-        setTimeout(
-            goBack,
-            1200
-        );
+        document.getElementById(
+            "branchName"
+        ).textContent =
+            branchData?.name ||
+            branchNameParam ||
+            "main";
 
     }catch(error){
 
-        console.error(error);
-
-        hideProgress();
-
-        showStatus(
-            "Upload failed: " +
-            (
-                error.message ||
-                error
-            ),
-            "error"
+        console.error(
+            "Load repository error:",
+            error
         );
 
-        disableButtons(false);
+        document.getElementById(
+            "repoName"
+        ).textContent =
+            repoNameParam || "Repository";
 
+        document.getElementById(
+            "branchName"
+        ).textContent =
+            branchNameParam || "main";
     }
 
 }
 
 
-/* =====================================================
-   REPLACE EXISTING FILE
-===================================================== */
+/* =========================================================
+   NORMALIZE PATH
+========================================================= */
 
-async function replaceFile(){
+function normalizePath(path){
 
-    if(!selectedFile){
-
-        showStatus(
-            "Please select a file.",
-            "error"
-        );
-
-        return;
-
-    }
-
-    if(!existingFile){
-
-        showStatus(
-            "Existing file was not found.",
-            "error"
-        );
-
-        return;
-
-    }
-
-    const confirmReplace =
-        confirm(
-            "Replace existing file?\n\n" +
-            existingFile.file_path +
-            "\n\nThe old content will be replaced."
-        );
-
-    if(!confirmReplace){
-
-        return;
-
-    }
-
-    try{
-
-        disableButtons(true);
-
-        clearStatus();
-
-        showProgress();
-
-        const filePath =
-            normalizePath(
-                document.getElementById(
-                    "filePath"
-                ).value ||
-                selectedFile.name
-            );
-
-        const binary =
-            isBinaryFile(
-                selectedFile
-            );
-
-        const storagePath =
-            existingFile.storage_path ||
-            buildStoragePath(
-                filePath
-            );
-
-        setProgress(
-            20,
-            "Preparing replacement..."
-        );
-
-        setProgress(
-            40,
-            "Uploading replacement..."
-        );
-
-        const {
-            error:storageError
-        } =
-        await supabaseClient
-        .storage
-        .from(
-            "repository-files"
-        )
-        .upload(
-            storagePath,
-            selectedFile,
-            {
-                upsert:true,
-
-                contentType:
-                    selectedFile.type ||
-                    "application/octet-stream"
-            }
-        );
-
-        if(storageError){
-
-            throw storageError;
-
-        }
-
-        setProgress(
-            70,
-            "Updating repository record..."
-        );
-
-        const content =
-            binary
-            ? ""
-            : await selectedFile.text();
-
-        const {
-            error:updateError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .update({
-
-            content:
-                content,
-
-            storage_path:
-                storagePath,
-
-            mime_type:
-                selectedFile.type ||
-                "application/octet-stream",
-
-            file_size:
-                selectedFile.size,
-
-            is_binary:
-                binary
-
-        })
-        .eq(
-            "id",
-            existingFile.id
-        );
-
-        if(updateError){
-
-            throw updateError;
-
-        }
-
-        setProgress(
-            100,
-            "Replacement completed."
-        );
-
-        showStatus(
-            "✅ Existing file replaced successfully!",
-            "success"
-        );
-
-        setTimeout(
-            goBack,
-            1200
-        );
-
-    }catch(error){
-
-        console.error(error);
-
-        hideProgress();
-
-        showStatus(
-            "Replacement failed: " +
-            (
-                error.message ||
-                error
-            ),
-            "error"
-        );
-
-        disableButtons(false);
-
-    }
+    return String(path || "")
+        .trim()
+        .replace(/\\/g, "/")
+        .replace(/^\/+/, "")
+        .replace(/\/+/g, "/")
+        .replace(/\/+$/, "");
 
 }
 
 
-/* =====================================================
-   CREATE NEW FILE
-===================================================== */
+/* =========================================================
+   VALIDATE FILE PATH
+========================================================= */
 
-async function createFile(){
+function validateFilePath(path){
+
+    path = normalizePath(path);
+
+    if(!path){
+
+        return {
+            valid:false,
+            message:"Please enter a file path."
+        };
+
+    }
+
+
+    if(path.includes("..")){
+
+        return {
+            valid:false,
+            message:"'..' is not allowed in file path."
+        };
+
+    }
+
+
+    if(path.startsWith(".")){
+
+        /*
+           Allow normal filenames but prevent
+           weird hidden root paths.
+        */
+
+    }
+
+
+    const parts = path.split("/");
+
+    for(const part of parts){
+
+        if(!part.trim()){
+
+            return {
+                valid:false,
+                message:"Invalid empty folder name."
+            };
+
+        }
+
+        if(part === "." || part === ".."){
+
+            return {
+                valid:false,
+                message:"Invalid path."
+            };
+
+        }
+
+    }
+
+
+    return {
+        valid:true,
+        path:path
+    };
+
+}
+
+
+/* =========================================================
+   GET FILE PATH
+========================================================= */
+
+function getFinalFilePath(){
+
+    let path =
+        document
+        .getElementById("filePath")
+        .value
+        .trim();
 
     const fileName =
-        document.getElementById(
-            "createFileName"
-        ).value.trim();
+        document
+        .getElementById("fileName")
+        .value
+        .trim();
 
-    const content =
-        document.getElementById(
-            "createContent"
-        ).value;
 
-    if(!fileName){
+    /*
+       If File Path is empty,
+       use File Name.
+    */
 
-        showStatus(
-            "Please enter a file name.",
-            "error"
-        );
+    if(!path && fileName){
 
-        return;
+        path = fileName;
 
     }
 
-    if(fileName.includes("\\")){
 
-        showStatus(
-            "Invalid file path.",
-            "error"
-        );
+    /*
+       If user entered folder path but filename separately,
+       make sure filename is included.
+    */
 
-        return;
+    if(path && fileName){
+
+        const lastPart =
+            path.split("/").pop();
+
+        /*
+           If File Path does not already end
+           with the File Name, replace last part.
+        */
+
+        if(lastPart !== fileName){
+
+            const pathParts =
+                path.split("/");
+
+            pathParts[pathParts.length - 1] =
+                fileName;
+
+            path =
+                pathParts.join("/");
+        }
 
     }
 
-    const filePath =
-        normalizePath(
-            fileName
-        );
 
-    try{
+    return normalizePath(path);
 
-        disableButtons(true);
+}
 
-        clearStatus();
 
-        showProgress();
+/* =========================================================
+   SYNC FILE NAME FROM PATH
+========================================================= */
 
-        setProgress(
-            20,
-            "Checking file..."
-        );
+function syncFileNameFromPath(){
 
-        const {
-            data:existing,
-            error:checkError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .select("id,file_path")
-        .eq(
-            "repository_id",
-            repoId
-        )
-        .eq(
-            "branch_id",
-            currentBranch.id
-        )
-        .eq(
-            "file_path",
-            filePath
-        )
-        .maybeSingle();
+    const path =
+        document
+        .getElementById("filePath")
+        .value
+        .trim();
 
-        if(checkError){
+    if(!path) return;
 
-            throw checkError;
+    const clean =
+        normalizePath(path);
 
-        }
+    const parts =
+        clean.split("/");
 
-        if(existing){
+    const filename =
+        parts[parts.length - 1];
 
-            hideProgress();
+    if(filename){
 
-            showStatus(
-                "⚠️ File already exists. Use Upload mode to replace it.",
-                "error"
-            );
-
-            disableButtons(false);
-
-            return;
-
-        }
-
-        setProgress(
-            50,
-            "Saving file..."
-        );
-
-        const blob =
-            new Blob(
-                [content],
-                {
-                    type:
-                    guessMimeType(
-                        filePath
-                    )
-                }
-            );
-
-        const storagePath =
-            buildStoragePath(
-                filePath
-            );
-
-        const {
-            error:storageError
-        } =
-        await supabaseClient
-        .storage
-        .from(
-            "repository-files"
-        )
-        .upload(
-            storagePath,
-            blob,
-            {
-                upsert:true,
-
-                contentType:
-                    guessMimeType(
-                        filePath
-                    )
-            }
-        );
-
-        if(storageError){
-
-            throw storageError;
-
-        }
-
-        setProgress(
-            75,
-            "Creating repository record..."
-        );
-
-        const {
-            error:dbError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .insert({
-
-            repository_id:
-                repoId,
-
-            branch_id:
-                currentBranch.id,
-
-            file_path:
-                filePath,
-
-            content:
-                content,
-
-            storage_path:
-                storagePath,
-
-            mime_type:
-                guessMimeType(
-                    filePath
-                ),
-
-            file_size:
-                new Blob(
-                    [content]
-                ).size,
-
-            is_binary:
-                false
-
-        });
-
-        if(dbError){
-
-            throw dbError;
-
-        }
-
-        setProgress(
-            100,
-            "File created."
-        );
-
-        showStatus(
-            "✅ File created successfully!",
-            "success"
-        );
-
-        setTimeout(
-            goBack,
-            1200
-        );
-
-    }catch(error){
-
-        console.error(error);
-
-        hideProgress();
-
-        showStatus(
-            error.message ||
-            "Could not create file.",
-            "error"
-        );
-
-        disableButtons(false);
+        document.getElementById(
+            "fileName"
+        ).value = filename;
 
     }
 
 }
 
 
-/* =====================================================
+/* =========================================================
+   PATH PREVIEW
+========================================================= */
+
+function updatePathPreview(){
+
+    const path =
+        getFinalFilePath();
+
+    document.getElementById(
+        "pathPreview"
+    ).textContent =
+        path || "root/file.ext";
+
+}
+
+
+/* =========================================================
    CREATE FOLDER
-===================================================== */
+========================================================= */
 
 async function createFolder(){
 
-    const input =
+    const button =
         document.getElementById(
-            "folderName"
+            "createFolderButton"
         );
 
     const folderName =
-        input.value.trim();
+        document
+        .getElementById("folderName")
+        .value
+        .trim();
+
+
+    if(!repoId){
+
+        showToast(
+            "Repository ID is missing.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!branchId){
+
+        showToast(
+            "Branch ID is missing.",
+            "error"
+        );
+
+        return;
+    }
+
 
     if(!folderName){
 
-        showStatus(
+        showToast(
             "Please enter a folder name.",
             "error"
         );
 
-        input.focus();
-
         return;
-
     }
+
+
+    /*
+       Folder must be a single folder name.
+       Nested folders can be created one by one.
+    */
 
     if(
         folderName.includes("/") ||
         folderName.includes("\\") ||
+        folderName === "." ||
+        folderName === ".." ||
         folderName.includes("..")
     ){
 
-        showStatus(
-            "Invalid folder name. Please enter only one folder name.",
+        showToast(
+            "Please enter a valid single folder name.",
             "error"
         );
 
-        input.focus();
-
         return;
-
     }
+
+
+    button.disabled = true;
+    button.textContent = "Creating Folder...";
+
 
     try{
 
-        disableButtons(true);
-
-        clearStatus();
-
-        showProgress();
-
-        setProgress(
-            20,
-            "Checking folder..."
-        );
-
+        const folderPath =
+            normalizePath(folderName);
 
         const placeholderPath =
-            normalizePath(
-                folderName +
-                "/.gitkeep"
-            );
+            folderPath + "/.gitkeep";
 
 
-        /* Check whether folder already exists */
+        /*
+           Check whether placeholder already exists
+        */
 
         const {
             data:existing,
-            error:checkError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .select("id,file_path")
-        .eq(
-            "repository_id",
-            repoId
-        )
-        .eq(
-            "branch_id",
-            currentBranch.id
-        )
-        .eq(
-            "file_path",
-            placeholderPath
-        )
-        .maybeSingle();
+            error:existingError
+        } = await supabaseClient
+            .from("repository_files")
+            .select("id,file_path")
+            .eq("repository_id", repoId)
+            .eq("branch_id", branchId)
+            .eq("file_path", placeholderPath)
+            .maybeSingle();
 
 
-        if(checkError){
+        if(existingError){
 
-            throw checkError;
+            console.warn(
+                "Existing folder check:",
+                existingError
+            );
 
         }
 
 
         if(existing){
 
-            hideProgress();
-
-            showStatus(
-                "⚠️ This folder already exists.",
+            showToast(
+                "Folder already exists.",
                 "error"
             );
 
-            disableButtons(false);
-
             return;
-
         }
 
 
-        setProgress(
-            45,
-            "Creating folder..."
-        );
+        /*
+           Storage path
+        */
+
+        const storagePath =
+            repoId +
+            "/" +
+            branchId +
+            "/" +
+            placeholderPath;
 
 
-        const emptyBlob =
+        /*
+           Empty .gitkeep file
+        */
+
+        const blob =
             new Blob(
                 [""],
                 {
-                    type:
-                    "text/plain"
+                    type:"text/plain"
                 }
-            );
-
-
-        const storagePath =
-            buildStoragePath(
-                placeholderPath
             );
 
 
         const {
             error:storageError
-        } =
-        await supabaseClient
-        .storage
-        .from(
-            "repository-files"
-        )
-        .upload(
-            storagePath,
-            emptyBlob,
-            {
-                upsert:false,
-
-                contentType:
-                    "text/plain"
-            }
-        );
+        } = await supabaseClient
+            .storage
+            .from("repository-files")
+            .upload(
+                storagePath,
+                blob,
+                {
+                    upsert:false,
+                    contentType:"text/plain"
+                }
+            );
 
 
         if(storageError){
+
+            /*
+               If storage says file already exists,
+               try DB check before failing.
+            */
 
             throw storageError;
 
         }
 
 
-        setProgress(
-            75,
-            "Saving folder information..."
-        );
-
+        /*
+           Insert database record
+        */
 
         const {
             error:dbError
-        } =
-        await supabaseClient
-        .from("repository_files")
-        .insert({
+        } = await supabaseClient
+            .from("repository_files")
+            .insert({
 
-            repository_id:
-                repoId,
+                repository_id:repoId,
 
-            branch_id:
-                currentBranch.id,
+                branch_id:branchId,
 
-            file_path:
-                placeholderPath,
+                file_path:placeholderPath,
 
-            content:
-                "",
+                content:"",
 
-            storage_path:
-                storagePath,
+                mime_type:"text/plain",
 
-            mime_type:
-                "text/plain",
+                file_size:0,
 
-            file_size:
-                0,
+                is_binary:false,
 
-            is_binary:
-                false
+                storage_path:storagePath
 
-        });
+            });
 
 
         if(dbError){
 
-            /* Try to remove storage placeholder
-               if DB insert fails */
+            /*
+               Cleanup storage if DB insert fails
+            */
 
             await supabaseClient
-            .storage
-            .from(
-                "repository-files"
-            )
-            .remove([
-                storagePath
-            ]);
+                .storage
+                .from("repository-files")
+                .remove([
+                    storagePath
+                ]);
 
             throw dbError;
 
         }
 
 
-        setProgress(
-            100,
-            "Folder created."
-        );
-
-
-        input.value = "";
-
-
-        showStatus(
-            "✅ Folder '" +
-            folderName +
-            "' created successfully!",
+        showToast(
+            "Folder created successfully.",
             "success"
         );
 
 
-        setTimeout(
-            goBack,
-            1200
-        );
+        document.getElementById(
+            "folderName"
+        ).value = "";
+
+
+        /*
+           Give user a moment to see success
+           and return to repository.
+        */
+
+        setTimeout(function(){
+
+            goBack();
+
+        },700);
 
 
     }catch(error){
@@ -2273,396 +1271,872 @@ async function createFolder(){
             error
         );
 
-        hideProgress();
+        showToast(
+            "Folder creation failed: " +
+            (error.message || "Unknown error"),
+            "error"
+        );
 
-        let message =
-            error.message ||
-            "Could not create folder.";
+    }finally{
+
+        button.disabled = false;
+
+        button.textContent =
+            "📁 Create Folder";
+
+    }
+
+}
 
 
-        if(
-            message
-            .toLowerCase()
-            .includes("duplicate")
-        ){
+/* =========================================================
+   CREATE TEXT FILE
+========================================================= */
 
-            message =
-                "This folder already exists.";
+async function createFile(){
+
+    const button =
+        document.getElementById(
+            "createFileButton"
+        );
+
+
+    if(!repoId){
+
+        showToast(
+            "Repository ID is missing.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!branchId){
+
+        showToast(
+            "Branch ID is missing.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    let filePath =
+        getFinalFilePath();
+
+
+    const content =
+        document
+        .getElementById("fileContent")
+        .value;
+
+
+    if(!filePath){
+
+        showToast(
+            "Please enter File Path or File Name.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const validation =
+        validateFilePath(filePath);
+
+
+    if(!validation.valid){
+
+        showToast(
+            validation.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    filePath =
+        validation.path;
+
+
+    if(!content.trim()){
+
+        /*
+           Allow empty files too,
+           but ask through normal confirmation.
+        */
+
+    }
+
+
+    button.disabled = true;
+    button.textContent = "Creating...";
+
+
+    try{
+
+        /*
+           Check duplicate
+        */
+
+        const {
+            data:existing,
+            error:checkError
+        } = await supabaseClient
+            .from("repository_files")
+            .select("id")
+            .eq("repository_id", repoId)
+            .eq("branch_id", branchId)
+            .eq("file_path", filePath)
+            .maybeSingle();
+
+
+        if(checkError){
+
+            throw checkError;
 
         }
 
 
-        showStatus(
-            "Folder creation failed: " +
-            message,
+        if(existing){
+
+            showToast(
+                "A file with this path already exists.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const blob =
+            new Blob(
+                [content],
+                {
+                    type:getMimeType(filePath)
+                }
+            );
+
+
+        const storagePath =
+            repoId +
+            "/" +
+            branchId +
+            "/" +
+            filePath;
+
+
+        /*
+           Upload to Storage
+        */
+
+        const {
+            error:storageError
+        } = await supabaseClient
+            .storage
+            .from("repository-files")
+            .upload(
+                storagePath,
+                blob,
+                {
+                    upsert:false,
+                    contentType:getMimeType(filePath)
+                }
+            );
+
+
+        if(storageError){
+
+            throw storageError;
+
+        }
+
+
+        /*
+           Insert DB row
+        */
+
+        const {
+            error:dbError
+        } = await supabaseClient
+            .from("repository_files")
+            .insert({
+
+                repository_id:repoId,
+
+                branch_id:branchId,
+
+                file_path:filePath,
+
+                content:content,
+
+                mime_type:getMimeType(filePath),
+
+                file_size:new Blob([content]).size,
+
+                is_binary:false,
+
+                storage_path:storagePath
+
+            });
+
+
+        if(dbError){
+
+            await supabaseClient
+                .storage
+                .from("repository-files")
+                .remove([
+                    storagePath
+                ]);
+
+            throw dbError;
+
+        }
+
+
+        showToast(
+            "File created successfully.",
+            "success"
+        );
+
+
+        setTimeout(function(){
+
+            goBack();
+
+        },700);
+
+
+    }catch(error){
+
+        console.error(
+            "Create file error:",
+            error
+        );
+
+        showToast(
+            "File creation failed: " +
+            (error.message || "Unknown error"),
             "error"
         );
 
-        disableButtons(false);
+    }finally{
+
+        button.disabled = false;
+
+        button.textContent =
+            "➕ Create File";
 
     }
 
 }
 
 
-/* =====================================================
-   STORAGE PATH
-===================================================== */
+/* =========================================================
+   UPLOAD FILE
+========================================================= */
 
-function buildStoragePath(filePath){
+async function uploadFile(){
 
-    return (
-        repoId +
-        "/" +
-        currentBranch.id +
-        "/" +
-        filePath
-    );
+    const button =
+        document.getElementById(
+            "uploadFileButton"
+        );
+
+
+    if(!repoId){
+
+        showToast(
+            "Repository ID is missing.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!branchId){
+
+        showToast(
+            "Branch ID is missing.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const input =
+        document.getElementById(
+            "fileInput"
+        );
+
+
+    const file =
+        input.files[0];
+
+
+    if(!file){
+
+        showToast(
+            "Please select a file.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    let filePath =
+        document
+        .getElementById("filePath")
+        .value
+        .trim();
+
+
+    /*
+       If File Path is empty,
+       use selected filename.
+    */
+
+    if(!filePath){
+
+        filePath =
+            file.name;
+
+    }
+
+
+    /*
+       Replace filename at end
+       with actual selected file name.
+    */
+
+    const pathParts =
+        normalizePath(filePath)
+        .split("/");
+
+
+    pathParts[pathParts.length - 1] =
+        file.name;
+
+
+    filePath =
+        pathParts.join("/");
+
+
+    const validation =
+        validateFilePath(filePath);
+
+
+    if(!validation.valid){
+
+        showToast(
+            validation.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    filePath =
+        validation.path;
+
+
+    button.disabled = true;
+    button.textContent = "Uploading...";
+
+
+    try{
+
+        /*
+           Duplicate check
+        */
+
+        const {
+            data:existing,
+            error:checkError
+        } = await supabaseClient
+            .from("repository_files")
+            .select("id")
+            .eq("repository_id", repoId)
+            .eq("branch_id", branchId)
+            .eq("file_path", filePath)
+            .maybeSingle();
+
+
+        if(checkError){
+
+            throw checkError;
+
+        }
+
+
+        if(existing){
+
+            showToast(
+                "A file with this path already exists.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const storagePath =
+            repoId +
+            "/" +
+            branchId +
+            "/" +
+            filePath;
+
+
+        /*
+           Upload file
+        */
+
+        const {
+            error:storageError
+        } = await supabaseClient
+            .storage
+            .from("repository-files")
+            .upload(
+                storagePath,
+                file,
+                {
+                    upsert:false,
+                    contentType:
+                        file.type ||
+                        getMimeType(filePath)
+                }
+            );
+
+
+        if(storageError){
+
+            throw storageError;
+
+        }
+
+
+        /*
+           Detect binary
+        */
+
+        const isBinary =
+            detectBinary(file);
+
+
+        /*
+           Read text content only for text files
+        */
+
+        let content = "";
+
+
+        if(!isBinary){
+
+            try{
+
+                content =
+                    await file.text();
+
+            }catch(error){
+
+                content = "";
+
+            }
+
+        }
+
+
+        /*
+           Insert DB
+        */
+
+        const {
+            error:dbError
+        } = await supabaseClient
+            .from("repository_files")
+            .insert({
+
+                repository_id:repoId,
+
+                branch_id:branchId,
+
+                file_path:filePath,
+
+                content:content,
+
+                mime_type:
+                    file.type ||
+                    getMimeType(filePath),
+
+                file_size:file.size,
+
+                is_binary:isBinary,
+
+                storage_path:storagePath
+
+            });
+
+
+        if(dbError){
+
+            /*
+               Cleanup Storage
+            */
+
+            await supabaseClient
+                .storage
+                .from("repository-files")
+                .remove([
+                    storagePath
+                ]);
+
+            throw dbError;
+
+        }
+
+
+        showToast(
+            "File uploaded successfully.",
+            "success"
+        );
+
+
+        setTimeout(function(){
+
+            goBack();
+
+        },700);
+
+
+    }catch(error){
+
+        console.error(
+            "Upload error:",
+            error
+        );
+
+        showToast(
+            "Upload failed: " +
+            (error.message || "Unknown error"),
+            "error"
+        );
+
+    }finally{
+
+        button.disabled = false;
+
+        button.textContent =
+            "📤 Upload File";
+
+    }
 
 }
 
 
-/* =====================================================
-   NORMALIZE PATH
-===================================================== */
+/* =========================================================
+   DETECT BINARY
+========================================================= */
 
-function normalizePath(path){
+function detectBinary(file){
 
-    return String(
-        path || ""
-    )
-    .replace(
-        /\\/g,
-        "/"
-    )
-    .replace(
-        /^\/+/,
-        ""
-    )
-    .replace(
-        /\/+/g,
-        "/"
-    )
-    .trim();
-
-}
+    const type =
+        String(file.type || "").toLowerCase();
 
 
-/* =====================================================
-   BINARY DETECTION
-===================================================== */
+    /*
+       Known text extensions
+    */
 
-function isBinaryFile(file){
+    const path =
+        String(file.name || "").toLowerCase();
 
-    const name =
-        file.name.toLowerCase();
 
-    const binaryExtensions = [
+    const textExtensions = [
 
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".gif",
-        ".webp",
-        ".bmp",
-        ".ico",
-
-        ".pdf",
-
-        ".zip",
-        ".rar",
-        ".7z",
-
-        ".mp3",
-        ".wav",
-        ".ogg",
-
-        ".mp4",
-        ".webm",
-        ".avi",
-
-        ".doc",
-        ".docx",
-        ".xls",
-        ".xlsx",
-        ".ppt",
-        ".pptx",
-
-        ".exe",
-        ".apk",
-
-        ".woff",
-        ".woff2",
-        ".ttf",
-        ".otf"
+        ".html",
+        ".htm",
+        ".css",
+        ".js",
+        ".jsx",
+        ".ts",
+        ".tsx",
+        ".json",
+        ".xml",
+        ".txt",
+        ".md",
+        ".markdown",
+        ".csv",
+        ".sql",
+        ".php",
+        ".py",
+        ".java",
+        ".c",
+        ".cpp",
+        ".h",
+        ".hpp",
+        ".cs",
+        ".go",
+        ".rs",
+        ".rb",
+        ".sh",
+        ".bat",
+        ".yaml",
+        ".yml",
+        ".env",
+        ".gitignore"
 
     ];
 
-    return binaryExtensions.some(
-        ext =>
-            name.endsWith(ext)
-    );
+
+    for(const ext of textExtensions){
+
+        if(path.endsWith(ext)){
+
+            return false;
+
+        }
+
+    }
+
+
+    if(
+        type.startsWith("text/")
+    ){
+
+        return false;
+
+    }
+
+
+    if(
+        type.includes("javascript") ||
+        type.includes("json") ||
+        type.includes("xml")
+    ){
+
+        return false;
+
+    }
+
+
+    return true;
 
 }
 
 
-/* =====================================================
+/* =========================================================
    MIME TYPE
-===================================================== */
+========================================================= */
 
-function guessMimeType(path){
+function getMimeType(path){
 
-    const ext =
+    const extension =
         path
-        .toLowerCase()
         .split(".")
-        .pop();
+        .pop()
+        .toLowerCase();
+
 
     const types = {
 
-        html:
-            "text/html",
+        html:"text/html",
 
-        htm:
-            "text/html",
+        htm:"text/html",
 
-        css:
-            "text/css",
+        css:"text/css",
 
-        js:
-            "application/javascript",
+        js:"application/javascript",
 
-        json:
-            "application/json",
+        json:"application/json",
 
-        txt:
-            "text/plain",
+        txt:"text/plain",
 
-        md:
-            "text/markdown",
+        md:"text/markdown",
 
-        xml:
-            "application/xml",
+        csv:"text/csv",
 
-        svg:
-            "image/svg+xml"
+        xml:"application/xml",
+
+        pdf:"application/pdf",
+
+        png:"image/png",
+
+        jpg:"image/jpeg",
+
+        jpeg:"image/jpeg",
+
+        gif:"image/gif",
+
+        webp:"image/webp",
+
+        svg:"image/svg+xml",
+
+        ico:"image/x-icon",
+
+        zip:"application/zip",
+
+        rar:"application/vnd.rar",
+
+        mp3:"audio/mpeg",
+
+        mp4:"video/mp4",
+
+        wav:"audio/wav",
+
+        doc:"application/msword",
+
+        docx:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+
+        xls:
+            "application/vnd.ms-excel",
+
+        xlsx:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
     };
 
-    return (
-        types[ext] ||
-        "text/plain"
-    );
+
+    return types[extension] ||
+        "application/octet-stream";
 
 }
 
 
-/* =====================================================
-   FILE SIZE
-===================================================== */
+/* =========================================================
+   FORMAT BYTES
+========================================================= */
 
-function formatFileSize(bytes){
+function formatBytes(bytes){
 
-    const n =
-        Number(bytes || 0);
+    if(!bytes || bytes === 0){
 
-    if(n < 1024){
-
-        return n +
-            " B";
+        return "0 Bytes";
 
     }
 
-    if(
-        n <
-        1024 * 1024
-    ){
 
-        return (
-            n / 1024
-        ).toFixed(1) +
-        " KB";
-
-    }
-
-    if(
-        n <
-        1024 *
-        1024 *
-        1024
-    ){
-
-        return (
-            n /
-            (1024 * 1024)
-        ).toFixed(1) +
-        " MB";
-
-    }
-
-    return (
-        n /
-        (1024 *
-        1024 *
-        1024)
-    ).toFixed(1) +
-    " GB";
-
-}
+    const units = [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+    ];
 
 
-/* =====================================================
-   PROGRESS
-===================================================== */
-
-function showProgress(){
-
-    document.getElementById(
-        "progress"
-    ).classList.add(
-        "show"
-    );
-
-}
-
-function hideProgress(){
-
-    document.getElementById(
-        "progress"
-    ).classList.remove(
-        "show"
-    );
-
-}
-
-function setProgress(
-    percent,
-    message
-){
-
-    document.getElementById(
-        "progressFill"
-    ).style.width =
-        percent + "%";
-
-    document.getElementById(
-        "progressText"
-    ).textContent =
-        message;
-
-}
-
-
-/* =====================================================
-   STATUS
-===================================================== */
-
-function showStatus(
-    message,
-    type
-){
-
-    const box =
-        document.getElementById(
-            "status"
+    const index =
+        Math.floor(
+            Math.log(bytes) /
+            Math.log(1024)
         );
 
-    box.textContent =
-        message;
 
-    box.className =
-        "status show " +
-        type;
-
-}
-
-function clearStatus(){
-
-    const box =
-        document.getElementById(
-            "status"
-        );
-
-    box.className =
-        "status";
-
-    box.textContent =
-        "";
-
-}
-
-
-/* =====================================================
-   HIDE EXISTING BOXES
-===================================================== */
-
-function hideBoxes(){
-
-    document.getElementById(
-        "existsBox"
-    ).classList.remove(
-        "show"
+    return (
+        parseFloat(
+            (
+                bytes /
+                Math.pow(1024,index)
+            ).toFixed(2)
+        )
+        +
+        " " +
+        units[index]
     );
 
-    document.getElementById(
-        "newBox"
-    ).classList.remove(
-        "show"
-    );
-
-    document.getElementById(
-        "replaceButton"
-    ).classList.add(
-        "hidden"
-    );
-
-    document.getElementById(
-        "replaceButton"
-    ).disabled =
-        true;
-
 }
 
 
-/* =====================================================
-   DISABLE BUTTONS
-===================================================== */
-
-function disableButtons(disabled){
-
-    document.getElementById(
-        "uploadButton"
-    ).disabled =
-        disabled;
-
-    document.getElementById(
-        "replaceButton"
-    ).disabled =
-        disabled;
-
-}
-
-
-/* =====================================================
-   BACK
-===================================================== */
+/* =========================================================
+   GO BACK
+========================================================= */
 
 function goBack(){
 
-    window.location.href =
-        "repository-details.html" +
-        "?repository_id=" +
-        encodeURIComponent(
-            repoId
-        ) +
-        (
-            currentBranch
-            ? "&branch_id=" +
-              encodeURIComponent(
-                  currentBranch.id
-              )
-            : ""
+    /*
+       Keep repository and branch information.
+       This works with the existing repository-details page.
+    */
+
+    let url =
+        "repository-details.html";
+
+
+    const query = [];
+
+
+    if(repoId){
+
+        query.push(
+            "repo_id=" +
+            encodeURIComponent(repoId)
         );
+
+    }
+
+
+    if(branchId){
+
+        query.push(
+            "branch_id=" +
+            encodeURIComponent(branchId)
+        );
+
+    }
+
+
+    if(query.length){
+
+        url += "?" + query.join("&");
+
+    }
+
+
+    window.location.href = url;
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer = null;
+
+function showToast(message,type="success"){
+
+    const toast =
+        document.getElementById("toast");
+
+
+    toast.textContent =
+        message;
+
+
+    toast.className =
+        "toast show " +
+        type;
+
+
+    clearTimeout(toastTimer);
+
+
+    toastTimer =
+        setTimeout(function(){
+
+            toast.className =
+                "toast";
+
+        },3500);
 
 }
 
