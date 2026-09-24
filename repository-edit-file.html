@@ -1,1 +1,791 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Edit File - ASIM TECH</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#07131f;
+    color:#ffffff;
+}
+
+.header{
+    background:#050c14;
+    border-bottom:1px solid #203747;
+    padding:16px 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+    color:#00dfb0;
+}
+
+.back-btn{
+    background:#202b35;
+    color:white;
+    border:1px solid #40515e;
+
+    padding:10px 16px;
+    border-radius:9px;
+
+    cursor:pointer;
+    font-size:14px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:#0b1722;
+    border:1px solid #203747;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+h1{
+    margin-top:0;
+    color:#45a8ff;
+}
+
+.info{
+    color:#9db0bf;
+    line-height:1.7;
+}
+
+.file-name{
+    color:#00dfb0;
+    font-weight:bold;
+    word-break:break-all;
+}
+
+textarea{
+    width:100%;
+    min-height:550px;
+
+    background:#050d14;
+    color:#e8f1f7;
+
+    border:1px solid #304858;
+    border-radius:12px;
+
+    padding:18px;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size:14px;
+    line-height:1.6;
+
+    resize:vertical;
+    outline:none;
+}
+
+textarea:focus{
+    border-color:#00dfb0;
+    box-shadow:
+        0 0 0 2px
+        rgba(0,223,176,.12);
+}
+
+.buttons{
+    display:flex;
+    gap:12px;
+    margin-top:18px;
+    flex-wrap:wrap;
+}
+
+.save-btn{
+    background:#00b878;
+    color:white;
+
+    border:none;
+    padding:13px 25px;
+
+    border-radius:10px;
+
+    font-size:16px;
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.save-btn:hover{
+    background:#00d18b;
+}
+
+.cancel-btn{
+    background:#26333e;
+    color:white;
+
+    border:1px solid #40515e;
+
+    padding:13px 22px;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+    cursor:pointer;
+}
+
+.status{
+    margin-top:15px;
+    padding:12px;
+
+    border-radius:9px;
+
+    display:none;
+
+    line-height:1.5;
+}
+
+.status.success{
+    display:block;
+
+    background:#073b2c;
+    border:1px solid #087b5b;
+    color:#72f0c3;
+}
+
+.status.error{
+    display:block;
+
+    background:#42151a;
+    border:1px solid #a73540;
+    color:#ff9da5;
+}
+
+.loading{
+    text-align:center;
+    padding:40px;
+
+    color:#9db0bf;
+}
+
+@media(max-width:700px){
+
+    .header{
+        padding:14px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .container{
+        padding:12px;
+    }
+
+    .card{
+        padding:15px;
+    }
+
+    textarea{
+        min-height:450px;
+        font-size:13px;
+    }
+
+    .buttons button{
+        width:100%;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+        ⚡ ASIM TECH
+    </div>
+
+    <button
+        class="back-btn"
+        onclick="goBack()">
+
+        ← Back
+
+    </button>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="card">
+
+        <h1>
+            ✏️ Edit File
+        </h1>
+
+        <div class="info">
+
+            Repository:
+            <span id="repositoryName">
+                Loading...
+            </span>
+
+            <br>
+
+            Branch:
+            <span id="branchName">
+                Loading...
+            </span>
+
+            <br>
+
+            File:
+            <span
+                class="file-name"
+                id="fileName">
+                Loading...
+            </span>
+
+        </div>
+
+    </div>
+
+
+
+    <div
+        class="card"
+        id="editorCard">
+
+        <div
+            class="loading"
+            id="loading">
+
+            ⏳ Loading file...
+
+        </div>
+
+
+        <div id="editorArea"
+             style="display:none;">
+
+            <textarea
+                id="fileContent"
+                spellcheck="false"
+                placeholder="Write your code here...">
+            </textarea>
+
+
+            <div class="buttons">
+
+                <button
+                    class="save-btn"
+                    id="saveButton"
+                    onclick="saveFile()">
+
+                    💾 Save Changes
+
+                </button>
+
+
+                <button
+                    class="cancel-btn"
+                    onclick="goBack()">
+
+                    ✖ Cancel
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="status"
+                class="status">
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+    "https://lgwaeqgiqrsjprsecwxx.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================
+   URL PARAMETERS
+========================================= */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const fileId =
+    params.get("id");
+
+
+const repositoryId =
+    params.get("repository_id");
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let currentFile = null;
+
+let originalContent = "";
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const loading =
+    document.getElementById(
+        "loading"
+    );
+
+const editorArea =
+    document.getElementById(
+        "editorArea"
+    );
+
+const fileContent =
+    document.getElementById(
+        "fileContent"
+    );
+
+const fileName =
+    document.getElementById(
+        "fileName"
+    );
+
+const repositoryName =
+    document.getElementById(
+        "repositoryName"
+    );
+
+const branchName =
+    document.getElementById(
+        "branchName"
+    );
+
+const statusBox =
+    document.getElementById(
+        "status"
+    );
+
+const saveButton =
+    document.getElementById(
+        "saveButton"
+    );
+
+
+/* =========================================
+   SHOW STATUS
+========================================= */
+
+function showStatus(
+    message,
+    type
+){
+
+    statusBox.className =
+        "status " + type;
+
+    statusBox.innerText =
+        message;
+
+}
+
+
+/* =========================================
+   LOAD FILE
+========================================= */
+
+async function loadFile(){
+
+    if(!fileId){
+
+        loading.innerHTML =
+            "❌ File ID is missing.";
+
+        return;
+    }
+
+
+    try{
+
+        let query =
+            supabaseClient
+                .from("repository_files")
+                .select("*")
+                .eq("id", fileId)
+                .limit(1);
+
+
+        const result =
+            await query;
+
+
+        if(result.error){
+
+            throw result.error;
+
+        }
+
+
+        if(
+            !result.data ||
+            result.data.length === 0
+        ){
+
+            throw new Error(
+                "File not found."
+            );
+
+        }
+
+
+        currentFile =
+            result.data[0];
+
+
+        /* FILE NAME */
+
+        fileName.innerText =
+            currentFile.path ||
+            currentFile.name ||
+            "Unnamed file";
+
+
+        /* CONTENT */
+
+        originalContent =
+            currentFile.content || "";
+
+
+        fileContent.value =
+            originalContent;
+
+
+        /* REPOSITORY */
+
+        if(repositoryId){
+
+            const repoResult =
+                await supabaseClient
+                    .from("repositories")
+                    .select("*")
+                    .eq(
+                        "id",
+                        repositoryId
+                    )
+                    .limit(1);
+
+
+            if(
+                !repoResult.error &&
+                repoResult.data &&
+                repoResult.data.length
+            ){
+
+                const repo =
+                    repoResult.data[0];
+
+                repositoryName.innerText =
+                    repo.name ||
+                    "Repository";
+
+            }else{
+
+                repositoryName.innerText =
+                    repositoryId;
+
+            }
+
+        }else{
+
+            repositoryName.innerText =
+                currentFile.repository_id ||
+                "Repository";
+
+        }
+
+
+        /* BRANCH */
+
+        branchName.innerText =
+            currentFile.branch ||
+            currentFile.branch_id ||
+            "main";
+
+
+        loading.style.display =
+            "none";
+
+
+        editorArea.style.display =
+            "block";
+
+
+    }catch(error){
+
+        console.error(
+            "Load file error:",
+            error
+        );
+
+
+        loading.innerHTML =
+            `
+            ❌ Unable to load file.
+            <br><br>
+            ${escapeHtml(
+                error.message
+            )}
+            `;
+
+    }
+
+}
+
+
+/* =========================================
+   SAVE FILE
+========================================= */
+
+async function saveFile(){
+
+    if(!currentFile){
+
+        showStatus(
+            "❌ File is not loaded.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const newContent =
+        fileContent.value;
+
+
+    saveButton.disabled =
+        true;
+
+    saveButton.innerText =
+        "⏳ Saving...";
+
+
+    statusBox.className =
+        "status";
+
+
+
+    try{
+
+        const updateData = {
+
+            content:
+                newContent,
+
+            updated_at:
+                new Date().toISOString()
+
+        };
+
+
+        const result =
+            await supabaseClient
+                .from("repository_files")
+                .update(updateData)
+                .eq(
+                    "id",
+                    currentFile.id
+                );
+
+
+        if(result.error){
+
+            throw result.error;
+
+        }
+
+
+        originalContent =
+            newContent;
+
+
+        showStatus(
+            "✅ File saved successfully!",
+            "success"
+        );
+
+
+        saveButton.innerText =
+            "✅ Saved";
+
+
+        setTimeout(
+            function(){
+
+                saveButton.innerText =
+                    "💾 Save Changes";
+
+            },
+            2000
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Save error:",
+            error
+        );
+
+
+        showStatus(
+            "❌ Save failed: "
+            +
+            error.message,
+            "error"
+        );
+
+
+        saveButton.innerText =
+            "💾 Save Changes";
+
+    }
+
+
+    saveButton.disabled =
+        false;
+
+}
+
+
+/* =========================================
+   BACK
+========================================= */
+
+function goBack(){
+
+    if(repositoryId){
+
+        window.location.href =
+            "repository-details.html"
+            +
+            "?repository_id="
+            +
+            encodeURIComponent(
+                repositoryId
+            );
+
+    }else{
+
+        window.history.back();
+
+    }
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(text){
+
+    return String(text)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+loadFile();
+
+</script>
+
+</body>
+</html>
