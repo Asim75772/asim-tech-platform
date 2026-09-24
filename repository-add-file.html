@@ -3,540 +3,558 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Repository — ASIM TECH</title>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Upload File — ASIM TECH</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 
 *{
-box-sizing:border-box;
-margin:0;
-padding:0;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
 body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-background:#0d1117;
-color:#e6edf3;
-min-height:100vh;
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+    background:#0d1117;
+    color:#e6edf3;
+
+    min-height:100vh;
 }
 
 .navbar{
-min-height:64px;
-background:#010409;
-border-bottom:1px solid #30363d;
-display:flex;
-align-items:center;
-padding:12px 5%;
-gap:24px;
-flex-wrap:wrap;
+    min-height:64px;
+
+    background:#010409;
+
+    border-bottom:1px solid #30363d;
+
+    display:flex;
+    align-items:center;
+
+    gap:24px;
+
+    padding:12px 5%;
+
+    flex-wrap:wrap;
 }
 
 .logo{
-font-size:21px;
-font-weight:700;
-color:#fff;
+    font-size:21px;
+    font-weight:700;
+    color:#fff;
 }
 
 .navbar a{
-color:#e6edf3;
-text-decoration:none;
-font-size:14px;
+    color:#e6edf3;
+    text-decoration:none;
+    font-size:14px;
 }
 
 .navbar a:hover{
-color:#58a6ff;
+    color:#58a6ff;
 }
 
 .container{
-width:94%;
-max-width:1250px;
-margin:28px auto;
+    width:94%;
+    max-width:900px;
+
+    margin:35px auto;
 }
 
-.loading{
-padding:70px 20px;
-text-align:center;
-color:#8b949e;
+.card{
+    background:#161b22;
+
+    border:1px solid #30363d;
+
+    border-radius:12px;
+
+    padding:25px;
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.35);
 }
 
-.error{
-display:none;
-background:#3d1f25;
-border:1px solid #f85149;
-color:#ff7b72;
-padding:14px;
-border-radius:8px;
-margin-bottom:20px;
+.title{
+    font-size:25px;
+    font-weight:700;
+
+    margin-bottom:8px;
 }
 
-.repo-header{
-margin-bottom:20px;
+.subtitle{
+    color:#8b949e;
+
+    font-size:14px;
+
+    margin-bottom:25px;
 }
 
-.repo-title{
-display:flex;
-align-items:center;
-gap:8px;
-flex-wrap:wrap;
-font-size:26px;
-margin-bottom:10px;
+.info{
+    background:#0d1117;
+
+    border:1px solid #30363d;
+
+    border-radius:8px;
+
+    padding:14px;
+
+    margin-bottom:20px;
+
+    line-height:1.7;
+
+    font-size:14px;
 }
 
-.owner{
-color:#58a6ff;
+.info strong{
+    color:#58a6ff;
 }
 
-.repo-slash{
-color:#8b949e;
+label{
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+    font-size:14px;
 }
 
-.visibility{
-border:1px solid #30363d;
-border-radius:20px;
-padding:4px 10px;
-font-size:12px;
-color:#8b949e;
+input[type="text"],
+textarea{
+
+    width:100%;
+
+    background:#0d1117;
+
+    border:1px solid #30363d;
+
+    border-radius:8px;
+
+    color:#fff;
+
+    padding:12px;
+
+    outline:none;
+
+    font-family:inherit;
+
+    font-size:14px;
+
+    margin-bottom:18px;
 }
 
-.description{
-color:#8b949e;
-font-size:14px;
-margin-bottom:15px;
+input[type="text"]:focus,
+textarea:focus{
+
+    border-color:#58a6ff;
 }
 
-.repo-info{
-display:flex;
-align-items:center;
-gap:9px;
-flex-wrap:wrap;
+textarea{
+
+    min-height:300px;
+
+    resize:vertical;
+
+    font-family:
+    Consolas,
+    "Courier New",
+    monospace;
 }
 
-.info-item{
-font-size:13px;
-color:#8b949e;
+.file-box{
+
+    border:2px dashed #30363d;
+
+    border-radius:12px;
+
+    padding:35px 20px;
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+    background:#0d1117;
+
+    transition:.2s;
 }
 
-.btn{
-border:1px solid #30363d;
-background:#21262d;
-color:#e6edf3;
-padding:8px 13px;
-border-radius:7px;
-font-size:13px;
-cursor:pointer;
-text-decoration:none;
-display:inline-flex;
-align-items:center;
-gap:6px;
-white-space:nowrap;
-}
+.file-box:hover{
 
-.btn:hover{
-background:#30363d;
-}
-
-.btn-green{
-background:#238636;
-border-color:#238636;
-color:white;
-}
-
-.btn-green:hover{
-background:#2ea043;
-}
-
-.btn-blue{
-background:#1f6feb;
-border-color:#1f6feb;
-color:white;
-}
-
-.btn-blue:hover{
-background:#388bfd;
-}
-
-.btn-red{
-background:#da3633;
-border-color:#da3633;
-color:white;
-}
-
-.tabs{
-display:flex;
-border-bottom:1px solid #30363d;
-overflow-x:auto;
-margin-bottom:18px;
-}
-
-.tab{
-padding:12px 16px;
-color:#8b949e;
-text-decoration:none;
-font-size:14px;
-white-space:nowrap;
-}
-
-.tab.active{
-color:#fff;
-font-weight:600;
-border-bottom:2px solid #f78166;
-}
-
-.toolbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:12px;
-margin-bottom:14px;
-flex-wrap:wrap;
-}
-
-.toolbar-left{
-display:flex;
-gap:8px;
-align-items:center;
-flex-wrap:wrap;
-}
-
-.toolbar-right{
-display:flex;
-flex:1;
-justify-content:flex-end;
-}
-
-.search{
-width:300px;
-max-width:100%;
-background:#0d1117;
-border:1px solid #30363d;
-border-radius:7px;
-padding:9px 12px;
-color:#fff;
-outline:none;
-}
-
-.search:focus{
-border-color:#58a6ff;
-}
-
-.branch-wrapper,
-.add-wrapper{
-position:relative;
-}
-
-.branch-menu,
-.add-menu{
-display:none;
-position:absolute;
-background:#161b22;
-border:1px solid #30363d;
-border-radius:8px;
-box-shadow:0 10px 30px rgba(0,0,0,.5);
-z-index:3000;
-overflow:hidden;
-}
-
-.branch-menu{
-top:44px;
-left:0;
-width:280px;
-}
-
-.add-menu{
-top:44px;
-right:0;
-width:220px;
-}
-
-.branch-menu.show,
-.add-menu.show{
-display:block;
-}
-
-.branch-item{
-display:block;
-width:100%;
-padding:12px 15px;
-border:0;
-background:transparent;
-color:#e6edf3;
-text-align:left;
-cursor:pointer;
-}
-
-.branch-item:hover{
-background:#21262d;
-}
-
-.add-menu a{
-display:block;
-padding:12px 15px;
-color:#e6edf3;
-text-decoration:none;
-}
-
-.add-menu a:hover{
-background:#21262d;
-color:#58a6ff;
-}
-
-.commit-bar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:#161b22;
-border:1px solid #30363d;
-border-radius:7px 7px 0 0;
-padding:12px 15px;
-font-size:13px;
-color:#8b949e;
-}
-
-.commit{
-color:#58a6ff;
-font-weight:600;
-}
-
-.file-list{
-border:1px solid #30363d;
-border-top:0;
-background:#0d1117;
-border-radius:0 0 7px 7px;
-overflow:hidden;
-}
-
-.file-row{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:15px;
-padding:13px 15px;
-border-bottom:1px solid #21262d;
-}
-
-.file-row:last-child{
-border-bottom:0;
-}
-
-.file-row:hover{
-background:#161b22;
-}
-
-.file-main{
-display:flex;
-align-items:center;
-gap:12px;
-min-width:0;
+    border-color:#58a6ff;
 }
 
 .file-icon{
-font-size:21px;
-width:28px;
-text-align:center;
+
+    font-size:45px;
+
+    margin-bottom:12px;
+}
+
+.choose-btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    background:#238636;
+
+    color:#fff;
+
+    padding:12px 22px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    border:0;
+
+}
+
+.choose-btn:hover{
+
+    background:#2ea043;
+}
+
+#fileInput{
+
+    display:none;
+}
+
+.selected-file{
+
+    display:none;
+
+    margin-top:18px;
+
+    padding:14px;
+
+    background:#161b22;
+
+    border:1px solid #30363d;
+
+    border-radius:8px;
+
+    text-align:left;
+}
+
+.selected-file.show{
+
+    display:block;
 }
 
 .file-name{
-color:#58a6ff;
-font-size:14px;
-word-break:break-word;
+
+    color:#58a6ff;
+
+    font-weight:700;
+
+    word-break:break-word;
 }
 
-.file-sub{
-color:#8b949e;
-font-size:11px;
-margin-top:4px;
+.file-size{
+
+    color:#8b949e;
+
+    font-size:12px;
+
+    margin-top:5px;
 }
 
-.file-meta{
-display:flex;
-align-items:center;
-gap:8px;
-flex-wrap:wrap;
+.exists-box{
+
+    display:none;
+
+    background:#3d2b13;
+
+    border:1px solid #d29922;
+
+    color:#e3b341;
+
+    border-radius:8px;
+
+    padding:15px;
+
+    margin:15px 0;
+
+    line-height:1.6;
 }
 
-.type-badge{
-border:1px solid #30363d;
-border-radius:15px;
-padding:3px 8px;
-font-size:10px;
-color:#8b949e;
+.exists-box.show{
+
+    display:block;
 }
 
-.file-actions{
-display:flex;
-gap:5px;
-flex-wrap:wrap;
+.new-box{
+
+    display:none;
+
+    background:#102a1b;
+
+    border:1px solid #238636;
+
+    color:#56d364;
+
+    border-radius:8px;
+
+    padding:15px;
+
+    margin:15px 0;
 }
 
-.empty{
-padding:55px 20px;
-text-align:center;
-color:#8b949e;
+.new-box.show{
+
+    display:block;
 }
 
-.readme{
-margin-top:25px;
-border:1px solid #30363d;
-border-radius:7px;
-overflow:hidden;
+.actions{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+    margin-top:20px;
 }
 
-.readme-header{
-background:#161b22;
-border-bottom:1px solid #30363d;
-padding:14px;
-font-weight:600;
+.btn{
+
+    border:1px solid #30363d;
+
+    background:#21262d;
+
+    color:#e6edf3;
+
+    padding:11px 18px;
+
+    border-radius:8px;
+
+    font-size:14px;
+
+    cursor:pointer;
+
+    text-decoration:none;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:7px;
 }
 
-.readme-body{
-padding:24px;
-line-height:1.7;
-color:#c9d1d9;
+.btn:hover{
+
+    background:#30363d;
 }
 
-.readme-body h1,
-.readme-body h2,
-.readme-body h3{
-color:#fff;
-margin-bottom:12px;
+.btn-green{
+
+    background:#238636;
+
+    border-color:#238636;
+
+    color:#fff;
 }
 
-/* ===============================
-   LIVE PREVIEW MODAL
-================================ */
+.btn-green:hover{
 
-.modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.85);
-align-items:center;
-justify-content:center;
-z-index:9999;
-padding:12px;
+    background:#2ea043;
 }
 
-.modal.show{
-display:flex;
+.btn-blue{
+
+    background:#1f6feb;
+
+    border-color:#1f6feb;
+
+    color:#fff;
 }
 
-.modal-card{
-width:100%;
-max-width:1200px;
-height:94vh;
-background:#161b22;
-border:1px solid #30363d;
-border-radius:10px;
-padding:14px;
-display:flex;
-flex-direction:column;
-box-shadow:0 20px 60px rgba(0,0,0,.7);
+.btn-blue:hover{
+
+    background:#388bfd;
 }
 
-.modal-title{
-font-size:19px;
-font-weight:600;
-padding:5px 0 12px;
+.btn-orange{
+
+    background:#9e6a03;
+
+    border-color:#9e6a03;
+
+    color:#fff;
 }
 
-.modal-text{
-flex:1;
-min-height:0;
+.btn-orange:hover{
+
+    background:#bb8009;
 }
 
-.preview-frame{
-width:100%;
-height:100%;
-border:1px solid #30363d;
-border-radius:7px;
-background:#fff;
-display:block;
+.btn-red{
+
+    background:#da3633;
+
+    border-color:#da3633;
+
+    color:#fff;
 }
 
-.modal-actions{
-display:flex;
-justify-content:flex-end;
-gap:8px;
-padding-top:10px;
+.btn:disabled{
+
+    opacity:.5;
+
+    cursor:not-allowed;
 }
 
-.toast{
-position:fixed;
-right:20px;
-bottom:20px;
-background:#161b22;
-border:1px solid #30363d;
-color:#e6edf3;
-padding:13px 17px;
-border-radius:8px;
-display:none;
-z-index:10000;
+.status{
+
+    display:none;
+
+    margin-top:20px;
+
+    padding:14px;
+
+    border-radius:8px;
+
+    line-height:1.6;
 }
 
-.toast.show{
-display:block;
+.status.show{
+
+    display:block;
 }
 
-.toast.success{
-border-color:#238636;
-color:#56d364;
+.status.success{
+
+    background:#102a1b;
+
+    border:1px solid #238636;
+
+    color:#56d364;
 }
 
-.toast.error{
-border-color:#f85149;
-color:#ff7b72;
+.status.error{
+
+    background:#3d1f25;
+
+    border:1px solid #f85149;
+
+    color:#ff7b72;
+}
+
+.status.loading{
+
+    background:#172033;
+
+    border:1px solid #1f6feb;
+
+    color:#79c0ff;
+}
+
+.progress{
+
+    display:none;
+
+    margin-top:15px;
+}
+
+.progress.show{
+
+    display:block;
+}
+
+.progress-bar{
+
+    width:100%;
+
+    height:8px;
+
+    background:#21262d;
+
+    border-radius:10px;
+
+    overflow:hidden;
+}
+
+.progress-fill{
+
+    width:0%;
+
+    height:100%;
+
+    background:#238636;
+
+    transition:.3s;
+}
+
+.small{
+
+    font-size:12px;
+
+    color:#8b949e;
+
+    margin-top:7px;
+}
+
+.hidden{
+
+    display:none !important;
 }
 
 @media(max-width:700px){
 
-.navbar{
-padding:12px 4%;
-gap:14px;
-}
+    .navbar{
 
-.container{
-width:94%;
-margin:20px auto;
-}
+        padding:12px 4%;
 
-.repo-title{
-font-size:21px;
-}
+        gap:14px;
+    }
 
-.toolbar-left,
-.toolbar-right{
-width:100%;
-}
+    .container{
 
-.toolbar-right{
-justify-content:flex-start;
-}
+        width:94%;
 
-.search{
-width:100%;
-}
+        margin:20px auto;
+    }
 
-.file-row{
-flex-direction:column;
-align-items:flex-start;
-}
+    .card{
 
-.file-meta{
-width:100%;
-}
+        padding:18px;
+    }
 
-.modal-card{
-height:94vh;
-padding:10px;
-}
+    .title{
 
-.preview-frame{
-min-height:400px;
-}
+        font-size:21px;
+    }
+
+    .actions{
+
+        flex-direction:column;
+    }
+
+    .actions .btn{
+
+        width:100%;
+    }
 
 }
 
@@ -546,358 +564,266 @@ min-height:400px;
 
 <body>
 
+
 <nav class="navbar">
 
-<div class="logo">
-⚡ ASIM TECH
-</div>
+    <div class="logo">
+        ⚡ ASIM TECH
+    </div>
 
-<a href="repositories.html">
-← Repositories
-</a>
+    <a href="repositories.html">
+        ← Repositories
+    </a>
 
-<a href="dashboard.html">
-Dashboard
-</a>
+    <a id="backRepoLink" href="#">
+        Repository
+    </a>
 
 </nav>
 
 
 <div class="container">
 
-<div id="loading" class="loading">
-Loading repository...
-</div>
+<div class="card">
 
-<div id="error" class="error"></div>
+    <div class="title">
+        📁 Repository File
+    </div>
 
+    <div class="subtitle">
+        Upload a new file or replace an existing file.
+    </div>
 
-<div id="content" style="display:none;">
 
-<!-- =========================
-     REPOSITORY HEADER
-========================= -->
+    <div class="info">
 
-<div class="repo-header">
+        <div>
+            <strong>Repository:</strong>
+            <span id="repoName">Loading...</span>
+        </div>
 
-<div class="repo-title">
+        <div>
+            <strong>Branch:</strong>
+            <span id="branchName">Loading...</span>
+        </div>
 
-<span
-id="repoOwner"
-class="owner">
-ASIM TECH
-</span>
-
-<span class="repo-slash">
-/
-</span>
-
-<strong id="repoName">
-—
-</strong>
-
-<span
-id="visibility"
-class="visibility">
-—
-</span>
+    </div>
 
-</div>
 
+    <!-- =========================
+         FILE UPLOAD
+    ========================== -->
 
-<div
-id="repoDescription"
-class="description">
-—
-</div>
+    <div id="uploadSection">
 
+        <label>
+            Select File
+        </label>
 
-<div class="repo-info">
+        <div class="file-box">
 
-<span class="info-item">
-⭐ <strong id="starCount">0</strong> stars
-</span>
+            <div class="file-icon">
+                📁
+            </div>
 
-<span class="info-item">
-🍴 <strong id="forkCount">0</strong> forks
-</span>
+            <div style="margin-bottom:15px;color:#8b949e;">
+                Select a file from your device
+            </div>
 
-<button
-id="starButton"
-class="btn"
-onclick="toggleStar()">
-☆ Star
-</button>
+            <label
+                for="fileInput"
+                class="choose-btn">
 
-<a
-id="editRepoLink"
-class="btn"
-href="#">
-⚙️ Settings
-</a>
+                📂 Choose File
 
-<button
-id="publishButton"
-class="btn btn-green"
-onclick="publishRepository()"
-style="display:none;">
-🚀 Publish
-</button>
+            </label>
 
-<a
-id="publishedWebsiteButton"
-class="btn btn-blue"
-href="#"
-target="_blank"
-style="display:none;">
-🌐 Published Website
-</a>
+            <input
+                id="fileInput"
+                type="file">
 
-</div>
+            <div
+                id="selectedFile"
+                class="selected-file">
 
-</div>
+                <div class="file-name"
+                     id="selectedFileName">
+                </div>
 
+                <div class="file-size"
+                     id="selectedFileSize">
+                </div>
 
-<!-- =========================
-     TABS
-========================= -->
+            </div>
 
-<div class="tabs">
+        </div>
 
-<a class="tab active" href="#">
-Code
-</a>
+    </div>
 
-<a
-class="tab"
-id="issuesLink"
-href="#">
-Issues
-</a>
 
-<a
-class="tab"
-id="pullRequestsLink"
-href="#">
-Pull requests
-</a>
+    <!-- =========================
+         CREATE FILE
+    ========================== -->
 
-<a
-class="tab"
-id="actionsLink"
-href="#">
-Actions
-</a>
+    <div
+        id="createSection"
+        class="hidden">
 
-<a
-class="tab"
-href="#">
-Projects
-</a>
+        <label>
+            File Name
+        </label>
 
-</div>
+        <input
+            id="createFileName"
+            type="text"
+            placeholder="example.html">
 
+        <label>
+            File Content
+        </label>
 
-<!-- =========================
-     TOOLBAR
-========================= -->
+        <textarea
+            id="createContent"
+            placeholder="Write your code here..."></textarea>
 
-<div class="toolbar">
+    </div>
 
-<div class="toolbar-left">
 
-<div class="branch-wrapper">
+    <!-- =========================
+         EXISTING FILE
+    ========================== -->
 
-<button
-class="btn"
-onclick="toggleBranchMenu()">
+    <div
+        id="existsBox"
+        class="exists-box">
 
-🌿
-<span id="branchName">
-main
-</span>
-▾
+        ⚠️ <strong>File already exists!</strong>
 
-</button>
+        <br>
 
+        A file with this name already exists
+        in this repository and branch.
 
-<div
-id="branchMenu"
-class="branch-menu">
+        <br><br>
 
-<div
-id="branchList">
-</div>
+        Existing file:
 
-<button
-class="branch-item"
-onclick="createNewBranch()">
-＋ Create new branch
-</button>
+        <strong id="existingFileName">
+        </strong>
 
-</div>
+        <br>
 
-</div>
+        You can replace the existing file with
+        the selected file.
 
+    </div>
 
-<a
-id="explorerButton"
-class="btn"
-href="#">
-📂 Explorer
-</a>
 
+    <!-- =========================
+         NEW FILE
+    ========================== -->
 
-<div class="add-wrapper">
+    <div
+        id="newBox"
+        class="new-box">
 
-<button
-class="btn btn-green"
-onclick="toggleAddMenu()">
-＋ Add file ▾
-</button>
+        ✅ <strong>New file</strong>
 
+        <br>
 
-<div
-id="addMenu"
-class="add-menu">
+        This filename is not present in the
+        selected branch.
 
-<a
-id="createFileLink"
-href="#">
-📝 Create new file
-</a>
+    </div>
 
-<a
-id="uploadFileLink"
-href="#">
-⬆️ Upload files
-</a>
 
-</div>
+    <!-- =========================
+         ACTIONS
+    ========================== -->
 
-</div>
+    <div class="actions">
 
-</div>
+        <button
+            id="uploadButton"
+            class="btn btn-green"
+            onclick="saveFile()"
+            disabled>
 
+            ⬆️ Upload File
 
-<div class="toolbar-right">
+        </button>
 
-<input
-id="searchInput"
-class="search"
-type="search"
-placeholder="🔎 Go to file..."
-oninput="filterFiles()">
 
-</div>
+        <button
+            id="replaceButton"
+            class="btn btn-orange hidden"
+            onclick="replaceFile()"
+            disabled>
 
-</div>
+            🔄 Replace Existing File
 
+        </button>
 
-<!-- =========================
-     COMMIT BAR
-========================= -->
 
-<div class="commit-bar">
+        <button
+            id="cancelButton"
+            class="btn"
+            onclick="goBack()">
 
-<span>
-🌿 Branch:
-<span
-id="commitBranch"
-class="commit">
-main
-</span>
-</span>
+            ❌ Cancel
 
-<span id="fileCount">
-0 files
-</span>
+        </button>
 
-</div>
+    </div>
 
 
-<!-- =========================
-     FILE LIST
-========================= -->
+    <!-- =========================
+         PROGRESS
+    ========================== -->
 
-<div
-id="fileList"
-class="file-list">
+    <div
+        id="progress"
+        class="progress">
 
-<div class="empty">
-Loading files...
-</div>
+        <div class="progress-bar">
 
-</div>
+            <div
+                id="progressFill"
+                class="progress-fill">
+            </div>
 
+        </div>
 
-<!-- =========================
-     README
-========================= -->
+        <div
+            id="progressText"
+            class="small">
 
-<div class="readme">
+            Processing...
 
-<div class="readme-header">
-📖 README
-</div>
+        </div>
 
-<div
-id="readmeBody"
-class="readme-body">
-Loading README...
-</div>
+    </div>
+
+
+    <!-- =========================
+         STATUS
+    ========================== -->
+
+    <div
+        id="status"
+        class="status">
+    </div>
 
 </div>
 
 </div>
-
-</div>
-
-
-<!-- ===============================
-     LIVE PREVIEW MODAL
-================================ -->
-
-<div
-id="modal"
-class="modal">
-
-<div class="modal-card">
-
-<div
-id="modalTitle"
-class="modal-title">
-🌐 HTML Preview
-</div>
-
-<div
-id="modalText"
-class="modal-text">
-</div>
-
-<div class="modal-actions">
-
-<button
-class="btn"
-onclick="closeModal()">
-✕ Close
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div id="toast" class="toast"></div>
 
 
 <script>
 
-/* =================================
+/* =====================================================
    SUPABASE
-================================= */
+===================================================== */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
@@ -907,2098 +833,1595 @@ const SUPABASE_KEY =
 
 const supabaseClient =
 supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 
-/* =================================
-   URL
-================================= */
+/* =====================================================
+   URL PARAMETERS
+===================================================== */
 
 const params =
 new URLSearchParams(
-window.location.search
+    window.location.search
 );
 
 const repoId =
 params.get("repository_id") ||
 params.get("id");
 
-const branchIdFromUrl =
+const branchId =
 params.get("branch_id");
 
+const mode =
+params.get("mode") || "upload";
 
-/* =================================
-   GLOBAL
-================================= */
+
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
 
 let currentUser = null;
+
 let repository = null;
-let allBranches = [];
+
 let currentBranch = null;
-let allFiles = [];
-let isStarred = false;
-let previewUrl = null;
+
+let selectedFile = null;
+
+let existingFile = null;
 
 
-/* =================================
-   LOAD
-================================= */
+/* =====================================================
+   START
+===================================================== */
 
 document.addEventListener(
-"DOMContentLoaded",
-loadRepository
+    "DOMContentLoaded",
+    initialize
 );
 
+
+async function initialize(){
+
+    try{
+
+        if(!repoId){
+
+            throw new Error(
+                "Repository ID is missing."
+            );
+
+        }
+
+
+        await loadUser();
+
+        await loadRepository();
+
+        await loadBranch();
+
+        setupMode();
+
+    }catch(error){
+
+        showStatus(
+            error.message ||
+            "Unable to load page.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   USER
+===================================================== */
+
+async function loadUser(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+    .auth
+    .getUser();
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    currentUser =
+        data?.user || null;
+
+
+    if(!currentUser){
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+}
+
+
+/* =====================================================
+   REPOSITORY
+===================================================== */
 
 async function loadRepository(){
 
-try{
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
 
-if(!repoId){
+    .from("repositories")
 
-throw new Error(
-"Repository ID is missing."
-);
+    .select("*")
+
+    .eq(
+        "id",
+        repoId
+    )
+
+    .single();
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    if(!data){
+
+        throw new Error(
+            "Repository not found."
+        );
+
+    }
+
+
+    repository =
+        data;
+
+
+    document.getElementById(
+        "repoName"
+    ).textContent =
+        repository.name;
+
+
+    document.getElementById(
+        "backRepoLink"
+    ).href =
+        "repository-details.html" +
+        "?repository_id=" +
+        encodeURIComponent(
+            repoId
+        );
 
 }
 
 
-const {
-data,
-error
-} =
-await supabaseClient.auth.getUser();
+/* =====================================================
+   BRANCH
+===================================================== */
+
+async function loadBranch(){
+
+    let query =
+        supabaseClient
+
+        .from("repository_branches")
+
+        .select("*")
+
+        .eq(
+            "repository_id",
+            repoId
+        );
 
 
-if(error){
-throw error;
+    if(branchId){
+
+        query =
+            query.eq(
+                "id",
+                branchId
+            );
+
+    }else{
+
+        query =
+            query.eq(
+                "name",
+                repository.default_branch ||
+                "main"
+            );
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+    await query.maybeSingle();
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    if(!data){
+
+        throw new Error(
+            "Branch not found."
+        );
+
+    }
+
+
+    currentBranch =
+        data;
+
+
+    document.getElementById(
+        "branchName"
+    ).textContent =
+        currentBranch.name;
+
 }
 
 
-currentUser =
-data?.user || null;
+/* =====================================================
+   MODE
+===================================================== */
+
+function setupMode(){
+
+    if(mode === "create"){
+
+        document.getElementById(
+            "uploadSection"
+        ).classList.add(
+            "hidden"
+        );
 
 
-if(!currentUser){
+        document.getElementById(
+            "createSection"
+        ).classList.remove(
+            "hidden"
+        );
 
-window.location.href =
-"login.html";
 
-return;
+        document.getElementById(
+            "uploadButton"
+        ).textContent =
+            "📝 Create File";
+
+
+        document.getElementById(
+            "uploadButton"
+        ).disabled =
+            false;
+
+    }
 
 }
 
 
-const {
-data:repo,
-error:repoError
-} =
-await supabaseClient
-
-.from("repositories")
-
-.select("*")
-
-.eq(
-"id",
-repoId
-)
-
-.single();
-
-
-if(repoError){
-throw repoError;
-}
-
-
-if(!repo){
-throw new Error(
-"Repository not found."
-);
-}
-
-
-repository =
-repo;
-
-
-renderRepository();
-
-await loadBranches();
-
-await loadFiles();
-
-await loadReadme();
-
-updatePageLinks();
-
-updatePublishUI();
-
+/* =====================================================
+   FILE INPUT
+===================================================== */
 
 document.getElementById(
-"loading"
-).style.display =
-"none";
+    "fileInput"
+).addEventListener(
+    "change",
+    async function(){
 
-document.getElementById(
-"content"
-).style.display =
-"block";
+        selectedFile =
+            this.files &&
+            this.files[0]
+            ? this.files[0]
+            : null;
 
 
-}catch(error){
+        existingFile =
+            null;
 
-console.error(error);
 
-document.getElementById(
-"loading"
-).style.display =
-"none";
+        hideBoxes();
 
-const box =
-document.getElementById(
-"error"
-);
-
-box.style.display =
-"block";
-
-box.textContent =
-error.message ||
-"Unable to load repository.";
-
-}
-
-}
-
-
-/* =================================
-   REPOSITORY
-================================= */
-
-function renderRepository(){
-
-document.getElementById(
-"repoOwner"
-).textContent =
-"ASIM TECH";
-
-document.getElementById(
-"repoName"
-).textContent =
-repository.name;
-
-document.getElementById(
-"repoDescription"
-).textContent =
-repository.description ||
-"No description";
-
-document.getElementById(
-"visibility"
-).textContent =
-repository.is_private
-? "Private"
-: "Public";
-
-document.getElementById(
-"starCount"
-).textContent =
-repository.stars_count || 0;
-
-}
-
-
-/* =================================
-   BRANCHES
-================================= */
-
-async function loadBranches(){
-
-const {
-data,
-error
-} =
-await supabaseClient
-
-.from("repository_branches")
-
-.select("*")
-
-.eq(
-"repository_id",
-repoId
-)
-
-.order(
-"name",
-{
-ascending:true
-}
-);
-
-
-if(error){
-throw error;
-}
-
-
-allBranches =
-data || [];
-
-
-if(!allBranches.length){
-
-throw new Error(
-"No branches found."
-);
-
-}
-
-
-let selected =
-null;
-
-
-if(branchIdFromUrl){
-
-selected =
-allBranches.find(
-b =>
-b.id ===
-branchIdFromUrl
-);
-
-}
-
-
-if(!selected){
-
-selected =
-allBranches.find(
-b =>
-b.name ===
-(repository.default_branch || "main")
-);
-
-}
-
-
-if(!selected){
-
-selected =
-allBranches[0];
-
-}
-
-
-currentBranch =
-selected;
-
-
-renderBranchMenu();
-
-updateBranchUI();
-
-}
-
-
-function renderBranchMenu(){
-
-const list =
-document.getElementById(
-"branchList"
-);
-
-list.innerHTML =
-"";
-
-
-allBranches.forEach(
-branch => {
-
-const button =
-document.createElement(
-"button"
-);
-
-button.className =
-"branch-item";
-
-button.textContent =
-"🌿 " +
-branch.name;
-
-button.onclick =
-function(){
-
-currentBranch =
-branch;
-
-updateBranchUI();
-
-loadFiles();
-
-loadReadme();
-
-closeBranchMenu();
-
-};
-
-list.appendChild(
-button
-);
-
-}
-);
-
-}
-
-
-function updateBranchUI(){
-
-if(!currentBranch){
-return;
-}
-
-document.getElementById(
-"branchName"
-).textContent =
-currentBranch.name;
-
-document.getElementById(
-"commitBranch"
-).textContent =
-currentBranch.name;
-
-updatePageLinks();
-
-}
-
-
-/* =================================
-   FILES
-================================= */
-
-async function loadFiles(){
-
-if(!currentBranch){
-return;
-}
-
-
-document.getElementById(
-"fileList"
-).innerHTML =
-'<div class="empty">Loading files...</div>';
-
-
-const {
-data,
-error
-} =
-await supabaseClient
-
-.from("repository_files")
-
-.select("*")
-
-.eq(
-"repository_id",
-repoId
-)
-
-.eq(
-"branch_id",
-currentBranch.id
-)
-
-.order(
-"file_path",
-{
-ascending:true
-}
-);
-
-
-if(error){
-
-showToast(
-error.message,
-"error"
-);
-
-return;
-
-}
-
-
-allFiles =
-data || [];
-
-
-renderFiles(
-allFiles
-);
-
-}
-
-
-/* =================================
-   RENDER FILES
-================================= */
-
-function renderFiles(files){
-
-const list =
-document.getElementById(
-"fileList"
-);
-
-list.innerHTML =
-"";
-
-
-document.getElementById(
-"fileCount"
-).textContent =
-files.length +
-(
-files.length === 1
-? " file"
-: " files"
-);
-
-
-if(!files.length){
-
-list.innerHTML =
-`
-<div class="empty">
-📁<br><br>
-No files found.
-</div>
-`;
-
-return;
-
-}
-
-
-files.forEach(
-file => {
-
-const row =
-document.createElement(
-"div"
-);
-
-row.className =
-"file-row";
-
-
-const editUrl =
-"file-editor.html" +
-"?file_id=" +
-encodeURIComponent(
-file.id
-) +
-"&repository_id=" +
-encodeURIComponent(
-repoId
-) +
-"&branch_id=" +
-encodeURIComponent(
-currentBranch.id
-);
-
-
-const name =
-file.file_path
-.split("/")
-.pop();
-
-
-let previewButton =
-"";
-
-
-if(!file.is_binary){
-
-previewButton =
-`
-<button
-class="btn btn-blue"
-type="button"
-onclick="previewFile('${file.id}')">
-👁 Preview
-</button>
-`;
-
-}
-
-
-row.innerHTML =
-`
-
-<div class="file-main">
 
-<div class="file-icon">
-${getFileIcon(file)}
-</div>
+        if(!selectedFile){
 
-<div>
+            document.getElementById(
+                "selectedFile"
+            ).classList.remove(
+                "show"
+            );
 
-<div class="file-name">
-${escapeHtml(file.file_path)}
-</div>
+            document.getElementById(
+                "uploadButton"
+            ).disabled =
+                true;
 
-<div class="file-sub">
+            document.getElementById(
+                "replaceButton"
+            ).disabled =
+                true;
 
-${
-file.is_binary
-? "Binary file"
-: "Text file"
-}
-
-${
-file.updated_at
-? " • Updated " +
-formatDate(file.updated_at)
-: ""
-}
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="file-meta">
-
-<span class="type-badge">
-${getFileType(file.file_path)}
-</span>
-
-<span>
-${formatFileSize(file.file_size)}
-</span>
+            return;
 
+        }
 
-<div class="file-actions">
 
-<a
-class="btn"
-href="${editUrl}">
-✏️ Edit
-</a>
+        document.getElementById(
+            "selectedFile"
+        ).classList.add(
+            "show"
+        );
 
-${previewButton}
-
-<button
-class="btn"
-onclick="downloadFile('${file.id}')">
-⬇️
-</button>
-
-</div>
-
-</div>
-
-`;
-
-
-list.appendChild(
-row
-);
-
-}
-);
 
-}
+        document.getElementById(
+            "selectedFileName"
+        ).textContent =
+            "📄 " +
+            selectedFile.name;
 
 
-/* =================================
-   ⭐ LIVE PREVIEW
-================================= */
+        document.getElementById(
+            "selectedFileSize"
+        ).textContent =
+            formatFileSize(
+                selectedFile.size
+            );
 
-async function previewFile(fileId){
 
-const file =
-allFiles.find(
-item =>
-item.id ===
-fileId
-);
+        document.getElementById(
+            "uploadButton"
+        ).disabled =
+            true;
 
 
-if(!file){
+        await checkExistingFile();
 
-showToast(
-"File not found.",
-"error"
+    }
 );
 
-return;
 
-}
+/* =====================================================
+   CHECK EXISTING FILE
+===================================================== */
 
+async function checkExistingFile(){
 
-if(file.is_binary){
-
-showToast(
-"Binary files cannot be previewed.",
-"error"
-);
+    if(!selectedFile){
 
-return;
+        return;
 
-}
+    }
 
 
-const path =
-String(
-file.file_path || ""
-).toLowerCase();
+    setProgress(
+        15,
+        "Checking repository..."
+    );
 
 
-if(
-!path.endsWith(".html") &&
-!path.endsWith(".htm")
-){
+    const filePath =
+        normalizePath(
+            selectedFile.name
+        );
 
-showToast(
-"Live Preview is available for HTML files.",
-"error"
-);
 
-return;
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
 
-}
+    .from("repository_files")
 
+    .select("*")
 
-let html =
-file.content || "";
+    .eq(
+        "repository_id",
+        repoId
+    )
 
+    .eq(
+        "branch_id",
+        currentBranch.id
+    )
 
-/*
-If content is not in database,
-load it from Storage.
-*/
+    .eq(
+        "file_path",
+        filePath
+    )
 
-if(
-!html &&
-file.storage_path
-){
+    .maybeSingle();
 
-const {
-data:blob,
-error
-} =
-await supabaseClient
 
-.storage
+    if(error){
 
-.from(
-"repository-files"
-)
+        hideProgress();
 
-.download(
-file.storage_path
-);
+        showStatus(
+            error.message,
+            "error"
+        );
 
+        return;
 
-if(error){
+    }
 
-showToast(
-error.message,
-"error"
-);
 
-return;
+    existingFile =
+        data || null;
 
-}
 
+    hideProgress();
 
-html =
-await blob.text();
 
-}
+    if(existingFile){
 
+        document.getElementById(
+            "existingFileName"
+        ).textContent =
+            existingFile.file_path;
 
-if(!html.trim()){
 
-showToast(
-"HTML file is empty.",
-"error"
-);
+        document.getElementById(
+            "existsBox"
+        ).classList.add(
+            "show"
+        );
 
-return;
 
-}
+        document.getElementById(
+            "replaceButton"
+        ).classList.remove(
+            "hidden"
+        );
 
 
-/*
-Create live preview.
-*/
-
-document.getElementById(
-"modalTitle"
-).textContent =
-"🌐 Preview — " +
-file.file_path;
-
-
-document.getElementById(
-"modalText"
-).innerHTML =
-`
-<iframe
-id="previewFrame"
-class="preview-frame"
-title="Live HTML Preview"
-sandbox="allow-scripts allow-forms allow-modals allow-popups">
-</iframe>
-`;
-
-
-document.getElementById(
-"modal"
-).classList.add(
-"show"
-);
+        document.getElementById(
+            "replaceButton"
+        ).disabled =
+            false;
 
 
-const frame =
-document.getElementById(
-"previewFrame"
-);
+        document.getElementById(
+            "uploadButton"
+        ).classList.add(
+            "hidden"
+        );
 
 
-/*
-IMPORTANT:
-srcdoc renders the HTML
-instead of displaying source code.
-*/
+    }else{
 
-frame.srcdoc =
-html;
+        document.getElementById(
+            "newBox"
+        ).classList.add(
+            "show"
+        );
 
-}
 
+        document.getElementById(
+            "uploadButton"
+        ).classList.remove(
+            "hidden"
+        );
 
-/* =================================
-   CLOSE MODAL
-================================= */
 
-function closeModal(){
+        document.getElementById(
+            "uploadButton"
+        ).disabled =
+            false;
 
-document.getElementById(
-"modal"
-).classList.remove(
-"show"
-);
+    }
 
 }
-
-
-/* =================================
-   DOWNLOAD
-================================= */
 
-async function downloadFile(fileId){
 
-const file =
-allFiles.find(
-f =>
-f.id ===
-fileId
-);
+/* =====================================================
+   SAVE NEW FILE
+===================================================== */
 
+async function saveFile(){
 
-if(!file){
-return;
-}
+    if(mode === "create"){
 
+        await createFile();
 
-let blob;
+        return;
 
+    }
 
-if(
-file.storage_path
-){
 
-const {
-data,
-error
-} =
-await supabaseClient
+    if(!selectedFile){
 
-.storage
-.from(
-"repository-files"
-)
-.download(
-file.storage_path
-);
+        showStatus(
+            "Please select a file.",
+            "error"
+        );
 
+        return;
 
-if(error){
+    }
 
-showToast(
-error.message,
-"error"
-);
 
-return;
+    if(existingFile){
 
-}
+        showStatus(
+            "This file already exists. Use Replace Existing File.",
+            "error"
+        );
 
+        return;
 
-blob =
-data;
+    }
 
-}else{
 
-blob =
-new Blob(
-[
-file.content || ""
-],
-{
-type:
-file.mime_type ||
-"text/plain"
-}
-);
+    await uploadNewFile();
 
 }
-
-
-const url =
-URL.createObjectURL(
-blob
-);
-
-
-const a =
-document.createElement(
-"a"
-);
-
-a.href =
-url;
-
-a.download =
-file.file_path
-.split("/")
-.pop();
-
-document.body.appendChild(
-a
-);
-
-a.click();
-
-a.remove();
-
 
-setTimeout(
-function(){
 
-URL.revokeObjectURL(
-url
-);
+/* =====================================================
+   UPLOAD NEW FILE
+===================================================== */
 
-},
-1000
-);
+async function uploadNewFile(){
 
-}
+    try{
 
+        disableButtons(true);
 
-/* =================================
-   SEARCH
-================================= */
+        clearStatus();
 
-function filterFiles(){
+        showProgress();
 
-const query =
-document.getElementById(
-"searchInput"
-).value
-.trim()
-.toLowerCase();
+        setProgress(
+            20,
+            "Reading file..."
+        );
 
 
-if(!query){
+        const filePath =
+            normalizePath(
+                selectedFile.name
+            );
 
-renderFiles(
-allFiles
-);
 
-return;
+        const binary =
+            isBinaryFile(
+                selectedFile
+            );
 
-}
 
+        setProgress(
+            35,
+            "Preparing file..."
+        );
 
-const filtered =
-allFiles.filter(
-file =>
-(
-file.file_path || ""
-)
-.toLowerCase()
-.includes(query)
-);
 
+        const storagePath =
+            buildStoragePath(
+                filePath
+            );
 
-renderFiles(
-filtered
-);
 
-}
+        setProgress(
+            50,
+            "Uploading file..."
+        );
 
 
-/* =================================
-   README
-================================= */
+        const {
+            error:storageError
+        } =
+        await supabaseClient
 
-async function loadReadme(){
+        .storage
 
-const body =
-document.getElementById(
-"readmeBody"
-);
+        .from(
+            "repository-files"
+        )
 
+        .upload(
+            storagePath,
+            selectedFile,
+            {
+                upsert:true,
 
-const readme =
-allFiles.find(
-file => {
+                contentType:
+                    selectedFile.type ||
+                    "application/octet-stream"
+            }
+        );
 
-const name =
-(
-file.file_path || ""
-)
-.toLowerCase();
 
-return (
-name === "readme.md" ||
-name === "readme.txt" ||
-name === "readme"
-);
+        if(storageError){
 
-}
-);
+            throw storageError;
 
+        }
 
-if(!readme){
 
-body.innerHTML =
-`
-<h2>
-${escapeHtml(repository.name)}
-</h2>
+        setProgress(
+            75,
+            "Saving repository record..."
+        );
 
-<p>
-No README file is available.
-</p>
-`;
 
-return;
+        const content =
+            binary
+            ? ""
+            : await selectedFile.text();
 
-}
 
+        const {
+            error:dbError
+        } =
+        await supabaseClient
 
-if(readme.is_binary){
+        .from(
+            "repository_files"
+        )
 
-body.innerHTML =
-"<p>This README is a binary file.</p>";
+        .insert({
 
-return;
+            repository_id:
+                repoId,
 
-}
+            branch_id:
+                currentBranch.id,
 
+            file_path:
+                filePath,
 
-body.innerHTML =
-markdownToHtml(
-readme.content || ""
-);
+            content:
+                content,
 
-}
+            storage_path:
+                storagePath,
 
+            mime_type:
+                selectedFile.type ||
+                "application/octet-stream",
 
-/* =================================
-   STAR STATUS
-================================= */
+            file_size:
+                selectedFile.size,
 
-async function loadStarStatus(){
+            is_binary:
+                binary
 
-if(!currentUser){
-return;
-}
+        });
 
 
-const {
-data
-} =
-await supabaseClient
+        if(dbError){
 
-.from("repository_stars")
+            throw dbError;
 
-.select(
-"repository_id,user_id"
-)
+        }
 
-.eq(
-"repository_id",
-repoId
-)
 
-.eq(
-"user_id",
-currentUser.id
-)
+        setProgress(
+            100,
+            "Upload completed."
+        );
 
-.maybeSingle();
 
+        showStatus(
+            "✅ File uploaded successfully!",
+            "success"
+        );
 
-isStarred =
-!!data;
 
+        setTimeout(
+            goBack,
+            1200
+        );
 
-document.getElementById(
-"starButton"
-).textContent =
-isStarred
-? "★ Starred"
-: "☆ Star";
 
-}
+    }catch(error){
 
+        console.error(error);
 
-async function toggleStar(){
+        hideProgress();
 
-if(!currentUser){
+        showStatus(
+            "Upload failed: " +
+            (
+                error.message ||
+                error
+            ),
+            "error"
+        );
 
-window.location.href =
-"login.html";
+        disableButtons(false);
 
-return;
+    }
 
 }
-
-
-const button =
-document.getElementById(
-"starButton"
-);
-
-button.disabled =
-true;
-
-
-try{
-
-if(isStarred){
 
-const {
-error
-} =
-await supabaseClient
 
-.from("repository_stars")
+/* =====================================================
+   REPLACE EXISTING FILE
+===================================================== */
 
-.delete()
+async function replaceFile(){
 
-.eq(
-"repository_id",
-repoId
-)
+    if(!selectedFile){
 
-.eq(
-"user_id",
-currentUser.id
-);
+        showStatus(
+            "Please select a file.",
+            "error"
+        );
 
+        return;
 
-if(error){
-throw error;
-}
+    }
 
 
-isStarred =
-false;
+    if(!existingFile){
 
-repository.stars_count =
-Math.max(
-0,
-(repository.stars_count || 0) - 1
-);
+        showStatus(
+            "Existing file was not found.",
+            "error"
+        );
 
-}else{
+        return;
 
-const {
-error
-} =
-await supabaseClient
+    }
 
-.from("repository_stars")
 
-.insert({
+    const confirmReplace =
+        confirm(
+            "Replace existing file?\n\n" +
+            existingFile.file_path +
+            "\n\nThe old content will be replaced."
+        );
 
-repository_id:
-repoId,
 
-user_id:
-currentUser.id
+    if(!confirmReplace){
 
-});
+        return;
 
+    }
 
-if(error){
-throw error;
-}
 
+    try{
 
-isStarred =
-true;
+        disableButtons(true);
 
-repository.stars_count =
-(repository.stars_count || 0) + 1;
+        clearStatus();
 
-}
+        showProgress();
 
 
-document.getElementById(
-"starCount"
-).textContent =
-repository.stars_count;
+        const filePath =
+            normalizePath(
+                selectedFile.name
+            );
 
 
-button.textContent =
-isStarred
-? "★ Starred"
-: "☆ Star";
+        const binary =
+            isBinaryFile(
+                selectedFile
+            );
 
 
-}catch(error){
+        const storagePath =
+            existingFile.storage_path ||
+            buildStoragePath(
+                filePath
+            );
 
-showToast(
-error.message,
-"error"
-);
 
-}finally{
+        setProgress(
+            20,
+            "Preparing replacement..."
+        );
 
-button.disabled =
-false;
 
-}
+        setProgress(
+            40,
+            "Uploading replacement..."
+        );
 
-}
 
+        const {
+            error:storageError
+        } =
+        await supabaseClient
 
-/* =================================
-   PUBLISH UI
-================================= */
+        .storage
 
-function updatePublishUI(){
+        .from(
+            "repository-files"
+        )
 
-const publish =
-document.getElementById(
-"publishButton"
-);
+        .upload(
+            storagePath,
+            selectedFile,
+            {
+                upsert:true,
 
-const published =
-document.getElementById(
-"publishedWebsiteButton"
-);
+                contentType:
+                    selectedFile.type ||
+                    "application/octet-stream"
+            }
+        );
 
 
-if(repository.is_published){
+        if(storageError){
 
-publish.style.display =
-"none";
+            throw storageError;
 
-published.style.display =
-"inline-flex";
+        }
 
-published.href =
-"published-website.html?id=" +
-encodeURIComponent(repoId);
 
-return;
+        setProgress(
+            70,
+            "Updating repository record..."
+        );
 
-}
 
+        const content =
+            binary
+            ? ""
+            : await selectedFile.text();
 
-published.style.display =
-"none";
 
+        const {
+            error:updateError
+        } =
+        await supabaseClient
 
-if(
-currentUser &&
-repository.owner_id ===
-currentUser.id
-){
+        .from(
+            "repository_files"
+        )
 
-publish.style.display =
-"inline-flex";
+        .update({
 
-}
+            content:
+                content,
 
-}
+            storage_path:
+                storagePath,
 
+            mime_type:
+                selectedFile.type ||
+                "application/octet-stream",
 
-/* =================================
-   PUBLISH
-================================= */
+            file_size:
+                selectedFile.size,
 
-async function publishRepository(){
+            is_binary:
+                binary
 
-if(!currentUser){
-return;
-}
+        })
 
+        .eq(
+            "id",
+            existingFile.id
+        );
 
-if(
-repository.owner_id !==
-currentUser.id
-){
 
-showToast(
-"Only repository owner can publish.",
-"error"
-);
+        if(updateError){
 
-return;
+            throw updateError;
 
-}
+        }
 
 
-const branchName =
-repository.default_branch ||
-"main";
+        setProgress(
+            100,
+            "Replacement completed."
+        );
 
 
-const {
-data:branch
-} =
-await supabaseClient
+        showStatus(
+            "✅ Existing file replaced successfully!",
+            "success"
+        );
 
-.from("repository_branches")
 
-.select("id,name")
+        setTimeout(
+            goBack,
+            1200
+        );
 
-.eq(
-"repository_id",
-repoId
-)
 
-.eq(
-"name",
-branchName
-)
+    }catch(error){
 
-.maybeSingle();
+        console.error(error);
 
+        hideProgress();
 
-if(!branch){
+        showStatus(
+            "Replacement failed: " +
+            (
+                error.message ||
+                error
+            ),
+            "error"
+        );
 
-showToast(
-"Default branch not found.",
-"error"
-);
+        disableButtons(false);
 
-return;
+    }
 
 }
-
-
-const {
-data:file
-} =
-await supabaseClient
-
-.from("repository_files")
 
-.select("*")
 
-.eq(
-"repository_id",
-repoId
-)
+/* =====================================================
+   CREATE NEW FILE
+===================================================== */
 
-.eq(
-"branch_id",
-branch.id
-)
+async function createFile(){
 
-.eq(
-"file_path",
-"index.html"
-)
+    const fileName =
+        document.getElementById(
+            "createFileName"
+        ).value.trim();
 
-.maybeSingle();
 
+    const content =
+        document.getElementById(
+            "createContent"
+        ).value;
 
-if(!file){
 
-showToast(
-"index.html not found.",
-"error"
-);
+    if(!fileName){
 
-return;
+        showStatus(
+            "Please enter a file name.",
+            "error"
+        );
 
-}
+        return;
 
+    }
 
-if(file.is_binary){
 
-showToast(
-"index.html is marked as binary.",
-"error"
-);
+    if(fileName.includes("\\")){
 
-return;
+        showStatus(
+            "Invalid file path.",
+            "error"
+        );
 
-}
+        return;
 
+    }
 
-if(
-!file.content ||
-!file.content.trim()
-){
 
-showToast(
-"index.html is empty.",
-"error"
-);
+    const filePath =
+        normalizePath(
+            fileName
+        );
 
-return;
 
-}
+    try{
 
+        disableButtons(true);
 
-if(
-!confirm(
-"Publish repository " +
-repository.name +
-"?\n\nDefault file: index.html"
-)
-){
+        clearStatus();
 
-return;
+        showProgress();
 
-}
 
+        setProgress(
+            20,
+            "Checking file..."
+        );
 
-const {
-error
-} =
-await supabaseClient
 
-.from("repositories")
+        const {
+            data:existing,
+            error:checkError
+        } =
+        await supabaseClient
 
-.update({
+        .from(
+            "repository_files"
+        )
 
-is_published:true,
+        .select("id,file_path")
+        
+        .eq(
+            "repository_id",
+            repoId
+        )
 
-published_at:
-new Date().toISOString(),
+        .eq(
+            "branch_id",
+            currentBranch.id
+        )
 
-updated_at:
-new Date().toISOString()
+        .eq(
+            "file_path",
+            filePath
+        )
 
-})
+        .maybeSingle();
 
-.eq(
-"id",
-repoId
-);
 
+        if(checkError){
 
-if(error){
+            throw checkError;
 
-showToast(
-error.message,
-"error"
-);
+        }
 
-return;
 
-}
+        if(existing){
 
+            hideProgress();
 
-repository.is_published =
-true;
+            showStatus(
+                "⚠️ File already exists. Use Upload mode to replace it.",
+                "error"
+            );
 
+            disableButtons(false);
 
-updatePublishUI();
+            return;
 
+        }
 
-showToast(
-"Repository published successfully!",
-"success"
-);
 
-}
+        setProgress(
+            50,
+            "Saving file..."
+        );
 
 
-/* =================================
-   CREATE BRANCH
-================================= */
+        const blob =
+            new Blob(
+                [content],
+                {
+                    type:
+                    guessMimeType(
+                        filePath
+                    )
+                }
+            );
 
-async function createNewBranch(){
 
-const name =
-prompt(
-"Enter new branch name:"
-);
+        const storagePath =
+            buildStoragePath(
+                filePath
+            );
 
 
-if(!name){
-return;
-}
+        const {
+            error:storageError
+        } =
+        await supabaseClient
 
+        .storage
 
-const branchName =
-name.trim();
+        .from(
+            "repository-files"
+        )
 
+        .upload(
+            storagePath,
+            blob,
+            {
+                upsert:true,
 
-if(!branchName){
+                contentType:
+                    guessMimeType(
+                        filePath
+                    )
+            }
+        );
 
-return;
 
-}
+        if(storageError){
 
+            throw storageError;
 
-if(
-branchName.includes(" ")
-){
+        }
 
-showToast(
-"Branch name cannot contain spaces.",
-"error"
-);
 
-return;
+        setProgress(
+            75,
+            "Creating repository record..."
+        );
 
-}
 
+        const {
+            error:dbError
+        } =
+        await supabaseClient
 
-const {
-data,
-error
-} =
-await supabaseClient
+        .from(
+            "repository_files"
+        )
 
-.from("repository_branches")
+        .insert({
 
-.insert({
+            repository_id:
+                repoId,
 
-repository_id:
-repoId,
+            branch_id:
+                currentBranch.id,
 
-name:
-branchName,
+            file_path:
+                filePath,
 
-created_by:
-currentUser.id
+            content:
+                content,
 
-})
+            storage_path:
+                storagePath,
 
-.select()
+            mime_type:
+                guessMimeType(
+                    filePath
+                ),
 
-.single();
+            file_size:
+                new Blob(
+                    [content]
+                ).size,
 
+            is_binary:
+                false
 
-if(error){
+        });
 
-showToast(
-error.message,
-"error"
-);
 
-return;
+        if(dbError){
 
-}
+            throw dbError;
 
+        }
 
-allBranches.push(
-data
-);
 
-currentBranch =
-data;
+        setProgress(
+            100,
+            "File created."
+        );
 
 
-renderBranchMenu();
+        showStatus(
+            "✅ File created successfully!",
+            "success"
+        );
 
-updateBranchUI();
 
-await loadFiles();
+        setTimeout(
+            goBack,
+            1200
+        );
 
-await loadReadme();
 
+    }catch(error){
 
-showToast(
-"Branch created successfully.",
-"success"
-);
+        console.error(error);
 
-}
+        hideProgress();
 
+        showStatus(
+            error.message ||
+            "Could not create file.",
+            "error"
+        );
 
-/* =================================
-   PAGE LINKS
-================================= */
+        disableButtons(false);
 
-function updatePageLinks(){
+    }
 
-if(!repoId){
-return;
 }
-
-
-const branchQuery =
-currentBranch
-? "&branch_id=" +
-encodeURIComponent(
-currentBranch.id
-)
-: "";
-
 
-document.getElementById(
-"explorerButton"
-).href =
-"repository-explorer.html" +
-"?repository_id=" +
-encodeURIComponent(repoId) +
-branchQuery;
 
+/* =====================================================
+   STORAGE PATH
+===================================================== */
 
-document.getElementById(
-"createFileLink"
-).href =
-"repository-add-file.html" +
-"?repository_id=" +
-encodeURIComponent(repoId) +
-branchQuery +
-"&mode=create";
+function buildStoragePath(filePath){
 
+    return (
+        repoId +
+        "/" +
+        currentBranch.id +
+        "/" +
+        filePath
+    );
 
-document.getElementById(
-"uploadFileLink"
-).href =
-"repository-add-file.html" +
-"?repository_id=" +
-encodeURIComponent(repoId) +
-branchQuery +
-"&mode=upload";
-
-
-document.getElementById(
-"editRepoLink"
-).href =
-"edit-repository.html?id=" +
-encodeURIComponent(repoId);
-
-
-document.getElementById(
-"issuesLink"
-).href =
-"issues.html?repository_id=" +
-encodeURIComponent(repoId);
-
-
-document.getElementById(
-"pullRequestsLink"
-).href =
-"pull-requests.html?repository_id=" +
-encodeURIComponent(repoId);
-
-
-document.getElementById(
-"actionsLink"
-).href =
-"actions.html?repository_id=" +
-encodeURIComponent(repoId);
-
 }
-
 
-/* =================================
-   ADD MENU
-================================= */
 
-function toggleAddMenu(){
+/* =====================================================
+   NORMALIZE PATH
+===================================================== */
 
-document.getElementById(
-"addMenu"
-).classList.toggle(
-"show"
-);
-
-}
-
-
-function closeAddMenu(){
+function normalizePath(path){
 
-document.getElementById(
-"addMenu"
-).classList.remove(
-"show"
-);
+    return String(
+        path || ""
+    )
+    .replace(
+        /\\/g,
+        "/"
+    )
+    .replace(
+        /^\/+/,
+        ""
+    )
+    .replace(
+        /\/+/g,
+        "/"
+    )
+    .trim();
 
 }
-
 
-/* =================================
-   BRANCH MENU
-================================= */
 
-function toggleBranchMenu(){
+/* =====================================================
+   BINARY DETECTION
+===================================================== */
 
-document.getElementById(
-"branchMenu"
-).classList.toggle(
-"show"
-);
+function isBinaryFile(file){
 
-}
+    const name =
+        file.name.toLowerCase();
 
 
-function closeBranchMenu(){
+    const binaryExtensions = [
 
-document.getElementById(
-"branchMenu"
-).classList.remove(
-"show"
-);
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".gif",
+        ".webp",
+        ".bmp",
+        ".ico",
 
-}
+        ".pdf",
 
+        ".zip",
+        ".rar",
+        ".7z",
 
-/* =================================
-   FILE ICON
-================================= */
+        ".mp3",
+        ".wav",
+        ".ogg",
 
-function getFileIcon(file){
+        ".mp4",
+        ".webm",
+        ".avi",
 
-if(file.is_binary){
-return "📦";
-}
+        ".doc",
+        ".docx",
+        ".xls",
+        ".xlsx",
+        ".ppt",
+        ".pptx",
 
+        ".exe",
+        ".apk",
 
-const name =
-(
-file.file_path || ""
-).toLowerCase();
+        ".woff",
+        ".woff2",
+        ".ttf",
+        ".otf"
 
+    ];
 
-if(
-name.endsWith(".html") ||
-name.endsWith(".htm")
-){
-return "🌐";
-}
 
+    return binaryExtensions.some(
+        ext =>
+            name.endsWith(ext)
+    );
 
-if(name.endsWith(".css")){
-return "🎨";
 }
 
-
-if(name.endsWith(".js")){
-return "⚡";
-}
 
+/* =====================================================
+   MIME TYPE
+===================================================== */
 
-if(name.endsWith(".json")){
-return "🔧";
-}
+function guessMimeType(path){
 
+    const ext =
+        path
+        .toLowerCase()
+        .split(".")
+        .pop();
 
-if(name.endsWith(".md")){
-return "📖";
-}
 
+    const types = {
 
-if(
-name.endsWith(".png") ||
-name.endsWith(".jpg") ||
-name.endsWith(".jpeg") ||
-name.endsWith(".gif") ||
-name.endsWith(".webp")
-){
-return "🖼️";
-}
+        html:
+            "text/html",
 
+        htm:
+            "text/html",
 
-return "📄";
+        css:
+            "text/css",
 
-}
+        js:
+            "application/javascript",
 
+        json:
+            "application/json",
 
-/* =================================
-   FILE TYPE
-================================= */
+        txt:
+            "text/plain",
 
-function getFileType(path){
+        md:
+            "text/markdown",
 
-const parts =
-path.split(".");
+        xml:
+            "application/xml",
 
+        svg:
+            "image/svg+xml"
 
-if(parts.length < 2){
-return "FILE";
-}
+    };
 
 
-return parts
-.pop()
-.toUpperCase();
+    return (
+        types[ext] ||
+        "text/plain"
+    );
 
 }
 
 
-/* =================================
+/* =====================================================
    FILE SIZE
-================================= */
+===================================================== */
 
 function formatFileSize(bytes){
 
-if(
-bytes === null ||
-bytes === undefined ||
-bytes === ""
-){
-return "";
-}
+    const n =
+        Number(bytes || 0);
 
 
-const n =
-Number(bytes);
+    if(n < 1024){
+
+        return n +
+            " B";
+
+    }
 
 
-if(n < 1024){
-return n + " B";
-}
+    if(
+        n <
+        1024 * 1024
+    ){
+
+        return (
+            n / 1024
+        ).toFixed(1) +
+        " KB";
+
+    }
 
 
-if(
-n < 1024 * 1024
-){
+    if(
+        n <
+        1024 *
+        1024 *
+        1024
+    ){
 
-return (
-n / 1024
-).toFixed(1) +
-" KB";
+        return (
+            n /
+            (1024 * 1024)
+        ).toFixed(1) +
+        " MB";
 
-}
-
-
-if(
-n < 1024 *
-1024 *
-1024
-){
-
-return (
-n /
-(1024 * 1024)
-).toFixed(1) +
-" MB";
-
-}
+    }
 
 
-return (
-n /
-(1024 *
-1024 *
-1024)
-).toFixed(1) +
-" GB";
+    return (
+        n /
+        (1024 *
+        1024 *
+        1024)
+    ).toFixed(1) +
+    " GB";
 
 }
 
 
-/* =================================
-   DATE
-================================= */
+/* =====================================================
+   PROGRESS
+===================================================== */
 
-function formatDate(value){
+function showProgress(){
 
-if(!value){
-return "";
-}
-
-
-try{
-
-return new Date(
-value
-).toLocaleString(
-"en-IN",
-{
-day:"2-digit",
-month:"short",
-year:"numeric",
-hour:"2-digit",
-minute:"2-digit"
-}
-);
-
-}catch(e){
-
-return "";
-
-}
+    document.getElementById(
+        "progress"
+    ).classList.add(
+        "show"
+    );
 
 }
 
 
-/* =================================
-   ESCAPE HTML
-================================= */
+function hideProgress(){
 
-function escapeHtml(value){
-
-return String(
-value ?? ""
-)
-
-.replace(
-/&/g,
-"&amp;"
-)
-
-.replace(
-/</g,
-"&lt;"
-)
-
-.replace(
-/>/g,
-"&gt;"
-)
-
-.replace(
-/"/g,
-"&quot;"
-)
-
-.replace(
-/'/g,
-"&#039;"
-);
+    document.getElementById(
+        "progress"
+    ).classList.remove(
+        "show"
+    );
 
 }
 
 
-/* =================================
-   MARKDOWN
-================================= */
-
-function markdownToHtml(markdown){
-
-let text =
-escapeHtml(
-markdown
-);
-
-
-text =
-text.replace(
-/^### (.*)$/gm,
-"<h3>$1</h3>"
-);
-
-
-text =
-text.replace(
-/^## (.*)$/gm,
-"<h2>$1</h2>"
-);
-
-
-text =
-text.replace(
-/^# (.*)$/gm,
-"<h1>$1</h1>"
-);
-
-
-text =
-text.replace(
-/\*\*(.*?)\*\*/g,
-"<strong>$1</strong>"
-);
-
-
-text =
-text.replace(
-/\n\n/g,
-"</p><p>"
-);
-
-
-text =
-text.replace(
-/\n/g,
-"<br>"
-);
-
-
-return "<p>" +
-text +
-"</p>";
-
-}
-
-
-/* =================================
-   TOAST
-================================= */
-
-function showToast(
-message,
-type
+function setProgress(
+    percent,
+    message
 ){
 
-const toast =
-document.getElementById(
-"toast"
-);
+    document.getElementById(
+        "progressFill"
+    ).style.width =
+        percent + "%";
 
-toast.textContent =
-message;
 
-toast.className =
-"toast show " +
-(type || "");
-
-setTimeout(
-function(){
-
-toast.className =
-"toast";
-
-},
-3500
-);
+    document.getElementById(
+        "progressText"
+    ).textContent =
+        message;
 
 }
 
 
-/* =================================
-   CLICK OUTSIDE
-================================= */
+/* =====================================================
+   STATUS
+===================================================== */
 
-document.addEventListener(
-"click",
-function(event){
-
-const branch =
-document.querySelector(
-".branch-wrapper"
-);
-
-const add =
-document.querySelector(
-".add-wrapper"
-);
-
-
-if(
-branch &&
-!branch.contains(
-event.target
-)
+function showStatus(
+    message,
+    type
 ){
 
-closeBranchMenu();
+    const box =
+        document.getElementById(
+            "status"
+        );
+
+
+    box.textContent =
+        message;
+
+
+    box.className =
+        "status show " +
+        type;
 
 }
 
 
-if(
-add &&
-!add.contains(
-event.target
-)
-){
+function clearStatus(){
 
-closeAddMenu();
-
-}
-
-}
-);
+    const box =
+        document.getElementById(
+            "status"
+        );
 
 
-/* =================================
-   ESC
-================================= */
+    box.className =
+        "status";
 
-document.addEventListener(
-"keydown",
-function(event){
 
-if(
-event.key ===
-"Escape"
-){
-
-closeModal();
-
-closeBranchMenu();
-
-closeAddMenu();
+    box.textContent =
+        "";
 
 }
 
+
+/* =====================================================
+   HIDE EXISTING BOXES
+===================================================== */
+
+function hideBoxes(){
+
+    document.getElementById(
+        "existsBox"
+    ).classList.remove(
+        "show"
+    );
+
+
+    document.getElementById(
+        "newBox"
+    ).classList.remove(
+        "show"
+    );
+
+
+    document.getElementById(
+        "replaceButton"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "replaceButton"
+    ).disabled =
+        true;
+
 }
-);
 
 
-/* =================================
-   MODAL BACKDROP
-================================= */
+/* =====================================================
+   DISABLE BUTTONS
+===================================================== */
 
-document.getElementById(
-"modal"
-).addEventListener(
-"click",
-function(event){
+function disableButtons(disabled){
 
-if(
-event.target ===
-this
-){
+    document.getElementById(
+        "uploadButton"
+    ).disabled =
+        disabled;
 
-closeModal();
 
-}
+    document.getElementById(
+        "replaceButton"
+    ).disabled =
+        disabled;
 
 }
-);
 
 
-/* =================================
-   STAR STATUS LOAD
-================================= */
+/* =====================================================
+   BACK
+===================================================== */
 
-loadStarStatus();
+function goBack(){
+
+    window.location.href =
+        "repository-details.html" +
+        "?repository_id=" +
+        encodeURIComponent(
+            repoId
+        ) +
+        (
+            currentBranch
+            ? "&branch_id=" +
+              encodeURIComponent(
+                  currentBranch.id
+              )
+            : ""
+        );
+
+}
 
 </script>
 
