@@ -15,848 +15,783 @@ content="width=device-width, initial-scale=1.0">
 
 <style>
 
+/* =====================================================
+   RESET
+===================================================== */
+
 *{
-box-sizing:border-box;
-margin:0;
-padding:0;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
 html{
-width:100%;
-min-height:100%;
+    min-height:100%;
 }
 
 body{
-font-family:
--apple-system,
-BlinkMacSystemFont,
-"Segoe UI",
-Arial,
-sans-serif;
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
-background:#0d1117;
-color:#e6edf3;
-
-min-height:100vh;
+    background:#0d1117;
+    color:#e6edf3;
+    min-height:100vh;
 }
 
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
 .navbar{
+    min-height:64px;
 
-min-height:64px;
+    background:#010409;
 
-background:#010409;
+    border-bottom:1px solid #30363d;
 
-border-bottom:
-1px solid #30363d;
+    display:flex;
+    align-items:center;
 
-display:flex;
+    padding:12px 5%;
 
-align-items:center;
+    gap:24px;
 
-padding:12px 5%;
-
-gap:24px;
-
-flex-wrap:wrap;
+    flex-wrap:wrap;
 }
 
 .logo{
-
-font-size:21px;
-
-font-weight:700;
-
-color:#fff;
+    font-size:21px;
+    font-weight:700;
+    color:#fff;
 }
 
 .navbar a{
-
-color:#e6edf3;
-
-text-decoration:none;
-
-font-size:14px;
+    color:#e6edf3;
+    text-decoration:none;
+    font-size:14px;
 }
 
 .navbar a:hover{
-
-color:#58a6ff;
+    color:#58a6ff;
 }
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
 
 .container{
-
-width:94%;
-
-max-width:1250px;
-
-margin:28px auto;
+    width:94%;
+    max-width:1250px;
+    margin:28px auto 60px;
 }
+
+
+/* =====================================================
+   LOADING
+===================================================== */
 
 .loading{
-
-padding:70px 20px;
-
-text-align:center;
-
-color:#8b949e;
+    padding:100px 20px;
+    text-align:center;
+    color:#8b949e;
+    font-size:20px;
 }
+
+
+/* =====================================================
+   ERROR
+===================================================== */
 
 .error{
+    display:none;
 
-display:none;
+    background:#3d1f25;
 
-background:#3d1f25;
+    border:1px solid #f85149;
 
-border:
-1px solid #f85149;
+    color:#ff7b72;
 
-color:#ff7b72;
+    padding:18px;
 
-padding:14px;
+    border-radius:8px;
 
-border-radius:8px;
+    margin-bottom:20px;
 
-margin-bottom:20px;
+    line-height:1.6;
+
+    word-break:break-word;
 }
 
-.repo-header{
 
-margin-bottom:20px;
+/* =====================================================
+   REPOSITORY HEADER
+===================================================== */
+
+.repo-header{
+    margin-bottom:22px;
 }
 
 .repo-title{
+    display:flex;
 
-display:flex;
+    align-items:center;
 
-align-items:center;
+    gap:8px;
 
-gap:8px;
+    flex-wrap:wrap;
 
-flex-wrap:wrap;
+    font-size:26px;
 
-font-size:26px;
-
-margin-bottom:10px;
+    margin-bottom:10px;
 }
 
 .owner{
-
-color:#58a6ff;
+    color:#58a6ff;
 }
 
 .repo-slash{
-
-color:#8b949e;
+    color:#8b949e;
 }
 
 .visibility{
+    border:1px solid #30363d;
 
-border:
-1px solid #30363d;
+    border-radius:20px;
 
-border-radius:20px;
+    padding:4px 10px;
 
-padding:4px 10px;
+    font-size:12px;
 
-font-size:12px;
-
-color:#8b949e;
+    color:#8b949e;
 }
 
 .description{
+    color:#8b949e;
 
-color:#8b949e;
+    font-size:14px;
 
-font-size:14px;
-
-margin-bottom:15px;
+    margin-bottom:15px;
 }
 
 .repo-info{
+    display:flex;
 
-display:flex;
+    align-items:center;
 
-align-items:center;
+    gap:9px;
 
-gap:9px;
-
-flex-wrap:wrap;
+    flex-wrap:wrap;
 }
 
 .info-item{
+    font-size:13px;
 
-font-size:13px;
-
-color:#8b949e;
+    color:#8b949e;
 }
 
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
 .btn{
+    border:1px solid #30363d;
 
-border:
-1px solid #30363d;
+    background:#21262d;
 
-background:#21262d;
+    color:#e6edf3;
 
-color:#e6edf3;
+    padding:8px 13px;
 
-padding:8px 13px;
+    border-radius:7px;
 
-border-radius:7px;
+    font-size:13px;
 
-font-size:13px;
+    cursor:pointer;
 
-cursor:pointer;
+    text-decoration:none;
 
-text-decoration:none;
+    display:inline-flex;
 
-display:inline-flex;
+    align-items:center;
 
-align-items:center;
+    justify-content:center;
 
-gap:6px;
+    gap:6px;
 
-white-space:nowrap;
+    white-space:nowrap;
 }
 
 .btn:hover{
+    background:#30363d;
+}
 
-background:#30363d;
+.btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
 }
 
 .btn-green{
+    background:#238636;
 
-background:#238636;
+    border-color:#238636;
 
-border-color:#238636;
-
-color:white;
+    color:#fff;
 }
 
 .btn-green:hover{
-
-background:#2ea043;
+    background:#2ea043;
 }
 
 .btn-blue{
+    background:#1f6feb;
 
-background:#1f6feb;
+    border-color:#1f6feb;
 
-border-color:#1f6feb;
-
-color:white;
+    color:#fff;
 }
 
 .btn-blue:hover{
-
-background:#388bfd;
+    background:#388bfd;
 }
 
 .btn-red{
+    background:#da3633;
 
-background:#da3633;
+    border-color:#da3633;
 
-border-color:#da3633;
-
-color:white;
+    color:#fff;
 }
 
+
+/* =====================================================
+   TABS
+===================================================== */
+
 .tabs{
+    display:flex;
 
-display:flex;
+    border-bottom:1px solid #30363d;
 
-border-bottom:
-1px solid #30363d;
+    overflow-x:auto;
 
-overflow-x:auto;
-
-margin-bottom:18px;
+    margin-bottom:18px;
 }
 
 .tab{
+    padding:12px 16px;
 
-padding:12px 16px;
+    color:#8b949e;
 
-color:#8b949e;
+    text-decoration:none;
 
-text-decoration:none;
+    font-size:14px;
 
-font-size:14px;
+    white-space:nowrap;
+}
 
-white-space:nowrap;
+.tab:hover{
+    color:#fff;
 }
 
 .tab.active{
+    color:#fff;
 
-color:#fff;
+    font-weight:600;
 
-font-weight:600;
-
-border-bottom:
-2px solid #f78166;
+    border-bottom:2px solid #f78166;
 }
 
+
+/* =====================================================
+   TOOLBAR
+===================================================== */
+
 .toolbar{
+    display:flex;
 
-display:flex;
+    justify-content:space-between;
 
-justify-content:space-between;
+    align-items:center;
 
-align-items:center;
+    gap:12px;
 
-gap:12px;
+    margin-bottom:14px;
 
-margin-bottom:14px;
-
-flex-wrap:wrap;
+    flex-wrap:wrap;
 }
 
 .toolbar-left{
+    display:flex;
 
-display:flex;
+    gap:8px;
 
-gap:8px;
+    align-items:center;
 
-align-items:center;
-
-flex-wrap:wrap;
+    flex-wrap:wrap;
 }
 
 .toolbar-right{
+    display:flex;
 
-display:flex;
+    flex:1;
 
-flex:1;
-
-justify-content:flex-end;
+    justify-content:flex-end;
 }
 
 .search{
+    width:300px;
 
-width:300px;
+    max-width:100%;
 
-max-width:100%;
+    background:#0d1117;
 
-background:#0d1117;
+    border:1px solid #30363d;
 
-border:
-1px solid #30363d;
+    border-radius:7px;
 
-border-radius:7px;
+    padding:9px 12px;
 
-padding:9px 12px;
+    color:#fff;
 
-color:#fff;
-
-outline:none;
+    outline:none;
 }
 
 .search:focus{
-
-border-color:#58a6ff;
+    border-color:#58a6ff;
 }
+
+
+/* =====================================================
+   BRANCH / ADD MENUS
+===================================================== */
 
 .branch-wrapper,
 .add-wrapper{
-
-position:relative;
+    position:relative;
 }
 
 .branch-menu,
 .add-menu{
+    display:none;
 
-display:none;
+    position:absolute;
 
-position:absolute;
+    background:#161b22;
 
-background:#161b22;
+    border:1px solid #30363d;
 
-border:
-1px solid #30363d;
+    border-radius:8px;
 
-border-radius:8px;
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.5);
 
-box-shadow:
-0 10px 30px rgba(0,0,0,.5);
+    z-index:3000;
 
-z-index:3000;
-
-overflow:hidden;
+    overflow:hidden;
 }
 
 .branch-menu{
-
-top:44px;
-
-left:0;
-
-width:280px;
+    top:44px;
+    left:0;
+    width:280px;
 }
 
 .add-menu{
-
-top:44px;
-
-right:0;
-
-width:220px;
+    top:44px;
+    right:0;
+    width:220px;
 }
 
 .branch-menu.show,
 .add-menu.show{
-
-display:block;
+    display:block;
 }
 
 .branch-item{
+    display:block;
 
-display:block;
+    width:100%;
 
-width:100%;
+    padding:12px 15px;
 
-padding:12px 15px;
+    border:0;
 
-border:0;
+    background:transparent;
 
-background:transparent;
+    color:#e6edf3;
 
-color:#e6edf3;
+    text-align:left;
 
-text-align:left;
-
-cursor:pointer;
+    cursor:pointer;
 }
 
 .branch-item:hover{
-
-background:#21262d;
+    background:#21262d;
 }
 
 .add-menu a{
+    display:block;
 
-display:block;
+    padding:12px 15px;
 
-padding:12px 15px;
+    color:#e6edf3;
 
-color:#e6edf3;
-
-text-decoration:none;
+    text-decoration:none;
 }
 
 .add-menu a:hover{
+    background:#21262d;
 
-background:#21262d;
-
-color:#58a6ff;
+    color:#58a6ff;
 }
 
+
+/* =====================================================
+   COMMIT BAR
+===================================================== */
+
 .commit-bar{
+    display:flex;
 
-display:flex;
+    justify-content:space-between;
 
-justify-content:space-between;
+    align-items:center;
 
-align-items:center;
+    background:#161b22;
 
-background:#161b22;
+    border:1px solid #30363d;
 
-border:
-1px solid #30363d;
+    border-radius:7px 7px 0 0;
 
-border-radius:
-7px 7px 0 0;
+    padding:12px 15px;
 
-padding:12px 15px;
+    font-size:13px;
 
-font-size:13px;
+    color:#8b949e;
 
-color:#8b949e;
+    gap:10px;
+
+    flex-wrap:wrap;
 }
 
 .commit{
+    color:#58a6ff;
 
-color:#58a6ff;
-
-font-weight:600;
+    font-weight:600;
 }
 
+
+/* =====================================================
+   FILE LIST
+===================================================== */
+
 .file-list{
+    border:1px solid #30363d;
 
-border:
-1px solid #30363d;
+    border-top:0;
 
-border-top:0;
+    background:#0d1117;
 
-background:#0d1117;
+    border-radius:0 0 7px 7px;
 
-border-radius:
-0 0 7px 7px;
-
-overflow:hidden;
+    overflow:hidden;
 }
 
 .file-row{
+    display:flex;
 
-display:flex;
+    justify-content:space-between;
 
-justify-content:space-between;
+    align-items:center;
 
-align-items:center;
+    gap:15px;
 
-gap:15px;
+    padding:13px 15px;
 
-padding:13px 15px;
-
-border-bottom:
-1px solid #21262d;
+    border-bottom:1px solid #21262d;
 }
 
 .file-row:last-child{
-
-border-bottom:0;
+    border-bottom:0;
 }
 
 .file-row:hover{
-
-background:#161b22;
+    background:#161b22;
 }
 
 .file-main{
+    display:flex;
 
-display:flex;
+    align-items:center;
 
-align-items:center;
+    gap:12px;
 
-gap:12px;
+    min-width:0;
 
-min-width:0;
+    flex:1;
 }
 
 .file-icon{
+    font-size:21px;
 
-font-size:21px;
+    width:28px;
 
-width:28px;
+    text-align:center;
 
-text-align:center;
+    flex-shrink:0;
 }
 
 .file-name{
+    color:#58a6ff;
 
-color:#58a6ff;
+    font-size:14px;
 
-font-size:14px;
-
-word-break:break-word;
+    word-break:break-word;
 }
 
 .file-sub{
+    color:#8b949e;
 
-color:#8b949e;
+    font-size:11px;
 
-font-size:11px;
-
-margin-top:4px;
+    margin-top:4px;
 }
 
 .file-meta{
+    display:flex;
 
-display:flex;
+    align-items:center;
 
-align-items:center;
+    gap:8px;
 
-gap:8px;
+    flex-wrap:wrap;
 
-flex-wrap:wrap;
+    justify-content:flex-end;
 }
 
 .type-badge{
+    border:1px solid #30363d;
 
-border:
-1px solid #30363d;
+    border-radius:15px;
 
-border-radius:15px;
+    padding:3px 8px;
 
-padding:3px 8px;
+    font-size:10px;
 
-font-size:10px;
-
-color:#8b949e;
+    color:#8b949e;
 }
 
 .file-actions{
+    display:flex;
 
-display:flex;
+    gap:5px;
 
-gap:5px;
-
-flex-wrap:wrap;
+    flex-wrap:wrap;
 }
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
 
 .empty{
+    padding:55px 20px;
 
-padding:55px 20px;
+    text-align:center;
 
-text-align:center;
-
-color:#8b949e;
+    color:#8b949e;
 }
 
+
+/* =====================================================
+   README
+===================================================== */
+
 .readme{
+    margin-top:25px;
 
-margin-top:25px;
+    border:1px solid #30363d;
 
-border:
-1px solid #30363d;
+    border-radius:7px;
 
-border-radius:7px;
-
-overflow:hidden;
+    overflow:hidden;
 }
 
 .readme-header{
+    background:#161b22;
 
-background:#161b22;
+    border-bottom:1px solid #30363d;
 
-border-bottom:
-1px solid #30363d;
+    padding:14px;
 
-padding:14px;
-
-font-weight:600;
+    font-weight:600;
 }
 
 .readme-body{
+    padding:24px;
 
-padding:24px;
+    line-height:1.7;
 
-line-height:1.7;
+    color:#c9d1d9;
 
-color:#c9d1d9;
+    overflow-wrap:anywhere;
 }
 
 .readme-body h1,
 .readme-body h2,
 .readme-body h3{
+    color:#fff;
 
-color:#fff;
-
-margin-bottom:12px;
+    margin-bottom:12px;
 }
 
 
-/* =================================
-   PREVIEW
-================================= */
-
-.modal{
-
-display:none;
-
-position:fixed;
-
-inset:0;
-
-background:
-rgba(0,0,0,.88);
-
-align-items:center;
-
-justify-content:center;
-
-z-index:9999;
-
-padding:12px;
-}
-
-.modal.show{
-
-display:flex;
-}
-
-.modal-card{
-
-width:100%;
-
-max-width:1400px;
-
-height:96vh;
-
-background:#161b22;
-
-border:
-1px solid #30363d;
-
-border-radius:10px;
-
-padding:10px;
-
-display:flex;
-
-flex-direction:column;
-
-box-shadow:
-0 20px 60px rgba(0,0,0,.7);
-}
-
-.modal-title{
-
-font-size:18px;
-
-font-weight:600;
-
-padding:5px 0 10px;
-}
-
-.modal-text{
-
-flex:1;
-
-min-height:0;
-}
-
-.preview-frame{
-
-width:100%;
-
-height:100%;
-
-border:
-1px solid #30363d;
-
-border-radius:7px;
-
-background:#fff;
-
-display:block;
-}
-
-.modal-actions{
-
-display:flex;
-
-justify-content:flex-end;
-
-gap:8px;
-
-padding-top:9px;
-}
+/* =====================================================
+   TOAST
+===================================================== */
 
 .toast{
+    position:fixed;
 
-position:fixed;
+    right:20px;
 
-right:20px;
+    bottom:20px;
 
-bottom:20px;
+    max-width:90%;
 
-background:#161b22;
+    background:#161b22;
 
-border:
-1px solid #30363d;
+    border:1px solid #30363d;
 
-color:#e6edf3;
+    color:#e6edf3;
 
-padding:13px 17px;
+    padding:13px 17px;
 
-border-radius:8px;
+    border-radius:8px;
 
-display:none;
+    display:none;
 
-z-index:10000;
+    z-index:10000;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.5);
 }
 
 .toast.show{
-
-display:block;
+    display:block;
 }
 
 .toast.success{
+    border-color:#238636;
 
-border-color:#238636;
-
-color:#56d364;
+    color:#56d364;
 }
 
 .toast.error{
+    border-color:#f85149;
 
-border-color:#f85149;
-
-color:#ff7b72;
+    color:#ff7b72;
 }
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
 
 @media(max-width:700px){
 
-.navbar{
+    .navbar{
+        padding:12px 4%;
 
-padding:12px 4%;
+        gap:14px;
+    }
 
-gap:14px;
+    .container{
+        width:94%;
+
+        margin:20px auto 40px;
+    }
+
+    .repo-title{
+        font-size:21px;
+    }
+
+    .toolbar-left,
+    .toolbar-right{
+        width:100%;
+    }
+
+    .toolbar-right{
+        justify-content:flex-start;
+    }
+
+    .search{
+        width:100%;
+    }
+
+    .file-row{
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+    .file-main{
+        width:100%;
+    }
+
+    .file-meta{
+        width:100%;
+
+        justify-content:flex-start;
+    }
+
+    .file-actions{
+        width:100%;
+    }
+
+    .file-actions .btn{
+        flex:1;
+    }
+
+    .commit-bar{
+        align-items:flex-start;
+
+        flex-direction:column;
+    }
+
 }
 
-.container{
 
-width:94%;
+/* =====================================================
+   EXTRA MOBILE
+===================================================== */
 
-margin:20px auto;
-}
+@media(max-width:420px){
 
-.repo-title{
+    .logo{
+        font-size:18px;
+    }
 
-font-size:21px;
-}
+    .navbar a{
+        font-size:13px;
+    }
 
-.toolbar-left,
-.toolbar-right{
+    .btn{
+        padding:8px 10px;
 
-width:100%;
-}
+        font-size:12px;
+    }
 
-.toolbar-right{
-
-justify-content:flex-start;
-}
-
-.search{
-
-width:100%;
-}
-
-.file-row{
-
-flex-direction:column;
-
-align-items:flex-start;
-}
-
-.file-meta{
-
-width:100%;
-}
-
-.modal{
-
-padding:0;
-}
-
-.modal-card{
-
-height:100vh;
-
-max-width:none;
-
-border-radius:0;
-
-border:0;
-
-padding:6px;
-}
-
-.preview-frame{
-
-min-height:400px;
-
-border-radius:4px;
-}
+    .repo-title{
+        font-size:19px;
+    }
 
 }
 
@@ -864,373 +799,430 @@ border-radius:4px;
 
 </head>
 
+
 <body>
 
 
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
 <nav class="navbar">
 
-<div class="logo">
-⚡ ASIM TECH
-</div>
+    <div class="logo">
+        ⚡ ASIM TECH
+    </div>
 
-<a href="repositories.html">
-← Repositories
-</a>
+    <a href="repositories.html">
+        ← Repositories
+    </a>
 
-<a href="dashboard.html">
-Dashboard
-</a>
+    <a href="dashboard.html">
+        Dashboard
+    </a>
 
 </nav>
 
 
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
 <div class="container">
 
-<div
-id="loading"
-class="loading">
 
-Loading repository...
+    <div
+    id="loading"
+    class="loading">
+
+        Loading repository...
+
+    </div>
+
+
+    <div
+    id="error"
+    class="error">
+    </div>
+
+
+    <div
+    id="content"
+    style="display:none;">
+
+
+        <!-- =================================================
+             REPOSITORY HEADER
+        ================================================== -->
+
+        <div class="repo-header">
+
+            <div class="repo-title">
+
+                <span
+                id="repoOwner"
+                class="owner">
+                    ASIM TECH
+                </span>
+
+                <span class="repo-slash">
+                    /
+                </span>
+
+                <strong id="repoName">
+                    —
+                </strong>
+
+                <span
+                id="visibility"
+                class="visibility">
+                    —
+                </span>
+
+            </div>
+
+
+            <div
+            id="repoDescription"
+            class="description">
+
+                —
+
+            </div>
+
+
+            <div class="repo-info">
+
+
+                <span class="info-item">
+
+                    ⭐
+                    <strong id="starCount">
+                        0
+                    </strong>
+                    stars
+
+                </span>
+
+
+                <span class="info-item">
+
+                    🍴
+                    <strong id="forkCount">
+                        0
+                    </strong>
+                    forks
+
+                </span>
+
+
+                <button
+                id="starButton"
+                class="btn"
+                onclick="toggleStar()">
+
+                    ☆ Star
+
+                </button>
+
+
+                <a
+                id="editRepoLink"
+                class="btn"
+                href="#">
+
+                    ⚙️ Settings
+
+                </a>
+
+
+                <button
+                id="publishButton"
+                class="btn btn-green"
+                onclick="publishRepository()"
+                style="display:none;">
+
+                    🚀 Publish
+
+                </button>
+
+
+                <a
+                id="publishedWebsiteButton"
+                class="btn btn-blue"
+                href="#"
+                target="_blank"
+                style="display:none;">
+
+                    🌐 Published Website
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TABS
+        ================================================== -->
+
+        <div class="tabs">
+
+            <a
+            class="tab active"
+            href="#">
+
+                Code
+
+            </a>
+
+
+            <a
+            class="tab"
+            id="issuesLink"
+            href="#">
+
+                Issues
+
+            </a>
+
+
+            <a
+            class="tab"
+            id="pullRequestsLink"
+            href="#">
+
+                Pull requests
+
+            </a>
+
+
+            <a
+            class="tab"
+            id="actionsLink"
+            href="#">
+
+                Actions
+
+            </a>
+
+
+            <a
+            class="tab"
+            href="#">
+
+                Projects
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             TOOLBAR
+        ================================================== -->
+
+        <div class="toolbar">
+
+
+            <div class="toolbar-left">
+
+
+                <!-- BRANCH -->
+
+                <div class="branch-wrapper">
+
+                    <button
+                    class="btn"
+                    onclick="toggleBranchMenu()">
+
+                        🌿
+
+                        <span id="branchName">
+                            main
+                        </span>
+
+                        ▾
+
+                    </button>
+
+
+                    <div
+                    id="branchMenu"
+                    class="branch-menu">
+
+
+                        <div
+                        id="branchList">
+                        </div>
+
+
+                        <button
+                        class="branch-item"
+                        onclick="createNewBranch()">
+
+                            ＋ Create new branch
+
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- EXPLORER -->
+
+                <a
+                id="explorerButton"
+                class="btn"
+                href="#">
+
+                    📂 Explorer
+
+                </a>
+
+
+                <!-- ADD FILE -->
+
+                <div class="add-wrapper">
+
+                    <button
+                    class="btn btn-green"
+                    onclick="toggleAddMenu()">
+
+                        ＋ Add file ▾
+
+                    </button>
+
+
+                    <div
+                    id="addMenu"
+                    class="add-menu">
+
+
+                        <a
+                        id="createFileLink"
+                        href="#">
+
+                            📝 Create new file
+
+                        </a>
+
+
+                        <a
+                        id="uploadFileLink"
+                        href="#">
+
+                            ⬆️ Upload files
+
+                        </a>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="toolbar-right">
+
+                <input
+                id="searchInput"
+                class="search"
+                type="search"
+                placeholder="🔎 Go to file..."
+                oninput="filterFiles()">
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             COMMIT BAR
+        ================================================== -->
+
+        <div class="commit-bar">
+
+            <span>
+
+                🌿 Branch:
+
+                <span
+                id="commitBranch"
+                class="commit">
+
+                    main
+
+                </span>
+
+            </span>
+
+
+            <span id="fileCount">
+
+                0 files
+
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             FILE LIST
+        ================================================== -->
+
+        <div
+        id="fileList"
+        class="file-list">
+
+            <div class="empty">
+
+                Loading files...
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             README
+        ================================================== -->
+
+        <div class="readme">
+
+            <div class="readme-header">
+
+                📖 README
+
+            </div>
+
+
+            <div
+            id="readmeBody"
+            class="readme-body">
+
+                Loading README...
+
+            </div>
+
+        </div>
+
+
+    </div>
 
 </div>
 
 
-<div
-id="error"
-class="error">
-</div>
-
-
-<div
-id="content"
-style="display:none;">
-
-
-<!-- REPOSITORY HEADER -->
-
-<div class="repo-header">
-
-<div class="repo-title">
-
-<span
-id="repoOwner"
-class="owner">
-ASIM TECH
-</span>
-
-<span class="repo-slash">
-/
-</span>
-
-<strong id="repoName">
-—
-</strong>
-
-<span
-id="visibility"
-class="visibility">
-—
-</span>
-
-</div>
-
-
-<div
-id="repoDescription"
-class="description">
-—
-</div>
-
-
-<div class="repo-info">
-
-<span class="info-item">
-⭐ <strong id="starCount">0</strong> stars
-</span>
-
-<span class="info-item">
-🍴 <strong id="forkCount">0</strong> forks
-</span>
-
-
-<button
-id="starButton"
-class="btn"
-onclick="toggleStar()">
-☆ Star
-</button>
-
-
-<a
-id="editRepoLink"
-class="btn"
-href="#">
-⚙️ Settings
-</a>
-
-
-<button
-id="publishButton"
-class="btn btn-green"
-onclick="publishRepository()"
-style="display:none;">
-🚀 Publish
-</button>
-
-
-<a
-id="publishedWebsiteButton"
-class="btn btn-blue"
-href="#"
-target="_blank"
-style="display:none;">
-🌐 Published Website
-</a>
-
-</div>
-
-</div>
-
-
-<!-- TABS -->
-
-<div class="tabs">
-
-<a
-class="tab active"
-href="#">
-Code
-</a>
-
-<a
-class="tab"
-id="issuesLink"
-href="#">
-Issues
-</a>
-
-<a
-class="tab"
-id="pullRequestsLink"
-href="#">
-Pull requests
-</a>
-
-<a
-class="tab"
-id="actionsLink"
-href="#">
-Actions
-</a>
-
-<a
-class="tab"
-href="#">
-Projects
-</a>
-
-</div>
-
-
-<!-- TOOLBAR -->
-
-<div class="toolbar">
-
-<div class="toolbar-left">
-
-
-<div class="branch-wrapper">
-
-<button
-class="btn"
-onclick="toggleBranchMenu()">
-
-🌿
-
-<span id="branchName">
-main
-</span>
-
-▾
-
-</button>
-
-
-<div
-id="branchMenu"
-class="branch-menu">
-
-<div id="branchList">
-</div>
-
-<button
-class="branch-item"
-onclick="createNewBranch()">
-
-＋ Create new branch
-
-</button>
-
-</div>
-
-</div>
-
-
-<a
-id="explorerButton"
-class="btn"
-href="#">
-📂 Explorer
-</a>
-
-
-<div class="add-wrapper">
-
-<button
-class="btn btn-green"
-onclick="toggleAddMenu()">
-
-＋ Add file ▾
-
-</button>
-
-
-<div
-id="addMenu"
-class="add-menu">
-
-<a
-id="createFileLink"
-href="#">
-📝 Create new file
-</a>
-
-<a
-id="uploadFileLink"
-href="#">
-⬆️ Upload files
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="toolbar-right">
-
-<input
-id="searchInput"
-class="search"
-type="search"
-placeholder="🔎 Go to file..."
-oninput="filterFiles()">
-
-</div>
-
-</div>
-
-
-<!-- COMMIT BAR -->
-
-<div class="commit-bar">
-
-<span>
-
-🌿 Branch:
-
-<span
-id="commitBranch"
-class="commit">
-main
-</span>
-
-</span>
-
-<span id="fileCount">
-0 files
-</span>
-
-</div>
-
-
-<!-- FILE LIST -->
-
-<div
-id="fileList"
-class="file-list">
-
-<div class="empty">
-Loading files...
-</div>
-
-</div>
-
-
-<!-- README -->
-
-<div class="readme">
-
-<div class="readme-header">
-📖 README
-</div>
-
-<div
-id="readmeBody"
-class="readme-body">
-
-Loading README...
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-<!-- PREVIEW MODAL -->
-
-<div
-id="modal"
-class="modal">
-
-<div class="modal-card">
-
-<div
-id="modalTitle"
-class="modal-title">
-
-🌐 HTML Preview
-
-</div>
-
-
-<div
-id="modalText"
-class="modal-text">
-</div>
-
-
-<div class="modal-actions">
-
-<button
-class="btn"
-onclick="closeModal()">
-
-✕ Close
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
+<!-- =====================================================
+     TOAST
+===================================================== -->
 
 <div
 id="toast"
@@ -1240,43 +1232,48 @@ class="toast">
 
 <script>
 
-/* =================================
+
+/* =====================================================
    SUPABASE
-================================= */
+===================================================== */
 
 const SUPABASE_URL =
 "https://lgwaeqgiqrsjprsecwxx.supabase.co";
 
+
 const SUPABASE_KEY =
 "sb_publishable_DEoJz1PlONjxqa3eqqXH8Q_uc0hlemT";
 
+
 const supabaseClient =
 supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 
-/* =================================
-   URL
-================================= */
+/* =====================================================
+   URL PARAMETERS
+===================================================== */
 
 const params =
 new URLSearchParams(
-window.location.search
+    window.location.search
 );
+
 
 const repoId =
 params.get("repository_id") ||
 params.get("id");
 
+
 const branchIdFromUrl =
 params.get("branch_id");
 
 
-/* =================================
-   GLOBAL
-================================= */
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
 
 let currentUser = null;
 
@@ -1290,2951 +1287,2516 @@ let allFiles = [];
 
 let isStarred = false;
 
-let previewObjectUrls = [];
 
-
-/* =================================
-   LOAD
-================================= */
+/* =====================================================
+   START
+===================================================== */
 
 document.addEventListener(
-"DOMContentLoaded",
-loadRepository
+    "DOMContentLoaded",
+    function(){
+
+        loadRepository();
+
+    }
 );
 
+
+/* =====================================================
+   ERROR HANDLER
+===================================================== */
+
+window.addEventListener(
+    "error",
+    function(event){
+
+        console.error(
+            "ASIM TECH ERROR:",
+            event.error || event.message
+        );
+
+    }
+);
+
+
+window.addEventListener(
+    "unhandledrejection",
+    function(event){
+
+        console.error(
+            "ASIM TECH PROMISE ERROR:",
+            event.reason
+        );
+
+    }
+);
+
+
+/* =====================================================
+   LOAD REPOSITORY
+===================================================== */
 
 async function loadRepository(){
 
-try{
+    try{
 
-if(!repoId){
+        if(!repoId){
 
-throw new Error(
-"Repository ID is missing."
-);
+            throw new Error(
+                "Repository ID is missing."
+            );
+
+        }
+
+
+        /* ---------------------------------------------
+           AUTH USER
+        --------------------------------------------- */
+
+        const {
+            data:userData,
+            error:userError
+        } =
+        await supabaseClient.auth.getUser();
+
+
+        if(userError){
+
+            throw userError;
+
+        }
+
+
+        currentUser =
+            userData?.user || null;
+
+
+        if(!currentUser){
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           LOAD REPOSITORY
+        --------------------------------------------- */
+
+        const {
+            data:repo,
+            error:repoError
+        } =
+        await supabaseClient
+
+        .from("repositories")
+
+        .select("*")
+
+        .eq(
+            "id",
+            repoId
+        )
+
+        .single();
+
+
+        if(repoError){
+
+            throw repoError;
+
+        }
+
+
+        if(!repo){
+
+            throw new Error(
+                "Repository not found."
+            );
+
+        }
+
+
+        repository =
+            repo;
+
+
+        renderRepository();
+
+
+        /* ---------------------------------------------
+           LOAD BRANCHES
+        --------------------------------------------- */
+
+        await loadBranches();
+
+
+        /* ---------------------------------------------
+           LOAD FILES
+        --------------------------------------------- */
+
+        await loadFiles();
+
+
+        /* ---------------------------------------------
+           README
+        --------------------------------------------- */
+
+        await loadReadme();
+
+
+        /* ---------------------------------------------
+           LINKS
+        --------------------------------------------- */
+
+        updatePageLinks();
+
+
+        /* ---------------------------------------------
+           PUBLISH
+        --------------------------------------------- */
+
+        updatePublishUI();
+
+
+        /* ---------------------------------------------
+           STAR
+        --------------------------------------------- */
+
+        await loadStarStatus();
+
+
+        /* ---------------------------------------------
+           SHOW PAGE
+        --------------------------------------------- */
+
+        document.getElementById(
+            "loading"
+        ).style.display =
+            "none";
+
+
+        document.getElementById(
+            "content"
+        ).style.display =
+            "block";
+
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Repository loading error:",
+            error
+        );
+
+
+        document.getElementById(
+            "loading"
+        ).style.display =
+            "none";
+
+
+        const box =
+            document.getElementById(
+                "error"
+            );
+
+
+        box.style.display =
+            "block";
+
+
+        box.innerHTML =
+            "<strong>⚠️ Unable to load repository</strong><br><br>" +
+            escapeHtml(
+                error?.message ||
+                "Unknown error"
+            );
+
+    }
 
 }
 
 
-const {
-data,
-error
-} =
-await supabaseClient
-.auth
-.getUser();
-
-
-if(error){
-throw error;
-}
-
-
-currentUser =
-data?.user || null;
-
-
-if(!currentUser){
-
-window.location.href =
-"login.html";
-
-return;
-
-}
-
-
-const {
-data:repo,
-error:repoError
-} =
-await supabaseClient
-.from("repositories")
-.select("*")
-.eq("id",repoId)
-.single();
-
-
-if(repoError){
-throw repoError;
-}
-
-
-if(!repo){
-
-throw new Error(
-"Repository not found."
-);
-
-}
-
-
-repository = repo;
-
-
-renderRepository();
-
-
-await loadBranches();
-
-await loadFiles();
-
-await loadReadme();
-
-updatePageLinks();
-
-updatePublishUI();
-
-await loadStarStatus();
-
-
-document.getElementById(
-"loading"
-).style.display =
-"none";
-
-
-document.getElementById(
-"content"
-).style.display =
-"block";
-
-
-}
-catch(error){
-
-console.error(error);
-
-
-document.getElementById(
-"loading"
-).style.display =
-"none";
-
-
-const box =
-document.getElementById(
-"error"
-);
-
-box.style.display =
-"block";
-
-box.textContent =
-error.message ||
-"Unable to load repository.";
-
-}
-
-}
-
-
-/* =================================
-   REPOSITORY
-================================= */
+/* =====================================================
+   RENDER REPOSITORY
+===================================================== */
 
 function renderRepository(){
 
-document.getElementById(
-"repoOwner"
-).textContent =
-"ASIM TECH";
+    document.getElementById(
+        "repoOwner"
+    ).textContent =
+        "ASIM TECH";
 
 
-document.getElementById(
-"repoName"
-).textContent =
-repository.name;
+    document.getElementById(
+        "repoName"
+    ).textContent =
+        repository.name ||
+        "Unnamed Repository";
 
 
-document.getElementById(
-"repoDescription"
-).textContent =
-repository.description ||
-"No description";
+    document.getElementById(
+        "repoDescription"
+    ).textContent =
+        repository.description ||
+        "No description";
 
 
-document.getElementById(
-"visibility"
-).textContent =
-repository.is_private
-? "Private"
-: "Public";
+    document.getElementById(
+        "visibility"
+    ).textContent =
+        repository.is_private
+        ? "Private"
+        : "Public";
 
 
-document.getElementById(
-"starCount"
-).textContent =
-repository.stars_count || 0;
-
-
-document.getElementById(
-"forkCount"
-).textContent =
-repository.forks_count || 0;
+    document.getElementById(
+        "starCount"
+    ).textContent =
+        repository.stars_count || 0;
 
 }
 
 
-/* =================================
+/* =====================================================
    BRANCHES
-================================= */
+===================================================== */
 
 async function loadBranches(){
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("repository_branches")
-.select("*")
-.eq("repository_id",repoId)
-.order(
-"name",
-{
-ascending:true
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+
+    .from("repository_branches")
+
+    .select("*")
+
+    .eq(
+        "repository_id",
+        repoId
+    )
+
+    .order(
+        "name",
+        {
+            ascending:true
+        }
+    );
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    allBranches =
+        data || [];
+
+
+    if(!allBranches.length){
+
+        throw new Error(
+            "No branches found."
+        );
+
+    }
+
+
+    let selected =
+        null;
+
+
+    /* ---------------------------------------------
+       URL BRANCH
+    --------------------------------------------- */
+
+    if(branchIdFromUrl){
+
+        selected =
+            allBranches.find(
+                branch =>
+                    branch.id ===
+                    branchIdFromUrl
+            );
+
+    }
+
+
+    /* ---------------------------------------------
+       DEFAULT BRANCH
+    --------------------------------------------- */
+
+    if(!selected){
+
+        selected =
+            allBranches.find(
+                branch =>
+                    branch.name ===
+                    (
+                        repository.default_branch ||
+                        "main"
+                    )
+            );
+
+    }
+
+
+    /* ---------------------------------------------
+       FIRST BRANCH
+    --------------------------------------------- */
+
+    if(!selected){
+
+        selected =
+            allBranches[0];
+
+    }
+
+
+    currentBranch =
+        selected;
+
+
+    renderBranchMenu();
+
+    updateBranchUI();
+
 }
-);
 
 
-if(error){
-throw error;
-}
-
-
-allBranches =
-data || [];
-
-
-if(!allBranches.length){
-
-throw new Error(
-"No branches found."
-);
-
-}
-
-
-let selected = null;
-
-
-if(branchIdFromUrl){
-
-selected =
-allBranches.find(
-b =>
-b.id ===
-branchIdFromUrl
-);
-
-}
-
-
-if(!selected){
-
-selected =
-allBranches.find(
-b =>
-b.name ===
-(
-repository.default_branch ||
-"main"
-)
-);
-
-}
-
-
-if(!selected){
-
-selected =
-allBranches[0];
-
-}
-
-
-currentBranch =
-selected;
-
-
-renderBranchMenu();
-
-updateBranchUI();
-
-}
-
-
-/* =================================
+/* =====================================================
    BRANCH MENU
-================================= */
+===================================================== */
 
 function renderBranchMenu(){
 
-const list =
-document.getElementById(
-"branchList"
-);
-
-list.innerHTML = "";
+    const list =
+        document.getElementById(
+            "branchList"
+        );
 
 
-allBranches.forEach(
-branch => {
-
-const button =
-document.createElement(
-"button"
-);
-
-button.className =
-"branch-item";
-
-button.textContent =
-"🌿 " +
-branch.name;
+    list.innerHTML =
+        "";
 
 
-button.onclick =
-async function(){
+    allBranches.forEach(
+        function(branch){
 
-currentBranch =
-branch;
-
-updateBranchUI();
-
-await loadFiles();
-
-await loadReadme();
-
-closeBranchMenu();
-
-};
+            const button =
+                document.createElement(
+                    "button"
+                );
 
 
-list.appendChild(
-button
-);
+            button.className =
+                "branch-item";
+
+
+            button.textContent =
+                "🌿 " +
+                branch.name;
+
+
+            button.onclick =
+                async function(){
+
+                    currentBranch =
+                        branch;
+
+
+                    updateBranchUI();
+
+
+                    await loadFiles();
+
+
+                    await loadReadme();
+
+
+                    closeBranchMenu();
+
+                };
+
+
+            list.appendChild(
+                button
+            );
+
+        }
+    );
 
 }
-);
 
-}
 
+/* =====================================================
+   UPDATE BRANCH UI
+===================================================== */
 
 function updateBranchUI(){
 
-if(!currentBranch){
-return;
+    if(!currentBranch){
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "branchName"
+    ).textContent =
+        currentBranch.name;
+
+
+    document.getElementById(
+        "commitBranch"
+    ).textContent =
+        currentBranch.name;
+
+
+    updatePageLinks();
+
 }
 
 
-document.getElementById(
-"branchName"
-).textContent =
-currentBranch.name;
-
-
-document.getElementById(
-"commitBranch"
-).textContent =
-currentBranch.name;
-
-
-updatePageLinks();
-
-}
-
-
-/* =================================
-   FILES
-================================= */
+/* =====================================================
+   LOAD FILES
+===================================================== */
 
 async function loadFiles(){
 
-if(!currentBranch){
-return;
+    if(!currentBranch){
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "fileList"
+    ).innerHTML =
+        '<div class="empty">Loading files...</div>';
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+
+    .from("repository_files")
+
+    .select("*")
+
+    .eq(
+        "repository_id",
+        repoId
+    )
+
+    .eq(
+        "branch_id",
+        currentBranch.id
+    )
+
+    .order(
+        "file_path",
+        {
+            ascending:true
+        }
+    );
+
+
+    if(error){
+
+        showToast(
+            error.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    allFiles =
+        data || [];
+
+
+    renderFiles(
+        allFiles
+    );
+
 }
 
 
-document.getElementById(
-"fileList"
-).innerHTML =
-`
-<div class="empty">
-Loading files...
-</div>
-`;
-
-
-const {
-data,
-error
-} =
-await supabaseClient
-.from("repository_files")
-.select("*")
-.eq("repository_id",repoId)
-.eq("branch_id",currentBranch.id)
-.order(
-"file_path",
-{
-ascending:true
-}
-);
-
-
-if(error){
-
-showToast(
-error.message,
-"error"
-);
-
-return;
-
-}
-
-
-allFiles =
-data || [];
-
-
-renderFiles(allFiles);
-
-}
-
-
-/* =================================
+/* =====================================================
    RENDER FILES
-================================= */
+===================================================== */
 
 function renderFiles(files){
 
-const list =
-document.getElementById(
-"fileList"
-);
+    const list =
+        document.getElementById(
+            "fileList"
+        );
 
-list.innerHTML = "";
 
+    list.innerHTML =
+        "";
 
-document.getElementById(
-"fileCount"
-).textContent =
-files.length +
-(
-files.length === 1
-? " file"
-: " files"
-);
 
+    document.getElementById(
+        "fileCount"
+    ).textContent =
+        files.length +
+        (
+            files.length === 1
+            ? " file"
+            : " files"
+        );
 
-if(!files.length){
 
-list.innerHTML =
-`
-<div class="empty">
+    if(!files.length){
 
-📁
+        list.innerHTML =
+        `
+        <div class="empty">
 
-<br><br>
+            📁
 
-No files found.
+            <br><br>
 
-</div>
-`;
+            No files found.
 
-return;
+        </div>
+        `;
 
-}
-
-
-files.forEach(
-file => {
-
-const row =
-document.createElement(
-"div"
-);
-
-row.className =
-"file-row";
-
-
-const editUrl =
-"file-editor.html" +
-"?file_id=" +
-encodeURIComponent(file.id) +
-"&repository_id=" +
-encodeURIComponent(repoId) +
-"&branch_id=" +
-encodeURIComponent(currentBranch.id);
-
-
-let previewButton = "";
-
-
-if(!file.is_binary){
-
-previewButton =
-`
-<button
-class="btn btn-blue"
-type="button"
-onclick="previewFile('${file.id}')">
-
-👁 Preview
-
-</button>
-`;
-
-}
-
-
-row.innerHTML =
-`
-
-<div class="file-main">
-
-<div class="file-icon">
-
-${getFileIcon(file)}
-
-</div>
-
-
-<div>
-
-<div class="file-name">
-
-${escapeHtml(file.file_path)}
-
-</div>
-
-
-<div class="file-sub">
-
-${
-file.is_binary
-? "Binary file"
-: "Text file"
-}
-
-${
-file.updated_at
-? " • Updated " +
-formatDate(file.updated_at)
-: ""
-}
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="file-meta">
-
-<span class="type-badge">
-
-${getFileType(file.file_path)}
-
-</span>
-
-
-<span>
-
-${formatFileSize(file.file_size)}
-
-</span>
-
-
-<div class="file-actions">
-
-<a
-class="btn"
-href="${editUrl}">
-
-✏️ Edit
-
-</a>
-
-
-${previewButton}
-
-
-<button
-class="btn"
-onclick="downloadFile('${file.id}')">
-
-⬇️
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-
-list.appendChild(row);
-
-}
-);
-
-}
-
-
-/* =================================
-   GET FILE CONTENT
-================================= */
-
-async function getFileContent(file){
-
-if(
-file.content !== null &&
-file.content !== undefined &&
-String(file.content).trim() !== ""
-){
-
-return file.content;
-
-}
-
-
-if(
-file.storage_path
-){
-
-const {
-data,
-error
-} =
-await supabaseClient
-.storage
-.from("repository-files")
-.download(
-file.storage_path
-);
-
-
-if(error){
-throw error;
-}
-
-
-return await data.text();
-
-}
-
-
-return "";
-
-}
-
-
-/* =================================
-   GET FILE BLOB
-================================= */
-
-async function getFileBlob(file){
-
-if(file.storage_path){
-
-const {
-data,
-error
-} =
-await supabaseClient
-.storage
-.from("repository-files")
-.download(
-file.storage_path
-);
-
-
-if(error){
-throw error;
-}
-
-
-return data;
-
-}
-
-
-return new Blob(
-[
-file.content || ""
-],
-{
-type:
-file.mime_type ||
-"application/octet-stream"
-}
-);
-
-}
-
-
-/* =================================
-   PATH NORMALIZATION
-================================= */
-
-function normalizePath(path){
-
-let p =
-String(path || "")
-.replace(
-/\\/g,
-"/"
-);
-
-while(
-p.startsWith("./")
-){
-
-p =
-p.substring(2);
-
-}
-
-
-const parts = [];
-
-p.split("/").forEach(
-part => {
-
-if(
-!part ||
-part === "."
-){
-
-return;
-
-}
-
-if(
-part === ".."
-){
-
-parts.pop();
-
-return;
-
-}
-
-parts.push(part);
-
-}
-);
-
-return parts.join("/");
-
-}
-
-
-/* =================================
-   RESOLVE ASSET PATH
-================================= */
-
-function resolveAssetPath(
-baseFile,
-reference
-){
-
-if(!reference){
-return null;
-}
-
-
-let ref =
-String(reference).trim();
-
-
-if(
-ref.startsWith("data:") ||
-ref.startsWith("blob:") ||
-ref.startsWith("http://") ||
-ref.startsWith("https://") ||
-ref.startsWith("//") ||
-ref.startsWith("#") ||
-ref.startsWith("mailto:")
-){
-
-return null;
-
-}
-
-
-ref =
-ref.split("#")[0];
-
-ref =
-ref.split("?")[0];
-
+        return;
 
-if(!ref){
-return null;
-}
-
-
-const base =
-normalizePath(baseFile);
-
-
-const slash =
-base.lastIndexOf("/");
-
-
-const directory =
-slash >= 0
-? base.substring(0,slash)
-: "";
-
-
-let resolved;
-
-
-if(ref.startsWith("/")){
-
-resolved =
-normalizePath(
-ref.substring(1)
-);
-
-}
-else{
-
-resolved =
-normalizePath(
-directory
-? directory + "/" + ref
-: ref
-);
-
-}
-
-
-let file =
-allFiles.find(
-f =>
-normalizePath(
-f.file_path
-) === resolved
-);
-
-
-if(file){
-return file;
-}
-
-
-/*
-   Fallback:
-   Search by filename.
-*/
-
-const basename =
-resolved
-.split("/")
-.pop();
-
-
-file =
-allFiles.find(
-f =>
-normalizePath(
-f.file_path
-)
-.split("/")
-.pop() === basename
-);
-
-
-return file || null;
-
-}
-
-
-/* =================================
-   ASSET URL
-================================= */
-
-async function createAssetURL(file){
-
-const blob =
-await getFileBlob(file);
-
-
-const url =
-URL.createObjectURL(blob);
-
-
-previewObjectUrls.push(url);
-
-
-return url;
-
-}
-
-
-/* =================================
-   REPLACE CSS ASSETS
-================================= */
-
-async function processCss(
-css,
-cssFile
-){
-
-return await replaceAsync(
-css,
-/
-url\(\s*(['"]?)(.*?)\1\s*\)
-/gi,
-async function(
-full,
-quote,
-reference
-){
-
-const asset =
-resolveAssetPath(
-cssFile.file_path,
-reference
-);
-
-if(!asset){
-
-return full;
-
-}
-
-try{
-
-const url =
-await createAssetURL(
-asset
-);
-
-return "url('" + url + "')";
-
-}
-catch(e){
-
-return full;
-
-}
-
-}
-);
-
-}
-
-
-/* =================================
-   ASYNC REGEX REPLACE
-================================= */
-
-async function replaceAsync(
-string,
-regex,
-asyncFn
-){
-
-const matches = [];
-
-string.replace(
-regex,
-function(){
-
-matches.push(
-Array.from(arguments)
-);
-
-}
-);
-
-
-const replacements =
-await Promise.all(
-matches.map(
-args =>
-asyncFn(...args)
-)
-);
+    }
 
 
-let index = 0;
+    files.forEach(
+        function(file){
 
+            const row =
+                document.createElement(
+                    "div"
+                );
 
-return string.replace(
-regex,
-function(){
 
-return replacements[
-index++
-];
+            row.className =
+                "file-row";
 
-}
-);
-
-}
-
-
-/* =================================
-   PREPARE HTML
-================================= */
-
-async function preparePreviewHTML(
-html,
-htmlFile
-){
-
-const parser =
-new DOMParser();
-
-
-const doc =
-parser.parseFromString(
-html,
-"text/html"
-);
-
-
-/*
-   CSS files
-*/
-
-const links =
-Array.from(
-doc.querySelectorAll(
-'link[href]'
-)
-);
-
-
-for(
-const link of links
-){
-
-const href =
-link.getAttribute(
-"href"
-);
-
-
-if(!href){
-continue;
-}
 
+            const editUrl =
+                "file-editor.html" +
+                "?file_id=" +
+                encodeURIComponent(
+                    file.id
+                ) +
+                "&repository_id=" +
+                encodeURIComponent(
+                    repoId
+                ) +
+                "&branch_id=" +
+                encodeURIComponent(
+                    currentBranch.id
+                );
 
-if(
-href.toLowerCase()
-.includes("stylesheet")
-){
 
-const cssFile =
-resolveAssetPath(
-htmlFile.file_path,
-href
-);
+            let previewButton =
+                "";
 
 
-if(cssFile){
-
-try{
-
-let css =
-await getFileContent(
-cssFile
-);
-
-
-css =
-await processCss(
-css,
-cssFile
-);
-
-
-const style =
-doc.createElement(
-"style"
-);
-
-style.textContent =
-css;
-
-
-link.replaceWith(
-style
-);
-
-}
-catch(e){
-
-console.error(
-"CSS load error",
-e
-);
-
-}
-
-}
-
-}
+            if(!file.is_binary){
 
-}
+                const path =
+                    String(
+                        file.file_path ||
+                        ""
+                    ).toLowerCase();
 
 
-/*
-   JavaScript files
-*/
+                if(
+                    path.endsWith(".html") ||
+                    path.endsWith(".htm")
+                ){
 
-const scripts =
-Array.from(
-doc.querySelectorAll(
-"script[src]"
-)
-);
+                    previewButton =
+                    `
+                    <button
+                    class="btn btn-blue"
+                    type="button"
+                    onclick="previewFile('${file.id}')">
 
+                        👁 Preview
 
-for(
-const script of scripts
-){
+                    </button>
+                    `;
 
-const src =
-script.getAttribute(
-"src"
-);
+                }
 
+            }
 
-const jsFile =
-resolveAssetPath(
-htmlFile.file_path,
-src
-);
 
+            row.innerHTML =
+            `
 
-if(jsFile){
+            <div class="file-main">
 
-try{
+                <div class="file-icon">
 
-const js =
-await getFileContent(
-jsFile
-);
+                    ${getFileIcon(file)}
 
+                </div>
 
-script.removeAttribute(
-"src"
-);
 
-script.textContent =
-js;
+                <div>
 
-}
-catch(e){
+                    <div class="file-name">
 
-console.error(
-"JS load error",
-e
-);
+                        ${escapeHtml(
+                            file.file_path
+                        )}
 
-}
+                    </div>
 
-}
 
-}
+                    <div class="file-sub">
 
+                        ${
+                            file.is_binary
+                            ? "Binary file"
+                            : "Text file"
+                        }
 
-/*
-   Images
-*/
+                        ${
+                            file.updated_at
+                            ? " • Updated " +
+                              formatDate(
+                                  file.updated_at
+                              )
+                            : ""
+                        }
 
-const images =
-Array.from(
-doc.querySelectorAll(
-"img[src]"
-)
-);
+                    </div>
 
+                </div>
 
-for(
-const img of images
-){
+            </div>
 
-const src =
-img.getAttribute(
-"src"
-);
 
+            <div class="file-meta">
 
-const imageFile =
-resolveAssetPath(
-htmlFile.file_path,
-src
-);
+                <span class="type-badge">
 
+                    ${getFileType(
+                        file.file_path
+                    )}
 
-if(imageFile){
+                </span>
 
-try{
 
-const url =
-await createAssetURL(
-imageFile
-);
+                <span>
 
-img.setAttribute(
-"src",
-url
-);
+                    ${formatFileSize(
+                        file.file_size
+                    )}
 
-}
-catch(e){
+                </span>
 
-console.error(
-"Image load error",
-e
-);
 
-}
+                <div class="file-actions">
 
-}
 
-}
+                    <a
+                    class="btn"
+                    href="${editUrl}">
 
+                        ✏️ Edit
 
-/*
-   Favicon
-*/
+                    </a>
 
-const icons =
-Array.from(
-doc.querySelectorAll(
-'link[rel*="icon"][href]'
-)
-);
 
+                    ${previewButton}
 
-for(
-const icon of icons
-){
 
-const href =
-icon.getAttribute(
-"href"
-);
+                    <button
+                    class="btn"
+                    onclick="downloadFile('${file.id}')">
 
+                        ⬇️
 
-const iconFile =
-resolveAssetPath(
-htmlFile.file_path,
-href
-);
+                    </button>
 
 
-if(iconFile){
+                </div>
 
-try{
+            </div>
 
-const url =
-await createAssetURL(
-iconFile
-);
+            `;
 
-icon.setAttribute(
-"href",
-url
-);
 
-}
-catch(e){}
+            list.appendChild(
+                row
+            );
 
-}
+        }
+    );
 
 }
 
 
-/*
-   Local HTML links
+/* =====================================================
+   ⭐ HTML PREVIEW
+   DIRECT BLOB VERSION
+===================================================== */
 
-   Convert them to repository
-   HTML preview URLs when possible.
-*/
+async function previewFile(fileId){
 
-const anchors =
-Array.from(
-doc.querySelectorAll(
-"a[href]"
-)
-);
+    try{
 
+        const file =
+            allFiles.find(
+                item =>
+                    item.id ===
+                    fileId
+            );
 
-for(
-const anchor of anchors
-){
 
-const href =
-anchor.getAttribute(
-"href"
-);
+        if(!file){
 
+            showToast(
+                "File not found.",
+                "error"
+            );
 
-if(
-!href ||
-href.startsWith("#") ||
-href.startsWith("http") ||
-href.startsWith("mailto:")
-){
+            return;
 
-continue;
-
-}
+        }
 
 
-const target =
-resolveAssetPath(
-htmlFile.file_path,
-href
-);
-
-
-if(
-target &&
-(
-target.file_path
-.toLowerCase()
-.endsWith(".html") ||
-target.file_path
-.toLowerCase()
-.endsWith(".htm")
-)
-){
-
-/*
-   Keep the link relative.
-   It will remain usable where
-   the browser can resolve it.
-*/
+        if(file.is_binary){
 
-}
+            showToast(
+                "Binary files cannot be previewed.",
+                "error"
+            );
 
-}
+            return;
 
+        }
 
-/*
-   Add responsive safety.
-*/
 
-const head =
-doc.querySelector("head");
+        const path =
+            String(
+                file.file_path ||
+                ""
+            ).toLowerCase();
 
 
-if(head){
+        if(
+            !path.endsWith(".html") &&
+            !path.endsWith(".htm")
+        ){
 
-const viewport =
-doc.querySelector(
-'meta[name="viewport"]'
-);
+            showToast(
+                "Preview is available for HTML files only.",
+                "error"
+            );
 
+            return;
 
-if(!viewport){
+        }
 
-const meta =
-doc.createElement(
-"meta"
-);
 
-meta.name =
-"viewport";
+        let html =
+            file.content ||
+            "";
 
-meta.content =
-"width=device-width, initial-scale=1.0";
 
-head.prepend(meta);
+        /* -----------------------------------------
+           LOAD FROM STORAGE IF NEEDED
+        ----------------------------------------- */
 
-}
+        if(
+            !html.trim() &&
+            file.storage_path
+        ){
 
-}
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
 
+            .storage
 
-return "<!DOCTYPE html>\n" +
-doc.documentElement.outerHTML;
+            .from(
+                "repository-files"
+            )
 
-}
+            .download(
+                file.storage_path
+            );
 
 
-/* =================================
-   LIVE PREVIEW
-================================= */
+            if(error){
 
-async function previewFile(
-fileId
-){
+                showToast(
+                    error.message,
+                    "error"
+                );
 
-try{
+                return;
 
-const file =
-allFiles.find(
-item =>
-item.id === fileId
-);
+            }
 
 
-if(!file){
+            html =
+                await data.text();
 
-showToast(
-"File not found.",
-"error"
-);
+        }
 
-return;
 
-}
+        if(!html.trim()){
 
+            showToast(
+                "HTML file is empty.",
+                "error"
+            );
 
-if(file.is_binary){
+            return;
 
-showToast(
-"Binary files cannot be previewed.",
-"error"
-);
+        }
 
-return;
 
-}
+        /* -----------------------------------------
+           DIRECT BLOB
+           
+           IMPORTANT:
+           DO NOT WRAP THE HTML.
+           Original HTML remains intact.
+        ----------------------------------------- */
 
+        const blob =
+            new Blob(
+                [html],
+                {
+                    type:
+                    "text/html;charset=utf-8"
+                }
+            );
 
-const path =
-String(
-file.file_path || ""
-).toLowerCase();
 
+        const previewURL =
+            URL.createObjectURL(
+                blob
+            );
 
-if(
-!path.endsWith(".html") &&
-!path.endsWith(".htm")
-){
 
-showToast(
-"Live Preview is available for HTML files.",
-"error"
-);
+        const previewWindow =
+            window.open(
+                previewURL,
+                "_blank"
+            );
 
-return;
 
-}
+        if(!previewWindow){
 
+            URL.revokeObjectURL(
+                previewURL
+            );
 
-/*
-   Clear old preview URLs.
-*/
 
-previewObjectUrls.forEach(
-url =>
-URL.revokeObjectURL(url)
-);
+            showToast(
+                "Please allow pop-ups for ASIM TECH.",
+                "error"
+            );
 
-previewObjectUrls = [];
+            return;
 
+        }
 
-let html =
-await getFileContent(file);
 
+        /* -----------------------------------------
+           RELEASE MEMORY LATER
+        ----------------------------------------- */
 
-if(!html.trim()){
+        setTimeout(
+            function(){
 
-showToast(
-"HTML file is empty.",
-"error"
-);
+                URL.revokeObjectURL(
+                    previewURL
+                );
 
-return;
+            },
+            60000
+        );
 
-}
+    }
 
+    catch(error){
 
-/*
-   Prepare CSS, JS and images.
-*/
+        console.error(
+            "Preview error:",
+            error
+        );
 
-html =
-await preparePreviewHTML(
-html,
-file
-);
 
+        showToast(
+            error?.message ||
+            "Unable to preview HTML file.",
+            "error"
+        );
 
-/*
-   Create final preview.
-*/
+    }
 
-const blob =
-new Blob(
-[html],
-{
-type:
-"text/html;charset=utf-8"
 }
-);
-
-
-const previewURL =
-URL.createObjectURL(
-blob
-);
-
-
-previewObjectUrls.push(
-previewURL
-);
-
 
-const previewWindow =
-window.open(
-previewURL,
-"_blank"
-);
 
+/* =====================================================
+   DOWNLOAD FILE
+===================================================== */
 
-if(!previewWindow){
+async function downloadFile(fileId){
 
-showToast(
-"Please allow pop-ups for ASIM TECH.",
-"error"
-);
+    try{
 
-return;
+        const file =
+            allFiles.find(
+                item =>
+                    item.id ===
+                    fileId
+            );
 
-}
-
 
-/*
-   Keep assets alive for 10 minutes.
-*/
+        if(!file){
 
-setTimeout(
-function(){
+            return;
 
-previewObjectUrls.forEach(
-url =>
-URL.revokeObjectURL(
-url
-)
-);
+        }
 
-previewObjectUrls = [];
 
-},
-600000
-);
+        let blob;
 
-}
-catch(error){
 
-console.error(error);
+        /* -----------------------------------------
+           STORAGE FILE
+        ----------------------------------------- */
 
-showToast(
-"Preview error: " +
-error.message,
-"error"
-);
+        if(file.storage_path){
 
-}
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
 
-}
+            .storage
 
+            .from(
+                "repository-files"
+            )
 
-/* =================================
-   CLOSE MODAL
-================================= */
+            .download(
+                file.storage_path
+            );
 
-function closeModal(){
 
-const modal =
-document.getElementById(
-"modal"
-);
+            if(error){
 
-if(modal){
+                showToast(
+                    error.message,
+                    "error"
+                );
 
-modal.classList.remove(
-"show"
-);
+                return;
 
-}
+            }
 
-}
 
+            blob =
+                data;
 
-/* =================================
-   DOWNLOAD
-================================= */
+        }
 
-async function downloadFile(
-fileId
-){
+        /* -----------------------------------------
+           DATABASE CONTENT
+        ----------------------------------------- */
 
-try{
+        else{
 
-const file =
-allFiles.find(
-f =>
-f.id === fileId
-);
+            blob =
+                new Blob(
+                    [
+                        file.content ||
+                        ""
+                    ],
+                    {
+                        type:
+                        file.mime_type ||
+                        "text/plain"
+                    }
+                );
 
+        }
 
-if(!file){
-return;
-}
 
+        const url =
+            URL.createObjectURL(
+                blob
+            );
 
-const blob =
-await getFileBlob(
-file
-);
 
+        const a =
+            document.createElement(
+                "a"
+            );
 
-const url =
-URL.createObjectURL(
-blob
-);
 
+        a.href =
+            url;
 
-const a =
-document.createElement(
-"a"
-);
 
+        a.download =
+            file.file_path
+            .split("/")
+            .pop();
 
-a.href =
-url;
 
+        document.body.appendChild(
+            a
+        );
 
-a.download =
-file.file_path
-.split("/")
-.pop();
 
+        a.click();
 
-document.body.appendChild(a);
 
-a.click();
+        a.remove();
 
-a.remove();
 
+        setTimeout(
+            function(){
 
-setTimeout(
-function(){
+                URL.revokeObjectURL(
+                    url
+                );
 
-URL.revokeObjectURL(
-url
-);
+            },
+            1000
+        );
 
-},
-1000
-);
+    }
 
-}
-catch(error){
+    catch(error){
 
-showToast(
-error.message,
-"error"
-);
+        showToast(
+            error?.message ||
+            "Download failed.",
+            "error"
+        );
 
-}
+    }
 
 }
 
 
-/* =================================
-   SEARCH
-================================= */
+/* =====================================================
+   SEARCH FILES
+===================================================== */
 
 function filterFiles(){
 
-const query =
-document.getElementById(
-"searchInput"
-)
-.value
-.trim()
-.toLowerCase();
+    const query =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .trim()
+        .toLowerCase();
 
 
-if(!query){
+    if(!query){
 
-renderFiles(
-allFiles
-);
+        renderFiles(
+            allFiles
+        );
 
-return;
+        return;
+
+    }
+
+
+    const filtered =
+        allFiles.filter(
+            function(file){
+
+                return String(
+                    file.file_path ||
+                    ""
+                )
+                .toLowerCase()
+                .includes(
+                    query
+                );
+
+            }
+        );
+
+
+    renderFiles(
+        filtered
+    );
 
 }
 
 
-const filtered =
-allFiles.filter(
-file =>
-(
-file.file_path || ""
-)
-.toLowerCase()
-.includes(query)
-);
-
-
-renderFiles(
-filtered
-);
-
-}
-
-
-/* =================================
+/* =====================================================
    README
-================================= */
+===================================================== */
 
 async function loadReadme(){
 
-const body =
-document.getElementById(
-"readmeBody"
-);
+    const body =
+        document.getElementById(
+            "readmeBody"
+        );
 
 
-const readme =
-allFiles.find(
-file => {
+    const readme =
+        allFiles.find(
+            function(file){
 
-const name =
-(
-file.file_path || ""
-)
-.toLowerCase();
+                const name =
+                    String(
+                        file.file_path ||
+                        ""
+                    )
+                    .toLowerCase();
 
-return (
-name === "readme.md" ||
-name === "readme.txt" ||
-name === "readme"
-);
+
+                return (
+                    name === "readme.md" ||
+                    name === "readme.txt" ||
+                    name === "readme"
+                );
+
+            }
+        );
+
+
+    if(!readme){
+
+        body.innerHTML =
+        `
+        <h2>
+
+            ${escapeHtml(
+                repository.name
+            )}
+
+        </h2>
+
+        <p>
+
+            No README file is available.
+
+        </p>
+        `;
+
+        return;
+
+    }
+
+
+    if(readme.is_binary){
+
+        body.innerHTML =
+            "<p>This README is a binary file.</p>";
+
+        return;
+
+    }
+
+
+    let content =
+        readme.content ||
+        "";
+
+
+    /* -----------------------------------------
+       STORAGE README
+    ----------------------------------------- */
+
+    if(
+        !content.trim() &&
+        readme.storage_path
+    ){
+
+        try{
+
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
+
+            .storage
+
+            .from(
+                "repository-files"
+            )
+
+            .download(
+                readme.storage_path
+            );
+
+
+            if(!error){
+
+                content =
+                    await data.text();
+
+            }
+
+        }
+
+        catch(e){
+
+            console.error(
+                e
+            );
+
+        }
+
+    }
+
+
+    body.innerHTML =
+        markdownToHtml(
+            content
+        );
 
 }
-);
 
 
-if(!readme){
-
-body.innerHTML =
-`
-<h2>
-${escapeHtml(repository.name)}
-</h2>
-
-<p>
-No README file is available.
-</p>
-`;
-
-return;
-
-}
-
-
-if(readme.is_binary){
-
-body.innerHTML =
-"<p>This README is a binary file.</p>";
-
-return;
-
-}
-
-
-try{
-
-const content =
-await getFileContent(
-readme
-);
-
-body.innerHTML =
-markdownToHtml(
-content
-);
-
-}
-catch(error){
-
-body.innerHTML =
-`
-<p>
-Unable to load README.
-</p>
-`;
-
-}
-
-}
-
-
-/* =================================
+/* =====================================================
    STAR STATUS
-================================= */
+===================================================== */
 
 async function loadStarStatus(){
 
-if(!currentUser){
-return;
+    if(!currentUser){
+
+        return;
+
+    }
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+
+        .from("repository_stars")
+
+        .select(
+            "repository_id,user_id"
+        )
+
+        .eq(
+            "repository_id",
+            repoId
+        )
+
+        .eq(
+            "user_id",
+            currentUser.id
+        )
+
+        .maybeSingle();
+
+
+        if(error){
+
+            console.warn(
+                "Star status:",
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        isStarred =
+            !!data;
+
+
+        document.getElementById(
+            "starButton"
+        ).textContent =
+            isStarred
+            ? "★ Starred"
+            : "☆ Star";
+
+    }
+
+    catch(error){
+
+        console.warn(
+            error
+        );
+
+    }
+
 }
 
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("repository_stars")
-.select(
-"repository_id,user_id"
-)
-.eq(
-"repository_id",
-repoId
-)
-.eq(
-"user_id",
-currentUser.id
-)
-.maybeSingle();
-
-
-if(error){
-
-console.error(
-"Star status error:",
-error
-);
-
-return;
-
-}
-
-
-isStarred =
-!!data;
-
-
-const button =
-document.getElementById(
-"starButton"
-);
-
-
-if(button){
-
-button.textContent =
-isStarred
-? "★ Starred"
-: "☆ Star";
-
-}
-
-}
-
-
-/* =================================
+/* =====================================================
    TOGGLE STAR
-================================= */
+===================================================== */
 
 async function toggleStar(){
 
-if(!currentUser){
+    if(!currentUser){
 
-window.location.href =
-"login.html";
+        window.location.href =
+            "login.html";
 
-return;
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "starButton"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    try{
+
+        if(isStarred){
+
+            const {
+                error
+            } =
+            await supabaseClient
+
+            .from("repository_stars")
+
+            .delete()
+
+            .eq(
+                "repository_id",
+                repoId
+            )
+
+            .eq(
+                "user_id",
+                currentUser.id
+            );
+
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            isStarred =
+                false;
+
+
+            repository.stars_count =
+                Math.max(
+                    0,
+                    (
+                        repository.stars_count ||
+                        0
+                    ) - 1
+                );
+
+        }
+
+        else{
+
+            const {
+                error
+            } =
+            await supabaseClient
+
+            .from("repository_stars")
+
+            .insert({
+
+                repository_id:
+                    repoId,
+
+                user_id:
+                    currentUser.id
+
+            });
+
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            isStarred =
+                true;
+
+
+            repository.stars_count =
+                (
+                    repository.stars_count ||
+                    0
+                ) + 1;
+
+        }
+
+
+        document.getElementById(
+            "starCount"
+        ).textContent =
+            repository.stars_count;
+
+
+        button.textContent =
+            isStarred
+            ? "★ Starred"
+            : "☆ Star";
+
+    }
+
+    catch(error){
+
+        showToast(
+            error.message,
+            "error"
+        );
+
+    }
+
+    finally{
+
+        button.disabled =
+            false;
+
+    }
 
 }
 
 
-const button =
-document.getElementById(
-"starButton"
-);
-
-
-button.disabled = true;
-
-
-try{
-
-if(isStarred){
-
-const {
-error
-} =
-await supabaseClient
-.from("repository_stars")
-.delete()
-.eq(
-"repository_id",
-repoId
-)
-.eq(
-"user_id",
-currentUser.id
-);
-
-
-if(error){
-throw error;
-}
-
-
-isStarred = false;
-
-
-repository.stars_count =
-Math.max(
-0,
-(repository.stars_count || 0) - 1
-);
-
-}
-else{
-
-const {
-error
-} =
-await supabaseClient
-.from("repository_stars")
-.insert({
-
-repository_id:
-repoId,
-
-user_id:
-currentUser.id
-
-});
-
-
-if(error){
-throw error;
-}
-
-
-isStarred = true;
-
-
-repository.stars_count =
-(repository.stars_count || 0) + 1;
-
-}
-
-
-document.getElementById(
-"starCount"
-).textContent =
-repository.stars_count;
-
-
-button.textContent =
-isStarred
-? "★ Starred"
-: "☆ Star";
-
-
-}
-catch(error){
-
-showToast(
-error.message,
-"error"
-);
-
-}
-finally{
-
-button.disabled = false;
-
-}
-
-}
-
-
-/* =================================
+/* =====================================================
    PUBLISH UI
-================================= */
+===================================================== */
 
 function updatePublishUI(){
 
-const publish =
-document.getElementById(
-"publishButton"
-);
+    const publish =
+        document.getElementById(
+            "publishButton"
+        );
 
 
-const published =
-document.getElementById(
-"publishedWebsiteButton"
-);
+    const published =
+        document.getElementById(
+            "publishedWebsiteButton"
+        );
 
 
-if(repository.is_published){
+    if(repository.is_published){
 
-publish.style.display =
-"none";
-
-
-published.style.display =
-"inline-flex";
+        publish.style.display =
+            "none";
 
 
-published.href =
-"published-website.html?id=" +
-encodeURIComponent(
-repoId
-);
+        published.style.display =
+            "inline-flex";
 
 
-return;
+        published.href =
+            "published-website.html?id=" +
+            encodeURIComponent(
+                repoId
+            );
+
+
+        return;
+
+    }
+
+
+    published.style.display =
+        "none";
+
+
+    if(
+        currentUser &&
+        repository.owner_id ===
+        currentUser.id
+    ){
+
+        publish.style.display =
+            "inline-flex";
+
+    }
 
 }
 
 
-published.style.display =
-"none";
-
-
-if(
-currentUser &&
-repository.owner_id ===
-currentUser.id
-){
-
-publish.style.display =
-"inline-flex";
-
-}
-
-}
-
-
-/* =================================
-   PUBLISH
-================================= */
+/* =====================================================
+   PUBLISH REPOSITORY
+===================================================== */
 
 async function publishRepository(){
 
-try{
+    if(!currentUser){
 
-if(!currentUser){
-return;
+        return;
+
+    }
+
+
+    if(
+        repository.owner_id !==
+        currentUser.id
+    ){
+
+        showToast(
+            "Only repository owner can publish.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const branchName =
+        repository.default_branch ||
+        "main";
+
+
+    const {
+        data:branch,
+        error:branchError
+    } =
+    await supabaseClient
+
+    .from("repository_branches")
+
+    .select("id,name")
+
+    .eq(
+        "repository_id",
+        repoId
+    )
+
+    .eq(
+        "name",
+        branchName
+    )
+
+    .maybeSingle();
+
+
+    if(branchError){
+
+        showToast(
+            branchError.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!branch){
+
+        showToast(
+            "Default branch not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const {
+        data:file,
+        error:fileError
+    } =
+    await supabaseClient
+
+    .from("repository_files")
+
+    .select("*")
+
+    .eq(
+        "repository_id",
+        repoId
+    )
+
+    .eq(
+        "branch_id",
+        branch.id
+    )
+
+    .eq(
+        "file_path",
+        "index.html"
+    )
+
+    .maybeSingle();
+
+
+    if(fileError){
+
+        showToast(
+            fileError.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!file){
+
+        showToast(
+            "index.html not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(file.is_binary){
+
+        showToast(
+            "index.html is marked as binary.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !file.content ||
+        !file.content.trim()
+    ){
+
+        showToast(
+            "index.html is empty.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            "Publish repository " +
+            repository.name +
+            "?\n\nDefault file: index.html"
+        );
+
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+
+    .from("repositories")
+
+    .update({
+
+        is_published:true,
+
+        published_at:
+            new Date().toISOString(),
+
+        updated_at:
+            new Date().toISOString()
+
+    })
+
+    .eq(
+        "id",
+        repoId
+    );
+
+
+    if(error){
+
+        showToast(
+            error.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    repository.is_published =
+        true;
+
+
+    updatePublishUI();
+
+
+    showToast(
+        "Repository published successfully!",
+        "success"
+    );
+
 }
 
 
-if(
-repository.owner_id !==
-currentUser.id
-){
-
-showToast(
-"Only repository owner can publish.",
-"error"
-);
-
-return;
-
-}
-
-
-const branchName =
-repository.default_branch ||
-"main";
-
-
-const {
-data:branch,
-error:branchError
-} =
-await supabaseClient
-.from("repository_branches")
-.select("id,name")
-.eq(
-"repository_id",
-repoId
-)
-.eq(
-"name",
-branchName
-)
-.maybeSingle();
-
-
-if(branchError){
-throw branchError;
-}
-
-
-if(!branch){
-
-showToast(
-"Default branch not found.",
-"error"
-);
-
-return;
-
-}
-
-
-const {
-data:file,
-error:fileError
-} =
-await supabaseClient
-.from("repository_files")
-.select("*")
-.eq(
-"repository_id",
-repoId
-)
-.eq(
-"branch_id",
-branch.id
-)
-.eq(
-"file_path",
-"index.html"
-)
-.maybeSingle();
-
-
-if(fileError){
-throw fileError;
-}
-
-
-if(!file){
-
-showToast(
-"index.html not found.",
-"error"
-);
-
-return;
-
-}
-
-
-if(file.is_binary){
-
-showToast(
-"index.html is marked as binary.",
-"error"
-);
-
-return;
-
-}
-
-
-/*
-   Check database OR Storage.
-*/
-
-let html = "";
-
-
-try{
-
-html =
-await getFileContent(
-file
-);
-
-}
-catch(error){
-
-showToast(
-"Unable to read index.html: " +
-error.message,
-"error"
-);
-
-return;
-
-}
-
-
-if(!html.trim()){
-
-showToast(
-"index.html is empty.",
-"error"
-);
-
-return;
-
-}
-
-
-if(
-!confirm(
-"Publish repository " +
-repository.name +
-"?\n\nDefault file: index.html"
-)
-){
-
-return;
-
-}
-
-
-const {
-error
-} =
-await supabaseClient
-.from("repositories")
-.update({
-
-is_published:
-true,
-
-published_at:
-new Date().toISOString(),
-
-updated_at:
-new Date().toISOString()
-
-})
-.eq(
-"id",
-repoId
-);
-
-
-if(error){
-throw error;
-}
-
-
-repository.is_published =
-true;
-
-
-updatePublishUI();
-
-
-showToast(
-"Repository published successfully!",
-"success"
-);
-
-}
-catch(error){
-
-showToast(
-error.message,
-"error"
-);
-
-}
-
-}
-
-
-/* =================================
+/* =====================================================
    CREATE BRANCH
-================================= */
+===================================================== */
 
 async function createNewBranch(){
 
-const name =
-prompt(
-"Enter new branch name:"
-);
+    if(!currentUser){
+
+        return;
+
+    }
 
 
-if(!name){
-return;
+    const name =
+        prompt(
+            "Enter new branch name:"
+        );
+
+
+    if(!name){
+
+        return;
+
+    }
+
+
+    const branchName =
+        name.trim();
+
+
+    if(!branchName){
+
+        return;
+
+    }
+
+
+    if(
+        branchName.includes(" ")
+    ){
+
+        showToast(
+            "Branch name cannot contain spaces.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+
+    .from("repository_branches")
+
+    .insert({
+
+        repository_id:
+            repoId,
+
+        name:
+            branchName,
+
+        created_by:
+            currentUser.id
+
+    })
+
+    .select()
+
+    .single();
+
+
+    if(error){
+
+        showToast(
+            error.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    allBranches.push(
+        data
+    );
+
+
+    currentBranch =
+        data;
+
+
+    renderBranchMenu();
+
+
+    updateBranchUI();
+
+
+    await loadFiles();
+
+
+    await loadReadme();
+
+
+    showToast(
+        "Branch created successfully.",
+        "success"
+    );
+
 }
 
 
-const branchName =
-name.trim();
-
-
-if(!branchName){
-return;
-}
-
-
-if(
-branchName.includes(" ")
-){
-
-showToast(
-"Branch name cannot contain spaces.",
-"error"
-);
-
-return;
-
-}
-
-
-const {
-data,
-error
-} =
-await supabaseClient
-.from("repository_branches")
-.insert({
-
-repository_id:
-repoId,
-
-name:
-branchName,
-
-created_by:
-currentUser.id
-
-})
-.select()
-.single();
-
-
-if(error){
-
-showToast(
-error.message,
-"error"
-);
-
-return;
-
-}
-
-
-allBranches.push(data);
-
-
-currentBranch =
-data;
-
-
-renderBranchMenu();
-
-updateBranchUI();
-
-
-await loadFiles();
-
-await loadReadme();
-
-
-showToast(
-"Branch created successfully.",
-"success"
-);
-
-}
-
-
-/* =================================
+/* =====================================================
    PAGE LINKS
-================================= */
+===================================================== */
 
 function updatePageLinks(){
 
-if(!repoId){
-return;
+    if(!repoId){
+
+        return;
+
+    }
+
+
+    const branchQuery =
+        currentBranch
+
+        ? "&branch_id=" +
+          encodeURIComponent(
+              currentBranch.id
+          )
+
+        : "";
+
+
+    document.getElementById(
+        "explorerButton"
+    ).href =
+        "repository-explorer.html" +
+        "?repository_id=" +
+        encodeURIComponent(
+            repoId
+        ) +
+        branchQuery;
+
+
+    document.getElementById(
+        "createFileLink"
+    ).href =
+        "repository-add-file.html" +
+        "?repository_id=" +
+        encodeURIComponent(
+            repoId
+        ) +
+        branchQuery +
+        "&mode=create";
+
+
+    document.getElementById(
+        "uploadFileLink"
+    ).href =
+        "repository-add-file.html" +
+        "?repository_id=" +
+        encodeURIComponent(
+            repoId
+        ) +
+        branchQuery +
+        "&mode=upload";
+
+
+    document.getElementById(
+        "editRepoLink"
+    ).href =
+        "edit-repository.html?id=" +
+        encodeURIComponent(
+            repoId
+        );
+
+
+    document.getElementById(
+        "issuesLink"
+    ).href =
+        "issues.html?repository_id=" +
+        encodeURIComponent(
+            repoId
+        );
+
+
+    document.getElementById(
+        "pullRequestsLink"
+    ).href =
+        "pull-requests.html?repository_id=" +
+        encodeURIComponent(
+            repoId
+        );
+
+
+    document.getElementById(
+        "actionsLink"
+    ).href =
+        "actions.html?repository_id=" +
+        encodeURIComponent(
+            repoId
+        );
+
 }
 
 
-const branchQuery =
-currentBranch
-? "&branch_id=" +
-encodeURIComponent(
-currentBranch.id
-)
-: "";
-
-
-document.getElementById(
-"explorerButton"
-).href =
-"repository-explorer.html" +
-"?repository_id=" +
-encodeURIComponent(repoId) +
-branchQuery;
-
-
-document.getElementById(
-"createFileLink"
-).href =
-"repository-add-file.html" +
-"?repository_id=" +
-encodeURIComponent(repoId) +
-branchQuery +
-"&mode=create";
-
-
-document.getElementById(
-"uploadFileLink"
-).href =
-"repository-add-file.html" +
-"?repository_id=" +
-encodeURIComponent(repoId) +
-branchQuery +
-"&mode=upload";
-
-
-document.getElementById(
-"editRepoLink"
-).href =
-"edit-repository.html?id=" +
-encodeURIComponent(repoId);
-
-
-document.getElementById(
-"issuesLink"
-).href =
-"issues.html?repository_id=" +
-encodeURIComponent(repoId);
-
-
-document.getElementById(
-"pullRequestsLink"
-).href =
-"pull-requests.html?repository_id=" +
-encodeURIComponent(repoId);
-
-
-document.getElementById(
-"actionsLink"
-).href =
-"actions.html?repository_id=" +
-encodeURIComponent(repoId);
-
-}
-
-
-/* =================================
+/* =====================================================
    ADD MENU
-================================= */
+===================================================== */
 
 function toggleAddMenu(){
 
-document.getElementById(
-"addMenu"
-).classList.toggle(
-"show"
-);
+    document.getElementById(
+        "addMenu"
+    ).classList.toggle(
+        "show"
+    );
 
 }
 
 
 function closeAddMenu(){
 
-document.getElementById(
-"addMenu"
-).classList.remove(
-"show"
-);
+    document.getElementById(
+        "addMenu"
+    ).classList.remove(
+        "show"
+    );
 
 }
 
 
-/* =================================
+/* =====================================================
    BRANCH MENU
-================================= */
+===================================================== */
 
 function toggleBranchMenu(){
 
-document.getElementById(
-"branchMenu"
-).classList.toggle(
-"show"
-);
+    document.getElementById(
+        "branchMenu"
+    ).classList.toggle(
+        "show"
+    );
 
 }
 
 
 function closeBranchMenu(){
 
-document.getElementById(
-"branchMenu"
-).classList.remove(
-"show"
-);
+    document.getElementById(
+        "branchMenu"
+    ).classList.remove(
+        "show"
+    );
 
 }
 
 
-/* =================================
+/* =====================================================
    FILE ICON
-================================= */
+===================================================== */
 
 function getFileIcon(file){
 
-if(file.is_binary){
+    if(file.is_binary){
 
-return "📦";
+        return "📦";
+
+    }
+
+
+    const name =
+        String(
+            file.file_path ||
+            ""
+        ).toLowerCase();
+
+
+    if(
+        name.endsWith(".html") ||
+        name.endsWith(".htm")
+    ){
+
+        return "🌐";
+
+    }
+
+
+    if(
+        name.endsWith(".css")
+    ){
+
+        return "🎨";
+
+    }
+
+
+    if(
+        name.endsWith(".js")
+    ){
+
+        return "⚡";
+
+    }
+
+
+    if(
+        name.endsWith(".json")
+    ){
+
+        return "🔧";
+
+    }
+
+
+    if(
+        name.endsWith(".md")
+    ){
+
+        return "📖";
+
+    }
+
+
+    if(
+        name.endsWith(".png") ||
+        name.endsWith(".jpg") ||
+        name.endsWith(".jpeg") ||
+        name.endsWith(".gif") ||
+        name.endsWith(".webp")
+    ){
+
+        return "🖼️";
+
+    }
+
+
+    return "📄";
 
 }
 
 
-const name =
-(
-file.file_path || ""
-)
-.toLowerCase();
-
-
-if(
-name.endsWith(".html") ||
-name.endsWith(".htm")
-){
-
-return "🌐";
-
-}
-
-
-if(
-name.endsWith(".css")
-){
-
-return "🎨";
-
-}
-
-
-if(
-name.endsWith(".js")
-){
-
-return "⚡";
-
-}
-
-
-if(
-name.endsWith(".json")
-){
-
-return "🔧";
-
-}
-
-
-if(
-name.endsWith(".md")
-){
-
-return "📖";
-
-}
-
-
-if(
-name.endsWith(".png") ||
-name.endsWith(".jpg") ||
-name.endsWith(".jpeg") ||
-name.endsWith(".gif") ||
-name.endsWith(".webp") ||
-name.endsWith(".svg")
-){
-
-return "🖼️";
-
-}
-
-
-return "📄";
-
-}
-
-
-/* =================================
+/* =====================================================
    FILE TYPE
-================================= */
+===================================================== */
 
 function getFileType(path){
 
-const parts =
-String(path || "")
-.split(".");
+    const parts =
+        String(
+            path || ""
+        ).split(".");
 
 
-if(parts.length < 2){
+    if(parts.length < 2){
 
-return "FILE";
+        return "FILE";
+
+    }
+
+
+    return parts
+        .pop()
+        .toUpperCase();
 
 }
 
 
-return parts
-.pop()
-.toUpperCase();
-
-}
-
-
-/* =================================
+/* =====================================================
    FILE SIZE
-================================= */
+===================================================== */
 
 function formatFileSize(bytes){
 
-if(
-bytes === null ||
-bytes === undefined ||
-bytes === ""
-){
+    if(
+        bytes === null ||
+        bytes === undefined ||
+        bytes === ""
+    ){
 
-return "";
+        return "";
+
+    }
+
+
+    const n =
+        Number(bytes);
+
+
+    if(!Number.isFinite(n)){
+
+        return "";
+
+    }
+
+
+    if(n < 1024){
+
+        return n + " B";
+
+    }
+
+
+    if(
+        n < 1024 * 1024
+    ){
+
+        return (
+            n / 1024
+        ).toFixed(1) +
+        " KB";
+
+    }
+
+
+    if(
+        n < 1024 *
+        1024 *
+        1024
+    ){
+
+        return (
+            n /
+            (1024 * 1024)
+        ).toFixed(1) +
+        " MB";
+
+    }
+
+
+    return (
+        n /
+        (1024 *
+         1024 *
+         1024)
+    ).toFixed(1) +
+    " GB";
 
 }
 
 
-const n =
-Number(bytes);
-
-
-if(n < 1024){
-
-return n + " B";
-
-}
-
-
-if(
-n < 1024 * 1024
-){
-
-return (
-n / 1024
-).toFixed(1) +
-" KB";
-
-}
-
-
-if(
-n < 1024 *
-1024 *
-1024
-){
-
-return (
-n /
-(1024 * 1024)
-).toFixed(1) +
-" MB";
-
-}
-
-
-return (
-n /
-(1024 *
-1024 *
-1024)
-).toFixed(1) +
-" GB";
-
-}
-
-
-/* =================================
+/* =====================================================
    DATE
-================================= */
+===================================================== */
 
 function formatDate(value){
 
-if(!value){
-return "";
-}
+    if(!value){
+
+        return "";
+
+    }
 
 
-try{
+    try{
 
-return new Date(
-value
-).toLocaleString(
-"en-IN",
-{
+        return new Date(
+            value
+        ).toLocaleString(
+            "en-IN",
+            {
+                day:"2-digit",
+                month:"short",
+                year:"numeric",
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
 
-day:"2-digit",
+    }
 
-month:"short",
+    catch(e){
 
-year:"numeric",
+        return "";
 
-hour:"2-digit",
-
-minute:"2-digit"
-
-}
-);
-
-}
-catch(e){
-
-return "";
-
-}
+    }
 
 }
 
 
-/* =================================
+/* =====================================================
    ESCAPE HTML
-================================= */
+===================================================== */
 
 function escapeHtml(value){
 
-return String(
-value ?? ""
-)
+    return String(
+        value ?? ""
+    )
 
-.replace(
-/&/g,
-"&amp;"
-)
+    .replace(
+        /&/g,
+        "&amp;"
+    )
 
-.replace(
-/</g,
-"&lt;"
-)
+    .replace(
+        /</g,
+        "&lt;"
+    )
 
-.replace(
-/>/g,
-"&gt;"
-)
+    .replace(
+        />/g,
+        "&gt;"
+    )
 
-.replace(
-/"/g,
-"&quot;"
-)
+    .replace(
+        /"/g,
+        "&quot;"
+    )
 
-.replace(
-/'/g,
-"&#039;"
-);
+    .replace(
+        /'/g,
+        "&#039;"
+    );
 
 }
 
 
-/* =================================
+/* =====================================================
    MARKDOWN
-================================= */
+===================================================== */
 
-function markdownToHtml(
-markdown
-){
+function markdownToHtml(markdown){
 
-let text =
-escapeHtml(
-markdown
-);
+    let text =
+        escapeHtml(
+            markdown || ""
+        );
 
 
-text =
-text.replace(
-/^### (.*)$/gm,
-"<h3>$1</h3>"
-);
+    text =
+        text.replace(
+            /^### (.*)$/gm,
+            "<h3>$1</h3>"
+        );
 
 
-text =
-text.replace(
-/^## (.*)$/gm,
-"<h2>$1</h2>"
-);
+    text =
+        text.replace(
+            /^## (.*)$/gm,
+            "<h2>$1</h2>"
+        );
 
 
-text =
-text.replace(
-/^# (.*)$/gm,
-"<h1>$1</h1>"
-);
+    text =
+        text.replace(
+            /^# (.*)$/gm,
+            "<h1>$1</h1>"
+        );
 
 
-text =
-text.replace(
-/\*\*(.*?)\*\*/g,
-"<strong>$1</strong>"
-);
+    text =
+        text.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
 
 
-text =
-text.replace(
-/\n\n/g,
-"</p><p>"
-);
+    text =
+        text.replace(
+            /\n\n/g,
+            "</p><p>"
+        );
 
 
-text =
-text.replace(
-/\n/g,
-"<br>"
-);
+    text =
+        text.replace(
+            /\n/g,
+            "<br>"
+        );
 
 
-return "<p>" +
-text +
-"</p>";
+    return (
+        "<p>" +
+        text +
+        "</p>"
+    );
 
 }
 
 
-/* =================================
+/* =====================================================
    TOAST
-================================= */
+===================================================== */
 
 function showToast(
-message,
-type
+    message,
+    type
 ){
 
-const toast =
-document.getElementById(
-"toast"
-);
+    const toast =
+        document.getElementById(
+            "toast"
+        );
 
 
-toast.textContent =
-message;
+    toast.textContent =
+        message;
 
 
-toast.className =
-"toast show " +
-(type || "");
+    toast.className =
+        "toast show " +
+        (
+            type ||
+            ""
+        );
 
 
-setTimeout(
-function(){
+    setTimeout(
+        function(){
 
-toast.className =
-"toast";
+            toast.className =
+                "toast";
 
-},
-3500
-);
+        },
+        3500
+    );
 
 }
 
 
-/* =================================
-   CLICK OUTSIDE
-================================= */
+/* =====================================================
+   CLICK OUTSIDE MENUS
+===================================================== */
 
 document.addEventListener(
-"click",
-function(event){
+    "click",
+    function(event){
 
-const branch =
-document.querySelector(
-".branch-wrapper"
+        const branch =
+            document.querySelector(
+                ".branch-wrapper"
+            );
+
+
+        const add =
+            document.querySelector(
+                ".add-wrapper"
+            );
+
+
+        if(
+            branch &&
+            !branch.contains(
+                event.target
+            )
+        ){
+
+            closeBranchMenu();
+
+        }
+
+
+        if(
+            add &&
+            !add.contains(
+                event.target
+            )
+        ){
+
+            closeAddMenu();
+
+        }
+
+    }
 );
 
 
-const add =
-document.querySelector(
-".add-wrapper"
-);
-
-
-if(
-branch &&
-!branch.contains(
-event.target
-)
-){
-
-closeBranchMenu();
-
-}
-
-
-if(
-add &&
-!add.contains(
-event.target
-)
-){
-
-closeAddMenu();
-
-}
-
-}
-);
-
-
-/* =================================
-   ESC
-================================= */
+/* =====================================================
+   ESCAPE
+===================================================== */
 
 document.addEventListener(
-"keydown",
-function(event){
+    "keydown",
+    function(event){
 
-if(
-event.key === "Escape"
-){
+        if(
+            event.key ===
+            "Escape"
+        ){
 
-closeModal();
+            closeBranchMenu();
 
-closeBranchMenu();
+            closeAddMenu();
 
-closeAddMenu();
+        }
 
-}
-
-}
-);
-
-
-/* =================================
-   MODAL BACKDROP
-================================= */
-
-document.getElementById(
-"modal"
-).addEventListener(
-"click",
-function(event){
-
-if(
-event.target === this
-){
-
-closeModal();
-
-}
-
-}
+    }
 );
 
 </script>
 
 </body>
+
 </html>
