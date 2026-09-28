@@ -100,7 +100,7 @@ jobs:
 
           echo "has_build=true" >> "$GITHUB_OUTPUT"
           echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
-          echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
+          echo "app_id=$APP_ID"
 
 
       # =====================================================
@@ -214,23 +214,31 @@ jobs:
           <!DOCTYPE html>
           <html lang="en">
           <head>
+
           <meta charset="UTF-8">
+
           <meta name="viewport"
                 content="width=device-width,
                          initial-scale=1.0,
                          maximum-scale=1.0,
                          user-scalable=no">
+
           <title>ASIM TECH App</title>
+
           </head>
+
           <body>
+
           <script>
           window.location.replace("__ASIM_TECH_URL__");
           </script>
+
           </body>
           </html>
           EOF
 
-              sed -i "s|__ASIM_TECH_URL__|${URL}|g" webapp/index.html
+              sed -i "s|__ASIM_TECH_URL__|${URL}|g" \
+                webapp/index.html
 
             else
 
@@ -328,6 +336,7 @@ jobs:
 
           ICON_FILE="launcher-icon.png"
 
+
           if [ -n "$APP_ICON_PATH" ]; then
 
             curl -fL \
@@ -338,6 +347,7 @@ jobs:
 
           fi
 
+
           if [ ! -s "$ICON_FILE" ] && [ -n "$APP_ICON_URL" ]; then
 
             curl -fL \
@@ -345,6 +355,7 @@ jobs:
               -o "$ICON_FILE" || true
 
           fi
+
 
           if [ ! -s "$ICON_FILE" ]; then
 
@@ -357,6 +368,7 @@ jobs:
               "$ICON_FILE"
 
           fi
+
 
           convert "$ICON_FILE" \
             -resize 48x48 \
@@ -377,6 +389,7 @@ jobs:
           convert "$ICON_FILE" \
             -resize 192x192 \
             android-project/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
 
           for density in mdpi hdpi xhdpi xxhdpi xxxhdpi
           do
@@ -476,11 +489,13 @@ jobs:
 
           }
 
+
           android {
 
               namespace '__PACKAGE_NAME__'
 
               compileSdk 35
+
 
               defaultConfig {
 
@@ -496,14 +511,31 @@ jobs:
 
               }
 
+
+              compileOptions {
+
+                  sourceCompatibility JavaVersion.VERSION_1_8
+
+                  targetCompatibility JavaVersion.VERSION_1_8
+
+              }
+
           }
+
 
           dependencies {
 
               implementation 'androidx.webkit:webkit:1.12.1'
 
+              implementation 'androidx.media3:media3-transformer:1.11.1'
+
+              implementation 'androidx.media3:media3-effect:1.11.1'
+
+              implementation 'androidx.media3:media3-common:1.11.1'
+
           }
           EOF
+
 
           sed -i "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
             android-project/app/build.gradle
@@ -525,19 +557,29 @@ jobs:
 
           mkdir -p android-project/app/src/main
 
+
           cat > android-project/app/src/main/AndroidManifest.xml <<'EOF'
           <manifest
               xmlns:android="http://schemas.android.com/apk/res/android">
 
+
               <uses-permission
                   android:name="android.permission.INTERNET" />
+
 
               <uses-permission
                   android:name="android.permission.CAMERA" />
 
+
+              <uses-permission
+                  android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                  android:maxSdkVersion="28" />
+
+
               <uses-feature
                   android:name="android.hardware.camera"
                   android:required="false" />
+
 
               <application
                   android:allowBackup="true"
@@ -547,9 +589,11 @@ jobs:
                   android:icon="@mipmap/ic_launcher"
                   android:roundIcon="@mipmap/ic_launcher_round">
 
+
                   <activity
                       android:name=".MainActivity"
                       android:exported="true">
+
 
                       <intent-filter>
 
@@ -561,12 +605,16 @@ jobs:
 
                       </intent-filter>
 
+
                   </activity>
+
 
               </application>
 
+
           </manifest>
           EOF
+
 
           sed -i "s|__APP_NAME__|${APP_NAME}|g" \
             android-project/app/src/main/AndroidManifest.xml
@@ -584,16 +632,23 @@ jobs:
 
           mkdir -p "$JAVA_PATH"
 
+
           cat > "$JAVA_PATH/MainActivity.java" <<'EOF'
           package __PACKAGE_NAME__;
 
+
           import android.Manifest;
           import android.app.Activity;
+          import android.content.ContentValues;
           import android.content.Intent;
           import android.content.pm.PackageManager;
           import android.graphics.Color;
           import android.net.Uri;
+          import android.os.Build;
           import android.os.Bundle;
+          import android.os.Environment;
+          import android.provider.MediaStore;
+          import android.webkit.JavascriptInterface;
           import android.webkit.PermissionRequest;
           import android.webkit.ValueCallback;
           import android.webkit.WebChromeClient;
@@ -602,20 +657,31 @@ jobs:
           import android.webkit.WebSettings;
           import android.webkit.WebView;
 
+          import androidx.annotation.Nullable;
+          import androidx.media3.common.MediaItem;
+          import androidx.media3.common.MimeTypes;
+          import androidx.media3.transformer.EditedMediaItem;
+          import androidx.media3.transformer.ExportException;
+          import androidx.media3.transformer.ExportResult;
+          import androidx.media3.transformer.Transformer;
           import androidx.webkit.WebViewAssetLoader;
           import androidx.webkit.WebViewClientCompat;
 
+          import java.io.File;
+          import java.io.FileInputStream;
+          import java.io.FileOutputStream;
+          import java.io.InputStream;
+          import java.io.OutputStream;
+          import java.util.Base64;
+
+
           public class MainActivity extends Activity {
+
 
               private WebView webView;
 
               private PermissionRequest pendingPermissionRequest;
 
-              /*
-               * IMPORTANT:
-               * This callback receives the files selected from
-               * the native Android file picker.
-               */
               private ValueCallback<Uri[]> filePathCallback;
 
               private static final int FILE_CHOOSER_REQUEST = 2001;
@@ -623,10 +689,28 @@ jobs:
               private static final int CAMERA_PERMISSION_REQUEST = 1001;
 
 
+              // =================================================
+              // VIDEO EXPORT
+              // =================================================
+
+              private File nativeInputFile;
+
+              private File nativeOutputFile;
+
+              private FileOutputStream nativeInputStream;
+
+              private Transformer transformer;
+
+
+              // =================================================
+              // ACTIVITY CREATE
+              // =================================================
+
               @Override
               protected void onCreate(Bundle savedInstanceState) {
 
                   super.onCreate(savedInstanceState);
+
 
                   getWindow().setStatusBarColor(
                       Color.rgb(180, 35, 0)
@@ -637,16 +721,8 @@ jobs:
                   );
 
 
-                  // =========================================
-                  // CREATE WEBVIEW
-                  // =========================================
-
                   webView = new WebView(this);
 
-
-                  // =========================================
-                  // WEBVIEW SETTINGS
-                  // =========================================
 
                   WebSettings settings =
                       webView.getSettings();
@@ -668,10 +744,6 @@ jobs:
                   settings.setSupportZoom(false);
 
 
-                  // =========================================
-                  // WEBVIEW ASSET LOADER
-                  // =========================================
-
                   final WebViewAssetLoader assetLoader =
                       new WebViewAssetLoader.Builder()
 
@@ -683,10 +755,6 @@ jobs:
 
                           .build();
 
-
-                  // =========================================
-                  // WEBVIEW CLIENT
-                  // =========================================
 
                   webView.setWebViewClient(
                       new WebViewClientCompat() {
@@ -709,17 +777,19 @@ jobs:
                   );
 
 
-                  // =========================================
-                  // WEB CHROME CLIENT
-                  // =========================================
+                  // =================================================
+                  // NATIVE EXPORT BRIDGE
+                  // =================================================
+
+                  webView.addJavascriptInterface(
+                      new AndroidExportBridge(),
+                      "AndroidExport"
+                  );
+
 
                   webView.setWebChromeClient(
                       new WebChromeClient() {
 
-
-                          // =================================
-                          // NATIVE ANDROID FILE PICKER
-                          // =================================
 
                           @Override
                           public boolean onShowFileChooser(
@@ -727,10 +797,6 @@ jobs:
                               ValueCallback<Uri[]> callback,
                               FileChooserParams params
                           ) {
-
-                              /*
-                               * Cancel previous callback if any.
-                               */
 
                               if (filePathCallback != null) {
 
@@ -743,13 +809,6 @@ jobs:
 
 
                               try {
-
-                                  /*
-                                   * Android creates the proper
-                                   * native file picker according
-                                   * to the HTML accept/multiple
-                                   * attributes.
-                                   */
 
                                   Intent intent =
                                       params.createIntent();
@@ -771,10 +830,6 @@ jobs:
 
                           }
 
-
-                          // =================================
-                          // CAMERA / WEBRTC PERMISSION
-                          // =================================
 
                           @Override
                           public void onPermissionRequest(
@@ -885,20 +940,676 @@ jobs:
                   );
 
 
-                  // =========================================
-                  // LOAD HTML APP
-                  // =========================================
-
                   webView.loadUrl(
                       "https://appassets.androidplatform.net/assets/index.html"
                   );
 
 
-                  // =========================================
-                  // SHOW WEBVIEW
-                  // =========================================
-
                   setContentView(webView);
+
+              }
+
+
+              // =================================================
+              // JAVASCRIPT NATIVE EXPORT BRIDGE
+              // =================================================
+
+              private class AndroidExportBridge {
+
+
+                  @JavascriptInterface
+                  public synchronized void startExport(
+                      String fileName
+                  ) {
+
+                      runOnUiThread(() -> {
+
+                          try {
+
+                              stopCurrentExport();
+
+
+                              nativeInputFile =
+                                  new File(
+                                      getCacheDir(),
+                                      "cine_input_" +
+                                      System.currentTimeMillis() +
+                                      ".webm"
+                                  );
+
+
+                              nativeOutputFile =
+                                  new File(
+                                      getCacheDir(),
+                                      "cine_output_" +
+                                      System.currentTimeMillis() +
+                                      ".mp4"
+                                  );
+
+
+                              nativeInputStream =
+                                  new FileOutputStream(
+                                      nativeInputFile
+                                  );
+
+
+                              sendJavascript(
+                                  "window.__nativeExportStarted && window.__nativeExportStarted();"
+                              );
+
+
+                          } catch (Exception e) {
+
+                              sendExportResult(
+                                  false,
+                                  e.getMessage()
+                              );
+
+                          }
+
+                      });
+
+                  }
+
+
+                  @JavascriptInterface
+                  public synchronized void appendChunk(
+                      String base64Data
+                  ) {
+
+                      try {
+
+                          if (nativeInputStream == null) {
+
+                              throw new Exception(
+                                  "Export has not been started."
+                              );
+
+                          }
+
+
+                          byte[] data =
+                              Base64.getDecoder().decode(
+                                  base64Data
+                              );
+
+
+                          nativeInputStream.write(data);
+
+
+                      } catch (Exception e) {
+
+                          sendExportResult(
+                              false,
+                              e.getMessage()
+                          );
+
+                      }
+
+                  }
+
+
+                  @JavascriptInterface
+                  public synchronized void finishExport() {
+
+                      runOnUiThread(() -> {
+
+                          try {
+
+                              if (
+                                  nativeInputStream != null
+                              ) {
+
+                                  nativeInputStream.flush();
+
+                                  nativeInputStream.close();
+
+                                  nativeInputStream = null;
+
+                              }
+
+
+                              transformToMp4();
+
+
+                          } catch (Exception e) {
+
+                              sendExportResult(
+                                  false,
+                                  e.getMessage()
+                              );
+
+                          }
+
+                      });
+
+                  }
+
+
+                  @JavascriptInterface
+                  public synchronized void cancelExport() {
+
+                      runOnUiThread(() -> {
+
+                          stopCurrentExport();
+
+                          sendExportResult(
+                              false,
+                              "Export cancelled."
+                          );
+
+                      });
+
+                  }
+
+              }
+
+
+              // =================================================
+              // TRANSFORM WEBM -> H264/AAC MP4
+              // =================================================
+
+              private void transformToMp4() {
+
+                  try {
+
+                      if (
+                          nativeInputFile == null
+                          ||
+                          !nativeInputFile.exists()
+                      ) {
+
+                          throw new Exception(
+                              "Input video not found."
+                          );
+
+                      }
+
+
+                      MediaItem inputMediaItem =
+                          MediaItem.fromUri(
+                              Uri.fromFile(nativeInputFile)
+                          );
+
+
+                      EditedMediaItem editedMediaItem =
+                          new EditedMediaItem.Builder(
+                              inputMediaItem
+                          ).build();
+
+
+                      transformer =
+                          new Transformer.Builder(this)
+
+                              .setVideoMimeType(
+                                  MimeTypes.VIDEO_H264
+                              )
+
+                              .setAudioMimeType(
+                                  MimeTypes.AUDIO_AAC
+                              )
+
+                              .addListener(
+                                  new Transformer.Listener() {
+
+                                      @Override
+                                      public void onCompleted(
+                                          androidx.media3.transformer.Composition composition,
+                                          ExportResult result
+                                      ) {
+
+                                          saveMp4ToGallery();
+
+                                      }
+
+
+                                      @Override
+                                      public void onError(
+                                          androidx.media3.transformer.Composition composition,
+                                          ExportResult result,
+                                          ExportException exception
+                                      ) {
+
+                                          sendExportResult(
+                                              false,
+                                              "MP4 conversion failed: " +
+                                              exception.getMessage()
+                                          );
+
+                                      }
+
+                                  }
+                              )
+
+                              .build();
+
+
+                      transformer.start(
+                          editedMediaItem,
+                          nativeOutputFile.getAbsolutePath()
+                      );
+
+
+                  } catch (Exception e) {
+
+                      sendExportResult(
+                          false,
+                          e.getMessage()
+                      );
+
+                  }
+
+              }
+
+
+              // =================================================
+              // SAVE MP4 TO ANDROID GALLERY
+              // =================================================
+
+              private void saveMp4ToGallery() {
+
+                  try {
+
+                      if (
+                          nativeOutputFile == null
+                          ||
+                          !nativeOutputFile.exists()
+                      ) {
+
+                          throw new Exception(
+                              "MP4 output file not found."
+                          );
+
+                      }
+
+
+                      String displayName =
+                          "CineReel_" +
+                          System.currentTimeMillis() +
+                          ".mp4";
+
+
+                      if (
+                          Build.VERSION.SDK_INT >=
+                          Build.VERSION_CODES.Q
+                      ) {
+
+                          ContentValues values =
+                              new ContentValues();
+
+
+                          values.put(
+                              MediaStore.Video.Media.DISPLAY_NAME,
+                              displayName
+                          );
+
+
+                          values.put(
+                              MediaStore.Video.Media.MIME_TYPE,
+                              "video/mp4"
+                          );
+
+
+                          values.put(
+                              MediaStore.Video.Media.RELATIVE_PATH,
+                              Environment.DIRECTORY_MOVIES +
+                              "/ASIM TECH"
+                          );
+
+
+                          values.put(
+                              MediaStore.Video.Media.IS_PENDING,
+                              1
+                          );
+
+
+                          Uri uri =
+                              getContentResolver()
+                                  .insert(
+                                      MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                                      values
+                                  );
+
+
+                          if (uri == null) {
+
+                              throw new Exception(
+                                  "Could not create Gallery item."
+                              );
+
+                          }
+
+
+                          try (
+                              InputStream input =
+                                  new FileInputStream(
+                                      nativeOutputFile
+                                  );
+
+                              OutputStream output =
+                                  getContentResolver()
+                                      .openOutputStream(uri)
+                          ) {
+
+                              byte[] buffer =
+                                  new byte[1024 * 1024];
+
+                              int length;
+
+                              while (
+                                  (length =
+                                      input.read(buffer))
+                                  > 0
+                              ) {
+
+                                  output.write(
+                                      buffer,
+                                      0,
+                                      length
+                                  );
+
+                              }
+
+                              output.flush();
+
+                          }
+
+
+                          ContentValues completeValues =
+                              new ContentValues();
+
+                          completeValues.put(
+                              MediaStore.Video.Media.IS_PENDING,
+                              0
+                          );
+
+
+                          getContentResolver()
+                              .update(
+                                  uri,
+                                  completeValues,
+                                  null,
+                                  null
+                              );
+
+
+                          sendExportResult(
+                              true,
+                              "MP4 video saved to Gallery."
+                          );
+
+
+                      } else {
+
+                          File moviesDir =
+                              new File(
+                                  Environment
+                                      .getExternalStoragePublicDirectory(
+                                          Environment.DIRECTORY_MOVIES
+                                      ),
+                                  "ASIM TECH"
+                              );
+
+
+                          if (!moviesDir.exists()) {
+
+                              moviesDir.mkdirs();
+
+                          }
+
+
+                          File destination =
+                              new File(
+                                  moviesDir,
+                                  displayName
+                              );
+
+
+                          copyFile(
+                              nativeOutputFile,
+                              destination
+                          );
+
+
+                          Intent scanIntent =
+                              new Intent(
+                                  Intent.ACTION_MEDIA_SCANNER_SCAN_FILE
+                              );
+
+
+                          scanIntent.setData(
+                              Uri.fromFile(destination)
+                          );
+
+
+                          sendBroadcast(
+                              scanIntent
+                          );
+
+
+                          sendExportResult(
+                              true,
+                              "MP4 video saved to Gallery."
+                          );
+
+                      }
+
+
+                  } catch (Exception e) {
+
+                      sendExportResult(
+                          false,
+                          "Gallery save failed: " +
+                          e.getMessage()
+                      );
+
+                  }
+
+              }
+
+
+              // =================================================
+              // FILE COPY
+              // =================================================
+
+              private void copyFile(
+                  File source,
+                  File destination
+              ) throws Exception {
+
+                  try (
+                      InputStream input =
+                          new FileInputStream(source);
+
+                      OutputStream output =
+                          new FileOutputStream(destination)
+                  ) {
+
+                      byte[] buffer =
+                          new byte[1024 * 1024];
+
+                      int length;
+
+                      while (
+                          (length =
+                              input.read(buffer))
+                          > 0
+                      ) {
+
+                          output.write(
+                              buffer,
+                              0,
+                              length
+                          );
+
+                      }
+
+                      output.flush();
+
+                  }
+
+              }
+
+
+              // =================================================
+              // JAVASCRIPT RESULT
+              // =================================================
+
+              private void sendExportResult(
+                  boolean success,
+                  String message
+              ) {
+
+                  String safeMessage =
+                      message == null
+                      ? ""
+                      : message
+                          .replace(
+                              "\\",
+                              "\\\\"
+                          )
+                          .replace(
+                              "'",
+                              "\\'"
+                          )
+                          .replace(
+                              "\n",
+                              "\\n"
+                          )
+                          .replace(
+                              "\r",
+                              "\\r"
+                          );
+
+
+                  String javascript =
+                      "window.__nativeExportDone && " +
+                      "window.__nativeExportDone(" +
+                      success +
+                      ",'" +
+                      safeMessage +
+                      "');";
+
+
+                  runOnUiThread(() -> {
+
+                      if (webView != null) {
+
+                          webView.evaluateJavascript(
+                              javascript,
+                              null
+                          );
+
+                      }
+
+                  });
+
+
+                  cleanupExportFiles();
+
+              }
+
+
+              // =================================================
+              // STOP EXPORT
+              // =================================================
+
+              private void stopCurrentExport() {
+
+                  try {
+
+                      if (transformer != null) {
+
+                          transformer.cancel();
+
+                      }
+
+                  } catch (Exception ignored) {
+                  }
+
+
+                  transformer = null;
+
+
+                  try {
+
+                      if (
+                          nativeInputStream != null
+                      ) {
+
+                          nativeInputStream.close();
+
+                      }
+
+                  } catch (Exception ignored) {
+                  }
+
+
+                  nativeInputStream = null;
+
+              }
+
+
+              // =================================================
+              // CLEANUP
+              // =================================================
+
+              private void cleanupExportFiles() {
+
+                  try {
+
+                      if (
+                          nativeInputFile != null
+                          &&
+                          nativeInputFile.exists()
+                      ) {
+
+                          nativeInputFile.delete();
+
+                      }
+
+                  } catch (Exception ignored) {
+                  }
+
+
+                  try {
+
+                      if (
+                          nativeOutputFile != null
+                          &&
+                          nativeOutputFile.exists()
+                      ) {
+
+                          nativeOutputFile.delete();
+
+                      }
+
+                  } catch (Exception ignored) {
+                  }
+
+              }
+
+
+              // =================================================
+              // JAVASCRIPT HELPER
+              // =================================================
+
+              private void sendJavascript(
+                  String javascript
+              ) {
+
+                  runOnUiThread(() -> {
+
+                      if (webView != null) {
+
+                          webView.evaluateJavascript(
+                              javascript,
+                              null
+                          );
+
+                      }
+
+                  });
 
               }
 
@@ -926,7 +1637,9 @@ jobs:
                       FILE_CHOOSER_REQUEST
                   ) {
 
-                      if (filePathCallback == null) {
+                      if (
+                          filePathCallback == null
+                      ) {
 
                           return;
 
@@ -953,11 +1666,6 @@ jobs:
 
                       }
 
-
-                      /*
-                       * Return selected files to HTML
-                       * <input type="file">
-                       */
 
                       filePathCallback
                           .onReceiveValue(results);
@@ -995,7 +1703,8 @@ jobs:
 
 
                       if (
-                          pendingPermissionRequest != null
+                          pendingPermissionRequest
+                          != null
                       ) {
 
 
@@ -1022,7 +1731,8 @@ jobs:
                           }
 
 
-                          pendingPermissionRequest = null;
+                          pendingPermissionRequest =
+                              null;
 
                       }
 
@@ -1032,7 +1742,7 @@ jobs:
 
 
               // =================================================
-              // ANDROID BACK BUTTON
+              // BACK BUTTON
               // =================================================
 
               @Override
@@ -1056,17 +1766,23 @@ jobs:
 
 
               // =================================================
-              // DESTROY WEBVIEW
+              // DESTROY
               // =================================================
 
               @Override
               protected void onDestroy() {
+
+                  stopCurrentExport();
+
+                  cleanupExportFiles();
+
 
                   if (webView != null) {
 
                       webView.destroy();
 
                   }
+
 
                   super.onDestroy();
 
@@ -1090,6 +1806,7 @@ jobs:
 
           mkdir -p \
             android-project/app/src/main/res/values
+
 
           cat > android-project/app/src/main/res/values/styles.xml <<'EOF'
           <resources>
@@ -1140,6 +1857,7 @@ jobs:
           echo "VERIFYING ANDROID PROJECT"
           echo "======================================"
 
+
           test -f android-project/build.gradle
 
           test -f android-project/settings.gradle
@@ -1160,25 +1878,90 @@ jobs:
 
 
           echo ""
-          echo "Checking package..."
+          echo "Checking WRITE_EXTERNAL_STORAGE..."
 
           grep \
-            "applicationId" \
+            "android.permission.WRITE_EXTERNAL_STORAGE" \
+            android-project/app/src/main/AndroidManifest.xml
+
+
+          echo ""
+          echo "Checking Media3 Transformer..."
+
+          grep \
+            "media3-transformer" \
             android-project/app/build.gradle
 
 
           echo ""
-          echo "Checking Gradle plugin..."
+          echo "Checking Media3 Common..."
 
           grep \
-            "com.android.application" \
-            android-project/build.gradle
+            "media3-common" \
+            android-project/app/build.gradle
 
 
           echo ""
-          echo "Checking MainActivity..."
+          echo "Checking Media3 Effect..."
 
-          test -f \
+          grep \
+            "media3-effect" \
+            android-project/app/build.gradle
+
+
+          echo ""
+          echo "Checking H264..."
+
+          grep \
+            "MimeTypes.VIDEO_H264" \
+            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          echo ""
+          echo "Checking AAC..."
+
+          grep \
+            "MimeTypes.AUDIO_AAC" \
+            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          echo ""
+          echo "Checking AndroidExport bridge..."
+
+          grep \
+            "AndroidExport" \
+            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          echo ""
+          echo "Checking startExport..."
+
+          grep \
+            "startExport" \
+            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          echo ""
+          echo "Checking appendChunk..."
+
+          grep \
+            "appendChunk" \
+            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          echo ""
+          echo "Checking finishExport..."
+
+          grep \
+            "finishExport" \
+            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          echo ""
+          echo "Checking Gallery save..."
+
+          grep \
+            "MediaStore.Video.Media" \
             "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
 
 
@@ -1187,11 +1970,6 @@ jobs:
 
           grep \
             "onShowFileChooser" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
-
-
-          grep \
-            "FILE_CHOOSER_REQUEST" \
             "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
 
 
@@ -1204,7 +1982,7 @@ jobs:
 
 
           echo ""
-          echo "Project verification completed."
+          echo "Android project verification completed."
 
 
       # =====================================================
@@ -1220,14 +1998,17 @@ jobs:
           echo "STARTING APK BUILD"
           echo "======================================"
 
+
           gradle assembleDebug \
             --no-daemon \
             --stacktrace
+
 
           echo ""
           echo "======================================"
           echo "APK BUILD COMPLETED"
           echo "======================================"
+
 
           ls -lh \
             app/build/outputs/apk/debug/
@@ -1243,9 +2024,11 @@ jobs:
 
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
+
           cp \
             android-project/app/build/outputs/apk/debug/app-debug.apk \
             "ASIM-TECH-${BUILD_ID}.apk"
+
 
           ls -lh \
             "ASIM-TECH-${BUILD_ID}.apk"
@@ -1262,20 +2045,24 @@ jobs:
 
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
+
           SHA=$(
             sha256sum \
               "ASIM-TECH-${BUILD_ID}.apk" |
             awk '{print $1}'
           )
 
+
           SIZE=$(
             stat -c%s \
               "ASIM-TECH-${BUILD_ID}.apk"
           )
 
+
           echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
 
           echo "size=$SIZE" >> "$GITHUB_OUTPUT"
+
 
           echo "SHA256=$SHA"
 
@@ -1297,6 +2084,7 @@ jobs:
 
           STORAGE_PATH="${BUILD_ID}/${FILE_NAME}"
 
+
           curl -fL -X POST \
             "${SUPABASE_URL}/storage/v1/object/android-apks/${STORAGE_PATH}?upsert=true" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
@@ -1304,8 +2092,10 @@ jobs:
             -H "Content-Type: application/vnd.android.package-archive" \
             --data-binary "@${FILE_NAME}"
 
+
           echo "STORAGE_PATH=${STORAGE_PATH}" \
             >> "$GITHUB_ENV"
+
 
           echo "APK uploaded successfully."
 
@@ -1323,6 +2113,7 @@ jobs:
 
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
 
+
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
@@ -1338,6 +2129,7 @@ jobs:
               \"sha256\": \"${{ steps.sha.outputs.sha256 }}\",
               \"completed_at\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
             }"
+
 
           echo "BUILD SUCCESS."
 
@@ -1367,6 +2159,7 @@ jobs:
         run: |
 
           echo "Build failed."
+
 
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
