@@ -37,7 +37,7 @@ jobs:
 
 
       # =====================================================
-      # JAVA 17
+      # JAVA
       # =====================================================
 
       - name: Setup Java 17
@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl jq imagemagick
+          sudo apt-get install -y curl jq imagemagick python3
 
 
       # =====================================================
@@ -86,13 +86,22 @@ jobs:
 
           echo "$RESPONSE"
 
+          if ! echo "$RESPONSE" | jq empty; then
+            echo "ERROR: Invalid JSON received from Supabase."
+            exit 1
+          fi
+
           BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
           APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
 
           if [ -z "$BUILD_ID" ] || [ -z "$APP_ID" ]; then
+
             echo "No queued build found."
+
             echo "has_build=false" >> "$GITHUB_OUTPUT"
+
             exit 0
+
           fi
 
           echo "BUILD_ID=$BUILD_ID"
@@ -110,7 +119,9 @@ jobs:
       - name: Stop if queue empty
         if: steps.queue.outputs.has_build != 'true'
         run: |
+
           echo "No queued APK build."
+
           exit 0
 
 
@@ -160,36 +171,174 @@ jobs:
 
           echo "Downloaded app files."
 
+          if ! jq empty source/files.json; then
+            echo "ERROR: source/files.json is not valid JSON."
+            cat source/files.json
+            exit 1
+          fi
+
+          echo "Number of files:"
           jq 'length' source/files.json
 
 
       # =====================================================
-      # CREATE WEB FILES
+      # CREATE SOURCE FILES
+      # FIXED VERSION
       # =====================================================
 
       - name: Create source files
         if: steps.queue.outputs.has_build == 'true'
         run: |
 
+          echo "======================================"
+          echo "CREATING SOURCE FILES"
+          echo "======================================"
+
+          rm -rf webapp
+
           mkdir -p webapp
 
-          jq -c '.[]' source/files.json | while read -r item
-          do
+          if ! jq -e 'type == "array"' source/files.json >/dev/null; then
 
-            FILE_PATH=$(echo "$item" | jq -r '.file_path')
-            CONTENT=$(echo "$item" | jq -r '.content')
+            echo "ERROR: Supabase response is not an array."
 
-            if [ -z "$FILE_PATH" ] || [ "$FILE_PATH" = "null" ]; then
-              continue
-            fi
+            echo "Actual response:"
+            cat source/files.json
 
-            mkdir -p "webapp/$(dirname "$FILE_PATH")"
+            exit 1
 
-            printf '%s' "$CONTENT" > "webapp/$FILE_PATH"
+          fi
 
-          done
+          echo ""
+          echo "Files received:"
 
-          echo "Source files created."
+          jq -r '.[].file_path' source/files.json
+
+          echo ""
+          echo "Creating files..."
+
+          python3 <<'PY'
+
+          import json
+          import os
+          import sys
+
+          source_file = "source/files.json"
+          output_dir = "webapp"
+
+          with open(
+              source_file,
+              "r",
+              encoding="utf-8"
+          ) as f:
+
+              data = json.load(f)
+
+          if not isinstance(data, list):
+
+              print(
+                  "ERROR: app_files response is not an array."
+              )
+
+              sys.exit(1)
+
+          created = 0
+
+          for item in data:
+
+              if not isinstance(item, dict):
+
+                  print(
+                      "WARNING: Invalid file item skipped."
+                  )
+
+                  continue
+
+              file_path = item.get("file_path")
+
+              content = item.get("content")
+
+              if not file_path:
+
+                  print(
+                      "WARNING: Missing file_path."
+                  )
+
+                  continue
+
+              if content is None:
+
+                  content = ""
+
+              file_path = str(file_path)
+
+              normalized = os.path.normpath(
+                  file_path
+              )
+
+              if (
+                  normalized == ".."
+                  or normalized.startswith("../")
+                  or normalized.startswith("/")
+              ):
+
+                  print(
+                      "ERROR: Unsafe file path:",
+                      file_path
+                  )
+
+                  sys.exit(1)
+
+              destination = os.path.join(
+                  output_dir,
+                  normalized
+              )
+
+              parent = os.path.dirname(
+                  destination
+              )
+
+              os.makedirs(
+                  parent,
+                  exist_ok=True
+              )
+
+              with open(
+                  destination,
+                  "w",
+                  encoding="utf-8"
+              ) as out:
+
+                  out.write(
+                      str(content)
+                  )
+
+              print(
+                  "Created:",
+                  destination
+              )
+
+              created += 1
+
+          if created == 0:
+
+              print(
+                  "ERROR: No source files were created."
+              )
+
+              sys.exit(1)
+
+          print("")
+          print(
+              "Created",
+              created,
+              "source files successfully."
+          )
+
+          PY
+
+          echo ""
+          echo "Created source files:"
 
           find webapp -type f -print
 
@@ -208,20 +357,25 @@ jobs:
 
             if [ -f "webapp/webapp-url.txt" ]; then
 
-              URL=$(cat "webapp/webapp-url.txt" | tr -d '\r\n')
+              URL=$(cat \
+                "webapp/webapp-url.txt" \
+                | tr -d '\r\n')
 
-              cat > webapp/index.html <<'EOF'
+              echo "Creating URL wrapper..."
+
+              cat > webapp/index.html <<EOF
           <!DOCTYPE html>
           <html lang="en">
+
           <head>
 
           <meta charset="UTF-8">
 
           <meta name="viewport"
                 content="width=device-width,
-                         initial-scale=1.0,
-                         maximum-scale=1.0,
-                         user-scalable=no">
+                initial-scale=1.0,
+                maximum-scale=1.0,
+                user-scalable=no">
 
           <title>ASIM TECH App</title>
 
@@ -230,19 +384,22 @@ jobs:
           <body>
 
           <script>
-          window.location.replace("__ASIM_TECH_URL__");
+
+          window.location.replace(
+            "${URL}"
+          );
+
           </script>
 
           </body>
+
           </html>
           EOF
-
-              sed -i "s|__ASIM_TECH_URL__|${URL}|g" \
-                webapp/index.html
 
             else
 
               echo "ERROR: index.html not found."
+
               exit 1
 
             fi
@@ -279,25 +436,44 @@ jobs:
 
           fi
 
+          echo "Android settings:"
+
           cat android-settings.json
 
-          APP_NAME=$(jq -r '.appName // "ASIM TECH APP"' android-settings.json)
+          APP_NAME=$(jq -r \
+            '.appName // "ASIM TECH APP"' \
+            android-settings.json)
 
-          PACKAGE_NAME=$(jq -r '.packageName // "com.asimtech.app"' android-settings.json)
+          PACKAGE_NAME=$(jq -r \
+            '.packageName // "com.asimtech.app"' \
+            android-settings.json)
 
-          VERSION_NAME=$(jq -r '.versionName // "1.0.0"' android-settings.json)
+          VERSION_NAME=$(jq -r \
+            '.versionName // "1.0.0"' \
+            android-settings.json)
 
-          VERSION_CODE=$(jq -r '.versionCode // 1' android-settings.json)
+          VERSION_CODE=$(jq -r \
+            '.versionCode // 1' \
+            android-settings.json)
 
-          APP_ICON_URL=$(jq -r '.appIconUrl // empty' android-settings.json)
+          APP_ICON_URL=$(jq -r \
+            '.appIconUrl // empty' \
+            android-settings.json)
 
-          APP_ICON_PATH=$(jq -r '.appIconPath // empty' android-settings.json)
+          APP_ICON_PATH=$(jq -r \
+            '.appIconPath // empty' \
+            android-settings.json)
 
           echo "APP_NAME=$APP_NAME" >> "$GITHUB_ENV"
+
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> "$GITHUB_ENV"
+
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+
           echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
+
           echo "APP_ICON_URL=$APP_ICON_URL" >> "$GITHUB_ENV"
+
           echo "APP_ICON_PATH=$APP_ICON_PATH" >> "$GITHUB_ENV"
 
 
@@ -309,7 +485,8 @@ jobs:
         if: steps.queue.outputs.has_build == 'true'
         run: |
 
-          mkdir -p android-project/app/src/main/assets
+          mkdir -p \
+            android-project/app/src/main/assets
 
           cp -r \
             webapp/. \
@@ -319,7 +496,7 @@ jobs:
 
 
       # =====================================================
-      # ICON
+      # PREPARE ICON
       # =====================================================
 
       - name: Prepare launcher icon
@@ -328,11 +505,20 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
 
-          mkdir -p android-project/app/src/main/res/mipmap-mdpi
-          mkdir -p android-project/app/src/main/res/mipmap-hdpi
-          mkdir -p android-project/app/src/main/res/mipmap-xhdpi
-          mkdir -p android-project/app/src/main/res/mipmap-xxhdpi
-          mkdir -p android-project/app/src/main/res/mipmap-xxxhdpi
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-mdpi
+
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-hdpi
+
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-xhdpi
+
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-xxhdpi
+
+          mkdir -p \
+            android-project/app/src/main/res/mipmap-xxxhdpi
 
           ICON_FILE="launcher-icon.png"
 
@@ -348,7 +534,8 @@ jobs:
           fi
 
 
-          if [ ! -s "$ICON_FILE" ] && [ -n "$APP_ICON_URL" ]; then
+          if [ ! -s "$ICON_FILE" ] &&
+             [ -n "$APP_ICON_URL" ]; then
 
             curl -fL \
               "$APP_ICON_URL" \
@@ -358,6 +545,8 @@ jobs:
 
 
           if [ ! -s "$ICON_FILE" ]; then
+
+            echo "Creating default icon..."
 
             convert \
               -size 512x512 \
@@ -391,7 +580,8 @@ jobs:
             android-project/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
 
-          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi
+          for density in \
+            mdpi hdpi xhdpi xxhdpi xxxhdpi
           do
 
             cp \
@@ -417,7 +607,7 @@ jobs:
 
 
       # =====================================================
-      # SETTINGS.GRADLE
+      # SETTINGS GRADLE
       # =====================================================
 
       - name: Create settings.gradle
@@ -425,6 +615,7 @@ jobs:
         run: |
 
           cat > android-project/settings.gradle <<'EOF'
+
           pluginManagement {
 
               repositories {
@@ -454,11 +645,12 @@ jobs:
           rootProject.name = "GeneratedApp"
 
           include(":app")
+
           EOF
 
 
       # =====================================================
-      # ROOT BUILD.GRADLE
+      # ROOT BUILD GRADLE
       # =====================================================
 
       - name: Create root build.gradle
@@ -466,16 +658,20 @@ jobs:
         run: |
 
           cat > android-project/build.gradle <<'EOF'
+
           plugins {
 
-              id 'com.android.application' version '8.7.3' apply false
+              id 'com.android.application'
+                  version '8.7.3'
+                  apply false
 
           }
+
           EOF
 
 
       # =====================================================
-      # APP BUILD.GRADLE
+      # APP BUILD GRADLE
       # =====================================================
 
       - name: Create app build.gradle
@@ -483,6 +679,7 @@ jobs:
         run: |
 
           cat > android-project/app/build.gradle <<'EOF'
+
           plugins {
 
               id 'com.android.application'
@@ -525,25 +722,33 @@ jobs:
 
           dependencies {
 
-              implementation 'androidx.webkit:webkit:1.12.1'
+              implementation \
+                  'androidx.webkit:webkit:1.12.1'
 
-              implementation 'androidx.media3:media3-transformer:1.11.1'
+              implementation \
+                  'androidx.media3:media3-transformer:1.11.1'
 
-              implementation 'androidx.media3:media3-effect:1.11.1'
+              implementation \
+                  'androidx.media3:media3-effect:1.11.1'
 
-              implementation 'androidx.media3:media3-common:1.11.1'
+              implementation \
+                  'androidx.media3:media3-common:1.11.1'
 
           }
+
           EOF
 
 
-          sed -i "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
+          sed -i \
+            "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
             android-project/app/build.gradle
 
-          sed -i "s|__VERSION_CODE__|${VERSION_CODE}|g" \
+          sed -i \
+            "s|__VERSION_CODE__|${VERSION_CODE}|g" \
             android-project/app/build.gradle
 
-          sed -i "s|__VERSION_NAME__|${VERSION_NAME}|g" \
+          sed -i \
+            "s|__VERSION_NAME__|${VERSION_NAME}|g" \
             android-project/app/build.gradle
 
 
@@ -555,10 +760,14 @@ jobs:
         if: steps.queue.outputs.has_build == 'true'
         run: |
 
-          mkdir -p android-project/app/src/main
+          mkdir -p \
+            android-project/app/src/main
 
 
-          cat > android-project/app/src/main/AndroidManifest.xml <<'EOF'
+          cat > \
+            android-project/app/src/main/AndroidManifest.xml \
+            <<'EOF'
+
           <manifest
               xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -613,10 +822,12 @@ jobs:
 
 
           </manifest>
+
           EOF
 
 
-          sed -i "s|__APP_NAME__|${APP_NAME}|g" \
+          sed -i \
+            "s|__APP_NAME__|${APP_NAME}|g" \
             android-project/app/src/main/AndroidManifest.xml
 
 
@@ -634,44 +845,70 @@ jobs:
 
 
           cat > "$JAVA_PATH/MainActivity.java" <<'EOF'
+
           package __PACKAGE_NAME__;
 
 
           import android.Manifest;
+
           import android.app.Activity;
+
           import android.content.ContentValues;
+
           import android.content.Intent;
+
           import android.content.pm.PackageManager;
+
           import android.graphics.Color;
+
           import android.net.Uri;
+
           import android.os.Build;
+
           import android.os.Bundle;
+
           import android.os.Environment;
+
           import android.provider.MediaStore;
+
           import android.webkit.JavascriptInterface;
+
           import android.webkit.PermissionRequest;
+
           import android.webkit.ValueCallback;
+
           import android.webkit.WebChromeClient;
+
           import android.webkit.WebResourceRequest;
+
           import android.webkit.WebResourceResponse;
+
           import android.webkit.WebSettings;
+
           import android.webkit.WebView;
 
-          import androidx.annotation.Nullable;
+
           import androidx.media3.common.MediaItem;
+
           import androidx.media3.common.MimeTypes;
+
           import androidx.media3.transformer.EditedMediaItem;
+
           import androidx.media3.transformer.ExportException;
+
           import androidx.media3.transformer.ExportResult;
+
           import androidx.media3.transformer.Transformer;
+
           import androidx.webkit.WebViewAssetLoader;
+
           import androidx.webkit.WebViewClientCompat;
 
+
           import java.io.File;
-          import java.io.FileInputStream;
+
           import java.io.FileOutputStream;
-          import java.io.InputStream;
-          import java.io.OutputStream;
+
           import java.util.Base64;
 
 
@@ -684,14 +921,11 @@ jobs:
 
               private ValueCallback<Uri[]> filePathCallback;
 
+
               private static final int FILE_CHOOSER_REQUEST = 2001;
 
               private static final int CAMERA_PERMISSION_REQUEST = 1001;
 
-
-              // =================================================
-              // VIDEO EXPORT
-              // =================================================
 
               private File nativeInputFile;
 
@@ -702,18 +936,16 @@ jobs:
               private Transformer transformer;
 
 
-              // =================================================
-              // ACTIVITY CREATE
-              // =================================================
-
               @Override
-              protected void onCreate(Bundle savedInstanceState) {
+              protected void onCreate(
+                  Bundle savedInstanceState
+              ) {
 
                   super.onCreate(savedInstanceState);
 
 
                   getWindow().setStatusBarColor(
-                      Color.rgb(180, 35, 0)
+                      Color.rgb(180,35,0)
                   );
 
                   getWindow().setNavigationBarColor(
@@ -726,6 +958,7 @@ jobs:
 
                   WebSettings settings =
                       webView.getSettings();
+
 
                   settings.setJavaScriptEnabled(true);
 
@@ -777,10 +1010,6 @@ jobs:
                   );
 
 
-                  // =================================================
-                  // NATIVE EXPORT BRIDGE
-                  // =================================================
-
                   webView.addJavascriptInterface(
                       new AndroidExportBridge(),
                       "AndroidExport"
@@ -798,14 +1027,18 @@ jobs:
                               FileChooserParams params
                           ) {
 
-                              if (filePathCallback != null) {
+                              if (
+                                  filePathCallback != null
+                              ) {
 
                                   filePathCallback
                                       .onReceiveValue(null);
 
                               }
 
-                              filePathCallback = callback;
+
+                              filePathCallback =
+                                  callback;
 
 
                               try {
@@ -818,13 +1051,15 @@ jobs:
                                       FILE_CHOOSER_REQUEST
                                   );
 
-                              } catch (Exception e) {
+                              }
+                              catch(Exception e) {
 
                                   filePathCallback = null;
 
                                   return false;
 
                               }
+
 
                               return true;
 
@@ -838,38 +1073,31 @@ jobs:
 
                               runOnUiThread(() -> {
 
-                                  boolean cameraRequested =
+                                  boolean camera =
                                       false;
 
-                                  String[] resources =
-                                      request.getResources();
 
-                                  if (resources != null) {
+                                  for(
+                                      String resource:
+                                      request.getResources()
+                                  ) {
 
-                                      for (
-                                          String resource :
-                                          resources
+                                      if(
+                                          PermissionRequest
+                                              .RESOURCE_VIDEO_CAPTURE
+                                              .equals(resource)
                                       ) {
 
-                                          if (
-                                              PermissionRequest
-                                                  .RESOURCE_VIDEO_CAPTURE
-                                                  .equals(resource)
-                                          ) {
+                                          camera = true;
 
-                                              cameraRequested =
-                                                  true;
-
-                                              break;
-
-                                          }
+                                          break;
 
                                       }
 
                                   }
 
 
-                                  if (!cameraRequested) {
+                                  if(!camera) {
 
                                       request.deny();
 
@@ -878,7 +1106,7 @@ jobs:
                                   }
 
 
-                                  if (
+                                  if(
                                       checkSelfPermission(
                                           Manifest.permission.CAMERA
                                       )
@@ -902,6 +1130,7 @@ jobs:
                                   pendingPermissionRequest =
                                       request;
 
+
                                   requestPermissions(
                                       new String[] {
                                           Manifest.permission.CAMERA
@@ -910,29 +1139,6 @@ jobs:
                                   );
 
                               });
-
-                          }
-
-
-                          @Override
-                          public void onPermissionRequestCanceled(
-                              PermissionRequest request
-                          ) {
-
-                              if (
-                                  pendingPermissionRequest
-                                  == request
-                              ) {
-
-                                  pendingPermissionRequest =
-                                      null;
-
-                              }
-
-                              super
-                                  .onPermissionRequestCanceled(
-                                      request
-                                  );
 
                           }
 
@@ -951,45 +1157,38 @@ jobs:
 
 
               // =================================================
-              // JAVASCRIPT NATIVE EXPORT BRIDGE
+              // NATIVE EXPORT BRIDGE
               // =================================================
 
               private class AndroidExportBridge {
 
 
                   @JavascriptInterface
-                  public synchronized void startExport(
-                      String fileName
-                  ) {
+                  public void startExport() {
 
                       runOnUiThread(() -> {
 
                           try {
 
-                              stopCurrentExport();
-
+                              stopExport();
 
                               nativeInputFile =
                                   new File(
                                       getCacheDir(),
-                                      "cine_input_" +
-                                      System.currentTimeMillis() +
-                                      ".webm"
+                                      "cine_input.webm"
                                   );
-
 
                               nativeOutputFile =
                                   new File(
                                       getCacheDir(),
-                                      "cine_output_" +
-                                      System.currentTimeMillis() +
-                                      ".mp4"
+                                      "cine_output.mp4"
                                   );
 
 
                               nativeInputStream =
                                   new FileOutputStream(
-                                      nativeInputFile
+                                      nativeInputFile,
+                                      false
                                   );
 
 
@@ -997,12 +1196,13 @@ jobs:
                                   "window.__nativeExportStarted && window.__nativeExportStarted();"
                               );
 
+                          }
+                          catch(Exception e) {
 
-                          } catch (Exception e) {
-
-                              sendExportResult(
+                              notifyJavascript(
                                   false,
-                                  e.getMessage()
+                                  "Unable to start native export: "
+                                      + e.getMessage()
                               );
 
                           }
@@ -1013,35 +1213,47 @@ jobs:
 
 
                   @JavascriptInterface
-                  public synchronized void appendChunk(
-                      String base64Data
+                  public void appendChunk(
+                      String base64
                   ) {
+
+                      if(
+                          base64 == null ||
+                          base64.length() == 0
+                      ) {
+
+                          return;
+
+                      }
+
 
                       try {
 
-                          if (nativeInputStream == null) {
+                          byte[] data =
+                              Base64
+                                  .getDecoder()
+                                  .decode(base64);
 
-                              throw new Exception(
-                                  "Export has not been started."
+
+                          if(
+                              nativeInputStream != null
+                          ) {
+
+                              nativeInputStream.write(
+                                  data
                               );
+
+                              nativeInputStream.flush();
 
                           }
 
+                      }
+                      catch(Exception e) {
 
-                          byte[] data =
-                              Base64.getDecoder().decode(
-                                  base64Data
-                              );
-
-
-                          nativeInputStream.write(data);
-
-
-                      } catch (Exception e) {
-
-                          sendExportResult(
+                          notifyJavascript(
                               false,
-                              e.getMessage()
+                              "Chunk write failed: "
+                                  + e.getMessage()
                           );
 
                       }
@@ -1050,17 +1262,15 @@ jobs:
 
 
                   @JavascriptInterface
-                  public synchronized void finishExport() {
+                  public void finishExport() {
 
                       runOnUiThread(() -> {
 
                           try {
 
-                              if (
+                              if(
                                   nativeInputStream != null
                               ) {
-
-                                  nativeInputStream.flush();
 
                                   nativeInputStream.close();
 
@@ -1069,14 +1279,96 @@ jobs:
                               }
 
 
-                              transformToMp4();
+                              if(
+                                  nativeInputFile == null ||
+                                  !nativeInputFile.exists()
+                              ) {
+
+                                  throw new Exception(
+                                      "Input video not found."
+                                  );
+
+                              }
 
 
-                          } catch (Exception e) {
+                              MediaItem mediaItem =
+                                  MediaItem.fromUri(
+                                      Uri.fromFile(
+                                          nativeInputFile
+                                      )
+                                  );
 
-                              sendExportResult(
+
+                              EditedMediaItem edited =
+                                  new EditedMediaItem.Builder(
+                                      mediaItem
+                                  ).build();
+
+
+                              Transformer.Listener listener =
+                                  new Transformer.Listener() {
+
+                                      @Override
+                                      public void onCompleted(
+                                          Composition composition,
+                                          ExportResult result
+                                      ) {
+
+                                          runOnUiThread(() -> {
+
+                                              saveToGallery();
+
+                                          });
+
+                                      }
+
+
+                                      @Override
+                                      public void onError(
+                                          Composition composition,
+                                          ExportResult result,
+                                          ExportException exception
+                                      ) {
+
+                                          notifyJavascript(
+                                              false,
+                                              "MP4 conversion failed: "
+                                                  + exception.getMessage()
+                                          );
+
+                                      }
+
+                                  };
+
+
+                              transformer =
+                                  new Transformer.Builder(
+                                      MainActivity.this
+                                  )
+                                  .setVideoMimeType(
+                                      MimeTypes.VIDEO_H264
+                                  )
+                                  .setAudioMimeType(
+                                      MimeTypes.AUDIO_AAC
+                                  )
+                                  .addListener(listener)
+                                  .build();
+
+
+                              transformer.start(
+                                  edited,
+                                  nativeOutputFile
+                                      .getAbsolutePath()
+                              );
+
+
+                          }
+                          catch(Exception e) {
+
+                              notifyJavascript(
                                   false,
-                                  e.getMessage()
+                                  "Export failed: "
+                                      + e.getMessage()
                               );
 
                           }
@@ -1087,13 +1379,13 @@ jobs:
 
 
                   @JavascriptInterface
-                  public synchronized void cancelExport() {
+                  public void cancelExport() {
 
                       runOnUiThread(() -> {
 
-                          stopCurrentExport();
+                          stopExport();
 
-                          sendExportResult(
+                          notifyJavascript(
                               false,
                               "Export cancelled."
                           );
@@ -1106,345 +1398,177 @@ jobs:
 
 
               // =================================================
-              // TRANSFORM WEBM -> H264/AAC MP4
+              // SAVE MP4 TO GALLERY
               // =================================================
 
-              private void transformToMp4() {
+              private void saveToGallery() {
 
                   try {
 
-                      if (
-                          nativeInputFile == null
-                          ||
-                          !nativeInputFile.exists()
-                      ) {
-
-                          throw new Exception(
-                              "Input video not found."
-                          );
-
-                      }
-
-
-                      MediaItem inputMediaItem =
-                          MediaItem.fromUri(
-                              Uri.fromFile(nativeInputFile)
-                          );
-
-
-                      EditedMediaItem editedMediaItem =
-                          new EditedMediaItem.Builder(
-                              inputMediaItem
-                          ).build();
-
-
-                      transformer =
-                          new Transformer.Builder(this)
-
-                              .setVideoMimeType(
-                                  MimeTypes.VIDEO_H264
-                              )
-
-                              .setAudioMimeType(
-                                  MimeTypes.AUDIO_AAC
-                              )
-
-                              .addListener(
-                                  new Transformer.Listener() {
-
-                                      @Override
-                                      public void onCompleted(
-                                          androidx.media3.transformer.Composition composition,
-                                          ExportResult result
-                                      ) {
-
-                                          saveMp4ToGallery();
-
-                                      }
-
-
-                                      @Override
-                                      public void onError(
-                                          androidx.media3.transformer.Composition composition,
-                                          ExportResult result,
-                                          ExportException exception
-                                      ) {
-
-                                          sendExportResult(
-                                              false,
-                                              "MP4 conversion failed: " +
-                                              exception.getMessage()
-                                          );
-
-                                      }
-
-                                  }
-                              )
-
-                              .build();
-
-
-                      transformer.start(
-                          editedMediaItem,
-                          nativeOutputFile.getAbsolutePath()
-                      );
-
-
-                  } catch (Exception e) {
-
-                      sendExportResult(
-                          false,
-                          e.getMessage()
-                      );
-
-                  }
-
-              }
-
-
-              // =================================================
-              // SAVE MP4 TO ANDROID GALLERY
-              // =================================================
-
-              private void saveMp4ToGallery() {
-
-                  try {
-
-                      if (
-                          nativeOutputFile == null
-                          ||
+                      if(
+                          nativeOutputFile == null ||
                           !nativeOutputFile.exists()
                       ) {
 
                           throw new Exception(
-                              "MP4 output file not found."
+                              "MP4 output not found."
                           );
 
                       }
 
 
-                      String displayName =
-                          "CineReel_" +
-                          System.currentTimeMillis() +
+                      String fileName =
+                          "CineReel_"
+                          +
+                          System.currentTimeMillis()
+                          +
                           ".mp4";
 
 
-                      if (
-                          Build.VERSION.SDK_INT >=
+                      ContentValues values =
+                          new ContentValues();
+
+
+                      values.put(
+                          MediaStore.Video.Media.DISPLAY_NAME,
+                          fileName
+                      );
+
+
+                      values.put(
+                          MediaStore.Video.Media.MIME_TYPE,
+                          "video/mp4"
+                      );
+
+
+                      if(
+                          Build.VERSION.SDK_INT
+                          >=
                           Build.VERSION_CODES.Q
                       ) {
 
-                          ContentValues values =
-                              new ContentValues();
-
-
-                          values.put(
-                              MediaStore.Video.Media.DISPLAY_NAME,
-                              displayName
-                          );
-
-
-                          values.put(
-                              MediaStore.Video.Media.MIME_TYPE,
-                              "video/mp4"
-                          );
-
-
                           values.put(
                               MediaStore.Video.Media.RELATIVE_PATH,
-                              Environment.DIRECTORY_MOVIES +
-                              "/ASIM TECH"
+                              Environment.DIRECTORY_MOVIES
+                                  + "/ASIM TECH"
                           );
-
 
                           values.put(
                               MediaStore.Video.Media.IS_PENDING,
                               1
                           );
 
+                      }
 
-                          Uri uri =
+
+                      Uri uri =
+                          getContentResolver()
+                              .insert(
+                                  MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                                  values
+                              );
+
+
+                      if(uri == null) {
+
+                          throw new Exception(
+                              "Unable to create Gallery entry."
+                          );
+
+                      }
+
+
+                      try(
+                          java.io.InputStream input =
+                              new java.io.FileInputStream(
+                                  nativeOutputFile
+                              );
+
+                          java.io.OutputStream output =
                               getContentResolver()
-                                  .insert(
-                                      MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                                      values
-                                  );
+                                  .openOutputStream(uri)
+                      ) {
 
-
-                          if (uri == null) {
+                          if(output == null) {
 
                               throw new Exception(
-                                  "Could not create Gallery item."
+                                  "Unable to open Gallery output."
                               );
 
                           }
 
 
-                          try (
-                              InputStream input =
-                                  new FileInputStream(
-                                      nativeOutputFile
-                                  );
+                          byte[] buffer =
+                              new byte[1024 * 1024];
 
-                              OutputStream output =
-                                  getContentResolver()
-                                      .openOutputStream(uri)
+                          int count;
+
+
+                          while(
+                              (count =
+                                  input.read(buffer))
+                              != -1
                           ) {
 
-                              byte[] buffer =
-                                  new byte[1024 * 1024];
-
-                              int length;
-
-                              while (
-                                  (length =
-                                      input.read(buffer))
-                                  > 0
-                              ) {
-
-                                  output.write(
-                                      buffer,
-                                      0,
-                                      length
-                                  );
-
-                              }
-
-                              output.flush();
+                              output.write(
+                                  buffer,
+                                  0,
+                                  count
+                              );
 
                           }
 
 
-                          ContentValues completeValues =
+                          output.flush();
+
+                      }
+
+
+                      if(
+                          Build.VERSION.SDK_INT
+                          >=
+                          Build.VERSION_CODES.Q
+                      ) {
+
+                          ContentValues done =
                               new ContentValues();
 
-                          completeValues.put(
+                          done.put(
                               MediaStore.Video.Media.IS_PENDING,
                               0
                           );
 
-
                           getContentResolver()
                               .update(
                                   uri,
-                                  completeValues,
+                                  done,
                                   null,
                                   null
                               );
 
-
-                          sendExportResult(
-                              true,
-                              "MP4 video saved to Gallery."
-                          );
-
-
-                      } else {
-
-                          File moviesDir =
-                              new File(
-                                  Environment
-                                      .getExternalStoragePublicDirectory(
-                                          Environment.DIRECTORY_MOVIES
-                                      ),
-                                  "ASIM TECH"
-                              );
-
-
-                          if (!moviesDir.exists()) {
-
-                              moviesDir.mkdirs();
-
-                          }
-
-
-                          File destination =
-                              new File(
-                                  moviesDir,
-                                  displayName
-                              );
-
-
-                          copyFile(
-                              nativeOutputFile,
-                              destination
-                          );
-
-
-                          Intent scanIntent =
-                              new Intent(
-                                  Intent.ACTION_MEDIA_SCANNER_SCAN_FILE
-                              );
-
-
-                          scanIntent.setData(
-                              Uri.fromFile(destination)
-                          );
-
-
-                          sendBroadcast(
-                              scanIntent
-                          );
-
-
-                          sendExportResult(
-                              true,
-                              "MP4 video saved to Gallery."
-                          );
-
                       }
 
 
-                  } catch (Exception e) {
+                      notifyJavascript(
+                          true,
+                          "MP4 saved to Gallery: "
+                              + fileName
+                      );
 
-                      sendExportResult(
+
+                  }
+                  catch(Exception e) {
+
+                      notifyJavascript(
                           false,
-                          "Gallery save failed: " +
-                          e.getMessage()
+                          "Gallery save failed: "
+                              + e.getMessage()
                       );
 
                   }
+                  finally {
 
-              }
-
-
-              // =================================================
-              // FILE COPY
-              // =================================================
-
-              private void copyFile(
-                  File source,
-                  File destination
-              ) throws Exception {
-
-                  try (
-                      InputStream input =
-                          new FileInputStream(source);
-
-                      OutputStream output =
-                          new FileOutputStream(destination)
-                  ) {
-
-                      byte[] buffer =
-                          new byte[1024 * 1024];
-
-                      int length;
-
-                      while (
-                          (length =
-                              input.read(buffer))
-                          > 0
-                      ) {
-
-                          output.write(
-                              buffer,
-                              0,
-                              length
-                          );
-
-                      }
-
-                      output.flush();
+                      cleanupFiles();
 
                   }
 
@@ -1452,18 +1576,20 @@ jobs:
 
 
               // =================================================
-              // JAVASCRIPT RESULT
+              // JAVASCRIPT CALLBACK
               // =================================================
 
-              private void sendExportResult(
+              private void notifyJavascript(
                   boolean success,
                   String message
               ) {
 
-                  String safeMessage =
+                  String safe =
                       message == null
-                      ? ""
-                      : message
+                      ?
+                      ""
+                      :
+                      message
                           .replace(
                               "\\",
                               "\\\\"
@@ -1482,18 +1608,32 @@ jobs:
                           );
 
 
-                  String javascript =
-                      "window.__nativeExportDone && " +
-                      "window.__nativeExportDone(" +
-                      success +
-                      ",'" +
-                      safeMessage +
+                  String js =
+                      "window.__nativeExportDone && "
+                      +
+                      "window.__nativeExportDone("
+                      +
+                      success
+                      +
+                      ",'"
+                      +
+                      safe
+                      +
                       "');";
 
 
+                  sendJavascript(js);
+
+              }
+
+
+              private void sendJavascript(
+                  String javascript
+              ) {
+
                   runOnUiThread(() -> {
 
-                      if (webView != null) {
+                      if(webView != null) {
 
                           webView.evaluateJavascript(
                               javascript,
@@ -1504,9 +1644,6 @@ jobs:
 
                   });
 
-
-                  cleanupExportFiles();
-
               }
 
 
@@ -1514,18 +1651,18 @@ jobs:
               // STOP EXPORT
               // =================================================
 
-              private void stopCurrentExport() {
+              private void stopExport() {
 
                   try {
 
-                      if (transformer != null) {
+                      if(transformer != null) {
 
                           transformer.cancel();
 
                       }
 
-                  } catch (Exception ignored) {
                   }
+                  catch(Exception ignored) {}
 
 
                   transformer = null;
@@ -1533,7 +1670,7 @@ jobs:
 
                   try {
 
-                      if (
+                      if(
                           nativeInputStream != null
                       ) {
 
@@ -1541,8 +1678,8 @@ jobs:
 
                       }
 
-                  } catch (Exception ignored) {
                   }
+                  catch(Exception ignored) {}
 
 
                   nativeInputStream = null;
@@ -1554,13 +1691,12 @@ jobs:
               // CLEANUP
               // =================================================
 
-              private void cleanupExportFiles() {
+              private void cleanupFiles() {
 
                   try {
 
-                      if (
-                          nativeInputFile != null
-                          &&
+                      if(
+                          nativeInputFile != null &&
                           nativeInputFile.exists()
                       ) {
 
@@ -1568,15 +1704,14 @@ jobs:
 
                       }
 
-                  } catch (Exception ignored) {
                   }
+                  catch(Exception ignored) {}
 
 
                   try {
 
-                      if (
-                          nativeOutputFile != null
-                          &&
+                      if(
+                          nativeOutputFile != null &&
                           nativeOutputFile.exists()
                       ) {
 
@@ -1584,32 +1719,8 @@ jobs:
 
                       }
 
-                  } catch (Exception ignored) {
                   }
-
-              }
-
-
-              // =================================================
-              // JAVASCRIPT HELPER
-              // =================================================
-
-              private void sendJavascript(
-                  String javascript
-              ) {
-
-                  runOnUiThread(() -> {
-
-                      if (webView != null) {
-
-                          webView.evaluateJavascript(
-                              javascript,
-                              null
-                          );
-
-                      }
-
-                  });
+                  catch(Exception ignored) {}
 
               }
 
@@ -1632,12 +1743,12 @@ jobs:
                   );
 
 
-                  if (
+                  if(
                       requestCode ==
                       FILE_CHOOSER_REQUEST
                   ) {
 
-                      if (
+                      if(
                           filePathCallback == null
                       ) {
 
@@ -1649,7 +1760,7 @@ jobs:
                       Uri[] results = null;
 
 
-                      if (
+                      if(
                           resultCode ==
                           Activity.RESULT_OK
                           &&
@@ -1668,7 +1779,9 @@ jobs:
 
 
                       filePathCallback
-                          .onReceiveValue(results);
+                          .onReceiveValue(
+                              results
+                          );
 
 
                       filePathCallback = null;
@@ -1696,19 +1809,17 @@ jobs:
                   );
 
 
-                  if (
+                  if(
                       requestCode ==
                       CAMERA_PERMISSION_REQUEST
                   ) {
 
-
-                      if (
+                      if(
                           pendingPermissionRequest
                           != null
                       ) {
 
-
-                          if (
+                          if(
                               grantResults.length > 0
                               &&
                               grantResults[0]
@@ -1724,7 +1835,8 @@ jobs:
                                   }
                               );
 
-                          } else {
+                          }
+                          else {
 
                               pendingPermissionRequest.deny();
 
@@ -1742,21 +1854,21 @@ jobs:
 
 
               // =================================================
-              // BACK BUTTON
+              // BACK
               // =================================================
 
               @Override
               public void onBackPressed() {
 
-                  if (
-                      webView != null
-                      &&
+                  if(
+                      webView != null &&
                       webView.canGoBack()
                   ) {
 
                       webView.goBack();
 
-                  } else {
+                  }
+                  else {
 
                       super.onBackPressed();
 
@@ -1772,12 +1884,12 @@ jobs:
               @Override
               protected void onDestroy() {
 
-                  stopCurrentExport();
+                  stopExport();
 
-                  cleanupExportFiles();
+                  cleanupFiles();
 
 
-                  if (webView != null) {
+                  if(webView != null) {
 
                       webView.destroy();
 
@@ -1789,10 +1901,12 @@ jobs:
               }
 
           }
+
           EOF
 
 
-          sed -i "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
+          sed -i \
+            "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
             "$JAVA_PATH/MainActivity.java"
 
 
@@ -1808,7 +1922,10 @@ jobs:
             android-project/app/src/main/res/values
 
 
-          cat > android-project/app/src/main/res/values/styles.xml <<'EOF'
+          cat > \
+            android-project/app/src/main/res/values/styles.xml \
+            <<'EOF'
+
           <resources>
 
               <style
@@ -1842,11 +1959,12 @@ jobs:
               </style>
 
           </resources>
+
           EOF
 
 
       # =====================================================
-      # VERIFY ANDROID PROJECT
+      # VERIFY PROJECT
       # =====================================================
 
       - name: Verify Android project
@@ -1858,127 +1976,72 @@ jobs:
           echo "======================================"
 
 
-          test -f android-project/build.gradle
+          test -f \
+            android-project/build.gradle
 
-          test -f android-project/settings.gradle
+          test -f \
+            android-project/settings.gradle
 
-          test -f android-project/app/build.gradle
+          test -f \
+            android-project/app/build.gradle
 
-          test -f android-project/app/src/main/AndroidManifest.xml
-
-          test -f android-project/app/src/main/res/values/styles.xml
-
-
-          echo ""
-          echo "Checking CAMERA permission..."
-
-          grep \
-            "android.permission.CAMERA" \
+          test -f \
             android-project/app/src/main/AndroidManifest.xml
 
-
-          echo ""
-          echo "Checking WRITE_EXTERNAL_STORAGE..."
-
-          grep \
-            "android.permission.WRITE_EXTERNAL_STORAGE" \
-            android-project/app/src/main/AndroidManifest.xml
+          test -f \
+            android-project/app/src/main/res/values/styles.xml
 
 
-          echo ""
-          echo "Checking Media3 Transformer..."
+          JAVA_FILE="android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+
+
+          test -f "$JAVA_FILE"
+
+
+          echo "Checking Media3..."
 
           grep \
             "media3-transformer" \
             android-project/app/build.gradle
-
-
-          echo ""
-          echo "Checking Media3 Common..."
 
           grep \
             "media3-common" \
             android-project/app/build.gradle
 
 
-          echo ""
-          echo "Checking Media3 Effect..."
-
-          grep \
-            "media3-effect" \
-            android-project/app/build.gradle
-
-
-          echo ""
           echo "Checking H264..."
 
           grep \
             "MimeTypes.VIDEO_H264" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+            "$JAVA_FILE"
 
 
-          echo ""
           echo "Checking AAC..."
 
           grep \
             "MimeTypes.AUDIO_AAC" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+            "$JAVA_FILE"
 
 
-          echo ""
-          echo "Checking AndroidExport bridge..."
+          echo "Checking AndroidExport..."
 
           grep \
             "AndroidExport" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+            "$JAVA_FILE"
 
 
-          echo ""
-          echo "Checking startExport..."
-
-          grep \
-            "startExport" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
-
-
-          echo ""
-          echo "Checking appendChunk..."
-
-          grep \
-            "appendChunk" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
-
-
-          echo ""
-          echo "Checking finishExport..."
-
-          grep \
-            "finishExport" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
-
-
-          echo ""
-          echo "Checking Gallery save..."
+          echo "Checking Gallery..."
 
           grep \
             "MediaStore.Video.Media" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+            "$JAVA_FILE"
 
 
-          echo ""
-          echo "Checking FILE CHOOSER..."
+          echo "Checking file chooser..."
 
           grep \
             "onShowFileChooser" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
-
-
-          echo ""
-          echo "Checking onActivityResult..."
-
-          grep \
-            "onActivityResult" \
-            "android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
+            "$JAVA_FILE"
 
 
           echo ""
@@ -1998,17 +2061,12 @@ jobs:
           echo "STARTING APK BUILD"
           echo "======================================"
 
-
           gradle assembleDebug \
             --no-daemon \
             --stacktrace
 
-
           echo ""
-          echo "======================================"
           echo "APK BUILD COMPLETED"
-          echo "======================================"
-
 
           ls -lh \
             app/build/outputs/apk/debug/
@@ -2024,11 +2082,9 @@ jobs:
 
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
-
           cp \
             android-project/app/build/outputs/apk/debug/app-debug.apk \
             "ASIM-TECH-${BUILD_ID}.apk"
-
 
           ls -lh \
             "ASIM-TECH-${BUILD_ID}.apk"
@@ -2045,24 +2101,22 @@ jobs:
 
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
-
           SHA=$(
             sha256sum \
               "ASIM-TECH-${BUILD_ID}.apk" |
             awk '{print $1}'
           )
 
-
           SIZE=$(
             stat -c%s \
               "ASIM-TECH-${BUILD_ID}.apk"
           )
 
+          echo "sha256=$SHA" \
+            >> "$GITHUB_OUTPUT"
 
-          echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
-
-          echo "size=$SIZE" >> "$GITHUB_OUTPUT"
-
+          echo "size=$SIZE" \
+            >> "$GITHUB_OUTPUT"
 
           echo "SHA256=$SHA"
 
@@ -2070,7 +2124,7 @@ jobs:
 
 
       # =====================================================
-      # UPLOAD APK TO SUPABASE
+      # UPLOAD APK
       # =====================================================
 
       - name: Upload APK
@@ -2130,8 +2184,9 @@ jobs:
               \"completed_at\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
             }"
 
-
-          echo "BUILD SUCCESS."
+          echo "======================================"
+          echo "BUILD SUCCESS"
+          echo "======================================"
 
 
       # =====================================================
@@ -2159,7 +2214,6 @@ jobs:
         run: |
 
           echo "Build failed."
-
 
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
