@@ -1,7 +1,6 @@
 name: ASIM TECH Android APK Builder
 
 on:
-
   push:
     branches:
       - main
@@ -11,15 +10,12 @@ on:
   schedule:
     - cron: "*/5 * * * *"
 
-
 permissions:
   contents: read
-
 
 concurrency:
   group: android-apk-builder
   cancel-in-progress: false
-
 
 jobs:
 
@@ -30,20 +26,19 @@ jobs:
     env:
       SUPABASE_URL: https://lgwaeqgiqrsjprsecwxx.supabase.co
 
-
     steps:
 
-      # =====================================================
+      # =========================================================
       # CHECKOUT
-      # =====================================================
+      # =========================================================
 
       - name: Checkout repository
         uses: actions/checkout@v4
 
 
-      # =====================================================
-      # JAVA
-      # =====================================================
+      # =========================================================
+      # JAVA 17
+      # =========================================================
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
@@ -52,12 +47,13 @@ jobs:
           java-version: "17"
 
 
-      # =====================================================
+      # =========================================================
       # TOOLS
-      # =====================================================
+      # =========================================================
 
       - name: Install dependencies
         run: |
+          set -e
 
           sudo apt-get update
 
@@ -68,9 +64,9 @@ jobs:
             python3
 
 
-      # =====================================================
+      # =========================================================
       # GRADLE
-      # =====================================================
+      # =========================================================
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -78,13 +74,9 @@ jobs:
           gradle-version: "8.10.2"
 
 
-      # =====================================================
+      # =========================================================
       # GET QUEUED BUILD
-      #
-      # IMPORTANT:
-      # We only trust BUILD_ID here.
-      # APP_ID will be resolved again from app_builds.
-      # =====================================================
+      # =========================================================
 
       - name: Get queued build
         id: queue
@@ -98,7 +90,6 @@ jobs:
           echo "CHECKING QUEUED BUILDS"
           echo "======================================"
 
-
           RESPONSE=$(curl -sS \
             --fail-with-body \
             "${SUPABASE_URL}/rest/v1/app_builds?status=eq.queued&order=queued_at.asc&limit=1" \
@@ -106,79 +97,46 @@ jobs:
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Accept: application/json")
 
-
-          echo ""
-          echo "Supabase response:"
           echo "$RESPONSE"
 
-
           if ! echo "$RESPONSE" | jq empty; then
-
             echo "ERROR: Invalid JSON received from Supabase."
-
             exit 1
-
           fi
-
 
           if ! echo "$RESPONSE" | jq -e 'type == "array"' >/dev/null; then
-
             echo "ERROR: app_builds response is not an array."
-
             exit 1
-
           fi
 
+          BUILD_ID=$(echo "$RESPONSE" | jq -r '.[0].id // empty')
 
-          BUILD_ID=$(
-            echo "$RESPONSE" |
-            jq -r '.[0].id // empty'
-          )
-
-
-          if [ -z "$BUILD_ID" ] ||
-             [ "$BUILD_ID" = "null" ]; then
-
-            echo ""
+          if [ -z "$BUILD_ID" ] || [ "$BUILD_ID" = "null" ]; then
             echo "No queued build found."
-
             echo "has_build=false" >> "$GITHUB_OUTPUT"
-
             exit 0
-
           fi
 
+          echo "BUILD_ID=$BUILD_ID"
 
-          echo ""
-          echo "Queued BUILD_ID:"
-          echo "$BUILD_ID"
-
-
-          echo "has_build=true" \
-            >> "$GITHUB_OUTPUT"
-
-          echo "build_id=$BUILD_ID" \
-            >> "$GITHUB_OUTPUT"
+          echo "has_build=true" >> "$GITHUB_OUTPUT"
+          echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
 
 
-      # =====================================================
-      # STOP IF QUEUE EMPTY
-      # =====================================================
+      # =========================================================
+      # STOP IF NO QUEUE
+      # =========================================================
 
       - name: Stop if queue empty
         if: steps.queue.outputs.has_build != 'true'
         run: |
-
           echo "No queued APK build."
-
           exit 0
 
 
-      # =====================================================
-      # RESOLVE BUILD + APP ID
-      #
-      # This is the important UUID fix.
-      # =====================================================
+      # =========================================================
+      # RESOLVE BUILD INFORMATION
+      # =========================================================
 
       - name: Resolve build information
         if: steps.queue.outputs.has_build == 'true'
@@ -194,139 +152,60 @@ jobs:
           echo "RESOLVING BUILD INFORMATION"
           echo "======================================"
 
-
           if [ -z "$BUILD_ID" ]; then
-
             echo "ERROR: BUILD_ID is empty."
-
             exit 1
-
           fi
 
-
-          BUILD_RESPONSE=$(curl -sS \
+          RESPONSE=$(curl -sS \
             --fail-with-body \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}&select=id,app_id,status,version_name,version_code,created_by&limit=1" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Accept: application/json")
 
+          echo "$RESPONSE"
 
-          echo ""
-          echo "Build response:"
-          echo "$BUILD_RESPONSE"
-
-
-          if ! echo "$BUILD_RESPONSE" | jq empty; then
-
-            echo "ERROR: Invalid build response."
-
+          if ! echo "$RESPONSE" | jq empty; then
+            echo "ERROR: Invalid JSON."
             exit 1
-
           fi
 
-
-          if ! echo "$BUILD_RESPONSE" |
-              jq -e 'type == "array"' >/dev/null
-          then
-
+          if ! echo "$RESPONSE" | jq -e 'type == "array"' >/dev/null; then
             echo "ERROR: Build response is not an array."
-
             exit 1
-
           fi
 
+          APP_ID=$(echo "$RESPONSE" | jq -r '.[0].app_id // empty')
+          VERSION_NAME=$(echo "$RESPONSE" | jq -r '.[0].version_name // "1.0.0"')
+          VERSION_CODE=$(echo "$RESPONSE" | jq -r '.[0].version_code // 1')
 
-          APP_ID=$(
-            echo "$BUILD_RESPONSE" |
-            jq -r '.[0].app_id // empty'
-          )
-
-
-          STATUS=$(
-            echo "$BUILD_RESPONSE" |
-            jq -r '.[0].status // empty'
-          )
-
-
-          VERSION_NAME=$(
-            echo "$BUILD_RESPONSE" |
-            jq -r '.[0].version_name // "1.0.0"'
-          )
-
-
-          VERSION_CODE=$(
-            echo "$BUILD_RESPONSE" |
-            jq -r '.[0].version_code // 1'
-          )
-
-
-          if [ -z "$APP_ID" ] ||
-             [ "$APP_ID" = "null" ]; then
-
-            echo ""
-            echo "======================================"
-            echo "ERROR: APP_ID IS EMPTY"
-            echo "======================================"
-
-            echo "BUILD_ID:"
-            echo "$BUILD_ID"
-
-            echo "Response:"
-            echo "$BUILD_RESPONSE"
-
+          if [ -z "$APP_ID" ] || [ "$APP_ID" = "null" ]; then
+            echo "ERROR: APP_ID is empty."
+            echo "$RESPONSE"
             exit 1
-
           fi
 
-
-          if ! echo "$APP_ID" |
-              grep -Eq \
-              '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+          if ! echo "$APP_ID" | grep -Eq \
+            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
           then
-
-            echo ""
-            echo "ERROR: Invalid APP_ID UUID:"
+            echo "ERROR: Invalid APP_ID:"
             echo "$APP_ID"
-
             exit 1
-
           fi
 
+          echo "APP_ID=$APP_ID"
+          echo "VERSION_NAME=$VERSION_NAME"
+          echo "VERSION_CODE=$VERSION_CODE"
 
-          echo ""
-          echo "APP_ID:"
-          echo "$APP_ID"
-
-          echo ""
-          echo "BUILD STATUS:"
-          echo "$STATUS"
-
-          echo ""
-          echo "VERSION:"
-          echo "$VERSION_NAME"
-
-          echo ""
-          echo "VERSION CODE:"
-          echo "$VERSION_CODE"
+          echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+          echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
 
 
-          echo "APP_ID=$APP_ID" \
-            >> "$GITHUB_ENV"
-
-          echo "VERSION_NAME=$VERSION_NAME" \
-            >> "$GITHUB_ENV"
-
-          echo "VERSION_CODE=$VERSION_CODE" \
-            >> "$GITHUB_ENV"
-
-          echo "app_id=$APP_ID" \
-            >> "$GITHUB_OUTPUT"
-
-
-      # =====================================================
+      # =========================================================
       # MARK BUILDING
-      # =====================================================
+      # =========================================================
 
       - name: Mark build as building
         if: steps.queue.outputs.has_build == 'true'
@@ -334,8 +213,6 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
         run: |
-
-          set -e
 
           curl -sS -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
@@ -349,50 +226,24 @@ jobs:
             }"
 
 
-          echo "Build marked as building."
-
-
-      # =====================================================
+      # =========================================================
       # DOWNLOAD APP FILES
-      # =====================================================
+      # =========================================================
 
       - name: Download app files
         if: steps.queue.outputs.has_build == 'true'
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          BUILD_ID: ${{ steps.queue.outputs.build_id }}
         run: |
 
           set -e
 
-          echo "======================================"
-          echo "DOWNLOADING APP SOURCE FILES"
-          echo "======================================"
-
-
           mkdir -p source
 
-
-          if [ -z "$APP_ID" ]; then
-
-            echo "ERROR: APP_ID is empty."
-
-            exit 1
-
-          fi
-
-
-          echo ""
-          echo "Using APP_ID:"
+          echo "APP_ID:"
           echo "$APP_ID"
 
-
           FILES_URL="${SUPABASE_URL}/rest/v1/app_files?app_id=eq.${APP_ID}&select=file_path,content,language"
-
-
-          echo ""
-          echo "Downloading app_files..."
-
 
           curl -sS \
             --fail-with-body \
@@ -402,77 +253,35 @@ jobs:
             -H "Accept: application/json" \
             > source/files.json
 
-
-          echo ""
-          echo "Raw response:"
-
-
+          echo "Supabase app_files response:"
           cat source/files.json
 
-
-          echo ""
-
-
           if ! jq empty source/files.json; then
-
-            echo "ERROR: source/files.json is invalid JSON."
-
+            echo "ERROR: Invalid JSON."
             exit 1
-
           fi
 
-
-          if ! jq -e 'type == "array"' \
-              source/files.json >/dev/null
-          then
-
-            echo ""
-            echo "======================================"
-            echo "ERROR: SUPABASE RESPONSE NOT ARRAY"
-            echo "======================================"
-
+          if ! jq -e 'type == "array"' source/files.json >/dev/null; then
+            echo "ERROR: Supabase response is not an array."
             cat source/files.json
-
             exit 1
-
           fi
 
+          COUNT=$(jq 'length' source/files.json)
 
-          FILE_COUNT=$(
-            jq 'length' source/files.json
-          )
+          echo "FILE COUNT=$COUNT"
 
-
-          echo ""
-          echo "Number of files:"
-          echo "$FILE_COUNT"
-
-
-          if [ "$FILE_COUNT" -eq 0 ]; then
-
-            echo ""
+          if [ "$COUNT" -eq 0 ]; then
             echo "ERROR: No source files found."
-
-            echo "APP_ID:"
-            echo "$APP_ID"
-
             exit 1
-
           fi
 
-
-          echo ""
-          echo "Files received:"
+          jq -r '.[].file_path' source/files.json
 
 
-          jq -r \
-            '.[].file_path' \
-            source/files.json
-
-
-      # =====================================================
+      # =========================================================
       # CREATE SOURCE FILES
-      # =====================================================
+      # =========================================================
 
       - name: Create source files
         if: steps.queue.outputs.has_build == 'true'
@@ -480,28 +289,8 @@ jobs:
 
           set -e
 
-          echo "======================================"
-          echo "CREATING SOURCE FILES"
-          echo "======================================"
-
-
           rm -rf webapp
-
           mkdir -p webapp
-
-
-          if ! jq -e 'type == "array"' \
-              source/files.json >/dev/null
-          then
-
-            echo "ERROR: Source response is not an array."
-
-            cat source/files.json
-
-            exit 1
-
-          fi
-
 
           python3 <<'PY'
 
@@ -509,170 +298,81 @@ jobs:
           import os
           import sys
 
+          source_file = "source/files.json"
+          output_dir = "webapp"
 
-          SOURCE_FILE = "source/files.json"
-          OUTPUT_DIR = "webapp"
-
-
-          try:
-
-              with open(
-                  SOURCE_FILE,
-                  "r",
-                  encoding="utf-8"
-              ) as f:
-
-                  data = json.load(f)
-
-          except Exception as e:
-
-              print(
-                  "ERROR reading source files:"
-              )
-
-              print(str(e))
-
-              sys.exit(1)
-
+          with open(source_file, "r", encoding="utf-8") as f:
+              data = json.load(f)
 
           if not isinstance(data, list):
-
-              print(
-                  "ERROR: Supabase response is not a list."
-              )
-
+              print("ERROR: Supabase response is not a list.")
               sys.exit(1)
 
-
           created = 0
-
 
           for item in data:
 
               if not isinstance(item, dict):
-
-                  print(
-                      "WARNING: Invalid file item skipped."
-                  )
-
                   continue
 
-
-              file_path = item.get(
-                  "file_path"
-              )
-
-
-              content = item.get(
-                  "content"
-              )
-
+              file_path = item.get("file_path")
+              content = item.get("content", "")
 
               if not file_path:
-
-                  print(
-                      "WARNING: Missing file_path."
-                  )
-
                   continue
-
-
-              if content is None:
-
-                  content = ""
-
 
               file_path = str(file_path)
 
-
-              normalized = os.path.normpath(
-                  file_path
-              )
-
+              normalized = os.path.normpath(file_path)
 
               if (
-                  normalized == ".."
+                  normalized.startswith("/")
+                  or normalized == ".."
                   or normalized.startswith("../")
-                  or normalized.startswith("/")
                   or os.path.isabs(normalized)
               ):
-
-                  print(
-                      "ERROR: Unsafe file path:",
-                      file_path
-                  )
-
+                  print("ERROR: Unsafe path:", file_path)
                   sys.exit(1)
 
-
               destination = os.path.join(
-                  OUTPUT_DIR,
+                  output_dir,
                   normalized
               )
 
-
-              parent = os.path.dirname(
-                  destination
-              )
-
-
               os.makedirs(
-                  parent,
+                  os.path.dirname(destination),
                   exist_ok=True
               )
-
 
               with open(
                   destination,
                   "w",
                   encoding="utf-8"
               ) as out:
+                  out.write(str(content))
 
-                  out.write(
-                      str(content)
-                  )
-
-
-              print(
-                  "Created:",
-                  destination
-              )
-
+              print("Created:", destination)
 
               created += 1
 
-
           if created == 0:
-
-              print(
-                  "ERROR: No source files created."
-              )
-
+              print("ERROR: No files created.")
               sys.exit(1)
 
-
-          print("")
-          print(
-              "Created",
-              created,
-              "source files."
-          )
+          print("Created", created, "files.")
 
           PY
 
+          echo "======================================"
+          echo "SOURCE FILES CREATED"
+          echo "======================================"
 
-          echo ""
-          echo "Created files:"
-
-
-          find webapp \
-            -type f \
-            -print
+          find webapp -type f -print
 
 
-      # =====================================================
-      # PREPARE WEB APPLICATION
-      # =====================================================
+      # =========================================================
+      # PREPARE WEB APP
+      # =========================================================
 
       - name: Prepare web application
         if: steps.queue.outputs.has_build == 'true'
@@ -680,83 +380,49 @@ jobs:
 
           set -e
 
-          echo "Checking index.html..."
+          if [ ! -f webapp/index.html ]; then
 
+            if [ -f webapp/webapp-url.txt ]; then
 
-          if [ ! -f "webapp/index.html" ]; then
-
-            if [ -f "webapp/webapp-url.txt" ]; then
-
-              URL=$(cat \
-                "webapp/webapp-url.txt" |
-                tr -d '\r\n')
-
+              URL=$(tr -d '\r\n' < webapp/webapp-url.txt)
 
               if [ -z "$URL" ]; then
-
-                echo "ERROR: webapp-url.txt is empty."
-
+                echo "ERROR: URL is empty."
                 exit 1
-
               fi
 
-
-              echo "Creating URL wrapper..."
-
-
               cat > webapp/index.html <<EOF
-
           <!DOCTYPE html>
-
-          <html lang="en">
-
+          <html>
           <head>
-
-          <meta charset="UTF-8">
-
-          <meta name="viewport"
-                content="width=device-width,
-                initial-scale=1.0,
-                maximum-scale=1.0,
-                user-scalable=no">
-
-          <title>ASIM TECH App</title>
-
+              <meta charset="UTF-8">
+              <meta name="viewport"
+                    content="width=device-width,initial-scale=1.0">
+              <title>ASIM TECH</title>
           </head>
-
           <body>
-
           <script>
-
-          window.location.replace(
-              "${URL}"
-          );
-
+          window.location.replace("${URL}");
           </script>
-
           </body>
-
           </html>
-
           EOF
 
             else
 
               echo "ERROR: index.html not found."
-
               exit 1
 
             fi
 
           fi
 
-
           echo "index.html ready."
 
 
-      # =====================================================
-      # READ ANDROID SETTINGS
-      # =====================================================
+      # =========================================================
+      # ANDROID SETTINGS
+      # =========================================================
 
       - name: Read Android settings
         if: steps.queue.outputs.has_build == 'true'
@@ -764,113 +430,53 @@ jobs:
 
           set -e
 
-
-          if [ -f "webapp/android-settings.json" ]; then
-
-            cp \
-              webapp/android-settings.json \
-              android-settings.json
-
+          if [ -f webapp/android-settings.json ]; then
+            cp webapp/android-settings.json android-settings.json
           else
 
             cat > android-settings.json <<'EOF'
-
           {
-            "appName":"ASIM TECH APP",
-            "packageName":"com.asimtech.app",
-            "versionName":"1.0.0",
-            "versionCode":1
+            "appName": "CineReel Video Editor",
+            "packageName": "com.asimtech.cinereel",
+            "versionName": "1.0.0",
+            "versionCode": 1
           }
-
           EOF
 
           fi
 
+          APP_NAME=$(jq -r '.appName // "CineReel Video Editor"' android-settings.json)
+          PACKAGE_NAME=$(jq -r '.packageName // "com.asimtech.cinereel"' android-settings.json)
 
-          echo ""
-          echo "Android settings:"
+          SETTINGS_VERSION_NAME=$(jq -r '.versionName // "1.0.0"' android-settings.json)
+          SETTINGS_VERSION_CODE=$(jq -r '.versionCode // 1' android-settings.json)
 
-          cat android-settings.json
+          APP_ICON_URL=$(jq -r '.appIconUrl // empty' android-settings.json)
+          APP_ICON_PATH=$(jq -r '.appIconPath // empty' android-settings.json)
 
-
-          APP_NAME=$(
-            jq -r \
-            '.appName // "ASIM TECH APP"' \
-            android-settings.json
-          )
-
-
-          PACKAGE_NAME=$(
-            jq -r \
-            '.packageName // "com.asimtech.app"' \
-            android-settings.json
-          )
-
-
-          SETTINGS_VERSION_NAME=$(
-            jq -r \
-            '.versionName // "1.0.0"' \
-            android-settings.json
-          )
-
-
-          SETTINGS_VERSION_CODE=$(
-            jq -r \
-            '.versionCode // 1' \
-            android-settings.json
-          )
-
-
-          APP_ICON_URL=$(
-            jq -r \
-            '.appIconUrl // empty' \
-            android-settings.json
-          )
-
-
-          APP_ICON_PATH=$(
-            jq -r \
-            '.appIconPath // empty' \
-            android-settings.json
-          )
-
-
-          if [ -n "$VERSION_NAME" ]; then
-            FINAL_VERSION_NAME="$VERSION_NAME"
-          else
-            FINAL_VERSION_NAME="$SETTINGS_VERSION_NAME"
+          if [ -z "$VERSION_NAME" ]; then
+            VERSION_NAME="$SETTINGS_VERSION_NAME"
           fi
 
-
-          if [ -n "$VERSION_CODE" ]; then
-            FINAL_VERSION_CODE="$VERSION_CODE"
-          else
-            FINAL_VERSION_CODE="$SETTINGS_VERSION_CODE"
+          if [ -z "$VERSION_CODE" ]; then
+            VERSION_CODE="$SETTINGS_VERSION_CODE"
           fi
 
+          echo "APP_NAME=$APP_NAME" >> "$GITHUB_ENV"
+          echo "PACKAGE_NAME=$PACKAGE_NAME" >> "$GITHUB_ENV"
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+          echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
+          echo "APP_ICON_URL=$APP_ICON_URL" >> "$GITHUB_ENV"
+          echo "APP_ICON_PATH=$APP_ICON_PATH" >> "$GITHUB_ENV"
 
-          echo "APP_NAME=$APP_NAME" \
-            >> "$GITHUB_ENV"
-
-          echo "PACKAGE_NAME=$PACKAGE_NAME" \
-            >> "$GITHUB_ENV"
-
-          echo "VERSION_NAME=$FINAL_VERSION_NAME" \
-            >> "$GITHUB_ENV"
-
-          echo "VERSION_CODE=$FINAL_VERSION_CODE" \
-            >> "$GITHUB_ENV"
-
-          echo "APP_ICON_URL=$APP_ICON_URL" \
-            >> "$GITHUB_ENV"
-
-          echo "APP_ICON_PATH=$APP_ICON_PATH" \
-            >> "$GITHUB_ENV"
+          echo "APP NAME: $APP_NAME"
+          echo "PACKAGE: $PACKAGE_NAME"
+          echo "VERSION: $VERSION_NAME"
 
 
-      # =====================================================
+      # =========================================================
       # CREATE ANDROID PROJECT
-      # =====================================================
+      # =========================================================
 
       - name: Create Android project
         if: steps.queue.outputs.has_build == 'true'
@@ -878,22 +484,16 @@ jobs:
 
           set -e
 
+          mkdir -p android-project/app/src/main/assets
 
-          mkdir -p \
-            android-project/app/src/main/assets
+          cp -r webapp/. android-project/app/src/main/assets/
 
-
-          cp -r \
-            webapp/. \
-            android-project/app/src/main/assets/
+          echo "Web application copied."
 
 
-          echo "Android web assets copied."
-
-
-      # =====================================================
-      # PREPARE ICON
-      # =====================================================
+      # =========================================================
+      # LAUNCHER ICON
+      # =========================================================
 
       - name: Prepare launcher icon
         if: steps.queue.outputs.has_build == 'true'
@@ -903,25 +503,13 @@ jobs:
 
           set -e
 
-
-          mkdir -p \
-            android-project/app/src/main/res/mipmap-mdpi
-
-          mkdir -p \
-            android-project/app/src/main/res/mipmap-hdpi
-
-          mkdir -p \
-            android-project/app/src/main/res/mipmap-xhdpi
-
-          mkdir -p \
-            android-project/app/src/main/res/mipmap-xxhdpi
-
-          mkdir -p \
-            android-project/app/src/main/res/mipmap-xxxhdpi
-
+          mkdir -p android-project/app/src/main/res/mipmap-mdpi
+          mkdir -p android-project/app/src/main/res/mipmap-hdpi
+          mkdir -p android-project/app/src/main/res/mipmap-xhdpi
+          mkdir -p android-project/app/src/main/res/mipmap-xxhdpi
+          mkdir -p android-project/app/src/main/res/mipmap-xxxhdpi
 
           ICON_FILE="launcher-icon.png"
-
 
           if [ -n "$APP_ICON_PATH" ]; then
 
@@ -933,9 +521,7 @@ jobs:
 
           fi
 
-
-          if [ ! -s "$ICON_FILE" ] &&
-             [ -n "$APP_ICON_URL" ]; then
+          if [ ! -s "$ICON_FILE" ] && [ -n "$APP_ICON_URL" ]; then
 
             curl -fL \
               "$APP_ICON_URL" \
@@ -943,15 +529,11 @@ jobs:
 
           fi
 
-
           if [ ! -s "$ICON_FILE" ]; then
-
-            echo "Creating default launcher icon."
-
 
             convert \
               -size 512x512 \
-              xc:"#087ff5" \
+              xc:"#087FF5" \
               -gravity center \
               -fill white \
               -draw "circle 256,256 256,100" \
@@ -959,67 +541,47 @@ jobs:
 
           fi
 
-
-          convert "$ICON_FILE" \
-            -resize 48x48 \
+          convert "$ICON_FILE" -resize 48x48 \
             android-project/app/src/main/res/mipmap-mdpi/ic_launcher.png
 
-
-          convert "$ICON_FILE" \
-            -resize 72x72 \
+          convert "$ICON_FILE" -resize 72x72 \
             android-project/app/src/main/res/mipmap-hdpi/ic_launcher.png
 
-
-          convert "$ICON_FILE" \
-            -resize 96x96 \
+          convert "$ICON_FILE" -resize 96x96 \
             android-project/app/src/main/res/mipmap-xhdpi/ic_launcher.png
 
-
-          convert "$ICON_FILE" \
-            -resize 144x144 \
+          convert "$ICON_FILE" -resize 144x144 \
             android-project/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
 
-
-          convert "$ICON_FILE" \
-            -resize 192x192 \
+          convert "$ICON_FILE" -resize 192x192 \
             android-project/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
-
-          for density in \
-            mdpi \
-            hdpi \
-            xhdpi \
-            xxhdpi \
-            xxxhdpi
+          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi
           do
-
             cp \
               "android-project/app/src/main/res/mipmap-${density}/ic_launcher.png" \
               "android-project/app/src/main/res/mipmap-${density}/ic_launcher_round.png"
-
           done
 
 
-      # =====================================================
+      # =========================================================
       # GRADLE PROPERTIES
-      # =====================================================
+      # =========================================================
 
       - name: Create Gradle properties
         if: steps.queue.outputs.has_build == 'true'
         run: |
 
           cat > android-project/gradle.properties <<'EOF'
-
           android.useAndroidX=true
           android.enableJetifier=true
           org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-
           EOF
 
 
-      # =====================================================
+      # =========================================================
       # SETTINGS GRADLE
-      # =====================================================
+      # =========================================================
 
       - name: Create settings.gradle
         if: steps.queue.outputs.has_build == 'true'
@@ -1027,20 +589,17 @@ jobs:
 
           cat > android-project/settings.gradle <<'EOF'
 
+          import org.gradle.api.initialization.resolve.RepositoriesMode
+
           pluginManagement {
 
               repositories {
-
                   google()
-
                   mavenCentral()
-
                   gradlePluginPortal()
-
               }
 
           }
-
 
           dependencyResolutionManagement {
 
@@ -1049,28 +608,22 @@ jobs:
               )
 
               repositories {
-
                   google()
-
                   mavenCentral()
-
               }
 
           }
 
-
-          rootProject.name =
-              "ASIMTECHGeneratedApp"
-
+          rootProject.name = "ASIMTECHGeneratedApp"
 
           include(":app")
 
           EOF
 
 
-      # =====================================================
+      # =========================================================
       # ROOT BUILD GRADLE
-      # =====================================================
+      # =========================================================
 
       - name: Create root build.gradle
         if: steps.queue.outputs.has_build == 'true'
@@ -1079,19 +632,15 @@ jobs:
           cat > android-project/build.gradle <<'EOF'
 
           plugins {
-
-              id 'com.android.application'
-                  version '8.7.3'
-                  apply false
-
+              id 'com.android.application' version '8.7.3' apply false
           }
 
           EOF
 
 
-      # =====================================================
+      # =========================================================
       # APP BUILD GRADLE
-      # =====================================================
+      # =========================================================
 
       - name: Create app build.gradle
         if: steps.queue.outputs.has_build == 'true'
@@ -1099,23 +648,19 @@ jobs:
 
           set -e
 
+          mkdir -p android-project/app
 
           cat > android-project/app/build.gradle <<'EOF'
 
           plugins {
-
               id 'com.android.application'
-
           }
-
 
           android {
 
               namespace '__PACKAGE_NAME__'
 
-
               compileSdk 35
-
 
               defaultConfig {
 
@@ -1131,7 +676,6 @@ jobs:
 
               }
 
-
               compileOptions {
 
                   sourceCompatibility JavaVersion.VERSION_1_8
@@ -1142,44 +686,34 @@ jobs:
 
           }
 
-
           dependencies {
 
-              implementation \
-                  'androidx.webkit:webkit:1.12.1'
+              implementation 'androidx.webkit:webkit:1.12.1'
 
-              implementation \
-                  'androidx.media3:media3-transformer:1.11.1'
+              implementation 'androidx.media3:media3-transformer:1.11.1'
 
-              implementation \
-                  'androidx.media3:media3-effect:1.11.1'
-
-              implementation \
-                  'androidx.media3:media3-common:1.11.1'
+              implementation 'androidx.media3:media3-common:1.11.1'
 
           }
 
           EOF
 
-
           sed -i \
             "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
             android-project/app/build.gradle
 
-
           sed -i \
             "s|__VERSION_CODE__|${VERSION_CODE}|g" \
             android-project/app/build.gradle
-
 
           sed -i \
             "s|__VERSION_NAME__|${VERSION_NAME}|g" \
             android-project/app/build.gradle
 
 
-      # =====================================================
-      # MANIFEST
-      # =====================================================
+      # =========================================================
+      # ANDROID MANIFEST
+      # =========================================================
 
       - name: Create Android Manifest
         if: steps.queue.outputs.has_build == 'true'
@@ -1187,52 +721,46 @@ jobs:
 
           set -e
 
+          mkdir -p android-project/app/src/main
 
-          mkdir -p \
-            android-project/app/src/main
-
-
-          cat > \
-            android-project/app/src/main/AndroidManifest.xml \
-            <<'EOF'
+          cat > android-project/app/src/main/AndroidManifest.xml <<'EOF'
 
           <manifest
               xmlns:android="http://schemas.android.com/apk/res/android">
 
-
               <uses-permission
                   android:name="android.permission.INTERNET" />
 
-
               <uses-permission
                   android:name="android.permission.CAMERA" />
-
 
               <uses-permission
                   android:name="android.permission.WRITE_EXTERNAL_STORAGE"
                   android:maxSdkVersion="28" />
 
-
               <uses-feature
                   android:name="android.hardware.camera"
                   android:required="false" />
 
-
               <application
-                  android:allowBackup="true"
-                  android:usesCleartextTraffic="true"
-                  android:hardwareAccelerated="true"
-                  android:theme="@style/AppTheme"
-                  android:label="__APP_NAME__"
-                  android:icon="@mipmap/ic_launcher"
-                  android:roundIcon="@mipmap/ic_launcher_round">
 
+                  android:allowBackup="true"
+
+                  android:label="__APP_NAME__"
+
+                  android:theme="@style/AppTheme"
+
+                  android:usesCleartextTraffic="true"
+
+                  android:hardwareAccelerated="true">
 
                   <activity
-                      android:name=".MainActivity"
-                      android:screenOrientation="portrait"
-                      android:exported="true">
 
+                      android:name=".MainActivity"
+
+                      android:screenOrientation="portrait"
+
+                      android:exported="true">
 
                       <intent-filter>
 
@@ -1244,34 +772,22 @@ jobs:
 
                       </intent-filter>
 
-
                   </activity>
 
-
               </application>
-
 
           </manifest>
 
           EOF
-
 
           sed -i \
             "s|__APP_NAME__|${APP_NAME}|g" \
             android-project/app/src/main/AndroidManifest.xml
 
 
-      # =====================================================
+      # =========================================================
       # MAIN ACTIVITY
-      #
-      # WebView + Native Android MP4 Export
-      #
-      # Browser:
-      # WebM/VP9/Opus
-      #
-      # Native:
-      # H.264/AVC + AAC MP4
-      # =====================================================
+      # =========================================================
 
       - name: Create MainActivity
         if: steps.queue.outputs.has_build == 'true'
@@ -1279,371 +795,201 @@ jobs:
 
           set -e
 
-
           JAVA_DIR="android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')"
-
 
           mkdir -p "$JAVA_DIR"
 
-
-          JAVA_PATH="$JAVA_DIR/MainActivity.java"
-
-
-          cat > "$JAVA_PATH" <<'EOF'
+          cat > "$JAVA_DIR/MainActivity.java" <<'EOF'
 
           package __PACKAGE_NAME__;
 
-
           import android.Manifest;
-
           import android.app.Activity;
-
           import android.content.ContentValues;
-
           import android.content.Intent;
-
           import android.content.pm.PackageManager;
-
           import android.net.Uri;
-
           import android.os.Build;
-
           import android.os.Bundle;
-
           import android.os.Environment;
-
           import android.provider.MediaStore;
-
+          import android.util.Base64;
           import android.webkit.ConsoleMessage;
-
           import android.webkit.PermissionRequest;
-
           import android.webkit.ValueCallback;
-
           import android.webkit.WebChromeClient;
-
-          import android.webkit.WebResourceRequest;
-
-          import android.webkit.WebResourceResponse;
-
           import android.webkit.WebSettings;
-
           import android.webkit.WebView;
-
           import android.webkit.WebViewClient;
 
           import androidx.annotation.NonNull;
 
-          import androidx.appcompat.app.AppCompatActivity;
-
-          import androidx.webkit.WebViewAssetLoader;
-
-          import androidx.webkit.WebViewClientCompat;
-
-
           import androidx.media3.common.MediaItem;
-
           import androidx.media3.common.MimeTypes;
-
           import androidx.media3.transformer.Composition;
-
           import androidx.media3.transformer.EditedMediaItem;
-
           import androidx.media3.transformer.ExportException;
-
           import androidx.media3.transformer.ExportResult;
-
           import androidx.media3.transformer.Transformer;
 
-
           import java.io.File;
-
           import java.io.FileInputStream;
-
           import java.io.FileOutputStream;
-
           import java.io.InputStream;
-
           import java.io.OutputStream;
 
-          import java.util.Base64;
+          public class MainActivity extends Activity {
 
-
-          public class MainActivity
-              extends Activity {
-
-
-              private static final int
-                  FILE_CHOOSER_REQUEST = 1001;
-
-
-              private static final int
-                  CAMERA_PERMISSION_REQUEST = 1002;
-
+              private static final int FILE_CHOOSER_REQUEST = 1001;
+              private static final int CAMERA_PERMISSION_REQUEST = 1002;
 
               private WebView webView;
 
+              private ValueCallback<Uri[]> filePathCallback;
 
-              private ValueCallback<Uri[]>
-                  filePathCallback;
-
-
-              private PermissionRequest
-                  pendingPermissionRequest;
-
+              private PermissionRequest pendingPermissionRequest;
 
               private Transformer transformer;
 
-
               private File nativeInputFile;
-
-
               private File nativeOutputFile;
 
-
-              private FileOutputStream
-                  nativeInputStream;
-
+              private FileOutputStream nativeInputStream;
 
               private String nativeFileName =
-                  "CineReel_1080x1920.mp4";
-
+                      "CineReel_1080x1920.mp4";
 
               private boolean exporting = false;
 
 
               @Override
-              protected void onCreate(
-                  Bundle savedInstanceState
-              ) {
+              protected void onCreate(Bundle savedInstanceState) {
 
-                  super.onCreate(
-                      savedInstanceState
-                  );
+                  super.onCreate(savedInstanceState);
 
-
-                  webView =
-                      new WebView(this);
-
+                  webView = new WebView(this);
 
                   setContentView(webView);
 
-
                   configureWebView();
 
-
                   loadLocalWebApp();
-
               }
 
 
-              // =================================================
-              // WEBVIEW
-              // =================================================
-
               private void configureWebView() {
 
-
                   WebSettings settings =
-                      webView.getSettings();
+                          webView.getSettings();
 
+                  settings.setJavaScriptEnabled(true);
 
-                  settings.setJavaScriptEnabled(
-                      true
-                  );
+                  settings.setDomStorageEnabled(true);
 
+                  settings.setDatabaseEnabled(true);
 
-                  settings.setDomStorageEnabled(
-                      true
-                  );
+                  settings.setMediaPlaybackRequiresUserGesture(false);
 
+                  settings.setAllowFileAccess(true);
 
-                  settings.setDatabaseEnabled(
-                      true
-                  );
+                  settings.setAllowContentAccess(true);
 
+                  settings.setBuiltInZoomControls(false);
 
-                  settings.setMediaPlaybackRequiresUserGesture(
-                      false
-                  );
+                  settings.setDisplayZoomControls(false);
 
+                  settings.setSupportZoom(false);
 
-                  settings.setAllowFileAccess(
-                      false
-                  );
+                  settings.setUseWideViewPort(true);
 
-
-                  settings.setAllowContentAccess(
-                      true
-                  );
-
-
-                  settings.setAllowFileAccessFromFileURLs(
-                      false
-                  );
-
-
-                  settings.setAllowUniversalAccessFromFileURLs(
-                      false
-                  );
-
-
-                  settings.setBuiltInZoomControls(
-                      false
-                  );
-
-
-                  settings.setDisplayZoomControls(
-                      false
-                  );
-
-
-                  settings.setSupportZoom(
-                      false
-                  );
-
-
-                  settings.setLoadWithOverviewMode(
-                      false
-                  );
-
-
-                  settings.setUseWideViewPort(
-                      true
-                  );
-
-
-                  settings.setJavaScriptCanOpenWindowsAutomatically(
-                      true
-                  );
-
+                  settings.setLoadWithOverviewMode(false);
 
                   settings.setMixedContentMode(
-                      WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+                          WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
                   );
 
 
-                  // Native bridge
                   webView.addJavascriptInterface(
-                      new AndroidExportBridge(),
-                      "AndroidExport"
+                          new AndroidExportBridge(),
+                          "AndroidExport"
                   );
 
 
-                  // WebView client
                   webView.setWebViewClient(
-                      new WebViewClientCompat() {
-
-                          @Override
-                          public WebResourceResponse
-                          shouldInterceptRequest(
-                              WebView view,
-                              WebResourceRequest request
-                          ) {
-
-                              return null;
-
-                          }
-
-                      }
+                          new WebViewClient()
                   );
 
 
                   webView.setWebChromeClient(
-                      new WebChromeClient() {
+                          new WebChromeClient() {
 
-
-                          @Override
-                          public boolean
-                          onConsoleMessage(
-                              ConsoleMessage message
-                          ) {
-
-                              android.util.Log.d(
-                                  "CineReel",
-                                  message.message()
-                              );
-
-                              return true;
-
-                          }
-
-
-                          @Override
-                          public boolean
-                          onShowFileChooser(
-                              WebView webView,
-                              ValueCallback<Uri[]> callback,
-                              FileChooserParams params
-                          ) {
-
-                              if(
-                                  filePathCallback != null
+                              @Override
+                              public boolean onConsoleMessage(
+                                      ConsoleMessage message
                               ) {
 
-                                  filePathCallback
-                                      .onReceiveValue(
-                                          null
-                                      );
-
-                              }
-
-
-                              filePathCallback =
-                                  callback;
-
-
-                              Intent intent =
-                                  params.createIntent();
-
-
-                              try {
-
-                                  startActivityForResult(
-                                      intent,
-                                      FILE_CHOOSER_REQUEST
+                                  android.util.Log.d(
+                                          "CineReel",
+                                          message.message()
                                   );
 
-                              }
-                              catch(Exception e) {
-
-                                  filePathCallback =
-                                      null;
-
-                                  return false;
-
+                                  return true;
                               }
 
 
-                              return true;
+                              @Override
+                              public boolean onShowFileChooser(
+                                      WebView webView,
+                                      ValueCallback<Uri[]> callback,
+                                      FileChooserParams params
+                              ) {
 
-                          }
+                                  if (filePathCallback != null) {
+
+                                      filePathCallback.onReceiveValue(null);
+
+                                  }
+
+                                  filePathCallback = callback;
+
+                                  Intent intent =
+                                          params.createIntent();
+
+                                  try {
+
+                                      startActivityForResult(
+                                              intent,
+                                              FILE_CHOOSER_REQUEST
+                                      );
+
+                                  } catch (Exception e) {
+
+                                      filePathCallback = null;
+
+                                      return false;
+                                  }
+
+                                  return true;
+                              }
 
 
-                          @Override
-                          public void
-                          onPermissionRequest(
-                              PermissionRequest request
-                          ) {
+                              @Override
+                              public void onPermissionRequest(
+                                      PermissionRequest request
+                              ) {
 
-                              runOnUiThread(
-                                  () -> {
+                                  runOnUiThread(() -> {
 
                                       pendingPermissionRequest =
-                                          request;
+                                              request;
 
+                                      if (Build.VERSION.SDK_INT >=
+                                              Build.VERSION_CODES.M) {
 
-                                      if(
-                                          Build.VERSION.SDK_INT
-                                          >=
-                                          Build.VERSION_CODES.M
-                                      ) {
-
-                                          if(
+                                          if (
                                               checkSelfPermission(
                                                   Manifest.permission.CAMERA
-                                              )
-                                              !=
+                                              ) !=
                                               PackageManager.PERMISSION_GRANTED
                                           ) {
 
@@ -1654,8 +1000,7 @@ jobs:
                                                   CAMERA_PERMISSION_REQUEST
                                               );
 
-                                          }
-                                          else {
+                                          } else {
 
                                               request.grant(
                                                   request.getResources()
@@ -1663,8 +1008,7 @@ jobs:
 
                                           }
 
-                                      }
-                                      else {
+                                      } else {
 
                                           request.grant(
                                               request.getResources()
@@ -1672,226 +1016,179 @@ jobs:
 
                                       }
 
-                                  }
-                              );
+                                  });
+                              }
 
                           }
-
-                      }
                   );
-
               }
 
 
               private void loadLocalWebApp() {
 
                   webView.loadUrl(
-                      "file:///android_asset/index.html"
+                          "file:///android_asset/index.html"
                   );
-
               }
 
 
-              // =================================================
+              // =====================================================
               // JAVASCRIPT BRIDGE
-              // =================================================
+              // =====================================================
 
               public class AndroidExportBridge {
 
 
                   @android.webkit.JavascriptInterface
                   public void startExport(
-                      String fileName
+                          String fileName
                   ) {
 
-                      runOnUiThread(
-                          () -> {
+                      runOnUiThread(() -> {
 
-                              try {
+                          try {
 
-                                  beginNativeExport(
-                                      fileName
-                                  );
+                              beginNativeExport(fileName);
 
-                              }
-                              catch(Exception e) {
+                          } catch (Exception e) {
 
-                                  notifyJavascript(
-                                      false,
-                                      e.getMessage()
-                                  );
-
-                              }
-
+                              notifyJavascript(
+                                  false,
+                                  e.getMessage()
+                              );
                           }
-                      );
 
+                      });
                   }
 
 
                   @android.webkit.JavascriptInterface
                   public void appendChunk(
-                      String base64
+                          String base64
                   ) {
 
                       try {
 
-                          if(
-                              nativeInputStream == null
-                          ) {
+                          if (nativeInputStream == null) {
 
                               throw new Exception(
                                   "Native export is not started."
                               );
-
                           }
 
 
                           byte[] bytes =
-                              Base64.getDecoder()
-                                  .decode(
-                                      base64
-                                  );
+                              Base64.decode(
+                                  base64,
+                                  Base64.DEFAULT
+                              );
 
 
-                          nativeInputStream.write(
-                              bytes
-                          );
-
+                          nativeInputStream.write(bytes);
 
                           nativeInputStream.flush();
 
-                      }
-                      catch(Exception e) {
+                      } catch (Exception e) {
 
                           notifyJavascript(
                               false,
-                              "Chunk write failed: "
-                                  + e.getMessage()
+                              "Chunk write failed: " +
+                              e.getMessage()
                           );
-
                       }
-
                   }
 
 
                   @android.webkit.JavascriptInterface
                   public void finishExport() {
 
-                      runOnUiThread(
-                          () -> {
+                      runOnUiThread(() -> {
 
-                              try {
+                          try {
 
-                                  finishNativeInput();
+                              finishNativeInput();
 
-                              }
-                              catch(Exception e) {
+                          } catch (Exception e) {
 
-                                  notifyJavascript(
-                                      false,
-                                      e.getMessage()
-                                  );
-
-                              }
-
+                              notifyJavascript(
+                                  false,
+                                  e.getMessage()
+                              );
                           }
-                      );
 
+                      });
                   }
 
 
                   @android.webkit.JavascriptInterface
                   public void cancelExport() {
 
-                      runOnUiThread(
-                          () -> {
+                      runOnUiThread(() -> {
 
-                              stopExport();
+                          stopExport();
 
-                              cleanupFiles();
+                          cleanupFiles();
 
-                              notifyJavascript(
-                                  false,
-                                  "Export cancelled."
-                              );
+                          notifyJavascript(
+                              false,
+                              "Export cancelled."
+                          );
 
-                          }
-                      );
-
+                      });
                   }
-
               }
 
 
-              // =================================================
-              // BEGIN EXPORT
-              // =================================================
+              // =====================================================
+              // START NATIVE EXPORT
+              // =====================================================
 
               private void beginNativeExport(
-                  String fileName
+                      String fileName
               ) throws Exception {
 
-
-                  if(exporting) {
-
+                  if (exporting) {
                       return;
-
                   }
-
 
                   exporting = true;
 
-
                   nativeFileName =
-                      sanitizeFileName(
-                          fileName
-                      );
-
+                          sanitizeFileName(fileName);
 
                   nativeInputFile =
-                      new File(
-                          getCacheDir(),
-                          "cinereel_input.webm"
-                      );
+                          new File(
+                              getCacheDir(),
+                              "cinereel_input.webm"
+                          );
 
-
-                  if(
-                      nativeInputFile.exists()
-                  ) {
-
+                  if (nativeInputFile.exists()) {
                       nativeInputFile.delete();
-
                   }
 
-
                   nativeInputStream =
-                      new FileOutputStream(
-                          nativeInputFile
-                      );
-
+                          new FileOutputStream(
+                              nativeInputFile
+                          );
 
                   sendJavascript(
                       "window.__nativeExportStarted && " +
                       "window.__nativeExportStarted();"
                   );
-
               }
 
 
               private String sanitizeFileName(
-                  String name
+                      String name
               ) {
 
-                  if(
+                  if (
                       name == null ||
                       name.trim().isEmpty()
                   ) {
 
                       return "CineReel_1080x1920.mp4";
-
                   }
-
 
                   String clean =
                       name.replaceAll(
@@ -1899,40 +1196,31 @@ jobs:
                           "_"
                       );
 
-
-                  if(
+                  if (
                       !clean.toLowerCase()
                           .endsWith(".mp4")
                   ) {
 
                       clean += ".mp4";
-
                   }
 
-
                   return clean;
-
               }
 
 
-              // =================================================
-              // FINISH INPUT
-              // =================================================
+              // =====================================================
+              // FINISH WEBM INPUT
+              // =====================================================
 
               private void finishNativeInput()
-                  throws Exception {
+                      throws Exception {
 
-
-                  if(
-                      nativeInputStream == null
-                  ) {
+                  if (nativeInputStream == null) {
 
                       throw new Exception(
-                          "Native input stream is unavailable."
+                          "Native input stream unavailable."
                       );
-
                   }
-
 
                   nativeInputStream.flush();
 
@@ -1941,7 +1229,7 @@ jobs:
                   nativeInputStream = null;
 
 
-                  if(
+                  if (
                       nativeInputFile == null ||
                       !nativeInputFile.exists() ||
                       nativeInputFile.length() == 0
@@ -1950,160 +1238,129 @@ jobs:
                       throw new Exception(
                           "Input video is empty."
                       );
-
                   }
 
 
                   File outputDir =
-                      new File(
-                          getCacheDir(),
-                          "cinereel_output"
-                      );
+                          new File(
+                              getCacheDir(),
+                              "cinereel_output"
+                          );
 
-
-                  if(!outputDir.exists()) {
-
+                  if (!outputDir.exists()) {
                       outputDir.mkdirs();
-
                   }
 
 
                   nativeOutputFile =
-                      new File(
-                          outputDir,
-                          nativeFileName
-                      );
+                          new File(
+                              outputDir,
+                              nativeFileName
+                          );
 
-
-                  if(
-                      nativeOutputFile.exists()
-                  ) {
-
+                  if (nativeOutputFile.exists()) {
                       nativeOutputFile.delete();
-
                   }
 
 
-                  sendJavascript(
-                      "window.__nativeExportStarted && " +
-                      "window.__nativeExportStarted();"
-                  );
-
-
                   MediaItem mediaItem =
-                      MediaItem.fromUri(
-                          Uri.fromFile(
-                              nativeInputFile
-                          )
-                      );
+                          MediaItem.fromUri(
+                              Uri.fromFile(
+                                  nativeInputFile
+                              )
+                          );
 
 
-                  EditedMediaItem
-                      editedMediaItem =
-                      new EditedMediaItem.Builder(
-                          mediaItem
-                      )
-                      .build();
+                  EditedMediaItem editedMediaItem =
+                          new EditedMediaItem.Builder(
+                              mediaItem
+                          ).build();
 
 
                   transformer =
-                      new Transformer.Builder(
-                          this
-                      )
-                      .setVideoMimeType(
-                          MimeTypes.VIDEO_H264
-                      )
-                      .setAudioMimeType(
-                          MimeTypes.AUDIO_AAC
-                      )
-                      .addListener(
-                          new Transformer.Listener() {
+                          new Transformer.Builder(this)
+
+                              .setVideoMimeType(
+                                  MimeTypes.VIDEO_H264
+                              )
+
+                              .setAudioMimeType(
+                                  MimeTypes.AUDIO_AAC
+                              )
+
+                              .addListener(
+                                  new Transformer.Listener() {
+
+                                      @Override
+                                      public void onCompleted(
+                                              Composition composition,
+                                              ExportResult result
+                                      ) {
+
+                                          runOnUiThread(() -> {
+
+                                              try {
+
+                                                  saveMp4ToGallery();
+
+                                              } catch (Exception e) {
+
+                                                  exporting = false;
+
+                                                  notifyJavascript(
+                                                      false,
+                                                      e.getMessage()
+                                                  );
+
+                                                  cleanupFiles();
+                                              }
+
+                                          });
+                                      }
 
 
-                              @Override
-                              public void
-                              onCompleted(
-                                  Composition composition,
-                                  ExportResult result
-                              ) {
+                                      @Override
+                                      public void onError(
+                                              Composition composition,
+                                              ExportResult result,
+                                              ExportException exception
+                                      ) {
 
-                                  runOnUiThread(
-                                      () -> {
-
-                                          try {
-
-                                              saveMp4ToGallery();
-
-                                          }
-                                          catch(Exception e) {
+                                          runOnUiThread(() -> {
 
                                               exporting = false;
 
                                               notifyJavascript(
                                                   false,
-                                                  e.getMessage()
+                                                  "Media3 export failed: " +
+                                                  exception.getMessage()
                                               );
 
                                               cleanupFiles();
-
-                                          }
-
+                                          });
                                       }
-                                  );
 
-                              }
+                                  }
+                              )
 
-
-                              @Override
-                              public void
-                              onError(
-                                  Composition composition,
-                                  ExportResult result,
-                                  ExportException exception
-                              ) {
-
-                                  runOnUiThread(
-                                      () -> {
-
-                                          exporting = false;
-
-                                          notifyJavascript(
-                                              false,
-                                              "Media3 export failed: "
-                                              +
-                                              exception.getMessage()
-                                          );
-
-                                          cleanupFiles();
-
-                                      }
-                                  );
-
-                              }
-
-                          }
-                      )
-                      .build();
+                              .build();
 
 
                   transformer.start(
                       editedMediaItem,
-                      nativeOutputFile
-                          .getAbsolutePath()
+                      nativeOutputFile.getAbsolutePath()
                   );
-
               }
 
 
-              // =================================================
+              // =====================================================
               // SAVE MP4 TO GALLERY
-              // =================================================
+              // =====================================================
 
               private void saveMp4ToGallery()
-                  throws Exception {
+                      throws Exception {
 
-
-                  if(
+                  if (
                       nativeOutputFile == null ||
                       !nativeOutputFile.exists()
                   ) {
@@ -2111,30 +1368,24 @@ jobs:
                       throw new Exception(
                           "MP4 output file not found."
                       );
-
                   }
 
 
-                  if(
-                      nativeOutputFile.length() == 0
-                  ) {
+                  if (nativeOutputFile.length() == 0) {
 
                       throw new Exception(
                           "MP4 output file is empty."
                       );
-
                   }
 
 
                   ContentValues values =
-                      new ContentValues();
-
+                          new ContentValues();
 
                   values.put(
                       MediaStore.Video.Media.DISPLAY_NAME,
                       nativeFileName
                   );
-
 
                   values.put(
                       MediaStore.Video.Media.MIME_TYPE,
@@ -2142,45 +1393,40 @@ jobs:
                   );
 
 
-                  values.put(
-                      MediaStore.Video.Media.RELATIVE_PATH,
-                      Environment.DIRECTORY_MOVIES
-                          + "/ASIM TECH"
-                  );
-
-
-                  if(
-                      Build.VERSION.SDK_INT
-                      >=
+                  if (
+                      Build.VERSION.SDK_INT >=
                       Build.VERSION_CODES.Q
                   ) {
+
+                      values.put(
+                          MediaStore.Video.Media.RELATIVE_PATH,
+                          Environment.DIRECTORY_MOVIES +
+                          "/ASIM TECH"
+                      );
 
                       values.put(
                           MediaStore.Video.Media.IS_PENDING,
                           1
                       );
-
                   }
 
 
                   Uri uri =
-                      getContentResolver()
-                          .insert(
-                              MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                              values
-                          );
+                      getContentResolver().insert(
+                          MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                          values
+                      );
 
 
-                  if(uri == null) {
+                  if (uri == null) {
 
                       throw new Exception(
                           "Unable to create Gallery entry."
                       );
-
                   }
 
 
-                  try(
+                  try (
                       InputStream input =
                           new FileInputStream(
                               nativeOutputFile
@@ -2188,32 +1434,24 @@ jobs:
 
                       OutputStream output =
                           getContentResolver()
-                              .openOutputStream(
-                                  uri
-                              )
+                              .openOutputStream(uri)
                   ) {
 
-
-                      if(output == null) {
+                      if (output == null) {
 
                           throw new Exception(
                               "Unable to open Gallery output."
                           );
-
                       }
 
 
                       byte[] buffer =
                           new byte[1024 * 1024];
 
-
                       int count;
 
-
-                      while(
-                          (count =
-                              input.read(buffer))
-                          != -1
+                      while (
+                          (count = input.read(buffer)) != -1
                       ) {
 
                           output.write(
@@ -2221,88 +1459,62 @@ jobs:
                               0,
                               count
                           );
-
                       }
 
-
                       output.flush();
-
                   }
 
 
-                  if(
-                      Build.VERSION.SDK_INT
-                      >=
+                  if (
+                      Build.VERSION.SDK_INT >=
                       Build.VERSION_CODES.Q
                   ) {
 
                       ContentValues completed =
-                          new ContentValues();
-
+                              new ContentValues();
 
                       completed.put(
                           MediaStore.Video.Media.IS_PENDING,
                           0
                       );
 
-
-                      getContentResolver()
-                          .update(
-                              uri,
-                              completed,
-                              null,
-                              null
-                          );
-
+                      getContentResolver().update(
+                          uri,
+                          completed,
+                          null,
+                          null
+                      );
                   }
 
 
                   exporting = false;
-
 
                   notifyJavascript(
                       true,
                       "MP4 saved to Gallery: Movies/ASIM TECH"
                   );
 
-
                   cleanupFiles();
-
               }
 
 
-              // =================================================
+              // =====================================================
               // JAVASCRIPT CALLBACK
-              // =================================================
+              // =====================================================
 
               private void notifyJavascript(
-                  boolean success,
-                  String message
+                      boolean success,
+                      String message
               ) {
 
-
                   String safe =
-                      message == null
-                      ?
-                      ""
-                      :
-                      message
-                          .replace(
-                              "\\",
-                              "\\\\"
-                          )
-                          .replace(
-                              "'",
-                              "\\'"
-                          )
-                          .replace(
-                              "\n",
-                              "\\n"
-                          )
-                          .replace(
-                              "\r",
-                              "\\r"
-                          );
+                          message == null
+                          ? ""
+                          : message
+                              .replace("\\", "\\\\")
+                              .replace("'", "\\'")
+                              .replace("\n", "\\n")
+                              .replace("\r", "\\r");
 
 
                   String js =
@@ -2314,131 +1526,103 @@ jobs:
                       "');";
 
 
-                  sendJavascript(
-                      js
-                  );
-
+                  sendJavascript(js);
               }
 
 
               private void sendJavascript(
-                  String javascript
+                      String javascript
               ) {
 
-                  runOnUiThread(
-                      () -> {
+                  runOnUiThread(() -> {
 
-                          if(
-                              webView != null
-                          ) {
+                      if (webView != null) {
 
-                              webView.evaluateJavascript(
-                                  javascript,
-                                  null
-                              );
-
-                          }
-
+                          webView.evaluateJavascript(
+                              javascript,
+                              null
+                          );
                       }
-                  );
 
+                  });
               }
 
 
-              // =================================================
+              // =====================================================
               // STOP EXPORT
-              // =================================================
+              // =====================================================
 
               private void stopExport() {
 
-
                   try {
 
-                      if(
-                          transformer != null
-                      ) {
+                      if (transformer != null) {
 
                           transformer.cancel();
-
                       }
 
-                  }
-                  catch(Exception ignored) {}
-
+                  } catch (Exception ignored) {}
 
                   transformer = null;
 
 
                   try {
 
-                      if(
-                          nativeInputStream != null
-                      ) {
+                      if (nativeInputStream != null) {
 
                           nativeInputStream.close();
-
                       }
 
-                  }
-                  catch(Exception ignored) {}
-
+                  } catch (Exception ignored) {}
 
                   nativeInputStream = null;
 
-
                   exporting = false;
-
               }
 
 
-              // =================================================
+              // =====================================================
               // CLEANUP
-              // =================================================
+              // =====================================================
 
               private void cleanupFiles() {
 
-
                   try {
 
-                      if(
+                      if (
                           nativeInputFile != null &&
                           nativeInputFile.exists()
                       ) {
 
                           nativeInputFile.delete();
-
                       }
 
-                  }
-                  catch(Exception ignored) {}
+                  } catch (Exception ignored) {}
 
 
                   try {
 
-                      if(
+                      if (
                           nativeOutputFile != null &&
                           nativeOutputFile.exists()
                       ) {
 
                           nativeOutputFile.delete();
-
                       }
 
-                  }
-                  catch(Exception ignored) {}
-
+                  } catch (Exception ignored) {}
               }
 
 
-              // =================================================
+              // =====================================================
               // FILE PICKER RESULT
-              // =================================================
+              // =====================================================
 
               @Override
               protected void onActivityResult(
-                  int requestCode,
-                  int resultCode,
-                  Intent data
+                      int requestCode,
+                      int resultCode,
+                      Intent data
               ) {
 
                   super.onActivityResult(
@@ -2448,28 +1632,21 @@ jobs:
                   );
 
 
-                  if(
+                  if (
                       requestCode ==
                       FILE_CHOOSER_REQUEST
                   ) {
 
-
-                      if(
-                          filePathCallback == null
-                      ) {
-
+                      if (filePathCallback == null) {
                           return;
-
                       }
 
 
-                      Uri[] results =
-                          null;
+                      Uri[] results = null;
 
 
-                      if(
-                          resultCode ==
-                          Activity.RESULT_OK &&
+                      if (
+                          resultCode == Activity.RESULT_OK &&
                           data != null
                       ) {
 
@@ -2480,34 +1657,26 @@ jobs:
                                       resultCode,
                                       data
                                   );
-
                       }
 
 
                       filePathCallback
-                          .onReceiveValue(
-                              results
-                          );
+                          .onReceiveValue(results);
 
-
-                      filePathCallback =
-                          null;
-
+                      filePathCallback = null;
                   }
-
               }
 
 
-              // =================================================
+              // =====================================================
               // CAMERA PERMISSION
-              // =================================================
+              // =====================================================
 
               @Override
-              public void
-              onRequestPermissionsResult(
-                  int requestCode,
-                  @NonNull String[] permissions,
-                  @NonNull int[] grantResults
+              public void onRequestPermissionsResult(
+                      int requestCode,
+                      @NonNull String[] permissions,
+                      @NonNull int[] grantResults
               ) {
 
                   super.onRequestPermissionsResult(
@@ -2517,23 +1686,19 @@ jobs:
                   );
 
 
-                  if(
+                  if (
                       requestCode ==
                       CAMERA_PERMISSION_REQUEST
                   ) {
 
-
-                      if(
+                      if (
                           pendingPermissionRequest != null
                       ) {
 
-
-                          if(
+                          if (
                               grantResults.length > 0 &&
-                              grantResults[0]
-                              ==
-                              PackageManager
-                                  .PERMISSION_GRANTED
+                              grantResults[0] ==
+                              PackageManager.PERMISSION_GRANTED
                           ) {
 
                               pendingPermissionRequest.grant(
@@ -2543,88 +1708,67 @@ jobs:
                                   }
                               );
 
-                          }
-                          else {
+                          } else {
 
                               pendingPermissionRequest.deny();
-
                           }
 
-
-                          pendingPermissionRequest =
-                              null;
-
+                          pendingPermissionRequest = null;
                       }
-
                   }
-
               }
 
 
-              // =================================================
+              // =====================================================
               // BACK
-              // =================================================
+              // =====================================================
 
               @Override
               public void onBackPressed() {
 
-
-                  if(
+                  if (
                       webView != null &&
                       webView.canGoBack()
                   ) {
 
                       webView.goBack();
 
-                  }
-                  else {
+                  } else {
 
                       super.onBackPressed();
-
                   }
-
               }
 
 
-              // =================================================
+              // =====================================================
               // DESTROY
-              // =================================================
+              // =====================================================
 
               @Override
               protected void onDestroy() {
-
 
                   stopExport();
 
                   cleanupFiles();
 
-
-                  if(
-                      webView != null
-                  ) {
-
+                  if (webView != null) {
                       webView.destroy();
-
                   }
 
-
                   super.onDestroy();
-
               }
-
           }
 
           EOF
 
-
           sed -i \
             "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
-            "$JAVA_PATH"
+            "$JAVA_DIR/MainActivity.java"
 
 
-      # =====================================================
-      # APP STYLE
-      # =====================================================
+      # =========================================================
+      # STYLES
+      # =========================================================
 
       - name: Create styles
         if: steps.queue.outputs.has_build == 'true'
@@ -2632,14 +1776,9 @@ jobs:
 
           set -e
 
+          mkdir -p android-project/app/src/main/res/values
 
-          mkdir -p \
-            android-project/app/src/main/res/values
-
-
-          cat > \
-            android-project/app/src/main/res/values/styles.xml \
-            <<'EOF'
+          cat > android-project/app/src/main/res/values/styles.xml <<'EOF'
 
           <resources>
 
@@ -2647,33 +1786,19 @@ jobs:
                   name="AppTheme"
                   parent="android:style/Theme.Material.Light.NoActionBar">
 
-                  <item name="android:fontFamily">
-                      sans
-                  </item>
+                  <item name="android:fontFamily">sans</item>
 
-                  <item name="android:windowActionModeOverlay">
-                      true
-                  </item>
+                  <item name="android:windowActionModeOverlay">true</item>
 
-                  <item name="android:colorAccent">
-                      #087FF5
-                  </item>
+                  <item name="android:colorAccent">#087FF5</item>
 
-                  <item name="android:statusBarColor">
-                      #050B11
-                  </item>
+                  <item name="android:statusBarColor">#050B11</item>
 
-                  <item name="android:navigationBarColor">
-                      #050B11
-                  </item>
+                  <item name="android:navigationBarColor">#050B11</item>
 
-                  <item name="android:windowLightStatusBar">
-                      false
-                  </item>
+                  <item name="android:windowLightStatusBar">false</item>
 
-                  <item name="android:windowLightNavigationBar">
-                      false
-                  </item>
+                  <item name="android:windowLightNavigationBar">false</item>
 
               </style>
 
@@ -2682,9 +1807,9 @@ jobs:
           EOF
 
 
-      # =====================================================
-      # VERIFY ANDROID PROJECT
-      # =====================================================
+      # =========================================================
+      # VERIFY PROJECT
+      # =========================================================
 
       - name: Verify Android project
         if: steps.queue.outputs.has_build == 'true'
@@ -2692,122 +1817,66 @@ jobs:
 
           set -e
 
-
           echo "======================================"
-          echo "VERIFYING ANDROID PROJECT"
+          echo "VERIFYING PROJECT"
           echo "======================================"
 
+          test -f android-project/settings.gradle
 
-          test -f \
-            android-project/build.gradle
+          test -f android-project/build.gradle
 
+          test -f android-project/app/build.gradle
 
-          test -f \
-            android-project/settings.gradle
+          test -f android-project/app/src/main/AndroidManifest.xml
 
-
-          test -f \
-            android-project/app/build.gradle
-
-
-          test -f \
-            android-project/app/src/main/AndroidManifest.xml
-
-
-          test -f \
-            android-project/app/src/main/res/values/styles.xml
-
+          test -f android-project/app/src/main/res/values/styles.xml
 
           JAVA_FILE="android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')/MainActivity.java"
 
-
           test -f "$JAVA_FILE"
 
+          echo "Checking plugin..."
 
-          echo ""
+          grep \
+            "com.android.application.*8.7.3" \
+            android-project/build.gradle
+
           echo "Checking Media3..."
-
 
           grep \
             "media3-transformer" \
             android-project/app/build.gradle
 
-
-          grep \
-            "media3-common" \
-            android-project/app/build.gradle
-
-
-          echo ""
-          echo "Checking H.264..."
-
+          echo "Checking H264..."
 
           grep \
             "MimeTypes.VIDEO_H264" \
             "$JAVA_FILE"
 
-
-          echo ""
           echo "Checking AAC..."
-
 
           grep \
             "MimeTypes.AUDIO_AAC" \
             "$JAVA_FILE"
 
-
-          echo ""
-          echo "Checking Composition import..."
-
-
-          grep \
-            "transformer.Composition" \
-            "$JAVA_FILE"
-
-
-          echo ""
           echo "Checking AndroidExport..."
-
 
           grep \
             "AndroidExport" \
             "$JAVA_FILE"
 
-
-          echo ""
           echo "Checking Gallery..."
-
 
           grep \
             "MediaStore.Video.Media" \
             "$JAVA_FILE"
 
-
-          echo ""
-          echo "Checking WebView..."
+          echo "Project verification completed."
 
 
-          grep \
-            "WebView" \
-            "$JAVA_FILE"
-
-
-          echo ""
-          echo "Checking file chooser..."
-
-
-          grep \
-            "onShowFileChooser" \
-            "$JAVA_FILE"
-
-
-          echo ""
-          echo "Android project verification completed."
-
-
-      # =====================================================
+      # =========================================================
       # BUILD APK
-      # =====================================================
+      # =========================================================
 
       - name: Build APK
         if: steps.queue.outputs.has_build == 'true'
@@ -2816,30 +1885,25 @@ jobs:
 
           set -e
 
-
           echo "======================================"
-          echo "STARTING APK BUILD"
+          echo "BUILDING APK"
           echo "======================================"
-
 
           gradle assembleDebug \
             --no-daemon \
             --stacktrace
 
-
-          echo ""
           echo "======================================"
           echo "APK BUILD COMPLETED"
           echo "======================================"
-
 
           ls -lh \
             app/build/outputs/apk/debug/
 
 
-      # =====================================================
+      # =========================================================
       # RENAME APK
-      # =====================================================
+      # =========================================================
 
       - name: Rename APK
         if: steps.queue.outputs.has_build == 'true'
@@ -2847,22 +1911,19 @@ jobs:
 
           set -e
 
-
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
-
 
           cp \
             android-project/app/build/outputs/apk/debug/app-debug.apk \
             "ASIM-TECH-${BUILD_ID}.apk"
 
-
           ls -lh \
             "ASIM-TECH-${BUILD_ID}.apk"
 
 
-      # =====================================================
+      # =========================================================
       # SHA256
-      # =====================================================
+      # =========================================================
 
       - name: Calculate SHA256
         if: steps.queue.outputs.has_build == 'true'
@@ -2871,44 +1932,27 @@ jobs:
 
           set -e
 
-
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
+          SHA=$(sha256sum \
+            "ASIM-TECH-${BUILD_ID}.apk" |
+            awk '{print $1}')
 
-          SHA=$(
-            sha256sum \
-              "ASIM-TECH-${BUILD_ID}.apk" |
-            awk '{print $1}'
-          )
+          SIZE=$(stat -c%s \
+            "ASIM-TECH-${BUILD_ID}.apk")
 
+          echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
 
-          SIZE=$(
-            stat -c%s \
-              "ASIM-TECH-${BUILD_ID}.apk"
-          )
+          echo "size=$SIZE" >> "$GITHUB_OUTPUT"
 
+          echo "SHA256=$SHA"
 
-          echo "sha256=$SHA" \
-            >> "$GITHUB_OUTPUT"
+          echo "SIZE=$SIZE"
 
 
-          echo "size=$SIZE" \
-            >> "$GITHUB_OUTPUT"
-
-
-          echo ""
-          echo "SHA256:"
-          echo "$SHA"
-
-
-          echo ""
-          echo "APK SIZE:"
-          echo "$SIZE"
-
-
-      # =====================================================
-      # UPLOAD APK TO SUPABASE STORAGE
-      # =====================================================
+      # =========================================================
+      # UPLOAD APK
+      # =========================================================
 
       - name: Upload APK
         if: steps.queue.outputs.has_build == 'true'
@@ -2919,16 +1963,9 @@ jobs:
 
           set -e
 
-
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
 
-
           STORAGE_PATH="${BUILD_ID}/${FILE_NAME}"
-
-
-          echo "Uploading:"
-          echo "$FILE_NAME"
-
 
           curl -fL \
             -X POST \
@@ -2938,18 +1975,14 @@ jobs:
             -H "Content-Type: application/vnd.android.package-archive" \
             --data-binary "@${FILE_NAME}"
 
+          echo "STORAGE_PATH=${STORAGE_PATH}" >> "$GITHUB_ENV"
 
-          echo "STORAGE_PATH=${STORAGE_PATH}" \
-            >> "$GITHUB_ENV"
-
-
-          echo ""
-          echo "APK uploaded successfully."
+          echo "APK uploaded."
 
 
-      # =====================================================
+      # =========================================================
       # MARK SUCCESS
-      # =====================================================
+      # =========================================================
 
       - name: Mark build successful
         if: steps.queue.outputs.has_build == 'true'
@@ -2960,9 +1993,7 @@ jobs:
 
           set -e
 
-
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
-
 
           curl -sS \
             -X PATCH \
@@ -2982,15 +2013,9 @@ jobs:
             }"
 
 
-          echo ""
-          echo "======================================"
-          echo "BUILD SUCCESS"
-          echo "======================================"
-
-
-      # =====================================================
-      # GITHUB ARTIFACT
-      # =====================================================
+      # =========================================================
+      # GITHUB APK ARTIFACT
+      # =========================================================
 
       - name: Upload APK artifact
         if: steps.queue.outputs.has_build == 'true'
@@ -3001,9 +2026,9 @@ jobs:
           if-no-files-found: error
 
 
-      # =====================================================
+      # =========================================================
       # MARK FAILED
-      # =====================================================
+      # =========================================================
 
       - name: Mark build failed
         if: failure() && steps.queue.outputs.has_build == 'true'
@@ -3011,11 +2036,6 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
         run: |
-
-          echo "======================================"
-          echo "BUILD FAILED"
-          echo "======================================"
-
 
           curl -sS \
             -X PATCH \
@@ -3026,6 +2046,6 @@ jobs:
             -H "Prefer: return=minimal" \
             -d "{
               \"status\":\"failed\",
-              \"build_log\":\"GitHub Actions Android build failed. Check the Actions log for details.\",
+              \"build_log\":\"GitHub Actions Android build failed. Check Actions log.\",
               \"completed_at\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
             }"
