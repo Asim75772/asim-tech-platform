@@ -182,7 +182,6 @@ jobs:
 
           if [ -z "$APP_ID" ] || [ "$APP_ID" = "null" ]; then
             echo "ERROR: APP_ID is empty."
-            echo "$RESPONSE"
             exit 1
           fi
 
@@ -240,9 +239,6 @@ jobs:
 
           mkdir -p source
 
-          echo "APP_ID:"
-          echo "$APP_ID"
-
           FILES_URL="${SUPABASE_URL}/rest/v1/app_files?app_id=eq.${APP_ID}&select=file_path,content,language"
 
           curl -sS \
@@ -263,7 +259,6 @@ jobs:
 
           if ! jq -e 'type == "array"' source/files.json >/dev/null; then
             echo "ERROR: Supabase response is not an array."
-            cat source/files.json
             exit 1
           fi
 
@@ -322,7 +317,6 @@ jobs:
                   continue
 
               file_path = str(file_path)
-
               normalized = os.path.normpath(file_path)
 
               if (
@@ -352,7 +346,6 @@ jobs:
                   out.write(str(content))
 
               print("Created:", destination)
-
               created += 1
 
           if created == 0:
@@ -362,10 +355,6 @@ jobs:
           print("Created", created, "files.")
 
           PY
-
-          echo "======================================"
-          echo "SOURCE FILES CREATED"
-          echo "======================================"
 
           find webapp -type f -print
 
@@ -431,7 +420,9 @@ jobs:
           set -e
 
           if [ -f webapp/android-settings.json ]; then
+
             cp webapp/android-settings.json android-settings.json
+
           else
 
             cat > android-settings.json <<'EOF'
@@ -446,12 +437,15 @@ jobs:
           fi
 
           APP_NAME=$(jq -r '.appName // "CineReel Video Editor"' android-settings.json)
+
           PACKAGE_NAME=$(jq -r '.packageName // "com.asimtech.cinereel"' android-settings.json)
 
           SETTINGS_VERSION_NAME=$(jq -r '.versionName // "1.0.0"' android-settings.json)
+
           SETTINGS_VERSION_CODE=$(jq -r '.versionCode // 1' android-settings.json)
 
           APP_ICON_URL=$(jq -r '.appIconUrl // empty' android-settings.json)
+
           APP_ICON_PATH=$(jq -r '.appIconPath // empty' android-settings.json)
 
           if [ -z "$VERSION_NAME" ]; then
@@ -673,7 +667,6 @@ jobs:
                   versionCode __VERSION_CODE__
 
                   versionName '__VERSION_NAME__'
-
               }
 
               compileOptions {
@@ -681,19 +674,16 @@ jobs:
                   sourceCompatibility JavaVersion.VERSION_1_8
 
                   targetCompatibility JavaVersion.VERSION_1_8
-
               }
-
           }
 
           dependencies {
 
               implementation 'androidx.webkit:webkit:1.12.1'
 
-              implementation 'androidx.media3:media3-transformer:1.11.1'
+              implementation 'androidx.media3:media3-transformer:1.10.1'
 
-              implementation 'androidx.media3:media3-common:1.11.1'
-
+              implementation 'androidx.media3:media3-common:1.10.1'
           }
 
           EOF
@@ -838,9 +828,11 @@ jobs:
           import java.io.InputStream;
           import java.io.OutputStream;
 
+
           public class MainActivity extends Activity {
 
               private static final int FILE_CHOOSER_REQUEST = 1001;
+
               private static final int CAMERA_PERMISSION_REQUEST = 1002;
 
               private WebView webView;
@@ -852,6 +844,7 @@ jobs:
               private Transformer transformer;
 
               private File nativeInputFile;
+
               private File nativeOutputFile;
 
               private FileOutputStream nativeInputStream;
@@ -863,7 +856,9 @@ jobs:
 
 
               @Override
-              protected void onCreate(Bundle savedInstanceState) {
+              protected void onCreate(
+                      Bundle savedInstanceState
+              ) {
 
                   super.onCreate(savedInstanceState);
 
@@ -905,121 +900,123 @@ jobs:
                   settings.setLoadWithOverviewMode(false);
 
                   settings.setMixedContentMode(
-                          WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+                      WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
                   );
 
 
                   webView.addJavascriptInterface(
-                          new AndroidExportBridge(),
-                          "AndroidExport"
+                      new AndroidExportBridge(),
+                      "AndroidExport"
                   );
 
 
                   webView.setWebViewClient(
-                          new WebViewClient()
+                      new WebViewClient()
                   );
 
 
                   webView.setWebChromeClient(
-                          new WebChromeClient() {
+                      new WebChromeClient() {
 
-                              @Override
-                              public boolean onConsoleMessage(
-                                      ConsoleMessage message
+                          @Override
+                          public boolean onConsoleMessage(
+                                  ConsoleMessage message
+                          ) {
+
+                              android.util.Log.d(
+                                  "CineReel",
+                                  message.message()
+                              );
+
+                              return true;
+                          }
+
+
+                          @Override
+                          public boolean onShowFileChooser(
+                                  WebView webView,
+                                  ValueCallback<Uri[]> callback,
+                                  FileChooserParams params
+                          ) {
+
+                              if (
+                                  filePathCallback != null
                               ) {
 
-                                  android.util.Log.d(
-                                          "CineReel",
-                                          message.message()
+                                  filePathCallback
+                                      .onReceiveValue(null);
+                              }
+
+                              filePathCallback = callback;
+
+                              Intent intent =
+                                  params.createIntent();
+
+                              try {
+
+                                  startActivityForResult(
+                                      intent,
+                                      FILE_CHOOSER_REQUEST
                                   );
 
-                                  return true;
+                              } catch (Exception e) {
+
+                                  filePathCallback = null;
+
+                                  return false;
                               }
 
-
-                              @Override
-                              public boolean onShowFileChooser(
-                                      WebView webView,
-                                      ValueCallback<Uri[]> callback,
-                                      FileChooserParams params
-                              ) {
-
-                                  if (filePathCallback != null) {
-
-                                      filePathCallback.onReceiveValue(null);
-
-                                  }
-
-                                  filePathCallback = callback;
-
-                                  Intent intent =
-                                          params.createIntent();
-
-                                  try {
-
-                                      startActivityForResult(
-                                              intent,
-                                              FILE_CHOOSER_REQUEST
-                                      );
-
-                                  } catch (Exception e) {
-
-                                      filePathCallback = null;
-
-                                      return false;
-                                  }
-
-                                  return true;
-                              }
+                              return true;
+                          }
 
 
-                              @Override
-                              public void onPermissionRequest(
-                                      PermissionRequest request
-                              ) {
+                          @Override
+                          public void onPermissionRequest(
+                                  PermissionRequest request
+                          ) {
 
-                                  runOnUiThread(() -> {
+                              runOnUiThread(() -> {
 
-                                      pendingPermissionRequest =
-                                              request;
+                                  pendingPermissionRequest =
+                                      request;
 
-                                      if (Build.VERSION.SDK_INT >=
-                                              Build.VERSION_CODES.M) {
+                                  if (
+                                      Build.VERSION.SDK_INT >=
+                                      Build.VERSION_CODES.M
+                                  ) {
 
-                                          if (
-                                              checkSelfPermission(
+                                      if (
+                                          checkSelfPermission(
+                                              Manifest.permission.CAMERA
+                                          ) !=
+                                          PackageManager.PERMISSION_GRANTED
+                                      ) {
+
+                                          requestPermissions(
+                                              new String[]{
                                                   Manifest.permission.CAMERA
-                                              ) !=
-                                              PackageManager.PERMISSION_GRANTED
-                                          ) {
-
-                                              requestPermissions(
-                                                  new String[]{
-                                                      Manifest.permission.CAMERA
-                                                  },
-                                                  CAMERA_PERMISSION_REQUEST
-                                              );
-
-                                          } else {
-
-                                              request.grant(
-                                                  request.getResources()
-                                              );
-
-                                          }
+                                              },
+                                              CAMERA_PERMISSION_REQUEST
+                                          );
 
                                       } else {
 
                                           request.grant(
                                               request.getResources()
                                           );
-
                                       }
 
-                                  });
-                              }
+                                  } else {
 
+                                      request.grant(
+                                          request.getResources()
+                                      );
+                                  }
+
+                              });
                           }
+
+                      }
                   );
               }
 
@@ -1027,7 +1024,7 @@ jobs:
               private void loadLocalWebApp() {
 
                   webView.loadUrl(
-                          "file:///android_asset/index.html"
+                      "file:///android_asset/index.html"
                   );
               }
 
@@ -1048,7 +1045,9 @@ jobs:
 
                           try {
 
-                              beginNativeExport(fileName);
+                              beginNativeExport(
+                                  fileName
+                              );
 
                           } catch (Exception e) {
 
@@ -1069,7 +1068,9 @@ jobs:
 
                       try {
 
-                          if (nativeInputStream == null) {
+                          if (
+                              nativeInputStream == null
+                          ) {
 
                               throw new Exception(
                                   "Native export is not started."
@@ -1084,7 +1085,9 @@ jobs:
                               );
 
 
-                          nativeInputStream.write(bytes);
+                          nativeInputStream.write(
+                              bytes
+                          );
 
                           nativeInputStream.flush();
 
@@ -1136,6 +1139,7 @@ jobs:
 
                       });
                   }
+
               }
 
 
@@ -1154,22 +1158,29 @@ jobs:
                   exporting = true;
 
                   nativeFileName =
-                          sanitizeFileName(fileName);
+                      sanitizeFileName(fileName);
+
 
                   nativeInputFile =
-                          new File(
-                              getCacheDir(),
-                              "cinereel_input.webm"
-                          );
+                      new File(
+                          getCacheDir(),
+                          "cinereel_input.webm"
+                      );
 
-                  if (nativeInputFile.exists()) {
+
+                  if (
+                      nativeInputFile.exists()
+                  ) {
+
                       nativeInputFile.delete();
                   }
 
+
                   nativeInputStream =
-                          new FileOutputStream(
-                              nativeInputFile
-                          );
+                      new FileOutputStream(
+                          nativeInputFile
+                      );
+
 
                   sendJavascript(
                       "window.__nativeExportStarted && " +
@@ -1190,11 +1201,13 @@ jobs:
                       return "CineReel_1080x1920.mp4";
                   }
 
+
                   String clean =
                       name.replaceAll(
                           "[^a-zA-Z0-9._-]",
                           "_"
                       );
+
 
                   if (
                       !clean.toLowerCase()
@@ -1203,6 +1216,7 @@ jobs:
 
                       clean += ".mp4";
                   }
+
 
                   return clean;
               }
@@ -1215,12 +1229,15 @@ jobs:
               private void finishNativeInput()
                       throws Exception {
 
-                  if (nativeInputStream == null) {
+                  if (
+                      nativeInputStream == null
+                  ) {
 
                       throw new Exception(
                           "Native input stream unavailable."
                       );
                   }
+
 
                   nativeInputStream.flush();
 
@@ -1242,10 +1259,11 @@ jobs:
 
 
                   File outputDir =
-                          new File(
-                              getCacheDir(),
-                              "cinereel_output"
-                          );
+                      new File(
+                          getCacheDir(),
+                          "cinereel_output"
+                      );
+
 
                   if (!outputDir.exists()) {
                       outputDir.mkdirs();
@@ -1253,97 +1271,101 @@ jobs:
 
 
                   nativeOutputFile =
-                          new File(
-                              outputDir,
-                              nativeFileName
-                          );
+                      new File(
+                          outputDir,
+                          nativeFileName
+                      );
 
-                  if (nativeOutputFile.exists()) {
+
+                  if (
+                      nativeOutputFile.exists()
+                  ) {
+
                       nativeOutputFile.delete();
                   }
 
 
                   MediaItem mediaItem =
-                          MediaItem.fromUri(
-                              Uri.fromFile(
-                                  nativeInputFile
-                              )
-                          );
+                      MediaItem.fromUri(
+                          Uri.fromFile(
+                              nativeInputFile
+                          )
+                      );
 
 
                   EditedMediaItem editedMediaItem =
-                          new EditedMediaItem.Builder(
-                              mediaItem
-                          ).build();
+                      new EditedMediaItem.Builder(
+                          mediaItem
+                      ).build();
 
 
                   transformer =
-                          new Transformer.Builder(this)
+                      new Transformer.Builder(this)
 
-                              .setVideoMimeType(
-                                  MimeTypes.VIDEO_H264
-                              )
+                          .setVideoMimeType(
+                              MimeTypes.VIDEO_H264
+                          )
 
-                              .setAudioMimeType(
-                                  MimeTypes.AUDIO_AAC
-                              )
+                          .setAudioMimeType(
+                              MimeTypes.AUDIO_AAC
+                          )
 
-                              .addListener(
-                                  new Transformer.Listener() {
+                          .addListener(
+                              new Transformer.Listener() {
 
-                                      @Override
-                                      public void onCompleted(
-                                              Composition composition,
-                                              ExportResult result
-                                      ) {
+                                  @Override
+                                  public void onCompleted(
+                                          Composition composition,
+                                          ExportResult result
+                                  ) {
 
-                                          runOnUiThread(() -> {
+                                      runOnUiThread(() -> {
 
-                                              try {
+                                          try {
 
-                                                  saveMp4ToGallery();
+                                              saveMp4ToGallery();
 
-                                              } catch (Exception e) {
-
-                                                  exporting = false;
-
-                                                  notifyJavascript(
-                                                      false,
-                                                      e.getMessage()
-                                                  );
-
-                                                  cleanupFiles();
-                                              }
-
-                                          });
-                                      }
-
-
-                                      @Override
-                                      public void onError(
-                                              Composition composition,
-                                              ExportResult result,
-                                              ExportException exception
-                                      ) {
-
-                                          runOnUiThread(() -> {
+                                          } catch (Exception e) {
 
                                               exporting = false;
 
                                               notifyJavascript(
                                                   false,
-                                                  "Media3 export failed: " +
-                                                  exception.getMessage()
+                                                  e.getMessage()
                                               );
 
                                               cleanupFiles();
-                                          });
-                                      }
+                                          }
 
+                                      });
                                   }
-                              )
 
-                              .build();
+
+                                  @Override
+                                  public void onError(
+                                          Composition composition,
+                                          ExportResult result,
+                                          ExportException exception
+                                  ) {
+
+                                      runOnUiThread(() -> {
+
+                                          exporting = false;
+
+                                          notifyJavascript(
+                                              false,
+                                              "Media3 export failed: " +
+                                              exception.getMessage()
+                                          );
+
+                                          cleanupFiles();
+                                      });
+                                  }
+
+                              }
+                          )
+
+                          .build();
 
 
                   transformer.start(
@@ -1371,7 +1393,9 @@ jobs:
                   }
 
 
-                  if (nativeOutputFile.length() == 0) {
+                  if (
+                      nativeOutputFile.length() == 0
+                  ) {
 
                       throw new Exception(
                           "MP4 output file is empty."
@@ -1380,12 +1404,14 @@ jobs:
 
 
                   ContentValues values =
-                          new ContentValues();
+                      new ContentValues();
+
 
                   values.put(
                       MediaStore.Video.Media.DISPLAY_NAME,
                       nativeFileName
                   );
+
 
                   values.put(
                       MediaStore.Video.Media.MIME_TYPE,
@@ -1403,6 +1429,7 @@ jobs:
                           Environment.DIRECTORY_MOVIES +
                           "/ASIM TECH"
                       );
+
 
                       values.put(
                           MediaStore.Video.Media.IS_PENDING,
@@ -1450,6 +1477,7 @@ jobs:
 
                       int count;
 
+
                       while (
                           (count = input.read(buffer)) != -1
                       ) {
@@ -1461,6 +1489,7 @@ jobs:
                           );
                       }
 
+
                       output.flush();
                   }
 
@@ -1471,12 +1500,14 @@ jobs:
                   ) {
 
                       ContentValues completed =
-                              new ContentValues();
+                          new ContentValues();
+
 
                       completed.put(
                           MediaStore.Video.Media.IS_PENDING,
                           0
                       );
+
 
                       getContentResolver().update(
                           uri,
@@ -1489,10 +1520,12 @@ jobs:
 
                   exporting = false;
 
+
                   notifyJavascript(
                       true,
                       "MP4 saved to Gallery: Movies/ASIM TECH"
                   );
+
 
                   cleanupFiles();
               }
@@ -1508,13 +1541,13 @@ jobs:
               ) {
 
                   String safe =
-                          message == null
-                          ? ""
-                          : message
-                              .replace("\\", "\\\\")
-                              .replace("'", "\\'")
-                              .replace("\n", "\\n")
-                              .replace("\r", "\\r");
+                      message == null
+                      ? ""
+                      : message
+                          .replace("\\", "\\\\")
+                          .replace("'", "\\'")
+                          .replace("\n", "\\n")
+                          .replace("\r", "\\r");
 
 
                   String js =
@@ -1556,24 +1589,30 @@ jobs:
 
                   try {
 
-                      if (transformer != null) {
+                      if (
+                          transformer != null
+                      ) {
 
                           transformer.cancel();
                       }
 
                   } catch (Exception ignored) {}
 
+
                   transformer = null;
 
 
                   try {
 
-                      if (nativeInputStream != null) {
+                      if (
+                          nativeInputStream != null
+                      ) {
 
                           nativeInputStream.close();
                       }
 
                   } catch (Exception ignored) {}
+
 
                   nativeInputStream = null;
 
@@ -1637,7 +1676,10 @@ jobs:
                       FILE_CHOOSER_REQUEST
                   ) {
 
-                      if (filePathCallback == null) {
+                      if (
+                          filePathCallback == null
+                      ) {
+
                           return;
                       }
 
@@ -1713,6 +1755,7 @@ jobs:
                               pendingPermissionRequest.deny();
                           }
 
+
                           pendingPermissionRequest = null;
                       }
                   }
@@ -1751,12 +1794,18 @@ jobs:
 
                   cleanupFiles();
 
-                  if (webView != null) {
+
+                  if (
+                      webView != null
+                  ) {
+
                       webView.destroy();
                   }
 
+
                   super.onDestroy();
               }
+
           }
 
           EOF
@@ -1808,7 +1857,7 @@ jobs:
 
 
       # =========================================================
-      # VERIFY PROJECT
+      # VERIFY ANDROID PROJECT
       # =========================================================
 
       - name: Verify Android project
@@ -1835,17 +1884,34 @@ jobs:
 
           test -f "$JAVA_FILE"
 
-          echo "Checking plugin..."
+
+          echo "Checking Android Gradle Plugin..."
 
           grep \
             "com.android.application.*8.7.3" \
             android-project/build.gradle
 
-          echo "Checking Media3..."
+
+          echo "Checking compileSdk..."
 
           grep \
-            "media3-transformer" \
+            "compileSdk 35" \
             android-project/app/build.gradle
+
+
+          echo "Checking Media3 Transformer..."
+
+          grep \
+            "media3-transformer:1.10.1" \
+            android-project/app/build.gradle
+
+
+          echo "Checking Media3 Common..."
+
+          grep \
+            "media3-common:1.10.1" \
+            android-project/app/build.gradle
+
 
           echo "Checking H264..."
 
@@ -1853,11 +1919,13 @@ jobs:
             "MimeTypes.VIDEO_H264" \
             "$JAVA_FILE"
 
+
           echo "Checking AAC..."
 
           grep \
             "MimeTypes.AUDIO_AAC" \
             "$JAVA_FILE"
+
 
           echo "Checking AndroidExport..."
 
@@ -1865,13 +1933,17 @@ jobs:
             "AndroidExport" \
             "$JAVA_FILE"
 
+
           echo "Checking Gallery..."
 
           grep \
             "MediaStore.Video.Media" \
             "$JAVA_FILE"
 
-          echo "Project verification completed."
+
+          echo "======================================"
+          echo "PROJECT VERIFICATION PASSED"
+          echo "======================================"
 
 
       # =========================================================
@@ -1887,6 +1959,19 @@ jobs:
 
           echo "======================================"
           echo "BUILDING APK"
+          echo "======================================"
+
+          echo "Gradle version:"
+          gradle --version
+
+          echo "======================================"
+          echo "APP BUILD.GRADLE"
+          echo "======================================"
+
+          cat app/build.gradle
+
+          echo "======================================"
+          echo "STARTING GRADLE BUILD"
           echo "======================================"
 
           gradle assembleDebug \
@@ -1990,8 +2075,6 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
         run: |
-
-          set -e
 
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
 
