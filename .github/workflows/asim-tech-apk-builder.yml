@@ -71,7 +71,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "8.10.2"
+          gradle-version: "8.11.1"
 
 
       # =========================================================
@@ -199,7 +199,7 @@ jobs:
 
           echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
-          echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
+          echo "VERSION_CODE=$VERSION_CODE"
 
 
       # =========================================================
@@ -385,8 +385,7 @@ jobs:
           <html>
           <head>
               <meta charset="UTF-8">
-              <meta name="viewport"
-                    content="width=device-width,initial-scale=1.0">
+              <meta name="viewport" content="width=device-width,initial-scale=1.0">
               <title>ASIM TECH</title>
           </head>
           <body>
@@ -626,7 +625,7 @@ jobs:
           cat > android-project/build.gradle <<'EOF'
 
           plugins {
-              id 'com.android.application' version '8.7.3' apply false
+              id 'com.android.application' version '8.10.0' apply false
           }
 
           EOF
@@ -654,7 +653,7 @@ jobs:
 
               namespace '__PACKAGE_NAME__'
 
-              compileSdk 35
+              compileSdk 36
 
               defaultConfig {
 
@@ -662,7 +661,7 @@ jobs:
 
                   minSdk 23
 
-                  targetSdk 35
+                  targetSdk 36
 
                   versionCode __VERSION_CODE__
 
@@ -1813,9 +1812,7 @@ jobs:
           sed -i \
             "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
             "$JAVA_DIR/MainActivity.java"
-
-
-      # =========================================================
+                  # =========================================================
       # STYLES
       # =========================================================
 
@@ -1888,14 +1885,21 @@ jobs:
           echo "Checking Android Gradle Plugin..."
 
           grep \
-            "com.android.application.*8.7.3" \
+            "com.android.application.*8.10.0" \
             android-project/build.gradle
 
 
           echo "Checking compileSdk..."
 
           grep \
-            "compileSdk 35" \
+            "compileSdk 36" \
+            android-project/app/build.gradle
+
+
+          echo "Checking targetSdk..."
+
+          grep \
+            "targetSdk 36" \
             android-project/app/build.gradle
 
 
@@ -1962,13 +1966,23 @@ jobs:
           echo "======================================"
 
           echo "Gradle version:"
+
           gradle --version
+
 
           echo "======================================"
           echo "APP BUILD.GRADLE"
           echo "======================================"
 
           cat app/build.gradle
+
+
+          echo "======================================"
+          echo "ROOT BUILD.GRADLE"
+          echo "======================================"
+
+          cat build.gradle
+
 
           echo "======================================"
           echo "STARTING GRADLE BUILD"
@@ -1977,6 +1991,7 @@ jobs:
           gradle assembleDebug \
             --no-daemon \
             --stacktrace
+
 
           echo "======================================"
           echo "APK BUILD COMPLETED"
@@ -2019,16 +2034,20 @@ jobs:
 
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
+
           SHA=$(sha256sum \
             "ASIM-TECH-${BUILD_ID}.apk" |
             awk '{print $1}')
 
+
           SIZE=$(stat -c%s \
             "ASIM-TECH-${BUILD_ID}.apk")
+
 
           echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
 
           echo "size=$SIZE" >> "$GITHUB_OUTPUT"
+
 
           echo "SHA256=$SHA"
 
@@ -2036,7 +2055,7 @@ jobs:
 
 
       # =========================================================
-      # UPLOAD APK
+      # UPLOAD APK TO SUPABASE STORAGE
       # =========================================================
 
       - name: Upload APK
@@ -2052,6 +2071,16 @@ jobs:
 
           STORAGE_PATH="${BUILD_ID}/${FILE_NAME}"
 
+
+          echo "======================================"
+          echo "UPLOADING APK"
+          echo "======================================"
+
+          echo "FILE_NAME=${FILE_NAME}"
+
+          echo "STORAGE_PATH=${STORAGE_PATH}"
+
+
           curl -fL \
             -X POST \
             "${SUPABASE_URL}/storage/v1/object/android-apks/${STORAGE_PATH}?upsert=true" \
@@ -2060,9 +2089,13 @@ jobs:
             -H "Content-Type: application/vnd.android.package-archive" \
             --data-binary "@${FILE_NAME}"
 
+
           echo "STORAGE_PATH=${STORAGE_PATH}" >> "$GITHUB_ENV"
 
-          echo "APK uploaded."
+
+          echo "======================================"
+          echo "APK UPLOAD COMPLETED"
+          echo "======================================"
 
 
       # =========================================================
@@ -2076,7 +2109,15 @@ jobs:
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
         run: |
 
+          set -e
+
           FILE_NAME="ASIM-TECH-${BUILD_ID}.apk"
+
+
+          echo "======================================"
+          echo "MARKING BUILD SUCCESS"
+          echo "======================================"
+
 
           curl -sS \
             -X PATCH \
@@ -2094,6 +2135,9 @@ jobs:
               \"sha256\":\"${{ steps.sha.outputs.sha256 }}\",
               \"completed_at\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
             }"
+
+
+          echo "BUILD SUCCESSFULLY MARKED."
 
 
       # =========================================================
@@ -2120,6 +2164,13 @@ jobs:
           BUILD_ID: ${{ steps.queue.outputs.build_id }}
         run: |
 
+          set -e
+
+          echo "======================================"
+          echo "MARKING BUILD FAILED"
+          echo "======================================"
+
+
           curl -sS \
             -X PATCH \
             "${SUPABASE_URL}/rest/v1/app_builds?id=eq.${BUILD_ID}" \
@@ -2132,3 +2183,6 @@ jobs:
               \"build_log\":\"GitHub Actions Android build failed. Check Actions log.\",
               \"completed_at\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
             }"
+
+
+          echo "BUILD MARKED AS FAILED."
