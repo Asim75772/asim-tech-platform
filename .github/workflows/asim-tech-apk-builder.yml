@@ -1489,9 +1489,9 @@ jobs:
 
       - name: Upload build to Supabase Storage
         if: steps.queue.outputs.has_build == 'true'
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        
+    env:    
+     SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}  
         run: |
           set -e
 
@@ -1535,8 +1535,8 @@ jobs:
       - name: Mark build successful
         if: steps.queue.outputs.has_build == 'true' && success()
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}      
+          
         run: |
           set -e
 
@@ -1588,7 +1588,7 @@ jobs:
       - name: Mark build failed
         if: steps.queue.outputs.has_build == 'true' && failure()
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
