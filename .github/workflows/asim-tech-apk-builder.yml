@@ -508,7 +508,7 @@ jobs:
 
           cat > android-project/build.gradle <<'EOF'
           plugins {
-              id 'com.android.application' version '8.7.3' apply false
+              id 'com.android.application' version '8.9.1' apply false
           }
           EOF
 
@@ -550,7 +550,7 @@ jobs:
 
           android {
               namespace '__PACKAGE_NAME__'
-              compileSdk 35
+              compileSdk 36
 
               defaultConfig {
                   applicationId '__PACKAGE_NAME__'
