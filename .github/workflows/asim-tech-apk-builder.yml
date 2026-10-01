@@ -298,8 +298,7 @@ jobs:
           <html>
           <head>
               <meta charset="UTF-8">
-              <meta name="viewport"
-                    content="width=device-width,initial-scale=1.0">
+              <meta name="viewport" content="width=device-width,initial-scale=1.0">
               <title>ASIM TECH</title>
           </head>
           <body>
@@ -450,7 +449,9 @@ jobs:
               "android-project/app/src/main/res/mipmap-${density}/ic_launcher_round.png"
 
           done
-                # =========================================================
+
+
+      # =========================================================
       # GRADLE PROPERTIES
       # =========================================================
 
@@ -622,7 +623,6 @@ jobs:
           import android.os.Bundle;
           import android.os.Environment;
           import android.provider.MediaStore;
-          import android.provider.Settings;
           import android.webkit.JavascriptInterface;
           import android.webkit.ValueCallback;
           import android.webkit.WebChromeClient;
@@ -716,11 +716,6 @@ jobs:
                           "file:///android_asset/index.html");
               }
 
-
-              // =================================================
-              // JAVASCRIPT BRIDGE
-              // =================================================
-
               private class AndroidBridge {
 
                   @JavascriptInterface
@@ -755,11 +750,6 @@ jobs:
                       });
                   }
               }
-
-
-              // =================================================
-              // VIDEO EXPORT
-              // =================================================
 
               private void startExport(String sourcePath) {
 
@@ -825,7 +815,6 @@ jobs:
                                               });
                                           }
 
-
                                           @Override
                                           public void onError(
                                                   Composition composition,
@@ -849,7 +838,6 @@ jobs:
                                       })
                                       .build();
 
-
                       transformer.start(
                               editedMediaItem,
                               outputFile.getAbsolutePath());
@@ -863,11 +851,6 @@ jobs:
                       ).show();
                   }
               }
-
-
-              // =================================================
-              // SAVE VIDEO TO GALLERY
-              // =================================================
 
               private void saveToGallery(File sourceFile) {
 
@@ -993,11 +976,6 @@ jobs:
                   }
               }
 
-
-              // =================================================
-              // JAVASCRIPT CALLBACK
-              // =================================================
-
               private void notifyJavascript(
                       String status,
                       String message) {
@@ -1041,11 +1019,6 @@ jobs:
                                   null));
               }
 
-
-              // =================================================
-              // FILE PICKER RESULT
-              // =================================================
-
               @Override
               protected void onActivityResult(
                       int requestCode,
@@ -1083,11 +1056,6 @@ jobs:
                   }
               }
 
-
-              // =================================================
-              // CAMERA PERMISSION
-              // =================================================
-
               private void requestCameraPermission() {
 
                   if (Build.VERSION.SDK_INT >= 23) {
@@ -1106,7 +1074,6 @@ jobs:
                       }
                   }
               }
-
 
               @Override
               public void onRequestPermissionsResult(
@@ -1142,11 +1109,6 @@ jobs:
                   }
               }
 
-
-              // =================================================
-              // BACK BUTTON
-              // =================================================
-
               @Override
               public void onBackPressed() {
 
@@ -1170,7 +1132,7 @@ jobs:
 
 
       # =========================================================
-      # IMPORTANT MEDIA3 IMPORT FIX
+      # VERIFY MAIN ACTIVITY
       # =========================================================
 
       - name: Verify MainActivity
@@ -1180,35 +1142,20 @@ jobs:
 
           JAVA_DIR="android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')"
 
-          echo "Checking MainActivity..."
-
           test -f "$JAVA_DIR/MainActivity.java"
 
-          grep -q "class MainActivity" \
-            "$JAVA_DIR/MainActivity.java"
+          grep -q "class MainActivity" "$JAVA_DIR/MainActivity.java"
+          grep -q "Transformer.Builder" "$JAVA_DIR/MainActivity.java"
+          grep -q "setVideoMimeType" "$JAVA_DIR/MainActivity.java"
+          grep -q "setAudioMimeType" "$JAVA_DIR/MainActivity.java"
 
-          grep -q "Transformer.Builder" \
-            "$JAVA_DIR/MainActivity.java"
-
-          grep -q "setVideoMimeType" \
-            "$JAVA_DIR/MainActivity.java"
-
-          grep -q "setAudioMimeType" \
-            "$JAVA_DIR/MainActivity.java"
-
-          if grep -q "EncoderFactory" \
-            "$JAVA_DIR/MainActivity.java"; then
-
+          if grep -q "EncoderFactory" "$JAVA_DIR/MainActivity.java"; then
               echo "ERROR: Old EncoderFactory API found"
-
               exit 1
           fi
 
-          if grep -q "activity.runOnUiThread" \
-            "$JAVA_DIR/MainActivity.java"; then
-
+          if grep -q "activity.runOnUiThread" "$JAVA_DIR/MainActivity.java"; then
               echo "ERROR: Undefined activity variable found"
-
               exit 1
           fi
 
@@ -1318,10 +1265,6 @@ jobs:
         run: |
           set -e
 
-          echo "=========================================="
-          echo "ANDROID PROJECT VERIFICATION"
-          echo "=========================================="
-
           test -f android-project/settings.gradle
           test -f android-project/build.gradle
           test -f android-project/app/build.gradle
@@ -1331,29 +1274,14 @@ jobs:
 
           test -f "$JAVA_FILE"
 
-          echo ""
-          echo "Package:"
-          echo "$PACKAGE_NAME"
-
-          echo ""
-          echo "Version:"
-          echo "$VERSION_NAME"
-
-          echo ""
-          echo "Version Code:"
-          echo "$VERSION_CODE"
-
-          echo ""
-          echo "Build Type:"
-          echo "$BUILD_TYPE"
-
-          echo ""
-          echo "Java file:"
-          echo "$JAVA_FILE"
-
-          echo ""
+          echo "Package: $PACKAGE_NAME"
+          echo "Version: $VERSION_NAME"
+          echo "Version Code: $VERSION_CODE"
+          echo "Build Type: $BUILD_TYPE"
           echo "Android project verification completed."
-                # =========================================================
+
+
+      # =========================================================
       # BUILD APK / AAB
       # =========================================================
 
@@ -1372,25 +1300,18 @@ jobs:
           echo "VERSION    : $VERSION_NAME"
           echo "BUILD TYPE : $BUILD_TYPE"
 
-          
-
           if [ "$BUILD_TYPE" = "aab" ]; then
 
-              echo ""
               echo "Building Android App Bundle..."
-              echo ""
 
               gradle bundleDebug --no-daemon --stacktrace
-              
 
               OUTPUT_FILE="app/build/outputs/bundle/debug/app-debug.aab"
               OUTPUT_EXT="aab"
 
           else
 
-              echo ""
               echo "Building Android APK..."
-              echo ""
 
               gradle assembleDebug --no-daemon --stacktrace
 
@@ -1399,22 +1320,12 @@ jobs:
 
           fi
 
-          echo ""
-          echo "Checking output..."
-
           if [ ! -f "$OUTPUT_FILE" ]; then
-
-              echo "ERROR: Build output not found:"
-              echo "$OUTPUT_FILE"
-
+              echo "ERROR: Build output not found: $OUTPUT_FILE"
               exit 1
           fi
 
-          echo ""
           echo "BUILD SUCCESSFUL"
-          echo "OUTPUT FILE:"
-          echo "$OUTPUT_FILE"
-
           echo "OUTPUT_FILE=$OUTPUT_FILE" >> "$GITHUB_ENV"
           echo "OUTPUT_EXT=$OUTPUT_EXT" >> "$GITHUB_ENV"
 
@@ -1435,13 +1346,9 @@ jobs:
             tr -cd '[:alnum:]_.-')
 
           if [ "$BUILD_TYPE" = "aab" ]; then
-
               FINAL_NAME="${SAFE_APP_NAME}_v${VERSION_NAME}.aab"
-
           else
-
               FINAL_NAME="${SAFE_APP_NAME}_v${VERSION_NAME}.apk"
-
           fi
 
           FINAL_FILE="final-output/$FINAL_NAME"
@@ -1450,10 +1357,6 @@ jobs:
 
           echo "FINAL_FILE=$FINAL_FILE" >> "$GITHUB_ENV"
           echo "FINAL_NAME=$FINAL_NAME" >> "$GITHUB_ENV"
-
-          echo ""
-          echo "Final file:"
-          echo "$FINAL_FILE"
 
           ls -lh "$FINAL_FILE"
 
@@ -1468,19 +1371,13 @@ jobs:
           set -e
 
           SHA256=$(sha256sum "$FINAL_FILE" | awk '{print $1}')
-
           FILE_SIZE=$(stat -c%s "$FINAL_FILE")
 
           echo "SHA256=$SHA256" >> "$GITHUB_ENV"
           echo "FILE_SIZE=$FILE_SIZE" >> "$GITHUB_ENV"
 
-          echo ""
-          echo "SHA256:"
-          echo "$SHA256"
-
-          echo ""
-          echo "FILE SIZE:"
-          echo "$FILE_SIZE bytes"
+          echo "SHA256: $SHA256"
+          echo "FILE SIZE: $FILE_SIZE bytes"
 
 
       # =========================================================
@@ -1489,16 +1386,14 @@ jobs:
 
       - name: Upload build to Supabase Storage
         if: steps.queue.outputs.has_build == 'true'
-        
-    env:    
-     SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}  
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           set -e
 
           echo "Uploading build to Supabase..."
 
           STORAGE_BUCKET="apk-builds"
-
           STORAGE_PATH="${APP_ID}/${FINAL_NAME}"
 
           MIME_TYPE="application/vnd.android.package-archive"
@@ -1506,12 +1401,6 @@ jobs:
           if [ "$BUILD_TYPE" = "aab" ]; then
               MIME_TYPE="application/octet-stream"
           fi
-
-          echo "Bucket:"
-          echo "$STORAGE_BUCKET"
-
-          echo "Storage path:"
-          echo "$STORAGE_PATH"
 
           curl --fail-with-body \
             -X POST \
@@ -1535,12 +1424,9 @@ jobs:
       - name: Mark build successful
         if: steps.queue.outputs.has_build == 'true' && success()
         env:
-    SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}      
-          
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           set -e
-
-          echo "Updating app_builds..."
 
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
 
@@ -1562,10 +1448,7 @@ jobs:
               \"build_log\": \"Build completed successfully as ${BUILD_TYPE}\"
             }"
 
-          echo ""
-          echo "=========================================="
           echo "BUILD STATUS: SUCCESS"
-          echo "=========================================="
 
 
       # =========================================================
@@ -1588,7 +1471,6 @@ jobs:
       - name: Mark build failed
         if: steps.queue.outputs.has_build == 'true' && failure()
         env:
-          
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           BUILD_ID="${{ steps.queue.outputs.build_id }}"
@@ -1611,4 +1493,3 @@ jobs:
             }"
 
           echo "Build failure recorded in Supabase."
-          
