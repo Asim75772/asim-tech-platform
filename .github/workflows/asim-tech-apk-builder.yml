@@ -798,882 +798,871 @@ jobs:
       # MAIN ACTIVITY
       # =========================================================
 
-      - name: Create MainActivity
-        if: steps.queue.outputs.has_build == 'true'
-        run: |
+      cat > "$JAVA_DIR/MainActivity.java" <<'EOF'
 
-          set -e
+package __PACKAGE_NAME__;
 
-          JAVA_DIR="android-project/app/src/main/java/$(echo "$PACKAGE_NAME" | tr '.' '/')"
+import android.Manifest;
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.view.ViewGroup;
+import android.webkit.PermissionRequest;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
-          cat > "$JAVA_DIR/MainActivity.java" <<'EOF'
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.MimeTypes;
+import androidx.media3.transformer.Composition;
+import androidx.media3.transformer.EditedMediaItem;
+import androidx.media3.transformer.ExportException;
+import androidx.media3.transformer.ExportResult;
+import androidx.media3.transformer.Transformer;
 
-          package __PACKAGE_NAME__;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-          import android.Manifest;
-          import android.app.Activity;
-          import android.content.ContentValues;
-          import android.content.Intent;
-          import android.content.pm.PackageManager;
-          import android.net.Uri;
-          import android.os.Build;
-          import android.os.Bundle;
-          import android.os.Environment;
-          import android.provider.MediaStore;
-          import android.view.ViewGroup;
-          import android.webkit.PermissionRequest;
-          import android.webkit.ValueCallback;
-          import android.webkit.WebChromeClient;
-          import android.webkit.WebSettings;
-          import android.webkit.WebView;
-          import android.webkit.WebViewClient;
 
-          import androidx.annotation.NonNull;
-          import androidx.appcompat.app.AppCompatActivity;
-          import androidx.media3.common.MediaItem;
-          import androidx.media3.common.MimeTypes;
-          import androidx.media3.transformer.Composition;
-          import androidx.media3.transformer.DefaultEncoderFactory;
-          import androidx.media3.transformer.EditedMediaItem;
-          import androidx.media3.transformer.EncoderFactory;
-          import androidx.media3.transformer.ExportException;
-          import androidx.media3.transformer.ExportResult;
-          import androidx.media3.transformer.Transformer;
+public class MainActivity
+        extends AppCompatActivity {
 
-          import java.io.File;
-          import java.io.FileInputStream;
-          import java.io.FileOutputStream;
-          import java.io.InputStream;
-          import java.io.OutputStream;
 
-          public class MainActivity
-                  extends AppCompatActivity {
+    private WebView webView;
 
-              private WebView webView;
 
-              private static final int
-                      FILE_CHOOSER_REQUEST = 1001;
+    private static final int
+            FILE_CHOOSER_REQUEST = 1001;
 
-              private static final int
-                      CAMERA_PERMISSION_REQUEST = 1002;
 
-              private ValueCallback<Uri[]>
-                      filePathCallback;
+    private static final int
+            CAMERA_PERMISSION_REQUEST = 1002;
 
-              private PermissionRequest
-                      pendingPermissionRequest;
 
-              private Transformer transformer;
+    private ValueCallback<Uri[]>
+            filePathCallback;
 
-              private File nativeInputFile;
 
-              private File nativeOutputFile;
+    private PermissionRequest
+            pendingPermissionRequest;
 
-              private InputStream nativeInputStream;
 
-              private boolean exporting = false;
+    private Transformer transformer;
 
 
-              @Override
-              protected void onCreate(
-                      Bundle savedInstanceState
-              ) {
+    private File nativeInputFile;
 
-                  super.onCreate(savedInstanceState);
 
-                  webView =
-                      new WebView(this);
+    private File nativeOutputFile;
 
-                  webView.setLayoutParams(
-                      new ViewGroup.LayoutParams(
-                          ViewGroup.LayoutParams.MATCH_PARENT,
-                          ViewGroup.LayoutParams.MATCH_PARENT
-                      )
-                  );
 
-                  setContentView(webView);
+    private InputStream nativeInputStream;
 
 
-                  WebSettings settings =
-                      webView.getSettings();
+    private boolean exporting = false;
 
-                  settings.setJavaScriptEnabled(true);
 
-                  settings.setDomStorageEnabled(true);
+    @Override
+    protected void onCreate(
+            Bundle savedInstanceState
+    ) {
 
-                  settings.setAllowFileAccess(true);
+        super.onCreate(savedInstanceState);
 
-                  settings.setAllowContentAccess(true);
 
-                  settings.setMediaPlaybackRequiresUserGesture(false);
+        webView =
+                new WebView(this);
 
-                  settings.setBuiltInZoomControls(false);
 
-                  settings.setDisplayZoomControls(false);
+        webView.setLayoutParams(
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                )
+        );
 
-                  settings.setSupportZoom(false);
 
-                  settings.setLoadWithOverviewMode(true);
+        setContentView(webView);
 
-                  settings.setUseWideViewPort(true);
 
+        WebSettings settings =
+                webView.getSettings();
 
-                  webView.setWebViewClient(
-                      new WebViewClient()
-                  );
 
+        settings.setJavaScriptEnabled(true);
 
-                  webView.setWebChromeClient(
-                      new WebChromeClient() {
+        settings.setDomStorageEnabled(true);
 
-                          @Override
-                          public boolean onShowFileChooser(
-                                  WebView webView,
-                                  ValueCallback<Uri[]> callback,
-                                  FileChooserParams params
-                          ) {
+        settings.setAllowFileAccess(true);
 
-                              if (
-                                  filePathCallback != null
-                              ) {
+        settings.setAllowContentAccess(true);
 
-                                  filePathCallback
-                                      .onReceiveValue(null);
-                              }
+        settings.setMediaPlaybackRequiresUserGesture(false);
 
-                              filePathCallback =
-                                  callback;
+        settings.setBuiltInZoomControls(false);
 
+        settings.setDisplayZoomControls(false);
 
-                              Intent intent =
-                                  params.createIntent();
+        settings.setSupportZoom(false);
 
-                              intent.addCategory(
-                                  Intent.CATEGORY_OPENABLE
-                              );
+        settings.setLoadWithOverviewMode(true);
 
-                              intent.setType(
-                                  "video/*"
-                              );
+        settings.setUseWideViewPort(true);
 
-                              try {
 
-                                  startActivityForResult(
-                                      intent,
-                                      FILE_CHOOSER_REQUEST
-                                  );
+        webView.setWebViewClient(
+                new WebViewClient()
+        );
 
-                              } catch (Exception e) {
 
-                                  filePathCallback = null;
+        webView.setWebChromeClient(
+                new WebChromeClient() {
 
-                                  return false;
-                              }
+                    @Override
+                    public boolean onShowFileChooser(
+                            WebView webView,
+                            ValueCallback<Uri[]> callback,
+                            FileChooserParams params
+                    ) {
 
-                              return true;
-                          }
+                        if (
+                                filePathCallback != null
+                        ) {
 
+                            filePathCallback
+                                    .onReceiveValue(null);
+                        }
 
-                          @Override
-                          public void onPermissionRequest(
-                                  PermissionRequest request
-                          ) {
 
-                              runOnUiThread(() -> {
+                        filePathCallback =
+                                callback;
 
-                                  pendingPermissionRequest =
-                                      request;
 
-                                  if (
-                                      Build.VERSION.SDK_INT >=
-                                      Build.VERSION_CODES.M &&
-                                      checkSelfPermission(
-                                          Manifest.permission.CAMERA
-                                      ) !=
-                                      PackageManager.PERMISSION_GRANTED
-                                  ) {
+                        Intent intent =
+                                params.createIntent();
 
-                                      requestPermissions(
-                                          new String[]{
-                                              Manifest.permission.CAMERA
-                                          },
-                                          CAMERA_PERMISSION_REQUEST
-                                      );
 
-                                  } else {
+                        intent.addCategory(
+                                Intent.CATEGORY_OPENABLE
+                        );
 
-                                      request.grant(
-                                          new String[]{
-                                              PermissionRequest
-                                                  .RESOURCE_VIDEO_CAPTURE
-                                          }
-                                      );
-                                  }
 
-                              });
-                          }
-                      }
-                  );
+                        intent.setType(
+                                "video/*"
+                        );
 
 
-                  webView.addJavascriptInterface(
-                      new AndroidExport(this),
-                      "AndroidExport"
-                  );
+                        try {
 
+                            startActivityForResult(
+                                    intent,
+                                    FILE_CHOOSER_REQUEST
+                            );
 
-                  webView.loadUrl(
-                      "file:///android_asset/index.html"
-                  );
-              }
+                        } catch (Exception e) {
 
+                            filePathCallback = null;
 
-              public class AndroidExport {
+                            return false;
+                        }
 
-                  private final Activity activity;
 
+                        return true;
+                    }
 
-                  AndroidExport(
-                          Activity activity
-                  ) {
 
-                      this.activity = activity;
-                  }
+                    @Override
+                    public void onPermissionRequest(
+                            PermissionRequest request
+                    ) {
 
+                        runOnUiThread(() -> {
 
-                  @android.webkit.JavascriptInterface
-                  public void exportVideo(
-                          String sourcePath
-                  ) {
+                            pendingPermissionRequest =
+                                    request;
 
-                      activity.runOnUiThread(() -> {
 
-                          startExport(
-                              sourcePath
-                          );
+                            if (
+                                    Build.VERSION.SDK_INT >=
+                                            Build.VERSION_CODES.M &&
+                                    checkSelfPermission(
+                                            Manifest.permission.CAMERA
+                                    ) !=
+                                            PackageManager.PERMISSION_GRANTED
+                            ) {
 
-                      });
-                  }
-              }
+                                requestPermissions(
+                                        new String[]{
+                                                Manifest.permission.CAMERA
+                                        },
+                                        CAMERA_PERMISSION_REQUEST
+                                );
 
+                            } else {
 
-              private void startExport(
-                      String sourcePath
-              ) {
+                                request.grant(
+                                        new String[]{
+                                                PermissionRequest
+                                                        .RESOURCE_VIDEO_CAPTURE
+                                        }
+                                );
+                            }
 
-                  if (exporting) {
+                        });
+                    }
+                }
+        );
 
-                      notifyJavascript(
-                          false,
-                          "Export already running."
-                      );
 
-                      return;
-                  }
+        webView.addJavascriptInterface(
+                new AndroidExport(this),
+                "AndroidExport"
+        );
 
 
-                  exporting = true;
+        webView.loadUrl(
+                "file:///android_asset/index.html"
+        );
+    }
 
 
-                  try {
+    public class AndroidExport {
 
-                      Uri sourceUri =
-                          Uri.parse(sourcePath);
 
+        private final Activity activity;
 
-                      nativeInputFile =
-                          new File(
-                              getCacheDir(),
-                              "input_video.mp4"
-                          );
 
+        AndroidExport(
+                Activity activity
+        ) {
 
-                      try (
-                          InputStream input =
-                              getContentResolver()
-                                  .openInputStream(
-                                      sourceUri
-                                  );
+            this.activity = activity;
+        }
 
-                          FileOutputStream output =
-                              new FileOutputStream(
-                                  nativeInputFile
-                              )
-                      ) {
 
-                          if (input == null) {
+        @android.webkit.JavascriptInterface
+        public void exportVideo(
+                String sourcePath
+        ) {
 
-                              throw new Exception(
-                                  "Unable to open input video."
-                              );
-                          }
+            activity.runOnUiThread(() -> {
 
+                startExport(
+                        sourcePath
+                );
 
-                          byte[] buffer =
-                              new byte[1024 * 1024];
+            });
+        }
+    }
 
-                          int count;
 
-                          while (
-                              (count = input.read(buffer)) != -1
-                          ) {
+    private void startExport(
+            String sourcePath
+    ) {
 
-                              output.write(
-                                  buffer,
-                                  0,
-                                  count
-                              );
-                          }
+        if (exporting) {
 
-                      }
+            notifyJavascript(
+                    false,
+                    "Export already running."
+            );
 
+            return;
+        }
 
-                      nativeOutputFile =
-                          new File(
-                              getCacheDir(),
-                              "exported_video.mp4"
-                          );
 
+        exporting = true;
 
-                      MediaItem mediaItem =
-                          MediaItem.fromUri(
-                              Uri.fromFile(
-                                  nativeInputFile
-                              )
-                          );
 
+        try {
 
-                      EditedMediaItem editedMediaItem =
-                          new EditedMediaItem.Builder(
-                              mediaItem
-                          ).build();
+            Uri sourceUri =
+                    Uri.parse(sourcePath);
 
 
-                      EncoderFactory encoderFactory =
-                          new DefaultEncoderFactory.Builder(
-                              this
-                          )
-                          .setRequestedVideoMimeType(
-                              MimeTypes.VIDEO_H264
-                          )
-                          .setRequestedAudioMimeType(
-                              MimeTypes.AUDIO_AAC
-                          )
-                          .build();
+            nativeInputFile =
+                    new File(
+                            getCacheDir(),
+                            "input_video.mp4"
+                    );
 
 
-                      transformer =
-                          new Transformer.Builder(
-                              this
-                          )
-                          .setEncoderFactory(
-                              encoderFactory
-                          )
-                          .addListener(
-                              new Transformer.Listener() {
+            try (
+                    InputStream input =
+                            getContentResolver()
+                                    .openInputStream(
+                                            sourceUri
+                                    );
 
-                                  @Override
-                                  public void onCompleted(
-                                          Composition composition,
-                                          ExportResult result
-                                  ) {
+                    FileOutputStream output =
+                            new FileOutputStream(
+                                    nativeInputFile
+                            )
+            ) {
 
-                                      activity.runOnUiThread(
-                                          () -> {
+                if (input == null) {
 
-                                              try {
+                    throw new Exception(
+                            "Unable to open input video."
+                    );
+                }
 
-                                                  saveToGallery();
 
-                                              } catch (Exception e) {
+                byte[] buffer =
+                        new byte[1024 * 1024];
 
-                                                  exporting = false;
 
-                                                  notifyJavascript(
-                                                      false,
-                                                      "Gallery save failed: "
-                                                      + e.getMessage()
-                                                  );
-                                              }
+                int count;
 
-                                          }
-                                      );
-                                  }
 
+                while (
+                        (count = input.read(buffer)) != -1
+                ) {
 
-                                  @Override
-                                  public void onError(
-                                          Composition composition,
-                                          ExportResult result,
-                                          ExportException exception
-                                  ) {
+                    output.write(
+                            buffer,
+                            0,
+                            count
+                    );
+                }
 
-                                      activity.runOnUiThread(
-                                          () -> {
+            }
 
-                                              exporting = false;
 
-                                              notifyJavascript(
-                                                  false,
-                                                  "Video export failed: "
-                                                  + exception.getMessage()
-                                              );
+            nativeOutputFile =
+                    new File(
+                            getCacheDir(),
+                            "exported_video.mp4"
+                    );
 
-                                          }
-                                      );
-                                  }
 
-                              }
-                          )
-                          .build();
+            MediaItem mediaItem =
+                    MediaItem.fromUri(
+                            Uri.fromFile(
+                                    nativeInputFile
+                            )
+                    );
 
 
-                      transformer.start(
-                          editedMediaItem,
-                          nativeOutputFile
-                              .getAbsolutePath()
-                      );
+            EditedMediaItem editedMediaItem =
+                    new EditedMediaItem.Builder(
+                            mediaItem
+                    ).build();
 
-                  } catch (Exception e) {
 
-                      exporting = false;
+            /*
+             * Media3 1.10.1
+             *
+             * Do NOT use EncoderFactory here.
+             * Use Transformer Builder directly.
+             */
 
-                      notifyJavascript(
-                          false,
-                          "Export failed: "
-                          + e.getMessage()
-                      );
-                  }
-              }
+            transformer =
+                    new Transformer.Builder(
+                            this
+                    )
+                    .setVideoMimeType(
+                            MimeTypes.VIDEO_H264
+                    )
+                    .setAudioMimeType(
+                            MimeTypes.AUDIO_AAC
+                    )
+                    .addListener(
+                            new Transformer.Listener() {
 
+                                @Override
+                                public void onCompleted(
+                                        Composition composition,
+                                        ExportResult result
+                                ) {
 
-              private void saveToGallery()
-                      throws Exception {
+                                    runOnUiThread(
+                                            () -> {
 
-                  if (
-                      nativeOutputFile == null ||
-                      !nativeOutputFile.exists()
-                  ) {
+                                                try {
 
-                      throw new Exception(
-                          "Exported file not found."
-                      );
-                  }
+                                                    saveToGallery();
 
+                                                } catch (Exception e) {
 
-                  ContentValues values =
-                      new ContentValues();
+                                                    exporting = false;
 
-                  values.put(
-                      MediaStore.Video.Media.DISPLAY_NAME,
-                      "ASIM-TECH-"
-                      + System.currentTimeMillis()
-                      + ".mp4"
-                  );
+                                                    notifyJavascript(
+                                                            false,
+                                                            "Gallery save failed: "
+                                                                    + e.getMessage()
+                                                    );
+                                                }
 
-                  values.put(
-                      MediaStore.Video.Media.MIME_TYPE,
-                      "video/mp4"
-                  );
+                                            }
+                                    );
+                                }
 
-                  values.put(
-                      MediaStore.Video.Media.RELATIVE_PATH,
-                      Environment.DIRECTORY_MOVIES
-                      + "/ASIM TECH"
-                  );
 
+                                @Override
+                                public void onError(
+                                        Composition composition,
+                                        ExportResult result,
+                                        ExportException exception
+                                ) {
 
-                  if (
-                      Build.VERSION.SDK_INT >=
-                      Build.VERSION_CODES.Q
-                  ) {
+                                    runOnUiThread(
+                                            () -> {
 
-                      values.put(
-                          MediaStore.Video.Media.IS_PENDING,
-                          1
-                      );
-                  }
+                                                exporting = false;
 
+                                                notifyJavascript(
+                                                        false,
+                                                        "Video export failed: "
+                                                                + exception.getMessage()
+                                                );
 
-                  Uri uri =
-                      getContentResolver().insert(
-                          MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                          values
-                      );
+                                            }
+                                    );
+                                }
 
+                            }
+                    )
+                    .build();
 
-                  if (uri == null) {
 
-                      throw new Exception(
-                          "Unable to create Gallery entry."
-                      );
-                  }
+            transformer.start(
+                    editedMediaItem,
+                    nativeOutputFile
+                            .getAbsolutePath()
+            );
 
 
-                  try (
-                      InputStream input =
-                          new FileInputStream(
-                              nativeOutputFile
-                          );
+        } catch (Exception e) {
 
-                      OutputStream output =
-                          getContentResolver()
-                              .openOutputStream(uri)
-                  ) {
+            exporting = false;
 
-                      if (output == null) {
+            notifyJavascript(
+                    false,
+                    "Export failed: "
+                            + e.getMessage()
+            );
+        }
+    }
 
-                          throw new Exception(
-                              "Unable to open Gallery output."
-                          );
-                      }
 
+    private void saveToGallery()
+            throws Exception {
 
-                      byte[] buffer =
-                          new byte[1024 * 1024];
 
-                      int count;
+        if (
+                nativeOutputFile == null ||
+                !nativeOutputFile.exists()
+        ) {
 
+            throw new Exception(
+                    "Exported file not found."
+            );
+        }
 
-                      while (
-                          (count = input.read(buffer)) != -1
-                      ) {
 
-                          output.write(
-                              buffer,
-                              0,
-                              count
-                          );
-                      }
+        ContentValues values =
+                new ContentValues();
 
 
-                      output.flush();
-                  }
+        values.put(
+                MediaStore.Video.Media.DISPLAY_NAME,
+                "ASIM-TECH-"
+                        + System.currentTimeMillis()
+                        + ".mp4"
+        );
 
 
-                  if (
-                      Build.VERSION.SDK_INT >=
-                      Build.VERSION_CODES.Q
-                  ) {
+        values.put(
+                MediaStore.Video.Media.MIME_TYPE,
+                "video/mp4"
+        );
 
-                      ContentValues completed =
-                          new ContentValues();
 
-                      completed.put(
-                          MediaStore.Video.Media.IS_PENDING,
-                          0
-                      );
+        values.put(
+                MediaStore.Video.Media.RELATIVE_PATH,
+                Environment.DIRECTORY_MOVIES
+                        + "/ASIM TECH"
+        );
 
-                      getContentResolver().update(
-                          uri,
-                          completed,
-                          null,
-                          null
-                      );
-                  }
 
+        if (
+                Build.VERSION.SDK_INT >=
+                        Build.VERSION_CODES.Q
+        ) {
 
-                  exporting = false;
+            values.put(
+                    MediaStore.Video.Media.IS_PENDING,
+                    1
+            );
+        }
 
-                  notifyJavascript(
-                      true,
-                      "MP4 saved to Gallery: Movies/ASIM TECH"
-                  );
 
-                  cleanupFiles();
-              }
+        Uri uri =
+                getContentResolver().insert(
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                        values
+                );
 
 
-              private void notifyJavascript(
-                      boolean success,
-                      String message
-              ) {
+        if (uri == null) {
 
-                  String safe =
-                      message == null
-                      ? ""
-                      : message
-                          .replace("\\", "\\\\")
-                          .replace("'", "\\'")
-                          .replace("\n", "\\n")
-                          .replace("\r", "\\r");
+            throw new Exception(
+                    "Unable to create Gallery entry."
+            );
+        }
 
-                  String js =
-                      "window.__nativeExportDone && " +
-                      "window.__nativeExportDone(" +
-                      success +
-                      ",'" +
-                      safe +
-                      "');";
 
-                  sendJavascript(js);
-              }
+        try (
+                InputStream input =
+                        new FileInputStream(
+                                nativeOutputFile
+                        );
 
+                OutputStream output =
+                        getContentResolver()
+                                .openOutputStream(uri)
+        ) {
 
-              private void sendJavascript(
-                      String javascript
-              ) {
+            if (output == null) {
 
-                  runOnUiThread(() -> {
+                throw new Exception(
+                        "Unable to open Gallery output."
+                );
+            }
 
-                      if (webView != null) {
 
-                          webView.evaluateJavascript(
-                              javascript,
-                              null
-                          );
-                      }
+            byte[] buffer =
+                    new byte[1024 * 1024];
 
-                  });
-              }
 
+            int count;
 
-              private void stopExport() {
 
-                  try {
+            while (
+                    (count = input.read(buffer)) != -1
+            ) {
 
-                      if (
-                          transformer != null
-                      ) {
+                output.write(
+                        buffer,
+                        0,
+                        count
+                );
+            }
 
-                          transformer.cancel();
-                      }
 
-                  } catch (Exception ignored) {}
+            output.flush();
+        }
 
-                  transformer = null;
 
-                  try {
+        if (
+                Build.VERSION.SDK_INT >=
+                        Build.VERSION_CODES.Q
+        ) {
 
-                      if (
-                          nativeInputStream != null
-                      ) {
+            ContentValues completed =
+                    new ContentValues();
 
-                          nativeInputStream.close();
-                      }
 
-                  } catch (Exception ignored) {}
+            completed.put(
+                    MediaStore.Video.Media.IS_PENDING,
+                    0
+            );
 
-                  nativeInputStream = null;
 
-                  exporting = false;
-              }
+            getContentResolver().update(
+                    uri,
+                    completed,
+                    null,
+                    null
+            );
+        }
 
 
-              private void cleanupFiles() {
+        exporting = false;
 
-                  try {
 
-                      if (
-                          nativeInputFile != null &&
-                          nativeInputFile.exists()
-                      ) {
+        notifyJavascript(
+                true,
+                "MP4 saved to Gallery: Movies/ASIM TECH"
+        );
 
-                          nativeInputFile.delete();
-                      }
 
-                  } catch (Exception ignored) {}
+        cleanupFiles();
+    }
 
 
-                  try {
+    private void notifyJavascript(
+            boolean success,
+            String message
+    ) {
 
-                      if (
-                          nativeOutputFile != null &&
-                          nativeOutputFile.exists()
-                      ) {
+        String safe =
+                message == null
+                        ? ""
+                        : message
+                        .replace("\\", "\\\\")
+                        .replace("'", "\\'")
+                        .replace("\n", "\\n")
+                        .replace("\r", "\\r");
 
-                          nativeOutputFile.delete();
-                      }
 
-                  } catch (Exception ignored) {}
-              }
+        String js =
+                "window.__nativeExportDone && " +
+                        "window.__nativeExportDone(" +
+                        success +
+                        ",'" +
+                        safe +
+                        "');";
 
 
-              @Override
-              protected void onActivityResult(
-                      int requestCode,
-                      int resultCode,
-                      Intent data
-              ) {
+        sendJavascript(js);
+    }
 
-                  super.onActivityResult(
-                      requestCode,
-                      resultCode,
-                      data
-                  );
 
+    private void sendJavascript(
+            String javascript
+    ) {
 
-                  if (
-                      requestCode ==
-                      FILE_CHOOSER_REQUEST
-                  ) {
+        runOnUiThread(() -> {
 
-                      if (
-                          filePathCallback == null
-                      ) {
+            if (webView != null) {
 
-                          return;
-                      }
+                webView.evaluateJavascript(
+                        javascript,
+                        null
+                );
+            }
 
+        });
+    }
 
-                      Uri[] results = null;
 
+    private void stopExport() {
 
-                      if (
-                          resultCode == Activity.RESULT_OK &&
-                          data != null
-                      ) {
+        try {
 
-                          results =
-                              WebChromeClient
-                                  .FileChooserParams
-                                  .parseResult(
-                                      resultCode,
-                                      data
-                                  );
-                      }
+            if (
+                    transformer != null
+            ) {
 
+                transformer.cancel();
+            }
 
-                      filePathCallback
-                          .onReceiveValue(results);
+        } catch (Exception ignored) {}
 
-                      filePathCallback = null;
-                  }
-              }
 
+        transformer = null;
 
-              @Override
-              public void onRequestPermissionsResult(
-                      int requestCode,
-                      @NonNull String[] permissions,
-                      @NonNull int[] grantResults
-              ) {
 
-                  super.onRequestPermissionsResult(
-                      requestCode,
-                      permissions,
-                      grantResults
-                  );
+        try {
 
+            if (
+                    nativeInputStream != null
+            ) {
 
-                  if (
-                      requestCode ==
-                      CAMERA_PERMISSION_REQUEST
-                  ) {
+                nativeInputStream.close();
+            }
 
-                      if (
-                          pendingPermissionRequest != null
-                      ) {
+        } catch (Exception ignored) {}
 
-                          if (
-                              grantResults.length > 0 &&
-                              grantResults[0] ==
-                              PackageManager.PERMISSION_GRANTED
-                          ) {
 
-                              pendingPermissionRequest.grant(
-                                  new String[]{
-                                      PermissionRequest
-                                          .RESOURCE_VIDEO_CAPTURE
-                                  }
-                              );
+        nativeInputStream = null;
 
-                          } else {
 
-                              pendingPermissionRequest.deny();
-                          }
+        exporting = false;
+    }
 
 
-                          pendingPermissionRequest = null;
-                      }
-                  }
-              }
+    private void cleanupFiles() {
 
+        try {
 
-              @Override
-              public void onBackPressed() {
+            if (
+                    nativeInputFile != null &&
+                    nativeInputFile.exists()
+            ) {
 
-                  if (
-                      webView != null &&
-                      webView.canGoBack()
-                  ) {
+                nativeInputFile.delete();
+            }
 
-                      webView.goBack();
+        } catch (Exception ignored) {}
 
-                  } else {
 
-                      super.onBackPressed();
-                  }
-              }
+        try {
 
+            if (
+                    nativeOutputFile != null &&
+                    nativeOutputFile.exists()
+            ) {
 
-              @Override
-              protected void onDestroy() {
+                nativeOutputFile.delete();
+            }
 
-                  stopExport();
+        } catch (Exception ignored) {}
+    }
 
-                  cleanupFiles();
 
+    @Override
+    protected void onActivityResult(
+            int requestCode,
+            int resultCode,
+            Intent data
+    ) {
 
-                  if (
-                      webView != null
-                  ) {
+        super.onActivityResult(
+                requestCode,
+                resultCode,
+                data
+        );
 
-                      webView.destroy();
-                  }
 
+        if (
+                requestCode ==
+                        FILE_CHOOSER_REQUEST
+        ) {
 
-                  super.onDestroy();
-              }
+            if (
+                    filePathCallback == null
+            ) {
 
-          }
+                return;
+            }
 
-          EOF
 
-          sed -i \
-            "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
-            "$JAVA_DIR/MainActivity.java"
+            Uri[] results = null;
 
 
-      # =========================================================
-      # STYLES
-      # =========================================================
+            if (
+                    resultCode == Activity.RESULT_OK &&
+                    data != null
+            ) {
 
-      - name: Create styles
-        if: steps.queue.outputs.has_build == 'true'
-        run: |
+                results =
+                        WebChromeClient
+                                .FileChooserParams
+                                .parseResult(
+                                        resultCode,
+                                        data
+                                );
+            }
 
-          set -e
 
-          mkdir -p android-project/app/src/main/res/values
+            filePathCallback
+                    .onReceiveValue(results);
 
-          cat > android-project/app/src/main/res/values/styles.xml <<'EOF'
 
-          <resources>
+            filePathCallback = null;
+        }
+    }
 
-              <style
-                  name="AppTheme"
-                  parent="android:style/Theme.Material.Light.NoActionBar">
 
-                  <item name="android:fontFamily">sans</item>
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults
+    ) {
 
-                  <item name="android:windowActionModeOverlay">true</item>
+        super.onRequestPermissionsResult(
+                requestCode,
+                permissions,
+                grantResults
+        );
 
-                  <item name="android:colorAccent">#087FF5</item>
 
-                  <item name="android:statusBarColor">#050B11</item>
+        if (
+                requestCode ==
+                        CAMERA_PERMISSION_REQUEST
+        ) {
 
-                  <item name="android:navigationBarColor">#050B11</item>
+            if (
+                    pendingPermissionRequest != null
+            ) {
 
-                  <item name="android:windowLightStatusBar">false</item>
+                if (
+                        grantResults.length > 0 &&
+                        grantResults[0] ==
+                                PackageManager.PERMISSION_GRANTED
+                ) {
 
-                  <item name="android:windowLightNavigationBar">false</item>
+                    pendingPermissionRequest.grant(
+                            new String[]{
+                                    PermissionRequest
+                                            .RESOURCE_VIDEO_CAPTURE
+                            }
+                    );
 
-              </style>
+                } else {
 
-          </resources>
+                    pendingPermissionRequest.deny();
+                }
 
-          EOF
+
+                pendingPermissionRequest = null;
+            }
+        }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+        if (
+                webView != null &&
+                webView.canGoBack()
+        ) {
+
+            webView.goBack();
+
+        } else {
+
+            super.onBackPressed();
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+
+        stopExport();
+
+        cleanupFiles();
+
+
+        if (
+                webView != null
+        ) {
+
+            webView.destroy();
+        }
+
+
+        super.onDestroy();
+    }
+
+}
+
+EOF
+
+sed -i \
+  "s|__PACKAGE_NAME__|${PACKAGE_NAME}|g" \
+  "$JAVA_DIR/MainActivity.java"
+
+
                 # =========================================================
       # VERIFY ANDROID PROJECT
       # =========================================================
