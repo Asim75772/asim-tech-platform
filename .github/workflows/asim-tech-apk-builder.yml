@@ -89,7 +89,7 @@ jobs:
 
           RESPONSE=$(curl -sS \
             --fail-with-body \
-            "${SUPABASE_URL}/rest/v1/app_builds?status=in.(queued,building)&order=queued_at.desc&limit=1"
+            "${SUPABASE_URL}/rest/v1/app_builds?status=in.(queued,building)&order=queued_at.desc&limit=1" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Accept: application/json")
