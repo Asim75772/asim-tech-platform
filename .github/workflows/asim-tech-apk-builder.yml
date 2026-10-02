@@ -1393,7 +1393,7 @@ jobs:
 
           echo "Uploading build to Supabase..."
 
-          STORAGE_BUCKET="apk-builds"
+         STORAGE_BUCKET="android-apks" 
           STORAGE_PATH="${APP_ID}/${FINAL_NAME}"
 
           MIME_TYPE="application/vnd.android.package-archive"
